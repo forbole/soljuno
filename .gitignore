@@ -1,3 +1,4 @@
+vendor/
 .idea/
 build/
 # Binaries for programs and plugins
