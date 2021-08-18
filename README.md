@@ -1,5 +1,5 @@
 <div align="center">
-  <h1> Juno </h1>
+  <h1> SolJuno </h1>
 </div>
 
 ![banner](.docs/.img/logo.png)
