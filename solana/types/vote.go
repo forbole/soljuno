@@ -1,4 +1,4 @@
-package solana
+package types
 
 type VoteInit struct {
 	NodePubkey           Pubkey
@@ -16,6 +16,6 @@ const (
 
 type Vote struct {
 	Slots     []uint64
-	Hash      [32]uint8
+	Hash      [32]byte
 	Timestamp uint64
 }
