@@ -12,9 +12,3 @@ type MessageHeader struct {
 	NumReadonlySignedAccounts   uint8 `json:"numReadonlySignedAccounts"`
 	NumReadonlyUnsignedAccounts uint8 `json:"numReadonlyUnsignedAccounts"`
 }
-
-type UiCompiledInstruction struct {
-	ProgramIDIndex uint8   `json:"programIdIndex"`
-	Accounts       []uint8 `json:"accounts"`
-	Data           string  `json:"data"`
-}
