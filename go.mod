@@ -1,4 +1,4 @@
-module github.com/desmos-labs/soljuno
+module github.com/forbole/soljuno
 
 go 1.16
 
@@ -17,7 +17,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.11
 	github.com/ybbus/jsonrpc/v2 v2.1.6
-	google.golang.org/grpc v1.37.0
+	google.golang.org/grpc v1.37.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
 

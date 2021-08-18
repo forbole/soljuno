@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/desmos-labs/soljuno/solana/client/types"
+	"github.com/forbole/soljuno/solana/client/types"
 	jsonrpc "github.com/ybbus/jsonrpc/v2"
 )
 

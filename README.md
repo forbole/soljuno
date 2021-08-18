@@ -4,7 +4,7 @@
 
 ![banner](.docs/.img/logo.png)
 
-> This branch is intended to be used with Cosmos SDK `v0.40.x`.
+> This branch is intended to be used with Solana.
 
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/desmos-labs/juno/Tests)](https://github.com/desmos-labs/juno/actions?query=workflow%3ATests)
 [![Go Report Card](https://goreportcard.com/badge/github.com/desmos-labs/juno)](https://goreportcard.com/report/github.com/desmos-labs/juno)
@@ -30,16 +30,6 @@ The main reason behind the fork what to improve the original project by:
 We achieved the first objective by supporting both PostgreSQL and MongoDB. We also reviewed the code design by using a database interface so that you can implement whatever database backend you prefer most. 
 
 On the other hand, to achieve a highly modular code, we implemented extension points through the `worker.RegisterBlockHandler`, `worker.RegisterTxHandler` and `worker.RegisterMsgHandler` methods. You can use those to extend the default working of the code (which simply parses and saves the data on the database) with whatever operation you want.    
-
-## Compatibility table
-Since the Cosmos SDK has evolved a lot, we have different versions of Juno available.
-
-| Cosmos SDK Version | Juno branch |
-| :----------------: | :---------: | 
-| `v0.37.x` | `cosmos-v0.37.x` |
-| `v0.38.x` | `cosmos-v0.38.x` |
-| `v0.39.x` | `cosmos-v0.39.x` |
-| Stargate <br> (`v0.40.x`, `v0.41.x`, `v0.42.x`) | `cosmos-v0.40.x` |
 
 ## Usage
 To know how to setup and run Juno, please refer to the [docs folder](.docs).
