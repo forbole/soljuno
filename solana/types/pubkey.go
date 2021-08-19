@@ -1,4 +1,4 @@
-package solana
+package types
 
 import (
 	"github.com/mr-tron/base58"
