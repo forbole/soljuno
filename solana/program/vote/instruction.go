@@ -1,6 +1,6 @@
 package vote
 
-type VoteInstruction uint16
+type VoteInstruction uint32
 
 const (
 	InitializeAccount VoteInstruction = iota

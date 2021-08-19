@@ -1,6 +1,6 @@
 package system
 
-type SystemInstruction uint16
+type SystemInstruction uint32
 
 const (
 	CreateAccount SystemInstruction = iota

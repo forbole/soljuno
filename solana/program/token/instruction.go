@@ -1,6 +1,6 @@
 package token
 
-type TokenInstruction uint16
+type TokenInstruction uint32
 
 const (
 	InitializeMint TokenInstruction = iota

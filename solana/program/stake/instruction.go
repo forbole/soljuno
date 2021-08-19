@@ -1,6 +1,6 @@
 package stake
 
-type StakeInstruction uint16
+type StakeInstruction uint32
 
 const (
 	Initialize StakeInstruction = iota

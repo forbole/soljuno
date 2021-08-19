@@ -1,6 +1,6 @@
 package upgradable_loader
 
-type UpgradeableLoaderInstruction uint16
+type UpgradeableLoaderInstruction uint32
 
 const (
 	InitializeBuffer UpgradeableLoaderInstruction = iota

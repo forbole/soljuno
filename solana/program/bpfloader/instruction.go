@@ -1,6 +1,6 @@
 package bpfloader
 
-type LoaderInstruction uint16
+type LoaderInstruction uint32
 
 const (
 	Write LoaderInstruction = iota
