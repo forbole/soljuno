@@ -2,11 +2,11 @@ package system
 
 import "github.com/forbole/soljuno/solana/types"
 
-type SystemInstruction uint32
+type SystemInstructionID uint32
 
 const (
 	// Create a new account
-	CreateAccount SystemInstruction = iota
+	CreateAccount SystemInstructionID = iota
 
 	// Assign account to a program
 	Assign
