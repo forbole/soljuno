@@ -23,7 +23,7 @@ const (
 	// Withdraw funds from a nonce account
 	WithdrawNonceAccount
 
-	// Drive state of Uninitalized nonce account to Initialized, setting the nonce value
+	// Drive state of Uninitialized nonce account to Initialized, setting the nonce value
 	InitializeNonceAccount
 
 	// Change the entity authorized to execute nonce instructions on the account
