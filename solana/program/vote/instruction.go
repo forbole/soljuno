@@ -38,16 +38,16 @@ type Instruction struct {
 }
 
 type InitializeAccountInstruction struct {
-	VoteInit types.VoteInit
+	VoteInit VoteInit
 }
 
 type AuthorizeInstruction struct {
 	Pubkey        types.Pubkey
-	VoteAuthorize types.VoteAuthorize
+	VoteAuthorize VoteAuthorize
 }
 
 type VoteInstruction struct {
-	Vote types.Vote
+	Vote VoteData
 }
 
 type WithdrawInstruction struct {
@@ -59,10 +59,10 @@ type UpdateCommissionInstruction struct {
 }
 
 type VoteSwitchInstruction struct {
-	Vote types.Vote
+	Vote VoteData
 	Hash types.Hash
 }
 
 type AuthorizeCheckedInstruction struct {
-	VoteAuthorize types.VoteAuthorize
+	VoteAuthorize VoteAuthorize
 }
