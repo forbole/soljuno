@@ -16,6 +16,6 @@ const (
 
 type Vote struct {
 	Slots     []uint64
-	Hash      [32]byte
+	Hash      Hash
 	Timestamp *uint64
 }
