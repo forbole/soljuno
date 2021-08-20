@@ -37,10 +37,6 @@ type Instruction struct {
 	Data interface{}
 }
 
-func (v *Instruction) Marshal([]byte) error {
-	return nil
-}
-
 type InitializeAccountInstruction struct {
 	VoteInit types.VoteInit
 }
