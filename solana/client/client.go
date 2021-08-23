@@ -9,6 +9,7 @@ type Client interface {
 	GetSlot() (uint64, error)
 	GetBlock(uint64) (types.Block, error)
 	GetBlocks(uint64, uint64) ([]uint64, error)
+	GetVoteAccounts() (types.VoteAccounts, error)
 }
 
 type client struct {
@@ -49,4 +50,13 @@ func (c *client) GetBlocks(start uint64, end uint64) ([]uint64, error) {
 		return slots, err
 	}
 	return slots, nil
+}
+
+func (c *client) GetVoteAccounts() (types.VoteAccounts, error) {
+	var validators types.VoteAccounts
+	err := c.rpcClient.CallFor(&validators, "getVoteAccounts")
+	if err != nil {
+		return validators, err
+	}
+	return validators, nil
 }
