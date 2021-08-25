@@ -21,6 +21,8 @@ type Proxy interface {
 	// An error is returned if the query fails.
 	Slots(uint64, uint64) ([]uint64, error)
 
+	// Validators returns vote accounts of validators in the current chain.
+	// An error is returned if the query fails
 	Validators() (clienttype.VoteAccounts, error)
 }
 
