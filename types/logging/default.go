@@ -4,13 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/types"
 )
 
 var (
@@ -83,32 +81,32 @@ func (d *defaultLogger) GenesisError(module modules.Module, err error) {
 }
 
 // BlockError implements Logger
-func (d *defaultLogger) BlockError(module modules.Module, block *tmctypes.ResultBlock, err error) {
+func (d *defaultLogger) BlockError(module modules.Module, block types.Block, err error) {
 	d.Error("error while handling block",
 		"err", err,
 		LogKeyModule, module.Name(),
-		LogKeyHeight, block.Block.Height,
+		LogKeySlot, block.Slot,
 	)
 }
 
 // TxError implements Logger
-func (d *defaultLogger) TxError(module modules.Module, tx *types.Tx, err error) {
+func (d *defaultLogger) TxError(module modules.Module, tx types.Tx, err error) {
 	d.Error("error while handling transaction",
 		"err", err,
 		LogKeyModule, module.Name(),
-		LogKeyHeight, tx.Height,
-		LogKeyTxHash, tx.TxHash,
+		LogKeySlot, tx.Slot,
+		LogKeyTxHash, tx.Hash,
 	)
 }
 
-// MsgError implements Logger
-func (d *defaultLogger) MsgError(module modules.Module, tx *types.Tx, msg sdk.Msg, err error) {
+// InstructionError implements Logger
+func (d *defaultLogger) InstructionError(module modules.Module, tx types.Tx, instruction types.Instruction, err error) {
 	d.Error("error while handling message",
 		"err", err,
 		LogKeyModule, module.Name(),
-		LogKeyHeight, tx.Height,
-		LogKeyTxHash, tx.TxHash,
-		LogKeyMsgType, msg.Type(),
+		LogKeySlot, tx.Slot,
+		LogKeyTxHash, tx.Hash,
+		LogKeyInstructionType, instruction.Type,
 	)
 }
 
