@@ -40,5 +40,5 @@ CREATE INDEX instruction_transaction_hash_index ON instruction (transaction_hash
 
 CREATE TABLE pruning
 (
-    last_pruned_height BIGINT NOT NULL
+    last_pruned_slot BIGINT NOT NULL
 )

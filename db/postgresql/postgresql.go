@@ -107,7 +107,7 @@ VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 // HasValidator implements db.Database
 func (db *Database) HasValidator(pubkey string) (bool, error) {
 	var res bool
-	stmt := `SELECT EXISTS(SELECT 1 FROM validator WHERE vote_pubkey = $1 or WHERE node_pubkey = $1);`
+	stmt := `SELECT EXISTS(SELECT 1 FROM validator WHERE vote_pubkey = $1 OR node_pubkey = $1);`
 	err := db.Sql.QueryRow(stmt, pubkey).Scan(&res)
 	return res, err
 }
@@ -167,32 +167,27 @@ func (db *Database) Close() {
 // GetLastPruned implements db.PruningDb
 func (db *Database) GetLastPruned() (uint64, error) {
 	var lastPrunedHeight uint64
-	err := db.Sql.QueryRow(`SELECT coalesce(MAX(last_pruned_height),0) FROM pruning LIMIT 1;`).Scan(&lastPrunedHeight)
+	err := db.Sql.QueryRow(`SELECT coalesce(MAX(last_pruned_slot),0) FROM pruning LIMIT 1;`).Scan(&lastPrunedHeight)
 	return lastPrunedHeight, err
 }
 
 // StoreLastPruned implements db.PruningDb
-func (db *Database) StoreLastPruned(height uint64) error {
+func (db *Database) StoreLastPruned(slot uint64) error {
 	_, err := db.Sql.Exec(`DELETE FROM pruning`)
 	if err != nil {
 		return err
 	}
 
-	_, err = db.Sql.Exec(`INSERT INTO pruning (last_pruned_height) VALUES ($1)`, height)
+	_, err = db.Sql.Exec(`INSERT INTO pruning (last_pruned_slot) VALUES ($1)`, slot)
 	return err
 }
 
 // Prune implements db.PruningDb
 func (db *Database) Prune(slot uint64) error {
-	_, err := db.Sql.Exec(`DELETE FROM pre_commit WHERE height = $1`, slot)
-	if err != nil {
-		return err
-	}
-
-	_, err = db.Sql.Exec(`
-DELETE FROM message 
+	_, err := db.Sql.Exec(`
+DELETE FROM instruction 
 USING transaction 
-WHERE message.transaction_hash = transaction.hash AND transaction.height = $1
+WHERE instruction.transaction_hash = transaction.hash AND transaction.slot = $1
 `, slot)
 	return err
 }
