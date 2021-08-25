@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/desmos-labs/juno/types/logging"
+	"github.com/forbole/soljuno/types/logging"
 
 	"github.com/lib/pq"
 	_ "github.com/lib/pq" // nolint
