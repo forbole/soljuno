@@ -1,8 +1,6 @@
 package db
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-
 	"github.com/desmos-labs/juno/types"
 	"github.com/desmos-labs/juno/types/logging"
 )
@@ -57,17 +55,15 @@ type PruningDb interface {
 
 // Context contains the data that might be used to build a Database instance
 type Context struct {
-	Cfg            types.DatabaseConfig
-	EncodingConfig *params.EncodingConfig
-	Logger         logging.Logger
+	Cfg    types.DatabaseConfig
+	Logger logging.Logger
 }
 
 // NewContext allows to build a new Context instance
-func NewContext(cfg types.DatabaseConfig, encodingConfig *params.EncodingConfig, logger logging.Logger) *Context {
+func NewContext(cfg types.DatabaseConfig, logger logging.Logger) *Context {
 	return &Context{
-		Cfg:            cfg,
-		EncodingConfig: encodingConfig,
-		Logger:         logger,
+		Cfg:    cfg,
+		Logger: logger,
 	}
 }
 
