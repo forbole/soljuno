@@ -29,7 +29,7 @@ type Database interface {
 	// An error is returned if the operation fails.
 	SaveValidators(validators []types.Validator) error
 
-	// SaveMessage stores a single instruction.
+	// SaveInstruction stores a single instruction.
 	// An error is returned if the operation fails.
 	SaveInstruction(instruction types.Instruction) error
 

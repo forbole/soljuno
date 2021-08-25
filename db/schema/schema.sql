@@ -6,10 +6,10 @@ CREATE TABLE validator
 
 CREATE TABLE block
 (
-    slot           BIGINT UNIQUE PRIMARY KEY,
-    hash             TEXT                        NOT NULL UNIQUE,
-    proposer_address TEXT REFERENCES validator (vote_pubkey),
-    timestamp        TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    slot        BIGINT UNIQUE PRIMARY KEY,
+    hash        TEXT                        NOT NULL UNIQUE,
+    proposer    TEXT REFERENCES validator (vote_pubkey),
+    timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 CREATE INDEX block_hash_index ON block (hash);
 CREATE INDEX block_proposer_address_index ON block (proposer_address);
@@ -17,11 +17,11 @@ CREATE INDEX block_proposer_address_index ON block (proposer_address);
 
 CREATE TABLE transaction
 (
-    hash         TEXT    NOT NULL UNIQUE PRIMARY KEY,
-    slot       BIGINT  NOT NULL REFERENCES block (slot),
-    error      BOOLEAN NOT NULL,
-    fee          INT    NOT NULL DEFAULT 0,
-    logs         JSONB
+    hash       TEXT     NOT NULL UNIQUE PRIMARY KEY,
+    slot       BIGINT   NOT NULL REFERENCES block (slot),
+    error      BOOLEAN  NOT NULL,
+    fee        INT      NOT NULL,
+    logs       TEXT[]   NOT NULL
 );
 CREATE INDEX transaction_hash_index ON transaction (hash);
 CREATE INDEX transaction_slot_index ON transaction (slot);
@@ -32,7 +32,7 @@ CREATE TABLE instruction
     index               BIGINT  NOT NULL,
     program             TEXT    NOT NULL,      
     inner_instructions  JSONB   NOT NULL DEFAULT '[]'::JSONB,
-    involved_accounts   TEXT[]  NULL
+    involved_accounts   TEXT[]  NOT NULL,
     type                TEXT    NOT NULL DEFAULT 'unknown',
     value               JSONB   NOT NULL DEFAULT '{}'::JSONB,
 );

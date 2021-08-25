@@ -2,10 +2,12 @@ package postgresql
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 
 	"github.com/desmos-labs/juno/types/logging"
 
+	"github.com/lib/pq"
 	_ "github.com/lib/pq" // nolint
 
 	"github.com/forbole/soljuno/db"
@@ -76,26 +78,80 @@ func (db *Database) HasBlock(height uint64) (bool, error) {
 
 // SaveBlock implements db.Database
 func (db *Database) SaveBlock(block types.Block) error {
-	return nil
+	sqlStatement := `
+INSERT INTO block (slot, hash, proposer, timestamp)
+VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
+	proposer := sql.NullString{Valid: len(block.Proposer) != 0, String: block.Proposer}
+	_, err := db.Sql.Exec(sqlStatement,
+		block.Slot, block.Hash, proposer, block.Timestamp,
+	)
+	return err
 }
 
 // SaveTx implements db.Database
 func (db *Database) SaveTx(tx types.Tx) error {
-	return nil
+	sqlStatement := `
+INSERT INTO transaction 
+    (hash, height, error, fee, logs) 
+VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
+	_, err := db.Sql.Exec(sqlStatement,
+		tx.Hash,
+		tx.Slot,
+		tx.Successful(),
+		tx.Fee,
+		pq.Array(tx.Logs),
+	)
+	return err
 }
 
 // HasValidator implements db.Database
-func (db *Database) HasValidator(addr string) (bool, error) {
-	return false, nil
+func (db *Database) HasValidator(pubkey string) (bool, error) {
+	var res bool
+	stmt := `SELECT EXISTS(SELECT 1 FROM validator WHERE vote_pubkey = $1 or WHERE node_pubkey = $1);`
+	err := db.Sql.QueryRow(stmt, pubkey).Scan(&res)
+	return res, err
 }
 
 // SaveValidators implements db.Database
 func (db *Database) SaveValidators(validators []types.Validator) error {
-	return nil
+	if len(validators) == 0 {
+		return nil
+	}
+	stmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
+
+	var vparams []interface{}
+	for i, val := range validators {
+		vi := i * 2
+
+		stmt += fmt.Sprintf("($%d, $%d),", vi+1, vi+2)
+		vparams = append(vparams, val.VotePubkey, val.NodePubKey)
+	}
+
+	stmt = stmt[:len(stmt)-1] // Remove trailing ,
+	stmt += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(stmt, vparams...)
+	return err
 }
 
-func (db *Database) SaveInstruction(types.Instruction) error {
-	return nil
+// SaveInstruction implements db.Database
+func (db *Database) SaveInstruction(instruction types.Instruction) error {
+	stmt := `
+INSERT INTO instruction(transaction_hash, index, involved_accounts, inner_instructions, type, value) 
+VALUES ($1, $2, $3, $4, $5)`
+	innerInstructionsBz, err := json.Marshal(instruction.InnerInstructions)
+	if err != nil {
+		return nil
+	}
+	_, err = db.Sql.Exec(
+		stmt,
+		instruction.TxHash,
+		instruction.Index,
+		pq.Array(instruction.InvolvedAccounts),
+		string(innerInstructionsBz),
+		instruction.Type,
+		instruction.Value,
+	)
+	return err
 }
 
 // Close implements db.Database
