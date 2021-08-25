@@ -1,9 +1,9 @@
 package builder
 
 import (
-	"github.com/desmos-labs/juno/db"
+	"github.com/forbole/soljuno/db"
 
-	"github.com/desmos-labs/juno/db/postgresql"
+	"github.com/forbole/soljuno/db/postgresql"
 )
 
 // Builder represents a generic Builder implementation that build the proper database
