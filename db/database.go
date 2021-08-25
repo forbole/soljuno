@@ -1,8 +1,8 @@
 package db
 
 import (
-	"github.com/desmos-labs/juno/types"
-	"github.com/desmos-labs/juno/types/logging"
+	"github.com/forbole/soljuno/types"
+	"github.com/forbole/soljuno/types/logging"
 )
 
 // Database represents an abstract database that can be used to save data inside it

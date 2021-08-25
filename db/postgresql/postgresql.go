@@ -12,8 +12,8 @@ import (
 
 	_ "github.com/lib/pq" // nolint
 
-	"github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/types"
 )
 
 // Builder creates a database connection with the given database connection info
@@ -49,9 +49,8 @@ func Builder(ctx *db.Context) (db.Database, error) {
 	postgresDb.SetMaxIdleConns(ctx.Cfg.GetMaxIdleConnections())
 
 	return &Database{
-		Sql:            postgresDb,
-		EncodingConfig: ctx.EncodingConfig,
-		Logger:         ctx.Logger,
+		Sql:    postgresDb,
+		Logger: ctx.Logger,
 	}, nil
 }
 
