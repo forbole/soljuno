@@ -26,7 +26,7 @@ CREATE TABLE transaction
 CREATE INDEX transaction_hash_index ON transaction (hash);
 CREATE INDEX transaction_slot_index ON transaction (slot);
 
-CREATE TABLE message
+CREATE TABLE instruction
 (
     transaction_hash    TEXT    NOT NULL REFERENCES transaction (hash),
     index               BIGINT  NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE message
     type                TEXT    NOT NULL DEFAULT 'unknown',
     value               JSONB   NOT NULL DEFAULT '{}'::JSONB,
 );
-CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
+CREATE INDEX instruction_transaction_hash_index ON instruction (transaction_hash);
 
 CREATE TABLE pruning
 (
