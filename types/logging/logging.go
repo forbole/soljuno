@@ -6,10 +6,10 @@ import (
 )
 
 const (
-	LogKeyModule          = "module"
-	LogKeySlot            = "slot"
-	LogKeyTxHash          = "tx_hash"
-	LogKeyInstructionType = "instruction_type"
+	LogKeyModule  = "module"
+	LogKeySlot    = "slot"
+	LogKeyTxHash  = "tx_hash"
+	LogKeyMsgType = "msg_type"
 )
 
 // Logger defines a function that takes an error and logs it.
@@ -24,5 +24,5 @@ type Logger interface {
 	GenesisError(module modules.Module, err error)
 	BlockError(module modules.Module, block types.Block, err error)
 	TxError(module modules.Module, tx types.Tx, err error)
-	MessageError(module modules.Module, tx types.Tx, msg types.Message, err error)
+	MsgError(module modules.Module, tx types.Tx, msg types.Message, err error)
 }
