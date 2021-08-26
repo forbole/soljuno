@@ -3,13 +3,11 @@ package pruning
 import (
 	"fmt"
 
-	"github.com/desmos-labs/juno/types/logging"
+	"github.com/forbole/soljuno/types/logging"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-
-	"github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/types"
 )
 
 var _ modules.Module = &Module{}
@@ -36,14 +34,14 @@ func (m *Module) Name() string {
 }
 
 // HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
+func (m *Module) HandleBlock(block types.Block) error {
 	if m.cfg == nil {
 		// Nothing to do, pruning is disabled
 		return nil
 	}
 
-	if block.Block.Height%m.cfg.GetInterval() != 0 {
-		// Not an interval height, so just skip
+	if block.Slot%uint64(m.cfg.GetInterval()) != 0 {
+		// Not an interval slot, so just skip
 		return nil
 	}
 
@@ -52,28 +50,28 @@ func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, _ *tmct
 		return fmt.Errorf("pruning is enabled, but your database does not implement PruningDb")
 	}
 
-	// Get last pruned height
-	var height, err = pruningDb.GetLastPruned()
+	// Get last pruned slot
+	var slot, err = pruningDb.GetLastPruned()
 	if err != nil {
 		return err
 	}
 
-	// Iterate from last pruned height until (current block height - keep recent) to
+	// Iterate from last pruned slot until (current block slot - keep recent) to
 	// avoid pruning the recent blocks that should be kept
-	for ; height < block.Block.Height-m.cfg.GetKeepRecent(); height++ {
+	for ; slot < block.Slot-uint64(m.cfg.GetKeepRecent()); slot++ {
 
-		if height%m.cfg.GetKeepEvery() == 0 {
-			// The height should be kept, so just skip
+		if slot%uint64(m.cfg.GetKeepEvery()) == 0 {
+			// The slot should be kept, so just skip
 			continue
 		}
 
-		// Prune the height
-		m.logger.Debug("pruning", "module", "pruning", "height", height)
-		err = pruningDb.Prune(height)
+		// Prune the block by slot
+		m.logger.Debug("pruning", "module", "pruning", "slot", slot)
+		err = pruningDb.Prune(slot)
 		if err != nil {
-			return fmt.Errorf("error while pruning height %d: %s", height, err.Error())
+			return fmt.Errorf("error while pruning slot %d: %s", slot, err.Error())
 		}
 	}
 
-	return pruningDb.StoreLastPruned(height)
+	return pruningDb.StoreLastPruned(slot)
 }
