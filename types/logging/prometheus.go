@@ -20,8 +20,8 @@ var WorkerCount = prometheus.NewCounter(
 	},
 )
 
-// WorkerHeight represents the Telemetry counter used to track the last indexed slot for each worker
-var WorkerHeight = prometheus.NewGaugeVec(
+// WorkerSlot represents the Telemetry counter used to track the last indexed slot for each worker
+var WorkerSlot = prometheus.NewGaugeVec(
 	prometheus.GaugeOpts{
 		Name: "soljuno_last_indexed_slot",
 		Help: "Height of the last indexed block.",
@@ -48,7 +48,7 @@ func init() {
 		panic(err)
 	}
 
-	err = prometheus.Register(WorkerHeight)
+	err = prometheus.Register(WorkerSlot)
 	if err != nil {
 		panic(err)
 	}
