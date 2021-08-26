@@ -8,17 +8,17 @@ import (
 )
 
 // MessageNotSupported returns an error telling that the given message is not supported
-func MessageNotSupported(msg types.Instruction) error {
+func MessageNotSupported(msg types.Message) error {
 	return fmt.Errorf("message type not supported: %s", msg.Type)
 }
 
 // MessageParser represents a function that extracts all the
 // involved addresses from a provided message (both accounts and validators)
-type MessageParser = func(cdc bincode.Decoder, msg types.Instruction) ([]string, error)
+type MessageParser = func(cdc bincode.Decoder, msg types.Message) ([]string, error)
 
 // JoinMessageParsers joins together all the given parsers, calling them in order
 func JoinMessageParsers(parsers ...MessageParser) MessageParser {
-	return func(cdc bincode.Decoder, msg types.Instruction) ([]string, error) {
+	return func(cdc bincode.Decoder, msg types.Message) ([]string, error) {
 		for _, parser := range parsers {
 			// Try getting the addresses
 			addresses, _ := parser(cdc, msg)

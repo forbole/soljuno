@@ -24,5 +24,5 @@ type Logger interface {
 	GenesisError(module modules.Module, err error)
 	BlockError(module modules.Module, block types.Block, err error)
 	TxError(module modules.Module, tx types.Tx, err error)
-	InstructionError(module modules.Module, tx types.Tx, instruction types.Instruction, err error)
+	MessageError(module modules.Module, tx types.Tx, msg types.Message, err error)
 }

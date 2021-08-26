@@ -133,23 +133,23 @@ func (db *Database) SaveValidators(validators []types.Validator) error {
 	return err
 }
 
-// SaveInstruction implements db.Database
-func (db *Database) SaveInstruction(instruction types.Instruction) error {
+// SaveMessage implements db.Database
+func (db *Database) SaveMessage(msg types.Message) error {
 	stmt := `
-INSERT INTO instruction(transaction_hash, index, involved_accounts, inner_instructions, type, value) 
+INSERT INTO message(transaction_hash, index, involved_accounts, inner_instructions, type, value) 
 VALUES ($1, $2, $3, $4, $5)`
-	innerInstructionsBz, err := json.Marshal(instruction.InnerInstructions)
+	innerInstructionsBz, err := json.Marshal(msg.InnerInstructions)
 	if err != nil {
 		return nil
 	}
 	_, err = db.Sql.Exec(
 		stmt,
-		instruction.TxHash,
-		instruction.Index,
-		pq.Array(instruction.InvolvedAccounts),
+		msg.TxHash,
+		msg.Index,
+		pq.Array(msg.InvolvedAccounts),
 		string(innerInstructionsBz),
-		instruction.Type,
-		instruction.Value,
+		msg.Type,
+		msg.Value,
 	)
 	return err
 }

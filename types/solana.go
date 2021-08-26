@@ -65,7 +65,7 @@ func (tx Tx) Successful() bool {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-type Instruction struct {
+type Message struct {
 	TxHash            string
 	Index             int
 	Program           string
@@ -81,8 +81,8 @@ type InnerInstruction struct {
 	Value   interface{} `json:"value"`
 }
 
-func NewInstruction(hash string, index int, program string, involvedAccounts []string, innerInstructions []InnerInstruction, typ string, value interface{}) Instruction {
-	return Instruction{
+func NewMessage(hash string, index int, program string, involvedAccounts []string, innerInstructions []InnerInstruction, typ string, value interface{}) Message {
+	return Message{
 		TxHash:            hash,
 		Index:             index,
 		Program:           program,
