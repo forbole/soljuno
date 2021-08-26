@@ -6,14 +6,21 @@ import (
 	"reflect"
 )
 
+type Decoder interface {
+	Decode(bz []byte, data interface{})
+}
+
 type decoder struct {
 	order  binary.ByteOrder
 	buf    []byte
 	offset int // next read offset in data
 }
 
-func Decode(bz []byte, data interface{}) {
-	var d decoder
+func NewDecoder() Decoder {
+	return &decoder{}
+}
+
+func (d *decoder) Decode(bz []byte, data interface{}) {
 	v := reflect.ValueOf(data)
 	if v.Kind() == reflect.Ptr {
 		v = v.Elem()
