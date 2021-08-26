@@ -11,8 +11,8 @@ type Reward struct {
 type RewardType string
 
 const (
-	Fee     RewardType = "Fee"
-	Rent    RewardType = "Rent"
-	Staking RewardType = "Staking"
-	Voting  RewardType = "Voting"
+	RewardFee     RewardType = "Fee"
+	RewardRent    RewardType = "Rent"
+	RewardStaking RewardType = "Staking"
+	RewardVoting  RewardType = "Voting"
 )
