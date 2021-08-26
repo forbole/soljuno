@@ -5,10 +5,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/go-co-op/gocron"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/types"
 )
 
 // Module represents a generic module without any particular handling of data
@@ -78,7 +77,7 @@ type BlockModule interface {
 	// For each transaction present inside the block, HandleTx will be called as well.
 	// NOTE. The returned error will be logged using the logging.LogBlockError method. All other modules' handlers
 	// will still be called.
-	HandleBlock(block *tmctypes.ResultBlock, txs []*types.Tx, vals *tmctypes.ResultValidators) error
+	HandleBlock(block types.Block, txs []types.Tx) error
 }
 
 type TransactionModule interface {
