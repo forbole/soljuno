@@ -90,9 +90,9 @@ type TransactionModule interface {
 
 type MessageModule interface {
 	// HandleMsg handles a single message.
-	// For convenience of usa, the index of the message inside the transaction and the transaction itself
+	// For convenience of use, the index of the message inside the transaction and the transaction itself
 	// are passed as well.
 	// NOTE. The returned error will be logged using the logging.LogMsgError method. All other modules' handlers
 	// will still be called.
-	HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error
+	HandleMsg(index int, msg sdk.Msg, tx types.Tx) error
 }

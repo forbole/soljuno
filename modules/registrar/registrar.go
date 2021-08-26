@@ -65,21 +65,18 @@ var (
 
 // DefaultRegistrar represents a registrar that allows to handle the default Juno modules
 type DefaultRegistrar struct {
-	parser messages.MessageParser
 }
 
 // NewDefaultRegistrar builds a new DefaultRegistrar
-func NewDefaultRegistrar(parser messages.MessageParser) *DefaultRegistrar {
-	return &DefaultRegistrar{
-		parser: parser,
-	}
+func NewDefaultRegistrar() *DefaultRegistrar {
+	return &DefaultRegistrar{}
 }
 
 // BuildModules implements Registrar
 func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	return modules.Modules{
 		pruning.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Logger),
-		messages.NewModule(r.parser, ctx.Decoder, ctx.Database),
+		messages.NewModule(ctx.Decoder, ctx.Database),
 	}
 }
 
