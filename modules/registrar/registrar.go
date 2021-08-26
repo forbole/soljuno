@@ -65,11 +65,11 @@ var (
 
 // DefaultRegistrar represents a registrar that allows to handle the default Juno modules
 type DefaultRegistrar struct {
-	parser messages.MessageAddressesParser
+	parser messages.MessageParser
 }
 
 // NewDefaultRegistrar builds a new DefaultRegistrar
-func NewDefaultRegistrar(parser messages.MessageAddressesParser) *DefaultRegistrar {
+func NewDefaultRegistrar(parser messages.MessageParser) *DefaultRegistrar {
 	return &DefaultRegistrar{
 		parser: parser,
 	}

@@ -10,13 +10,13 @@ var _ modules.Module = &Module{}
 
 // Module represents the module allowing to store messages properly inside a dedicated table
 type Module struct {
-	parser MessageAddressesParser
+	parser MessageParser
 
 	cdc bincode.Decoder
 	db  db.Database
 }
 
-func NewModule(parser MessageAddressesParser, cdc bincode.Decoder, db db.Database) *Module {
+func NewModule(parser MessageParser, cdc bincode.Decoder, db db.Database) *Module {
 	return &Module{
 		parser: parser,
 		cdc:    cdc,
