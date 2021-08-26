@@ -1,44 +1,39 @@
 package registrar
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/forbole/soljuno/solana/bincode"
+	"github.com/forbole/soljuno/types/logging"
 
-	"github.com/desmos-labs/juno/types/logging"
+	"github.com/forbole/soljuno/types"
 
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/modules/pruning"
 
-	"github.com/desmos-labs/juno/modules/pruning"
+	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/modules/messages"
 
-	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/modules/messages"
-
-	"github.com/desmos-labs/juno/client"
-	"github.com/desmos-labs/juno/db"
+	"github.com/forbole/soljuno/client"
+	"github.com/forbole/soljuno/db"
 )
 
 // Context represents the context of the modules registrar
 type Context struct {
-	ParsingConfig  types.Config
-	SDKConfig      *sdk.Config
-	EncodingConfig *params.EncodingConfig
-	Database       db.Database
-	Proxy          *client.Proxy
-	Logger         logging.Logger
+	ParsingConfig types.Config
+	Database      db.Database
+	Decoder       bincode.Decoder
+	Proxy         *client.Proxy
+	Logger        logging.Logger
 }
 
 // NewContext allows to build a new Context instance
 func NewContext(
-	parsingConfig types.Config, sdkConfig *sdk.Config, encodingConfig *params.EncodingConfig,
-	database db.Database, proxy *client.Proxy, logger logging.Logger,
+	parsingConfig types.Config, database db.Database, decoder bincode.Decoder, proxy *client.Proxy, logger logging.Logger,
 ) Context {
 	return Context{
-		ParsingConfig:  parsingConfig,
-		SDKConfig:      sdkConfig,
-		EncodingConfig: encodingConfig,
-		Database:       database,
-		Proxy:          proxy,
-		Logger:         logger,
+		ParsingConfig: parsingConfig,
+		Database:      database,
+		Decoder:       decoder,
+		Proxy:         proxy,
+		Logger:        logger,
 	}
 }
 
@@ -84,7 +79,7 @@ func NewDefaultRegistrar(parser messages.MessageAddressesParser) *DefaultRegistr
 func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	return modules.Modules{
 		pruning.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Logger),
-		messages.NewModule(r.parser, ctx.EncodingConfig.Marshaler, ctx.Database),
+		messages.NewModule(r.parser, ctx.Decoder, ctx.Database),
 	}
 }
 

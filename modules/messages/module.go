@@ -1,12 +1,9 @@
 package messages
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/solana/bincode"
 )
 
 var _ modules.Module = &Module{}
@@ -15,11 +12,11 @@ var _ modules.Module = &Module{}
 type Module struct {
 	parser MessageAddressesParser
 
-	cdc codec.Marshaler
+	cdc bincode.Decoder
 	db  db.Database
 }
 
-func NewModule(parser MessageAddressesParser, cdc codec.Marshaler, db db.Database) *Module {
+func NewModule(parser MessageAddressesParser, cdc bincode.Decoder, db db.Database) *Module {
 	return &Module{
 		parser: parser,
 		cdc:    cdc,
@@ -33,6 +30,6 @@ func (m *Module) Name() string {
 }
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
-	return HandleMsg(index, msg, tx, m.parser, m.cdc, m.db)
-}
+// func (m *Module) HandleInstruction(index int, instruction types.Instruction, tx *types.Tx) error {
+// 	return HandleMsg(index, instruction, tx, m.parser, m.cdc, m.db)
+// }
