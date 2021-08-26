@@ -3,7 +3,6 @@ package modules
 import (
 	"encoding/json"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/go-co-op/gocron"
 	tmtypes "github.com/tendermint/tendermint/types"
 
@@ -77,7 +76,7 @@ type BlockModule interface {
 	// For each transaction present inside the block, HandleTx will be called as well.
 	// NOTE. The returned error will be logged using the logging.LogBlockError method. All other modules' handlers
 	// will still be called.
-	HandleBlock(block types.Block, txs []types.Tx) error
+	HandleBlock(block types.Block) error
 }
 
 type TransactionModule interface {
@@ -85,7 +84,7 @@ type TransactionModule interface {
 	// For each message present inside the transaction, HandleMsg will be called as well.
 	// NOTE. The returned error will be logged using the logging.LogTxError method. All other modules' handlers
 	// will still be called.
-	HandleTx(tx *types.Tx) error
+	HandleTx(tx types.Tx) error
 }
 
 type MessageModule interface {
@@ -94,5 +93,5 @@ type MessageModule interface {
 	// are passed as well.
 	// NOTE. The returned error will be logged using the logging.LogMsgError method. All other modules' handlers
 	// will still be called.
-	HandleMsg(index int, msg sdk.Msg, tx types.Tx) error
+	HandleMsg(index int, msg types.Message, tx types.Tx) error
 }
