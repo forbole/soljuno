@@ -2,7 +2,6 @@ package postgresql
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 
 	"github.com/forbole/soljuno/types/logging"
@@ -136,18 +135,13 @@ func (db *Database) SaveValidators(validators []types.Validator) error {
 // SaveMessage implements db.Database
 func (db *Database) SaveMessage(msg types.Message) error {
 	stmt := `
-INSERT INTO message(transaction_hash, index, involved_accounts, inner_instructions, type, value) 
+INSERT INTO message(transaction_hash, index, involved_accounts, type, value) 
 VALUES ($1, $2, $3, $4, $5)`
-	innerInstructionsBz, err := json.Marshal(msg.InnerInstructions)
-	if err != nil {
-		return nil
-	}
-	_, err = db.Sql.Exec(
+	_, err := db.Sql.Exec(
 		stmt,
 		msg.TxHash,
 		msg.Index,
 		pq.Array(msg.InvolvedAccounts),
-		string(innerInstructionsBz),
 		msg.Type,
 		msg.Value,
 	)
