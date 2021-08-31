@@ -17,7 +17,7 @@ const (
 )
 
 type VoteData struct {
-	Slots     []uint64
-	Hash      types.Hash
-	Timestamp *uint64
+	Slots     []uint64   `json:"slots"`
+	Hash      types.Hash `json:"hash"`
+	Timestamp *uint64    `json:"timestamp,omitempty"`
 }
