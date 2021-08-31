@@ -142,8 +142,8 @@ VALUES ($1, $2, $3, $4, $5)`
 		msg.TxHash,
 		msg.Index,
 		pq.Array(msg.InvolvedAccounts),
-		msg.Type,
-		msg.Value,
+		msg.Value.Type(),
+		msg.Value.JSON(),
 	)
 	return err
 }
