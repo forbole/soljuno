@@ -3,6 +3,7 @@ package worker
 import (
 	"fmt"
 
+	"github.com/forbole/soljuno/solana/parser"
 	"github.com/forbole/soljuno/types/logging"
 
 	"github.com/forbole/soljuno/modules"
@@ -20,6 +21,7 @@ type Worker struct {
 	queue  types.HeightQueue
 	cp     client.Proxy
 	db     db.Database
+	parser parser.Parser
 	logger logging.Logger
 
 	index   int
@@ -33,6 +35,7 @@ func NewWorker(index int, ctx Context) Worker {
 		cp:      ctx.ClientProxy,
 		queue:   ctx.Queue,
 		db:      ctx.Database,
+		parser:  ctx.Parser,
 		modules: ctx.Modules,
 		logger:  ctx.Logger,
 	}
@@ -78,7 +81,7 @@ func (w Worker) process(slot uint64) error {
 		return fmt.Errorf("failed to get block from database: %s", err)
 	}
 
-	block := types.NewBlockFromResult(slot, b)
+	block := types.NewBlockFromResult(w.parser, slot, b)
 
 	return w.ExportBlock(block)
 }

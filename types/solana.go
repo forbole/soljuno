@@ -4,6 +4,8 @@ import (
 	"time"
 
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
+	"github.com/forbole/soljuno/solana/parser"
+	"github.com/forbole/soljuno/solana/types"
 )
 
 // Validator contains the data of a single validator
@@ -42,7 +44,7 @@ func NewBlock(slot uint64, hash, proposer string, timestamp time.Time, txs []Tx)
 	}
 }
 
-func NewBlockFromResult(slot uint64, b clienttypes.BlockResult) Block {
+func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockResult) Block {
 	proposer := ""
 	for _, reward := range b.Rewards {
 		if reward.RewardType == clienttypes.RewardFee {
@@ -70,13 +72,17 @@ func NewBlockFromResult(slot uint64, b clienttypes.BlockResult) Block {
 			var accounts []string
 
 			accounts = getAccounts(accountKeys, msg.Accounts)
-			msgs = append(msgs, NewMessage(hash, count, accountKeys[msg.ProgramIDIndex], accounts, msg.Data))
+			programID := accountKeys[msg.ProgramIDIndex]
+			parsed := parser.Parse(accounts, programID, msg.Data)
+			msgs = append(msgs, NewMessage(hash, count, accountKeys[msg.ProgramIDIndex], accounts, parsed))
 			count++
 
 			if inner, ok := innerInstructionMap[uint8(i)]; ok {
 				for _, innerMsg := range inner {
 					accounts = getAccounts(accountKeys, msg.Accounts)
-					msgs = append(msgs, NewMessage(hash, count, accountKeys[innerMsg.ProgramIDIndex], accounts, innerMsg.Data))
+					programID := accountKeys[innerMsg.ProgramIDIndex]
+					parsed := parser.Parse(accounts, programID, msg.Data)
+					msgs = append(msgs, NewMessage(hash, count, accountKeys[innerMsg.ProgramIDIndex], accounts, parsed))
 					count++
 				}
 			}
@@ -140,11 +146,10 @@ type Message struct {
 	Index            int
 	Program          string
 	InvolvedAccounts []string
-	Type             string
-	Value            interface{}
+	Value            types.ParsedInstruction
 }
 
-func NewMessage(hash string, index int, program string, involvedAccounts []string, value interface{}) Message {
+func NewMessage(hash string, index int, program string, involvedAccounts []string, value types.ParsedInstruction) Message {
 	return Message{
 		TxHash:           hash,
 		Index:            index,
