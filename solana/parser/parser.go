@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/forbole/soljuno/solana/types"
 	"github.com/mr-tron/base58"
 )
@@ -18,7 +16,7 @@ func NewParser() *parser {
 }
 
 type Parser interface {
-	Register(programID string, programParser ProgramParser) error
+	Register(programID string, programParser ProgramParser)
 	Parse(accounts []string, programID string, base58Data string) types.ParsedInstruction
 }
 
@@ -26,13 +24,8 @@ type parser struct {
 	programs map[string]ProgramParser
 }
 
-func (p *parser) Register(programID string, programParser ProgramParser) error {
-	if _, ok := p.programs[programID]; ok {
-		return fmt.Errorf("%s is already registered", programID)
-	}
-
+func (p *parser) Register(programID string, programParser ProgramParser) {
 	p.programs[programID] = programParser
-	return nil
 }
 
 func (p parser) Parse(accounts []string, programID string, base58Data string) types.ParsedInstruction {
