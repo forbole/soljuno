@@ -7,12 +7,12 @@ CREATE TABLE validator
 CREATE TABLE block
 (
     slot        BIGINT UNIQUE PRIMARY KEY,
-    hash        TEXT                        NOT NULL UNIQUE,
-    proposer    TEXT REFERENCES validator (vote_pubkey),
+    hash        TEXT   NOT NULL UNIQUE,
+    proposer    TEXT   DEFAULT '',
     timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 CREATE INDEX block_hash_index ON block (hash);
-CREATE INDEX block_proposer_address_index ON block (proposer_address);
+CREATE INDEX block_proposer_index ON block (proposer);
 
 
 CREATE TABLE transaction
@@ -31,10 +31,9 @@ CREATE TABLE message
     transaction_hash    TEXT    NOT NULL REFERENCES transaction (hash),
     index               BIGINT  NOT NULL,
     program             TEXT    NOT NULL,      
-    inner_instructions  JSONB   NOT NULL DEFAULT '[]'::JSONB,
     involved_accounts   TEXT[]  NOT NULL,
     type                TEXT    NOT NULL DEFAULT 'unknown',
-    value               JSONB   NOT NULL DEFAULT '{}'::JSONB,
+    value               JSONB   NOT NULL DEFAULT '{}'::JSONB
 );
 CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 

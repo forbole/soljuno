@@ -141,6 +141,12 @@ func (w Worker) ExportTxs(txs []types.Tx) error {
 
 		// Handle all the messages contained inside the transaction
 		for i, msg := range tx.Messages {
+			// Save the message itself
+			err := w.db.SaveMessage(msg)
+			if err != nil {
+				return fmt.Errorf("failed to handle message with hash %s: %s", msg.TxHash, err)
+			}
+
 			// Call the handlers
 			for _, module := range w.modules {
 				if messageModule, ok := module.(modules.MessageModule); ok {

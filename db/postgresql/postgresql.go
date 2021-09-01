@@ -91,7 +91,7 @@ VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 func (db *Database) SaveTx(tx types.Tx) error {
 	sqlStatement := `
 INSERT INTO transaction 
-    (hash, height, error, fee, logs) 
+    (hash, slot, error, fee, logs) 
 VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(sqlStatement,
 		tx.Hash,
@@ -135,12 +135,13 @@ func (db *Database) SaveValidators(validators []types.Validator) error {
 // SaveMessage implements db.Database
 func (db *Database) SaveMessage(msg types.Message) error {
 	stmt := `
-INSERT INTO message(transaction_hash, index, involved_accounts, type, value) 
-VALUES ($1, $2, $3, $4, $5)`
+INSERT INTO message(transaction_hash, index, program, involved_accounts, type, value) 
+VALUES ($1, $2, $3, $4, $5, $6)`
 	_, err := db.Sql.Exec(
 		stmt,
 		msg.TxHash,
 		msg.Index,
+		msg.Program,
 		pq.Array(msg.InvolvedAccounts),
 		msg.Value.Type(),
 		msg.Value.JSON(),
