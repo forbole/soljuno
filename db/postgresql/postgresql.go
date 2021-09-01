@@ -180,9 +180,9 @@ func (db *Database) StoreLastPruned(slot uint64) error {
 // Prune implements db.PruningDb
 func (db *Database) Prune(slot uint64) error {
 	_, err := db.Sql.Exec(`
-DELETE FROM instruction 
+DELETE FROM message 
 USING transaction 
-WHERE instruction.transaction_hash = transaction.hash AND transaction.slot = $1
+WHERE message.transaction_hash = transaction.hash AND transaction.slot = $1
 `, slot)
 	return err
 }

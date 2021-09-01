@@ -149,7 +149,7 @@ func enqueueMissingSlots(exportQueue types.SlotQueue, ctx *Context) {
 
 	ctx.Logger.Info("syncing missing blocks...", "latest_block_slot", latestBlockSlot)
 	for i := cfg.GetStartSlot(); i <= latestBlockSlot; i++ {
-		ctx.Logger.Debug("enqueueing missing block", "height", i)
+		ctx.Logger.Debug("enqueueing missing block", "slot", i)
 		exportQueue <- i
 	}
 }
