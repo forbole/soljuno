@@ -420,7 +420,7 @@ type ParsingConfig interface {
 	ShouldParseOldBlocks() bool
 	ShouldParseGenesis() bool
 	GetGenesisFilePath() string
-	GetStartHeight() int64
+	GetStartSlot() uint64
 	UseFastSync() bool
 }
 
@@ -432,7 +432,7 @@ type parsingConfig struct {
 	ParseOldBlocks  bool   `toml:"parse_old_blocks"`
 	GenesisFilePath string `toml:"genesis_file_path"`
 	ParseGenesis    bool   `toml:"parse_genesis"`
-	StartHeight     int64  `toml:"start_height"`
+	StartSlot       uint64 `toml:"start_slot"`
 	FastSync        bool   `toml:"fast_sync"`
 }
 
@@ -440,7 +440,7 @@ type parsingConfig struct {
 func NewParsingConfig(
 	workers int64,
 	parseNewBlocks, parseOldBlocks bool,
-	parseGenesis bool, genesisFilePath string, startHeight int64, fastSync bool,
+	parseGenesis bool, genesisFilePath string, startSlot uint64, fastSync bool,
 ) ParsingConfig {
 	return &parsingConfig{
 		Workers:         workers,
@@ -448,7 +448,7 @@ func NewParsingConfig(
 		ParseNewBlocks:  parseNewBlocks,
 		ParseGenesis:    parseGenesis,
 		GenesisFilePath: genesisFilePath,
-		StartHeight:     startHeight,
+		StartSlot:       startSlot,
 		FastSync:        fastSync,
 	}
 }
@@ -491,8 +491,8 @@ func (p *parsingConfig) GetGenesisFilePath() string {
 }
 
 // GetStartHeight implements ParsingConfig
-func (p *parsingConfig) GetStartHeight() int64 {
-	return p.StartHeight
+func (p *parsingConfig) GetStartSlot() uint64 {
+	return p.StartSlot
 }
 
 // UseFastSync implements ParsingConfig

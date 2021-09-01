@@ -2,7 +2,6 @@ package postgresql
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 
 	"github.com/forbole/soljuno/types/logging"
@@ -92,7 +91,7 @@ VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 func (db *Database) SaveTx(tx types.Tx) error {
 	sqlStatement := `
 INSERT INTO transaction 
-    (hash, height, error, fee, logs) 
+    (hash, slot, error, fee, logs) 
 VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(sqlStatement,
 		tx.Hash,
@@ -133,23 +132,19 @@ func (db *Database) SaveValidators(validators []types.Validator) error {
 	return err
 }
 
-// SaveInstruction implements db.Database
-func (db *Database) SaveInstruction(instruction types.Instruction) error {
+// SaveMessage implements db.Database
+func (db *Database) SaveMessage(msg types.Message) error {
 	stmt := `
-INSERT INTO instruction(transaction_hash, index, involved_accounts, inner_instructions, type, value) 
-VALUES ($1, $2, $3, $4, $5)`
-	innerInstructionsBz, err := json.Marshal(instruction.InnerInstructions)
-	if err != nil {
-		return nil
-	}
-	_, err = db.Sql.Exec(
+INSERT INTO message(transaction_hash, index, program, involved_accounts, type, value) 
+VALUES ($1, $2, $3, $4, $5, $6)`
+	_, err := db.Sql.Exec(
 		stmt,
-		instruction.TxHash,
-		instruction.Index,
-		pq.Array(instruction.InvolvedAccounts),
-		string(innerInstructionsBz),
-		instruction.Type,
-		instruction.Value,
+		msg.TxHash,
+		msg.Index,
+		msg.Program,
+		pq.Array(msg.InvolvedAccounts),
+		msg.Value.Type(),
+		msg.Value.JSON(),
 	)
 	return err
 }

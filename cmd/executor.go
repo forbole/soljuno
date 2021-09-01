@@ -5,10 +5,10 @@ import (
 	"os"
 	"path"
 
-	initcmd "github.com/desmos-labs/juno/cmd/init"
-	parsecmd "github.com/desmos-labs/juno/cmd/parse"
+	initcmd "github.com/forbole/soljuno/cmd/init"
+	parsecmd "github.com/forbole/soljuno/cmd/parse"
 
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/types"
 
 	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/libs/cli"

@@ -11,7 +11,7 @@ import (
 
 type Proxy interface {
 	// Block queries for a block by slot. An error is returned if the query fails.
-	Block(uint64) (clienttype.Block, error)
+	Block(uint64) (clienttype.BlockResult, error)
 
 	// LatestSlot returns the latest slot on the active chain. An error
 	// is returned if the query fails.
@@ -62,7 +62,7 @@ func (cp *proxy) Slots(start uint64, end uint64) ([]uint64, error) {
 	return slots, nil
 }
 
-func (cp *proxy) Block(slot uint64) (clienttype.Block, error) {
+func (cp *proxy) Block(slot uint64) (clienttype.BlockResult, error) {
 	return cp.rpcClient.GetBlock(slot)
 }
 

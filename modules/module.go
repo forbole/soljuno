@@ -3,12 +3,10 @@ package modules
 import (
 	"encoding/json"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/go-co-op/gocron"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/types"
 )
 
 // Module represents a generic module without any particular handling of data
@@ -78,7 +76,7 @@ type BlockModule interface {
 	// For each transaction present inside the block, HandleTx will be called as well.
 	// NOTE. The returned error will be logged using the logging.LogBlockError method. All other modules' handlers
 	// will still be called.
-	HandleBlock(block *tmctypes.ResultBlock, txs []*types.Tx, vals *tmctypes.ResultValidators) error
+	HandleBlock(block types.Block) error
 }
 
 type TransactionModule interface {
@@ -86,14 +84,14 @@ type TransactionModule interface {
 	// For each message present inside the transaction, HandleMsg will be called as well.
 	// NOTE. The returned error will be logged using the logging.LogTxError method. All other modules' handlers
 	// will still be called.
-	HandleTx(tx *types.Tx) error
+	HandleTx(tx types.Tx) error
 }
 
 type MessageModule interface {
 	// HandleMsg handles a single message.
-	// For convenience of usa, the index of the message inside the transaction and the transaction itself
+	// For convenience of use, the index of the message inside the transaction and the transaction itself
 	// are passed as well.
 	// NOTE. The returned error will be logged using the logging.LogMsgError method. All other modules' handlers
 	// will still be called.
-	HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error
+	HandleMsg(index int, msg types.Message, tx types.Tx) error
 }

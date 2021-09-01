@@ -7,7 +7,7 @@ import (
 
 type Client interface {
 	GetSlot() (uint64, error)
-	GetBlock(uint64) (types.Block, error)
+	GetBlock(uint64) (types.BlockResult, error)
 	GetBlocks(uint64, uint64) ([]uint64, error)
 	GetVoteAccounts() (types.VoteAccounts, error)
 }
@@ -25,8 +25,8 @@ func NewClient(endpoint string) *client {
 	}
 }
 
-func (c *client) GetBlock(slot uint64) (types.Block, error) {
-	var block types.Block
+func (c *client) GetBlock(slot uint64) (types.BlockResult, error) {
+	var block types.BlockResult
 	err := c.rpcClient.CallFor(&block, "getBlock", slot)
 	if err != nil {
 		return block, err

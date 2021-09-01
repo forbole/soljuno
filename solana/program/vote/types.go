@@ -2,6 +2,8 @@ package vote
 
 import "github.com/forbole/soljuno/solana/types"
 
+const ProgramID = "Vote111111111111111111111111111111111111111"
+
 type VoteInit struct {
 	NodePubkey           types.Pubkey
 	AuthorizedVoter      types.Pubkey
@@ -17,7 +19,7 @@ const (
 )
 
 type VoteData struct {
-	Slots     []uint64
-	Hash      types.Hash
-	Timestamp *uint64
+	Slots     []uint64   `json:"slots"`
+	Hash      types.Hash `json:"hash"`
+	Timestamp *uint64    `json:"timestamp,omitempty"`
 }

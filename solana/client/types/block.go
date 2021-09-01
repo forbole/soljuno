@@ -2,7 +2,7 @@ package types
 
 type Slot uint64
 
-type Block struct {
+type BlockResult struct {
 	PreviousBlockhash string                             `json:"previousBlockhash"`
 	Blockhash         string                             `json:"blockhash"`
 	ParentSlot        Slot                               `json:"parentSlot"`

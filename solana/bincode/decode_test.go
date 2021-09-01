@@ -96,62 +96,63 @@ func TestDecode(t *testing.T) {
 }
 
 func testDecodeWithType(data interface{}, bz []byte, fun func(check interface{})) {
+	decoder := bincode.NewDecoder()
 	switch data.(type) {
 	case bool:
 		var v bool
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case int8:
 		var v int8
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case int16:
 		var v int16
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case int32:
 		var v int32
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case int64:
 		var v int64
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case uint8:
 		var v uint8
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case uint16:
 		var v uint16
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case uint32:
 		var v uint32
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case uint64:
 		var v uint64
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case [2]uint8:
 		var v [2]uint8
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case []uint8:
 		var v []uint8
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case string:
 		var v string
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case testStruct:
 		var v testStruct
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	case *testStruct:
 		var v *testStruct
-		bincode.Decode(bz, &v)
+		decoder.Decode(bz, &v)
 		fun(v)
 	}
 }

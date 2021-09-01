@@ -1,29 +1,24 @@
 package messages
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/solana/bincode"
+	"github.com/forbole/soljuno/types"
 )
 
 var _ modules.Module = &Module{}
 
 // Module represents the module allowing to store messages properly inside a dedicated table
 type Module struct {
-	parser MessageAddressesParser
-
-	cdc codec.Marshaler
+	cdc bincode.Decoder
 	db  db.Database
 }
 
-func NewModule(parser MessageAddressesParser, cdc codec.Marshaler, db db.Database) *Module {
+func NewModule(cdc bincode.Decoder, db db.Database) *Module {
 	return &Module{
-		parser: parser,
-		cdc:    cdc,
-		db:     db,
+		cdc: cdc,
+		db:  db,
 	}
 }
 
@@ -33,6 +28,6 @@ func (m *Module) Name() string {
 }
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
-	return HandleMsg(index, msg, tx, m.parser, m.cdc, m.db)
+func (m *Module) HandleMsg(index int, msg types.Message, tx types.Tx) error {
+	return m.db.SaveMessage(msg)
 }

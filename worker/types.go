@@ -1,41 +1,40 @@
 package worker
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp/params"
+	"github.com/forbole/soljuno/solana/parser"
+	"github.com/forbole/soljuno/types/logging"
 
-	"github.com/desmos-labs/juno/types/logging"
-
-	"github.com/desmos-labs/juno/client"
-	"github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/client"
+	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/types"
 )
 
 // Context represents the context that is shared among different workers
 type Context struct {
-	EncodingConfig *params.EncodingConfig
-	ClientProxy    *client.Proxy
-	Database       db.Database
-	Logger         logging.Logger
+	ClientProxy client.Proxy
+	Database    db.Database
+	Parser      parser.Parser
+	Logger      logging.Logger
 
-	Queue   types.HeightQueue
+	Queue   types.SlotQueue
 	Modules []modules.Module
 }
 
 // NewContext allows to build a new Worker Context instance
 func NewContext(
-	encodingConfig *params.EncodingConfig,
-	clientProxy *client.Proxy,
+	clientProxy client.Proxy,
 	db db.Database,
+	parser parser.Parser,
 	logger logging.Logger,
-	queue types.HeightQueue,
+	queue types.SlotQueue,
 	modules []modules.Module,
 ) *Context {
 	return &Context{
-		EncodingConfig: encodingConfig,
-		ClientProxy:    clientProxy,
-		Database:       db,
-		Logger:         logger,
+		ClientProxy: clientProxy,
+		Database:    db,
+		Parser:      parser,
+		Logger:      logger,
 
 		Queue:   queue,
 		Modules: modules,
