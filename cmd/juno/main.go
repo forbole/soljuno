@@ -3,21 +3,18 @@ package main
 import (
 	"os"
 
-	"github.com/desmos-labs/juno/cmd/parse"
+	"github.com/forbole/soljuno/cmd/parse"
 
-	"github.com/desmos-labs/juno/modules/messages"
-	"github.com/desmos-labs/juno/modules/registrar"
+	"github.com/forbole/soljuno/modules/registrar"
 
-	"github.com/desmos-labs/juno/cmd"
+	"github.com/forbole/soljuno/cmd"
 )
 
 func main() {
 	// ParsingConfig the runner
 	config := cmd.NewConfig("juno").
 		WithParseConfig(parse.NewConfig().
-			WithRegistrar(registrar.NewDefaultRegistrar(
-				messages.CosmosMessageAddressesParser,
-			)),
+			WithRegistrar(registrar.NewDefaultRegistrar()),
 		)
 
 	// Run the commands and panic on any error

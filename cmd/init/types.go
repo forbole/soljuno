@@ -3,7 +3,7 @@ package init
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/types"
 )
 
 // ConfigFlagSetup represents a function that will be called in order to setup all the flags for the "init" command.
@@ -50,7 +50,7 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 	parsingOldBlocks, _ := cmd.Flags().GetBool(flagParsingOldBlocks)
 	parsingParseGenesis, _ := cmd.Flags().GetBool(flagParsingParseGenesis)
 	parsingGenesisFilePath, _ := cmd.Flags().GetString(flagGenesisFilePath)
-	parsingStartHeight, _ := cmd.Flags().GetInt64(flagParsingStartHeight)
+	parsingStartSlot, _ := cmd.Flags().GetUint64(flagParsingStartSlot)
 	parsingFastSync, _ := cmd.Flags().GetBool(flagParsingFastSync)
 
 	pruningKeepEvery, _ := cmd.Flags().GetInt64(flagPruningKeepEvery)
@@ -82,7 +82,7 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 			parsingOldBlocks,
 			parsingParseGenesis,
 			parsingGenesisFilePath,
-			parsingStartHeight,
+			parsingStartSlot,
 			parsingFastSync,
 		),
 		types.NewPruningConfig(

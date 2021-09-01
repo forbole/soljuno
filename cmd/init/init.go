@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/types"
 
 	"github.com/spf13/cobra"
 )
@@ -39,7 +39,7 @@ const (
 	flagParsingOldBlocks    = "parsing-old-blocks"
 	flagParsingParseGenesis = "parsing-parse-genesis"
 	flagGenesisFilePath     = "parsing-genesis-file-path"
-	flagParsingStartHeight  = "parsing-start-height"
+	flagParsingStartSlot    = "parsing-start-height"
 	flagParsingFastSync     = "parsing-fast-sync"
 
 	flagPruningKeepRecent = "pruning-keep-recent"
@@ -122,7 +122,7 @@ func InitCmd(cfg *Config) *cobra.Command {
 	command.Flags().Bool(flagParsingOldBlocks, defParsingConfig.ShouldParseOldBlocks(), "Whether or not to parse old blocks")
 	command.Flags().Bool(flagParsingParseGenesis, defParsingConfig.ShouldParseGenesis(), "Whether or not to parse the genesis")
 	command.Flags().String(flagGenesisFilePath, defParsingConfig.GetGenesisFilePath(), "(Optional) Path to the genesis file, if it should not be retrieved from the RPC")
-	command.Flags().Int64(flagParsingStartHeight, defParsingConfig.GetStartHeight(), "Starting height when parsing new blocks")
+	command.Flags().Uint64(flagParsingStartSlot, defParsingConfig.GetStartSlot(), "Starting height when parsing new block slots")
 	command.Flags().Bool(flagParsingFastSync, defParsingConfig.UseFastSync(), "Whether to use fast sync or not when parsing old blocks")
 
 	defPruningConfig := types.DefaultPruningConfig()
