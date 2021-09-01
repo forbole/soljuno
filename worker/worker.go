@@ -18,7 +18,7 @@ import (
 // Worker defines a job consumer that is responsible for getting and
 // aggregating block and associated data and exporting it to a database.
 type Worker struct {
-	queue  types.HeightQueue
+	queue  types.SlotQueue
 	cp     client.Proxy
 	db     db.Database
 	parser parser.Parser
@@ -29,7 +29,7 @@ type Worker struct {
 }
 
 // NewWorker allows to create a new Worker implementation.
-func NewWorker(index int, ctx Context) Worker {
+func NewWorker(index int, ctx *Context) Worker {
 	return Worker{
 		index:   index,
 		cp:      ctx.ClientProxy,
@@ -49,9 +49,9 @@ func (w Worker) Start() {
 	for i := range w.queue {
 		if err := w.process(uint64(i)); err != nil {
 			// re-enqueue any failed job
-			// TODO: Implement exponential backoff or max retries for a block height.
+			// TODO: Implement exponential backoff or max retries for a block slot.
 			go func() {
-				w.logger.Error("re-enqueueing failed block", "height", i, "err", err)
+				w.logger.Error("re-enqueueing failed block", "slot", i, "err", err)
 				w.queue <- i
 			}()
 		}
@@ -78,7 +78,7 @@ func (w Worker) process(slot uint64) error {
 
 	b, err := w.cp.Block(slot)
 	if err != nil {
-		return fmt.Errorf("failed to get block from database: %s", err)
+		return fmt.Errorf("failed to get block from rpc server: %s", err)
 	}
 
 	block := types.NewBlockFromResult(w.parser, slot, b)

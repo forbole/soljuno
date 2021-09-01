@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/types"
 )
 
 // ReadConfig parses the configuration file for the executable having the give name using

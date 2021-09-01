@@ -1,27 +1,22 @@
 package parse
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/cosmos/cosmos-sdk/simapp/params"
+	"github.com/forbole/soljuno/types/logging"
 
-	"github.com/desmos-labs/juno/types/logging"
-
-	"github.com/desmos-labs/juno/client"
-	"github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/db/builder"
-	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/modules/registrar"
-	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/soljuno/client"
+	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/db/builder"
+	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/modules/registrar"
+	"github.com/forbole/soljuno/types"
 )
 
 // Config contains all the configuration for the "parse" command
 type Config struct {
-	registrar             registrar.Registrar
-	configParser          types.ConfigParser
-	encodingConfigBuilder types.EncodingConfigBuilder
-	setupCfg              types.SdkConfigSetup
-	buildDb               db.Builder
-	logger                logging.Logger
+	registrar    registrar.Registrar
+	configParser types.ConfigParser
+	buildDb      db.Builder
+	logger       logging.Logger
 }
 
 // NewConfig allows to build a new Config instance
@@ -57,34 +52,6 @@ func (config *Config) GetConfigParser() types.ConfigParser {
 	return config.configParser
 }
 
-// WithEncodingConfigBuilder sets the configurations builder to be used
-func (config *Config) WithEncodingConfigBuilder(b types.EncodingConfigBuilder) *Config {
-	config.encodingConfigBuilder = b
-	return config
-}
-
-// GetEncodingConfigBuilder returns the encoding config builder to be used
-func (config *Config) GetEncodingConfigBuilder() types.EncodingConfigBuilder {
-	if config.encodingConfigBuilder == nil {
-		return simapp.MakeTestEncodingConfig
-	}
-	return config.encodingConfigBuilder
-}
-
-// WithSetupConfig sets the SDK setup configurator to be used
-func (config *Config) WithSetupConfig(s types.SdkConfigSetup) *Config {
-	config.setupCfg = s
-	return config
-}
-
-// GetSetupConfig returns the SDK configuration builder to use
-func (config *Config) GetSetupConfig() types.SdkConfigSetup {
-	if config.setupCfg == nil {
-		return types.DefaultConfigSetup
-	}
-	return config.setupCfg
-}
-
 // WithDBBuilder sets the database builder to be used
 func (config *Config) WithDBBuilder(b db.Builder) *Config {
 	config.buildDb = b
@@ -117,23 +84,21 @@ func (config *Config) GetLogger() logging.Logger {
 
 // Context contains the parsing context
 type Context struct {
-	EncodingConfig *params.EncodingConfig
-	Proxy          *client.Proxy
-	Database       db.Database
-	Logger         logging.Logger
-	Modules        []modules.Module
+	Proxy    client.Proxy
+	Database db.Database
+	Logger   logging.Logger
+	Modules  []modules.Module
 }
 
 // NewContext builds a new Context instance
 func NewContext(
-	encodingConfig *params.EncodingConfig, proxy *client.Proxy, db db.Database,
+	proxy client.Proxy, db db.Database,
 	logger logging.Logger, modules []modules.Module,
 ) *Context {
 	return &Context{
-		EncodingConfig: encodingConfig,
-		Proxy:          proxy,
-		Database:       db,
-		Modules:        modules,
-		Logger:         logger,
+		Proxy:    proxy,
+		Database: db,
+		Modules:  modules,
+		Logger:   logger,
 	}
 }

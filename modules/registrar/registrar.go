@@ -26,12 +26,11 @@ type Context struct {
 
 // NewContext allows to build a new Context instance
 func NewContext(
-	parsingConfig types.Config, database db.Database, decoder bincode.Decoder, proxy *client.Proxy, logger logging.Logger,
+	parsingConfig types.Config, database db.Database, proxy *client.Proxy, logger logging.Logger,
 ) Context {
 	return Context{
 		ParsingConfig: parsingConfig,
 		Database:      database,
-		Decoder:       decoder,
 		Proxy:         proxy,
 		Logger:        logger,
 	}

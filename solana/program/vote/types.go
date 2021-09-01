@@ -2,6 +2,8 @@ package vote
 
 import "github.com/forbole/soljuno/solana/types"
 
+const ProgramID = "Vote111111111111111111111111111111111111111"
+
 type VoteInit struct {
 	NodePubkey           types.Pubkey
 	AuthorizedVoter      types.Pubkey

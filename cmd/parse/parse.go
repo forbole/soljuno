@@ -12,14 +12,15 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"github.com/desmos-labs/juno/types/logging"
+	"github.com/forbole/soljuno/solana/parser"
+	"github.com/forbole/soljuno/solana/program/vote"
+	"github.com/forbole/soljuno/types/logging"
 
 	"github.com/go-co-op/gocron"
-	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/types"
-	"github.com/desmos-labs/juno/worker"
+	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/types"
+	"github.com/forbole/soljuno/worker"
 
 	"github.com/spf13/cobra"
 )
@@ -67,7 +68,7 @@ func StartPrometheus() {
 func StartParsing(ctx *Context) error {
 	// Get the config
 	cfg := types.Cfg.GetParsingConfig()
-	logging.StartHeight.Add(float64(cfg.GetStartHeight()))
+	logging.StartSlot.Add(float64(cfg.GetStartSlot()))
 
 	// Start periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)
@@ -84,8 +85,12 @@ func StartParsing(ctx *Context) error {
 	// Create a queue that will collect, aggregate, and export blocks and metadata
 	exportQueue := types.NewQueue(25)
 
+	// Create and register solana message parser
+	parser := parser.NewParser()
+	parser.Register(vote.ProgramID, vote.VoteParser{})
+
 	// Create workers
-	workerCtx := worker.NewContext(ctx.EncodingConfig, ctx.Proxy, ctx.Database, ctx.Logger, exportQueue, ctx.Modules)
+	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parser, ctx.Logger, exportQueue, ctx.Modules)
 	workers := make([]worker.Worker, cfg.GetWorkers(), cfg.GetWorkers())
 	for i := range workers {
 		workers[i] = worker.NewWorker(i, workerCtx)
@@ -116,7 +121,7 @@ func StartParsing(ctx *Context) error {
 	}
 
 	if cfg.ShouldParseOldBlocks() {
-		go enqueueMissingBlocks(exportQueue, ctx)
+		go enqueueMissingSlots(exportQueue, ctx)
 	}
 
 	if cfg.ShouldParseNewBlocks() {
@@ -128,61 +133,33 @@ func StartParsing(ctx *Context) error {
 	return nil
 }
 
-// enqueueMissingBlocks enqueues jobs (block heights) for missed blocks starting
-// at the startHeight up until the latest known height.
-func enqueueMissingBlocks(exportQueue types.HeightQueue, ctx *Context) {
+// enqueueMissingSlots enqueue jobs (block slots) for missed blocks starting
+// at the startSlot up until the latest known slot.
+func enqueueMissingSlots(exportQueue types.SlotQueue, ctx *Context) {
 	// Get the config
 	cfg := types.Cfg.GetParsingConfig()
 
-	// Get the latest height
-	latestBlockHeight, err := ctx.Proxy.LatestHeight()
+	// Get the latest slot
+	latestBlockSlot, err := ctx.Proxy.LatestSlot()
 	if err != nil {
 		panic(fmt.Errorf("failed to get last block from RPC client: %s", err))
 	}
 
-	if cfg.UseFastSync() {
-		ctx.Logger.Info("fast sync is enabled, ignoring all previous blocks", "latest_block_height", latestBlockHeight)
-		for _, module := range ctx.Modules {
-			if mod, ok := module.(modules.FastSyncModule); ok {
-				err = mod.DownloadState(latestBlockHeight)
-				if err != nil {
-					ctx.Logger.Error("error while performing fast sync",
-						"err", err,
-						"last_block_height", latestBlockHeight,
-						"module", module.Name(),
-					)
-				}
-			}
-		}
-	} else {
-		ctx.Logger.Info("syncing missing blocks...", "latest_block_height", latestBlockHeight)
-		for i := cfg.GetStartHeight(); i <= latestBlockHeight; i++ {
-			ctx.Logger.Debug("enqueueing missing block", "height", i)
-			exportQueue <- i
-		}
+	// TODO solana fastsync module
+
+	ctx.Logger.Info("syncing missing blocks...", "latest_block_slot", latestBlockSlot)
+	for i := cfg.GetStartSlot(); i <= latestBlockSlot; i++ {
+		ctx.Logger.Debug("enqueueing missing block", "height", i)
+		exportQueue <- i
 	}
 }
 
+// TODO rebuild for json rpc websocket to subscribe
 // startNewBlockListener subscribes to new block events via the Tendermint RPC
 // and enqueues each new block height onto the provided queue. It blocks as new
 // blocks are incoming.
-func startNewBlockListener(exportQueue types.HeightQueue, ctx *Context) {
-	eventCh, cancel, err := ctx.Proxy.SubscribeNewBlocks(types.Cfg.GetRPCConfig().GetClientName() + "-blocks")
-	defer cancel()
+func startNewBlockListener(exportQueue types.SlotQueue, ctx *Context) {
 
-	if err != nil {
-		panic(fmt.Errorf("failed to subscribe to new blocks: %s", err))
-	}
-
-	ctx.Logger.Info("listening for new block events...")
-
-	for e := range eventCh {
-		newBlock := e.Data.(tmtypes.EventDataNewBlock).Block
-		height := newBlock.Header.Height
-
-		ctx.Logger.Debug("enqueueing new block", "height", height)
-		exportQueue <- height
-	}
 }
 
 // trapSignal will listen for any OS signal and invoke Done on the main
@@ -196,7 +173,6 @@ func trapSignal(ctx *Context) {
 	go func() {
 		sig := <-sigCh
 		ctx.Logger.Info("caught signal; shutting down...", "signal", sig.String())
-		defer ctx.Proxy.Stop()
 		defer ctx.Database.Close()
 		defer waitGroup.Done()
 	}()

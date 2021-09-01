@@ -10,7 +10,7 @@ type VoteParser struct {
 	parser.ProgramParser
 }
 
-func Parse(accounts []string, data []byte) types.ParsedInstruction {
+func (VoteParser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 	decoder := bincode.NewDecoder()
 	var id InstructionID
 	decoder.Decode(data[:4], &id)
