@@ -17,7 +17,7 @@ type Context struct {
 	Parser      parser.Parser
 	Logger      logging.Logger
 
-	Queue   types.HeightQueue
+	Queue   types.SlotQueue
 	Modules []modules.Module
 }
 
@@ -27,7 +27,7 @@ func NewContext(
 	db db.Database,
 	parser parser.Parser,
 	logger logging.Logger,
-	queue types.HeightQueue,
+	queue types.SlotQueue,
 	modules []modules.Module,
 ) *Context {
 	return &Context{
