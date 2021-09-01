@@ -8,8 +8,6 @@ import (
 
 	"github.com/forbole/soljuno/modules"
 
-	tmtypes "github.com/tendermint/tendermint/types"
-
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
@@ -88,7 +86,7 @@ func (w Worker) process(slot uint64) error {
 
 // SaveValidators persists a list of validators with an address and a
 // consensus public key. An error is returned if the DB write fails.
-func (w Worker) SaveValidators(vals []*tmtypes.Validator) error {
+func (w Worker) SaveValidators(vals []types.Validator) error {
 
 	// TODO: Save validators
 
