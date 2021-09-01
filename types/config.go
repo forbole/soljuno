@@ -177,7 +177,7 @@ func NewRPCConfig(clientName, address string) RPCConfig {
 
 // DefaultRPCConfig returns the default instance of RPCConfig
 func DefaultRPCConfig() RPCConfig {
-	return NewRPCConfig("soljuno", "http://localhost:8081")
+	return NewRPCConfig("soljuno", "http://localhost:8899")
 }
 
 // GetClientName implements RPCConfig
