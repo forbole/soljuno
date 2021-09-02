@@ -1,0 +1,3 @@
+package stake
+
+const Stake = "Stake11111111111111111111111111111111111111"
