@@ -16,48 +16,108 @@ func (VoteParser) Parse(accounts []string, data []byte) types.ParsedInstruction 
 	decoder.Decode(data[:4], &id)
 	switch id {
 	case InitializeAccount:
-		return nil
+		var instruction InitializeAccountInstruction
+		decoder.Decode(data[4:], &instruction)
+		return types.NewParsedInstruction(
+			"initialize",
+			NewParsedInitializeAccount(
+				accounts[0],
+				accounts[1],
+				accounts[2],
+				accounts[3],
+				instruction,
+			),
+		)
+
 	case Authorize:
-		return nil
+		var instruction AuthorizeInstruction
+		decoder.Decode(data[4:], &instruction)
+		return types.NewParsedInstruction(
+			"authorize",
+			NewParsedAuthorize(
+				accounts[0],
+				accounts[1],
+				accounts[2],
+				instruction,
+			),
+		)
+
 	case Vote:
 		var instruction VoteInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
 			"vote",
-			NewParsedVote(accounts[0],
+			NewParsedVote(
+				accounts[0],
 				accounts[1],
 				accounts[2],
 				accounts[3],
-				instruction.Vote),
+				instruction),
 		)
+
 	case Withdraw:
-		return nil
+		var instruction WithdrawInstruction
+		decoder.Decode(data[4:], &instruction)
+		return types.NewParsedInstruction(
+			"withdraw",
+			NewParsedWithdraw(
+				accounts[0],
+				accounts[1],
+				accounts[2],
+				instruction,
+			),
+		)
+
 	case UpdateValidatorIdentity:
-		return nil
+		return types.NewParsedInstruction(
+			"updateValidatorIdentity",
+			NewParsedUpdateValidatorIdentity(
+				accounts[0],
+				accounts[1],
+				accounts[2],
+			),
+		)
+
 	case UpdateCommission:
-		return nil
+		var instruction UpdateCommissionInstruction
+		decoder.Decode(data[4:], &instruction)
+		return types.NewParsedInstruction(
+			"updateCommission",
+			NewParsedUpdateCommission(
+				accounts[0],
+				accounts[1],
+				instruction,
+			),
+		)
+
 	case VoteSwitch:
-		return nil
+		var instruction VoteSwitchInstruction
+		decoder.Decode(data[4:], &instruction)
+		return types.NewParsedInstruction(
+			"voteSwitch",
+			NewParsedVoteSwitch(
+				accounts[0],
+				accounts[1],
+				accounts[2],
+				accounts[3],
+				instruction,
+			),
+		)
+
 	case AuthorizeChecked:
-		return nil
+		var instruction AuthorizeCheckedInstruction
+		decoder.Decode(data[4:], &instruction)
+		return types.NewParsedInstruction(
+			"authorizeChecked",
+			NewParsedAuthorizeChecked(
+				accounts[0],
+				accounts[1],
+				accounts[2],
+				accounts[3],
+				instruction,
+			),
+		)
 	}
+
 	return nil
-}
-
-type ParsedVote struct {
-	VoteAccount      string   `json:"voteAccount"`
-	SlotHashesSysvar string   `json:"slotHashesSysvar"`
-	ClockSysvar      string   `json:"clockSysvar"`
-	VoteAuthority    string   `json:"voteAuthority"`
-	Vote             VoteData `json:"vote"`
-}
-
-func NewParsedVote(voteAccount, slotHashesSysvar, clockSysvar, voteAuthority string, vote VoteData) ParsedVote {
-	return ParsedVote{
-		VoteAccount:      voteAccount,
-		SlotHashesSysvar: slotHashesSysvar,
-		ClockSysvar:      clockSysvar,
-		VoteAuthority:    voteAuthority,
-		Vote:             vote,
-	}
 }
