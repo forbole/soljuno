@@ -11,17 +11,14 @@ type ParsedInitializeAccount struct {
 }
 
 func NewParsedInitializeAccount(
-	voteAccount,
-	rentSysvar,
-	clockSysvar,
-	node string,
+	accounts []string,
 	instruction InitializeAccountInstruction,
 ) ParsedInitializeAccount {
 	return ParsedInitializeAccount{
-		VoteAccount:          voteAccount,
-		RentSysvar:           rentSysvar,
-		ClockSysvar:          clockSysvar,
-		Node:                 node,
+		VoteAccount:          accounts[0],
+		RentSysvar:           accounts[1],
+		ClockSysvar:          accounts[2],
+		Node:                 accounts[3],
 		AuthorizedVoter:      instruction.VoteInit.AuthorizedVoter.String(),
 		AuthorizedWithdrawer: instruction.VoteInit.AuthorizedWithdrawer.String(),
 		Commission:           instruction.VoteInit.Commission,
@@ -39,15 +36,13 @@ type ParsedAuthorize struct {
 }
 
 func NewParsedAuthorize(
-	voteAccount,
-	clockSysvar,
-	authority string,
+	accounts []string,
 	instruction AuthorizeInstruction,
 ) ParsedAuthorize {
 	return ParsedAuthorize{
-		VoteAccount:   voteAccount,
-		ClockSysvar:   clockSysvar,
-		Authority:     authority,
+		VoteAccount:   accounts[0],
+		ClockSysvar:   accounts[1],
+		Authority:     accounts[2],
 		NewAuthority:  instruction.Pubkey.String(),
 		AuthorityType: NewParsedAuthorityType(instruction.VoteAuthorize),
 	}
@@ -64,17 +59,14 @@ type ParsedVote struct {
 }
 
 func NewParsedVote(
-	voteAccount,
-	slotHashesSysvar,
-	clockSysvar,
-	voteAuthority string,
+	accounts []string,
 	instruction VoteInstruction,
 ) ParsedVote {
 	return ParsedVote{
-		VoteAccount:      voteAccount,
-		SlotHashesSysvar: slotHashesSysvar,
-		ClockSysvar:      clockSysvar,
-		VoteAuthority:    voteAuthority,
+		VoteAccount:      accounts[0],
+		SlotHashesSysvar: accounts[1],
+		ClockSysvar:      accounts[2],
+		VoteAuthority:    accounts[3],
 		Vote:             NewParsedVoteData(instruction.Vote),
 	}
 }
@@ -89,15 +81,13 @@ type ParsedWithdraw struct {
 }
 
 func NewParsedWithdraw(
-	voteAccount,
-	destination,
-	withdrawAuthority string,
+	accounts []string,
 	instruction WithdrawInstruction,
 ) ParsedWithdraw {
 	return ParsedWithdraw{
-		VoteAccount:       voteAccount,
-		Destination:       destination,
-		WithdrawAuthority: withdrawAuthority,
+		VoteAccount:       accounts[0],
+		Destination:       accounts[1],
+		WithdrawAuthority: accounts[2],
 		Lamports:          instruction.Amount,
 	}
 }
@@ -111,14 +101,12 @@ type ParsedUpdateValidatorIdentity struct {
 }
 
 func NewParsedUpdateValidatorIdentity(
-	voteAccount,
-	newValidatorIdentity,
-	withdrawAuthority string,
+	accounts []string,
 ) ParsedUpdateValidatorIdentity {
 	return ParsedUpdateValidatorIdentity{
-		VoteAccount:          voteAccount,
-		NewValidatorIdentity: newValidatorIdentity,
-		WithdrawAuthority:    withdrawAuthority,
+		VoteAccount:          accounts[0],
+		NewValidatorIdentity: accounts[1],
+		WithdrawAuthority:    accounts[2],
 	}
 }
 
@@ -131,13 +119,12 @@ type ParsedUpdateCommission struct {
 }
 
 func NewParsedUpdateCommission(
-	voteAccount,
-	withdrawAuthority string,
+	accounts []string,
 	instruction UpdateCommissionInstruction,
 ) ParsedUpdateCommission {
 	return ParsedUpdateCommission{
-		VoteAccount:       voteAccount,
-		WithdrawAuthority: withdrawAuthority,
+		VoteAccount:       accounts[0],
+		WithdrawAuthority: accounts[1],
 		Commission:        instruction.Commission,
 	}
 }
@@ -154,17 +141,14 @@ type ParsedVoteSwitch struct {
 }
 
 func NewParsedVoteSwitch(
-	voteAccount,
-	slotHashesSysvar,
-	clockSysvar,
-	voteAuthority string,
+	accounts []string,
 	instruction VoteSwitchInstruction,
 ) ParsedVoteSwitch {
 	return ParsedVoteSwitch{
-		VoteAccount:      voteAccount,
-		SlotHashesSysvar: slotHashesSysvar,
-		ClockSysvar:      clockSysvar,
-		VoteAuthority:    voteAuthority,
+		VoteAccount:      accounts[0],
+		SlotHashesSysvar: accounts[1],
+		ClockSysvar:      accounts[2],
+		VoteAuthority:    accounts[3],
 		Vote:             NewParsedVoteData(instruction.Vote),
 		Hash:             instruction.Hash.String(),
 	}
@@ -181,17 +165,14 @@ type ParsedAuthorizeChecked struct {
 }
 
 func NewParsedAuthorizeChecked(
-	voteAccount,
-	clockSysvar,
-	authority,
-	newAuthority string,
+	accounts []string,
 	instruction AuthorizeCheckedInstruction,
 ) ParsedAuthorizeChecked {
 	return ParsedAuthorizeChecked{
-		VoteAccount:   voteAccount,
-		ClockSysvar:   clockSysvar,
-		Authority:     authority,
-		NewAuthority:  newAuthority,
+		VoteAccount:   accounts[0],
+		ClockSysvar:   accounts[1],
+		Authority:     accounts[2],
+		NewAuthority:  accounts[3],
 		AuthorityType: NewParsedAuthorityType(instruction.VoteAuthorize),
 	}
 }

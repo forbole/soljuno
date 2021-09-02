@@ -21,8 +21,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"createAccount",
 			NewParsedCreateAccount(
-				accounts[0],
-				accounts[1],
+				accounts,
 				instruction,
 			),
 		)
@@ -33,7 +32,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"assign",
 			NewParsedAssign(
-				accounts[0],
+				accounts,
 				instruction,
 			),
 		)
@@ -44,8 +43,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"transfer",
 			NewParsedTransfer(
-				accounts[0],
-				accounts[1],
+				accounts,
 				instruction,
 			),
 		)
@@ -56,8 +54,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"createAccountWithSeed",
 			NewParsedCreateAccountWithSeed(
-				accounts[0],
-				accounts[1],
+				accounts,
 				instruction,
 			),
 		)
@@ -66,9 +63,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"advanceNonce",
 			NewParsedAdvanceNonceAccount(
-				accounts[0],
-				accounts[1],
-				accounts[2],
+				accounts,
 			),
 		)
 
@@ -78,11 +73,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"withdrawFromNonce",
 			NewParsedWithdrawNonceAccount(
-				accounts[0],
-				accounts[1],
-				accounts[2],
-				accounts[3],
-				accounts[4],
+				accounts,
 				instruction,
 			),
 		)
@@ -93,9 +84,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"initializeNonce",
 			NewParsedInitializeNonceAccount(
-				accounts[0],
-				accounts[1],
-				accounts[2],
+				accounts,
 				instruction,
 			),
 		)
@@ -106,8 +95,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"authorizeNonce",
 			NewParsedAuthorizeNonceAccount(
-				accounts[0],
-				accounts[1],
+				accounts,
 				instruction,
 			),
 		)
@@ -118,7 +106,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"allocate",
 			NewParsedAllocate(
-				accounts[0],
+				accounts,
 				instruction,
 			),
 		)
@@ -129,7 +117,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"allocateWithSeed",
 			NewParsedAllocateWithSeed(
-				accounts[0],
+				accounts,
 				instruction,
 			),
 		)
@@ -140,7 +128,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"assignWithSeed",
 			NewParsedAssignWithSeed(
-				accounts[0],
+				accounts,
 				instruction,
 			),
 		)
@@ -151,9 +139,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"transferWithSeed",
 			NewParsedTransferWithSeed(
-				accounts[0],
-				accounts[1],
-				accounts[2],
+				accounts,
 				instruction,
 			),
 		)

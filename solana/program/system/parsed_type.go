@@ -9,13 +9,12 @@ type ParsedCreateAccount struct {
 }
 
 func NewParsedCreateAccount(
-	source,
-	newAccount string,
+	accounts []string,
 	instruction CreateAccountInstruction,
 ) ParsedCreateAccount {
 	return ParsedCreateAccount{
-		Source:     source,
-		NewAccount: newAccount,
+		Source:     accounts[0],
+		NewAccount: accounts[1],
 		Lamports:   instruction.Lamports,
 		Space:      instruction.Space,
 		Owner:      instruction.Owner.String(),
@@ -30,11 +29,11 @@ type ParsedAssign struct {
 }
 
 func NewParsedAssign(
-	account string,
+	accounts []string,
 	instruction AssignInstruction,
 ) ParsedAssign {
 	return ParsedAssign{
-		Account: account,
+		Account: accounts[0],
 		Owner:   instruction.Owner.String(),
 	}
 }
@@ -48,13 +47,12 @@ type ParsedTransfer struct {
 }
 
 func NewParsedTransfer(
-	source,
-	destination string,
+	accounts []string,
 	instruction TransferInstruction,
 ) ParsedTransfer {
 	return ParsedTransfer{
-		Source:      source,
-		Destination: destination,
+		Source:      accounts[0],
+		Destination: accounts[1],
 		Lamports:    instruction.Lamports,
 	}
 }
@@ -72,13 +70,12 @@ type ParsedCreateAccountWithSeed struct {
 }
 
 func NewParsedCreateAccountWithSeed(
-	source,
-	newAccount string,
+	accounts []string,
 	instruction CreateAccountWithSeedInstruction,
 ) ParsedCreateAccountWithSeed {
 	return ParsedCreateAccountWithSeed{
-		Source:     source,
-		NewAccount: newAccount,
+		Source:     accounts[0],
+		NewAccount: accounts[1],
 		Base:       instruction.Base.String(),
 		Seed:       instruction.Seed,
 		Lamports:   instruction.Lamports,
@@ -95,14 +92,12 @@ type ParsedAdvanceNonceAccount struct {
 }
 
 func NewParsedAdvanceNonceAccount(
-	nonceAccount,
-	recentBlockHashesSysvar,
-	nonceAuthority string,
+	accounts []string,
 ) ParsedAdvanceNonceAccount {
 	return ParsedAdvanceNonceAccount{
-		NonceAccount:            nonceAccount,
-		RecentBlockHashesSysvar: recentBlockHashesSysvar,
-		NonceAuthority:          nonceAuthority,
+		NonceAccount:            accounts[0],
+		RecentBlockHashesSysvar: accounts[1],
+		NonceAuthority:          accounts[2],
 	}
 }
 
@@ -118,19 +113,15 @@ type ParsedWithdrawNonceAccount struct {
 }
 
 func NewParsedWithdrawNonceAccount(
-	nonceAccount,
-	destination,
-	recentBlockHashesSysvar,
-	rentSysvar,
-	nonceAuthority string,
+	accounts []string,
 	instruction WithdrawNonceAccountInstruction,
 ) ParsedWithdrawNonceAccount {
 	return ParsedWithdrawNonceAccount{
-		NonceAccount:            nonceAccount,
-		Destination:             destination,
-		RecentBlockHashesSysvar: recentBlockHashesSysvar,
-		RentSysvar:              rentSysvar,
-		NonceAuthority:          nonceAuthority,
+		NonceAccount:            accounts[0],
+		Destination:             accounts[1],
+		RecentBlockHashesSysvar: accounts[2],
+		RentSysvar:              accounts[3],
+		NonceAuthority:          accounts[4],
 		Lamports:                instruction.Lamports,
 	}
 }
@@ -145,15 +136,13 @@ type ParsedInitializeNonceAccount struct {
 }
 
 func NewParsedInitializeNonceAccount(
-	nonceAccount,
-	recentBlockHashesSysvar,
-	rentSysvar string,
+	accounts []string,
 	instruction InitializeNonceAccountInstruction,
 ) ParsedInitializeNonceAccount {
 	return ParsedInitializeNonceAccount{
-		NonceAccount:            nonceAccount,
-		RecentBlockHashesSysvar: recentBlockHashesSysvar,
-		RentSysvar:              rentSysvar,
+		NonceAccount:            accounts[0],
+		RecentBlockHashesSysvar: accounts[1],
+		RentSysvar:              accounts[2],
 		NonceAuthority:          instruction.Authority.String(),
 	}
 }
@@ -167,13 +156,12 @@ type ParsedAuthorizeNonceAccount struct {
 }
 
 func NewParsedAuthorizeNonceAccount(
-	nonceAccount,
-	nonceAuthority string,
+	accounts []string,
 	instruction AuthorizeNonceAccountInstruction,
 ) ParsedAuthorizeNonceAccount {
 	return ParsedAuthorizeNonceAccount{
-		NonceAccount:   nonceAccount,
-		NonceAuthority: nonceAuthority,
+		NonceAccount:   accounts[0],
+		NonceAuthority: accounts[1],
 		NewAuthorized:  instruction.Authority.String(),
 	}
 }
@@ -186,11 +174,11 @@ type ParsedAllocate struct {
 }
 
 func NewParsedAllocate(
-	account string,
+	accounts []string,
 	instruction AllocateInstruction,
 ) ParsedAllocate {
 	return ParsedAllocate{
-		Account: account,
+		Account: accounts[0],
 		Space:   instruction.Space,
 	}
 }
@@ -206,11 +194,11 @@ type ParsedAllocateWithSeed struct {
 }
 
 func NewParsedAllocateWithSeed(
-	account string,
+	accounts []string,
 	instruction AllocateWithSeedInstruction,
 ) ParsedAllocateWithSeed {
 	return ParsedAllocateWithSeed{
-		Account: account,
+		Account: accounts[0],
 		Base:    instruction.Base.String(),
 		Seed:    instruction.Seed,
 		Space:   instruction.Space,
@@ -228,11 +216,11 @@ type ParsedAssignWithSeed struct {
 }
 
 func NewParsedAssignWithSeed(
-	account string,
+	accounts []string,
 	instruction AssignWithSeedInstruction,
 ) ParsedAssignWithSeed {
 	return ParsedAssignWithSeed{
-		Account: account,
+		Account: accounts[0],
 		Base:    instruction.Base.String(),
 		Seed:    instruction.Seed,
 		Owner:   instruction.Owner.String(),
@@ -251,15 +239,13 @@ type ParsedTransferWithSeed struct {
 }
 
 func NewParsedTransferWithSeed(
-	source,
-	sourceBase,
-	destination string,
+	accounts []string,
 	instruction TransferWithSeedInstruction,
 ) ParsedTransferWithSeed {
 	return ParsedTransferWithSeed{
-		Source:      source,
-		SourceBase:  sourceBase,
-		Destination: destination,
+		Source:      accounts[0],
+		SourceBase:  accounts[1],
+		Destination: accounts[2],
 		Lamports:    instruction.Lamports,
 		SourceSeed:  instruction.FromSeed,
 		SourceOwner: instruction.FromOwner.String(),

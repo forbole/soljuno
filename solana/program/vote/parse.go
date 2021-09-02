@@ -21,10 +21,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"initialize",
 			NewParsedInitializeAccount(
-				accounts[0],
-				accounts[1],
-				accounts[2],
-				accounts[3],
+				accounts,
 				instruction,
 			),
 		)
@@ -35,9 +32,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"authorize",
 			NewParsedAuthorize(
-				accounts[0],
-				accounts[1],
-				accounts[2],
+				accounts,
 				instruction,
 			),
 		)
@@ -48,10 +43,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"vote",
 			NewParsedVote(
-				accounts[0],
-				accounts[1],
-				accounts[2],
-				accounts[3],
+				accounts,
 				instruction),
 		)
 
@@ -61,9 +53,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"withdraw",
 			NewParsedWithdraw(
-				accounts[0],
-				accounts[1],
-				accounts[2],
+				accounts,
 				instruction,
 			),
 		)
@@ -72,9 +62,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"updateValidatorIdentity",
 			NewParsedUpdateValidatorIdentity(
-				accounts[0],
-				accounts[1],
-				accounts[2],
+				accounts,
 			),
 		)
 
@@ -84,8 +72,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"updateCommission",
 			NewParsedUpdateCommission(
-				accounts[0],
-				accounts[1],
+				accounts,
 				instruction,
 			),
 		)
@@ -96,10 +83,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"voteSwitch",
 			NewParsedVoteSwitch(
-				accounts[0],
-				accounts[1],
-				accounts[2],
-				accounts[3],
+				accounts,
 				instruction,
 			),
 		)
@@ -110,10 +94,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		return types.NewParsedInstruction(
 			"authorizeChecked",
 			NewParsedAuthorizeChecked(
-				accounts[0],
-				accounts[1],
-				accounts[2],
-				accounts[3],
+				accounts,
 				instruction,
 			),
 		)
