@@ -87,7 +87,7 @@ func StartParsing(ctx *Context) error {
 
 	// Create and register solana message parser
 	parser := parser.NewParser()
-	parser.Register(vote.ProgramID, vote.VoteParser{})
+	parser.Register(vote.ProgramID, vote.Parser{})
 
 	// Create workers
 	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parser, ctx.Logger, exportQueue, ctx.Modules)

@@ -1,0 +1,3 @@
+package system
+
+const System = "11111111111111111111111111111111"

@@ -6,11 +6,11 @@ import (
 	"github.com/forbole/soljuno/solana/types"
 )
 
-type VoteParser struct {
+type Parser struct {
 	parser.ProgramParser
 }
 
-func (VoteParser) Parse(accounts []string, data []byte) types.ParsedInstruction {
+func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 	decoder := bincode.NewDecoder()
 	var id InstructionID
 	decoder.Decode(data[:4], &id)
