@@ -121,7 +121,7 @@ type BurnCheckedInstruction struct {
 	Decimals uint8
 }
 
-type InitializeAccount2Instruction struct {
+type InitializeAccountInstruction struct {
 	Owner types.Pubkey
 }
 
