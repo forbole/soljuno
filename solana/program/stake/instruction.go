@@ -56,11 +56,11 @@ type AuthorizeInstruction struct {
 }
 
 type SplitInstruction struct {
-	Amount uint64
+	Lamports uint64
 }
 
 type WithdrawInstruction struct {
-	Amount uint64
+	Lamports uint64
 }
 
 type SetLockupInstruction struct {
@@ -83,6 +83,10 @@ type SetLockupCheckedInstruction struct {
 	LockupCheckedArgs LockupCheckedArgs
 }
 
+//____________________________________________________________________________
+
+// The instances used in instructions
+
 type Authorized struct {
 	Staker     types.Pubkey
 	Withdrawer types.Pubkey
@@ -102,9 +106,9 @@ const (
 )
 
 type LockupArgs struct {
-	LockupArgs *int64
-	Epoch      *uint64
-	Custodian  *types.Pubkey
+	UnixTimestamp *int64
+	Epoch         *uint64
+	Custodian     *types.Pubkey
 }
 
 type AuthorizeWithSeedArgs struct {
@@ -121,6 +125,6 @@ type AuthorizeCheckedWithSeedArgs struct {
 }
 
 type LockupCheckedArgs struct {
-	Epoch     *uint64
-	Custodian *types.Pubkey
+	UnixTimestamp *int64
+	Epoch         *uint64
 }

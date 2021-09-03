@@ -100,5 +100,8 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		)
 	}
 
-	return nil
+	return types.NewParsedInstruction(
+		"unknown",
+		nil,
+	)
 }
