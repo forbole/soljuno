@@ -1,10 +1,10 @@
 package upgradable_loader
 
-type UpgradeableLoaderInstruction uint32
+type InstructionID uint32
 
 const (
 	// Initialize a Buffer account
-	InitializeBuffer UpgradeableLoaderInstruction = iota
+	InitializeBuffer InstructionID = iota
 
 	// Write program data into a Buffer account
 	Write

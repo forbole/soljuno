@@ -1,0 +1,4 @@
+package bpfloader
+
+const ProgramID = "BPFLoader2111111111111111111111111111111111"
+const DeprecatedProgramID = "BPFLoader1111111111111111111111111111111111"
