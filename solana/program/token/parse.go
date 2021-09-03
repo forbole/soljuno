@@ -19,7 +19,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction InitializeMintInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"initializeMint",
 			NewParsedParsedInitializeMint(
 				accounts,
 				instruction,
@@ -28,7 +28,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case InitializeAccount:
 		return types.NewParsedInstruction(
-			"unknown",
+			"initializeAccount",
 			NewParsedInitializeAccount(
 				accounts,
 			),
@@ -38,7 +38,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction InitializeMultisigInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"initializeMultisig",
 			NewParsedInitializeMultiisig(
 				accounts,
 				instruction,
@@ -49,7 +49,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction TransferInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"transfer",
 			NewParsedTransfer(
 				accounts,
 				instruction,
@@ -60,7 +60,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction ApproveInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"approve",
 			NewParsedApprove(
 				accounts,
 				instruction,
@@ -69,7 +69,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case Revoke:
 		return types.NewParsedInstruction(
-			"unknown",
+			"revoke",
 			NewParsedRevoke(
 				accounts,
 			),
@@ -79,7 +79,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction SetAuthorityInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"setAuthority",
 			NewParsedSetAuthority(
 				accounts,
 				instruction,
@@ -90,7 +90,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction MintToInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"mintTo",
 			NewParsedMintTo(
 				accounts,
 				instruction,
@@ -101,7 +101,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction BurnInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"burn",
 			NewParsedBurn(
 				accounts,
 				instruction,
@@ -110,7 +110,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case CloseAccount:
 		return types.NewParsedInstruction(
-			"unknown",
+			"closeAccount",
 			NewParsedCloseAccount(
 				accounts,
 			),
@@ -118,7 +118,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case FreezeAccount:
 		return types.NewParsedInstruction(
-			"unknown",
+			"freezeAccount",
 			NewParsedFreezeAccount(
 				accounts,
 			),
@@ -126,7 +126,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case ThawAccount:
 		return types.NewParsedInstruction(
-			"unknown",
+			"thawAccount",
 			NewParsedParsedThawAccount(
 				accounts,
 			),
@@ -136,7 +136,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction TransferCheckedInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"transferChecked",
 			NewParsedTransferChecked(
 				accounts,
 				instruction,
@@ -147,7 +147,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction ApproveCheckedInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"approveChecked",
 			NewParsedApproveChecked(
 				accounts,
 				instruction,
@@ -158,7 +158,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction MintToCheckedInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"mintToChecked",
 			NewParsedMintToChecked(
 				accounts,
 				instruction,
@@ -169,7 +169,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction BurnCheckedInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"burnChecked",
 			NewParsedBurnChecked(
 				accounts,
 				instruction,
@@ -180,7 +180,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction InitializeAccountInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"initializeAccount2",
 			NewParsedInitializeAccount2(
 				accounts,
 				instruction,
@@ -189,7 +189,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case SyncNative:
 		return types.NewParsedInstruction(
-			"unknown",
+			"syncNative",
 			NewParsedSyncNative(
 				accounts,
 			),
@@ -199,7 +199,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction InitializeAccountInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"initializeAccount3",
 			NewParsedInitializeAccount3(
 				accounts,
 				instruction,
@@ -210,7 +210,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction InitializeMultisigInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"initializeMultisig2",
 			NewParsedInitializeMultiisig2(
 				accounts,
 				instruction,
@@ -221,7 +221,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		var instruction InitializeMintInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"unknown",
+			"initializeMint2",
 			NewParsedParsedInitializeMint2(
 				accounts,
 				instruction,
