@@ -1,4 +1,4 @@
-package upgradable_loader
+package upgradableLoader
 
 import "encoding/base64"
 

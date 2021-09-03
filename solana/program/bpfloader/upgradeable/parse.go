@@ -1,4 +1,4 @@
-package upgradable_loader
+package upgradableLoader
 
 import (
 	"github.com/forbole/soljuno/solana/bincode"
