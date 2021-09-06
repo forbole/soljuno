@@ -63,7 +63,7 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 	return types.NewConfig(
 		types.NewRPCConfig(rpcClientName, rpcAddr),
 		types.NewGrpcConfig(grpcAddr, grpcInsecure),
-		types.NewCosmosConfig(cosmosPrefix, cosmosModules),
+		types.NewChainConfig(cosmosPrefix, cosmosModules),
 		types.NewDatabaseConfig(
 			dbName,
 			dbHost,

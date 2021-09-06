@@ -16,7 +16,7 @@ type ConfigParser = func(fileContents []byte) (Config, error)
 type configToml struct {
 	RPC       *rpcConfig       `toml:"rpc"`
 	Grpc      *grpcConfig      `toml:"grpc"`
-	Cosmos    *cosmosConfig    `toml:"cosmos"`
+	Chain     *chainConfig     `toml:"chain"`
 	Database  *databaseConfig  `toml:"database"`
 	Logging   *loggingConfig   `toml:"logging"`
 	Parsing   *parsingConfig   `toml:"parsing"`
@@ -32,7 +32,7 @@ func DefaultConfigParser(configData []byte) (Config, error) {
 	return NewConfig(
 		cfg.RPC,
 		cfg.Grpc,
-		cfg.Cosmos,
+		cfg.Chain,
 		cfg.Database,
 		cfg.Logging,
 		cfg.Parsing,
@@ -47,7 +47,7 @@ func DefaultConfigParser(configData []byte) (Config, error) {
 type Config interface {
 	GetRPCConfig() RPCConfig
 	GetGrpcConfig() GrpcConfig
-	GetCosmosConfig() CosmosConfig
+	GetChainConfig() ChainConfig
 	GetDatabaseConfig() DatabaseConfig
 	GetLoggingConfig() LoggingConfig
 	GetParsingConfig() ParsingConfig
@@ -61,7 +61,7 @@ var _ Config = &config{}
 type config struct {
 	RPC       RPCConfig       `toml:"rpc"`
 	Grpc      GrpcConfig      `toml:"grpc"`
-	Cosmos    CosmosConfig    `toml:"cosmos"`
+	Chain     ChainConfig     `toml:"chain"`
 	Database  DatabaseConfig  `toml:"database"`
 	Logging   LoggingConfig   `toml:"logging"`
 	Parsing   ParsingConfig   `toml:"parsing"`
@@ -72,14 +72,14 @@ type config struct {
 // NewConfig builds a new Config instance
 func NewConfig(
 	rpcConfig RPCConfig, grpConfig GrpcConfig,
-	cosmosConfig CosmosConfig, dbConfig DatabaseConfig,
+	chainConfig ChainConfig, dbConfig DatabaseConfig,
 	loggingConfig LoggingConfig, parsingConfig ParsingConfig,
 	pruningConfig PruningConfig, telemetryConfig TelemetryConfig,
 ) Config {
 	return &config{
 		RPC:       rpcConfig,
 		Grpc:      grpConfig,
-		Cosmos:    cosmosConfig,
+		Chain:     chainConfig,
 		Database:  dbConfig,
 		Logging:   loggingConfig,
 		Parsing:   parsingConfig,
@@ -104,12 +104,12 @@ func (c *config) GetGrpcConfig() GrpcConfig {
 	return c.Grpc
 }
 
-// GetCosmosConfig implements Config
-func (c *config) GetCosmosConfig() CosmosConfig {
-	if c.Cosmos == nil {
-		return DefaultCosmosConfig()
+// GetChainConfig implements Config
+func (c *config) GetChainConfig() ChainConfig {
+	if c.Chain == nil {
+		return DefaultChainConfig()
 	}
-	return c.Cosmos
+	return c.Chain
 }
 
 // GetDatabaseConfig implements Config
@@ -215,7 +215,7 @@ func NewGrpcConfig(address string, insecure bool) GrpcConfig {
 
 // DefaultGrpcConfig returns the default instance of a GrpcConfig
 func DefaultGrpcConfig() GrpcConfig {
-	return NewGrpcConfig("localhost:9090", true)
+	return NewGrpcConfig("", true)
 }
 
 // GetAddress implements GrpcConfig
@@ -230,39 +230,39 @@ func (g *grpcConfig) IsInsecure() bool {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-// CosmosConfig contains the data to configure the CosmosConfig SDK
-type CosmosConfig interface {
+// ChainConfig contains the data to configure the ChainConfig SDK
+type ChainConfig interface {
 	GetPrefix() string
 	GetModules() []string
 }
 
-var _ CosmosConfig = &cosmosConfig{}
+var _ ChainConfig = &chainConfig{}
 
-type cosmosConfig struct {
+type chainConfig struct {
 	Prefix  string   `toml:"prefix"`
 	Modules []string `toml:"modules"`
 }
 
-// NewCosmosConfig returns a new CosmosConfig instance
-func NewCosmosConfig(prefix string, modules []string) CosmosConfig {
-	return &cosmosConfig{
+// NewChainConfig returns a new ChainConfig instance
+func NewChainConfig(prefix string, modules []string) ChainConfig {
+	return &chainConfig{
 		Prefix:  prefix,
 		Modules: modules,
 	}
 }
 
-// DefaultCosmosConfig returns the default instance of CosmosConfig
-func DefaultCosmosConfig() CosmosConfig {
-	return NewCosmosConfig("cosmos", nil)
+// DefaultChainConfig returns the default instance of ChainConfig
+func DefaultChainConfig() ChainConfig {
+	return NewChainConfig("", nil)
 }
 
-// GetPrefix implements CosmosConfig
-func (c *cosmosConfig) GetPrefix() string {
+// GetPrefix implements ChainConfig
+func (c *chainConfig) GetPrefix() string {
 	return c.Prefix
 }
 
-// GetModules implements CosmosConfig
-func (c *cosmosConfig) GetModules() []string {
+// GetModules implements ChainConfig
+func (c *chainConfig) GetModules() []string {
 	return c.Modules
 }
 
