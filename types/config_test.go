@@ -8,7 +8,7 @@ import (
 
 func TestDefaultConfigParser(t *testing.T) {
 	data := `
-[cosmos]
+[chain]
   prefix = "cosmos"
   modules = [
     "pruning"
