@@ -88,7 +88,19 @@ func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockRe
 			}
 		}
 
-		txs = append(txs, NewTx(hash, slot, txResult.Meta.Err, txResult.Meta.Fee, txResult.Meta.LogMessages, msgs))
+		txs = append(
+			txs,
+			NewTx(
+				hash,
+				slot,
+				txResult.Meta.Err,
+				txResult.Meta.Fee,
+				txResult.Meta.LogMessages,
+				msgs,
+				txResult.Meta.PostBalances,
+				txResult.Meta.PreTokenBalances,
+			),
+		)
 	}
 
 	return Block{
@@ -120,10 +132,22 @@ type Tx struct {
 	Fee      uint64
 	Logs     []string
 	Messages []Message
+
+	PostBalances      []uint64
+	PostTokenBalances []clienttypes.TransactionTokenBalance
 }
 
 // NewTx allows to build a new Tx instance
-func NewTx(hash string, slot uint64, err interface{}, fee uint64, logs []string, msgs []Message) Tx {
+func NewTx(
+	hash string,
+	slot uint64,
+	err interface{},
+	fee uint64,
+	logs []string,
+	msgs []Message,
+	postBalances []uint64,
+	postTokenBalances []clienttypes.TransactionTokenBalance,
+) Tx {
 	return Tx{
 		Hash:     hash,
 		Slot:     slot,
@@ -131,6 +155,9 @@ func NewTx(hash string, slot uint64, err interface{}, fee uint64, logs []string,
 		Fee:      fee,
 		Logs:     logs,
 		Messages: msgs,
+
+		PostBalances:      postBalances,
+		PostTokenBalances: postTokenBalances,
 	}
 }
 

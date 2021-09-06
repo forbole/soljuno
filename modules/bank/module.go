@@ -1,4 +1,4 @@
-package system
+package bank
 
 import (
 	"github.com/forbole/soljuno/db"
@@ -17,7 +17,7 @@ func NewModule(db db.Database) *Module {
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "system"
+	return "bank"
 }
 
 func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
