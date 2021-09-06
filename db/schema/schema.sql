@@ -21,7 +21,7 @@ CREATE TABLE transaction
     slot       BIGINT   NOT NULL REFERENCES block (slot),
     error      BOOLEAN  NOT NULL,
     fee        INT      NOT NULL,
-    logs       TEXT[]   NOT NULL
+    logs       TEXT[]
 );
 CREATE INDEX transaction_hash_index ON transaction (hash);
 CREATE INDEX transaction_slot_index ON transaction (slot);
