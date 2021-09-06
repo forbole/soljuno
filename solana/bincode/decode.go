@@ -36,7 +36,7 @@ func (d *decoder) init(data []byte) *decoder {
 	return d
 }
 
-// nolint
+// nolint: gocyclo
 func (d *decoder) value(v reflect.Value) {
 	switch v.Kind() {
 	case reflect.Bool:
