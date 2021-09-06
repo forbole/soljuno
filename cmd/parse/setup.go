@@ -48,7 +48,7 @@ func GetParsingContext(parseConfig *Config) (*Context, error) {
 	}
 
 	// Get the modules
-	context := modsregistrar.NewContext(cfg, database, &cp, parseConfig.GetLogger())
+	context := modsregistrar.NewContext(cfg, database, cp, parseConfig.GetLogger())
 	mods := parseConfig.GetRegistrar().BuildModules(context)
 	registeredModules := modsregistrar.GetModules(mods, cfg.GetCosmosConfig().GetModules(), parseConfig.GetLogger())
 

@@ -13,7 +13,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/forbole/soljuno/solana/parser"
+	"github.com/forbole/soljuno/solana/program/bpfloader"
+	upgradableLoader "github.com/forbole/soljuno/solana/program/bpfloader/upgradeable"
+	"github.com/forbole/soljuno/solana/program/stake"
+	"github.com/forbole/soljuno/solana/program/system"
+	"github.com/forbole/soljuno/solana/program/token"
 	"github.com/forbole/soljuno/solana/program/vote"
+
 	"github.com/forbole/soljuno/types/logging"
 
 	"github.com/go-co-op/gocron"
@@ -87,7 +93,12 @@ func StartParsing(ctx *Context) error {
 
 	// Create and register solana message parser
 	parser := parser.NewParser()
-	parser.Register(vote.ProgramID, vote.VoteParser{})
+	parser.Register(vote.ProgramID, vote.Parser{})
+	parser.Register(stake.ProgramID, stake.Parser{})
+	parser.Register(system.ProgramID, system.Parser{})
+	parser.Register(token.ProgramID, token.Parser{})
+	parser.Register(bpfloader.ProgramID, bpfloader.Parser{})
+	parser.Register(upgradableLoader.ProgramID, upgradableLoader.Parser{})
 
 	// Create workers
 	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parser, ctx.Logger, exportQueue, ctx.Modules)
@@ -149,7 +160,7 @@ func enqueueMissingSlots(exportQueue types.SlotQueue, ctx *Context) {
 
 	ctx.Logger.Info("syncing missing blocks...", "latest_block_slot", latestBlockSlot)
 	for i := cfg.GetStartSlot(); i <= latestBlockSlot; i++ {
-		ctx.Logger.Debug("enqueueing missing block", "height", i)
+		ctx.Logger.Debug("enqueueing missing block", "slot", i)
 		exportQueue <- i
 	}
 }

@@ -32,5 +32,5 @@ type UiTokenAmount struct {
 	UiAmount       float64 `json:"uiAmount"`
 	Decimals       uint8   `json:"decimals"`
 	Amount         string  `json:"amount"`
-	UiAmountString string  `json:"uiAmountString"`
+	UiAmountString string  `json:"uiAmountString,omitempty"`
 }

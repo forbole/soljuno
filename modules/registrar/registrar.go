@@ -1,7 +1,7 @@
 package registrar
 
 import (
-	"github.com/forbole/soljuno/solana/bincode"
+	"github.com/forbole/soljuno/solana/parser"
 	"github.com/forbole/soljuno/types/logging"
 
 	"github.com/forbole/soljuno/types"
@@ -19,14 +19,14 @@ import (
 type Context struct {
 	ParsingConfig types.Config
 	Database      db.Database
-	Decoder       bincode.Decoder
-	Proxy         *client.Proxy
+	Parser        parser.Parser
+	Proxy         client.Proxy
 	Logger        logging.Logger
 }
 
 // NewContext allows to build a new Context instance
 func NewContext(
-	parsingConfig types.Config, database db.Database, proxy *client.Proxy, logger logging.Logger,
+	parsingConfig types.Config, database db.Database, proxy client.Proxy, logger logging.Logger,
 ) Context {
 	return Context{
 		ParsingConfig: parsingConfig,
@@ -75,7 +75,7 @@ func NewDefaultRegistrar() *DefaultRegistrar {
 func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	return modules.Modules{
 		pruning.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Logger),
-		messages.NewModule(ctx.Decoder, ctx.Database),
+		messages.NewModule(ctx.Database),
 	}
 }
 

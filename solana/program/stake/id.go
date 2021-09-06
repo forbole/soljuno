@@ -1,0 +1,3 @@
+package stake
+
+const ProgramID = "Stake11111111111111111111111111111111111111"

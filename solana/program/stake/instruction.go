@@ -1,12 +1,12 @@
 package stake
 
-import "github.com/cosmos/cosmos-sdk/crypto/types"
+import "github.com/forbole/soljuno/solana/types"
 
-type StakeInstructionID uint32
+type InstructionID uint32
 
 const (
 	// Initialize a stake with lockup and authorization information
-	Initialize StakeInstructionID = iota
+	Initialize InstructionID = iota
 
 	// Authorize a key to manage stake or withdrawal
 	Authorize
@@ -51,16 +51,16 @@ type InitializeInstruction struct {
 }
 
 type AuthorizeInstruction struct {
-	Pubkey         types.PubKey
+	Pubkey         types.Pubkey
 	StakeAuthorize StakeAuthorize
 }
 
 type SplitInstruction struct {
-	Amount uint64
+	Lamports uint64
 }
 
 type WithdrawInstruction struct {
-	Amount uint64
+	Lamports uint64
 }
 
 type SetLockupInstruction struct {
@@ -81,4 +81,50 @@ type AuthorizeCheckedWithSeedInstruction struct {
 
 type SetLockupCheckedInstruction struct {
 	LockupCheckedArgs LockupCheckedArgs
+}
+
+//____________________________________________________________________________
+
+// The instances used in instructions
+
+type Authorized struct {
+	Staker     types.Pubkey
+	Withdrawer types.Pubkey
+}
+
+type Lockup struct {
+	UnixTimestamp int64
+	Epoch         uint64
+	Custodian     types.Pubkey
+}
+
+type StakeAuthorize uint32
+
+const (
+	Staker StakeAuthorize = iota
+	Withdrawer
+)
+
+type LockupArgs struct {
+	UnixTimestamp *int64
+	Epoch         *uint64
+	Custodian     *types.Pubkey
+}
+
+type AuthorizeWithSeedArgs struct {
+	NewAuthorizedPubkey types.Pubkey
+	StakeAuthorize      StakeAuthorize
+	AuthoritySeed       string
+	AuthorityOwner      types.Pubkey
+}
+
+type AuthorizeCheckedWithSeedArgs struct {
+	StakeAuthorize StakeAuthorize
+	AuthoritySeed  string
+	AuthorityOwner types.Pubkey
+}
+
+type LockupCheckedArgs struct {
+	UnixTimestamp *int64
+	Epoch         *uint64
 }

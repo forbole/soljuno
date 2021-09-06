@@ -32,10 +32,9 @@ const (
 	AuthorizeChecked
 )
 
-type Instruction struct {
-	ID   InstructionID
-	Data interface{}
-}
+//____________________________________________________________________________
+
+// Instruction struct
 
 type InitializeAccountInstruction struct {
 	VoteInit VoteInit
@@ -65,4 +64,28 @@ type VoteSwitchInstruction struct {
 
 type AuthorizeCheckedInstruction struct {
 	VoteAuthorize VoteAuthorize
+}
+
+//____________________________________________________________________________
+
+// The instance used by instructions
+
+type VoteInit struct {
+	NodePubkey           types.Pubkey
+	AuthorizedVoter      types.Pubkey
+	AuthorizedWithdrawer types.Pubkey
+	Commission           uint8
+}
+
+type VoteAuthorize uint16
+
+const (
+	Voter VoteAuthorize = iota
+	Withdrawer
+)
+
+type VoteData struct {
+	Slots     []uint64   `json:"slots"`
+	Hash      types.Hash `json:"hash"`
+	Timestamp *uint64    `json:"timestamp,omitempty"`
 }

@@ -2,11 +2,11 @@ package system
 
 import "github.com/forbole/soljuno/solana/types"
 
-type SystemInstructionID uint32
+type InstructionID uint32
 
 const (
 	// Create a new account
-	CreateAccount SystemInstructionID = iota
+	CreateAccount InstructionID = iota
 
 	// Assign account to a program
 	Assign
@@ -65,15 +65,15 @@ type CreateAccountWithSeedInstruction struct {
 }
 
 type WithdrawNonceAccountInstruction struct {
-	Amount uint64
+	Lamports uint64
 }
 
 type InitializeNonceAccountInstruction struct {
-	Account types.Pubkey
+	Authority types.Pubkey
 }
 
 type AuthorizeNonceAccountInstruction struct {
-	Account types.Pubkey
+	Authority types.Pubkey
 }
 
 type AllocateInstruction struct {

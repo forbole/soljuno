@@ -2,11 +2,11 @@ package token
 
 import "github.com/forbole/soljuno/solana/types"
 
-type TokenInstructionID uint32
+type InstructionID uint32
 
 const (
 	// Initializes a new mint and optionally deposits all the newly minted
-	InitializeMint TokenInstructionID = iota
+	InitializeMint InstructionID = iota
 
 	// Initializes a new account to hold tokens
 	InitializeAccount
@@ -90,6 +90,7 @@ type ApproveInstruction struct {
 
 type SetAuthorityInstruction struct {
 	AuthorityType AuthorityType
+	NewAuthority  *types.Pubkey
 }
 
 type MintToInstruction struct {
@@ -123,3 +124,23 @@ type BurnCheckedInstruction struct {
 type InitializeAccountInstruction struct {
 	Owner types.Pubkey
 }
+
+//____________________________________________________________________________
+
+// The instance used by instructions
+
+type AuthorityType uint32
+
+const (
+	// Authority to mint new tokens
+	MintTokensType AuthorityType = iota
+
+	// Authority to freeze any account associated with the Mint
+	FreezeAccountType
+
+	// Owner of a given token account
+	AccountOwnerType
+
+	// Authority to close a token account
+	CloseAccountType
+)

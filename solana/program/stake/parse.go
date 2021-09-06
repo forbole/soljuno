@@ -1,4 +1,4 @@
-package vote
+package stake
 
 import (
 	"github.com/forbole/soljuno/solana/bincode"
@@ -16,12 +16,12 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 	var id InstructionID
 	decoder.Decode(data[:4], &id)
 	switch id {
-	case InitializeAccount:
-		var instruction InitializeAccountInstruction
+	case Initialize:
+		var instruction InitializeInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
 			"initialize",
-			NewParsedInitializeAccount(
+			NewParsedInitialize(
 				accounts,
 				instruction,
 			),
@@ -38,14 +38,25 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 			),
 		)
 
-	case Vote:
-		var instruction VoteInstruction
+	case DelegateStake:
+		var instruction InitializeInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"vote",
-			NewParsedVote(
+			"delegate",
+			NewParsedDelegateStake(
 				accounts,
-				instruction),
+			),
+		)
+
+	case Split:
+		var instruction SplitInstruction
+		decoder.Decode(data[4:], &instruction)
+		return types.NewParsedInstruction(
+			"split",
+			NewParsedSplit(
+				accounts,
+				instruction,
+			),
 		)
 
 	case Withdraw:
@@ -59,33 +70,49 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 			),
 		)
 
-	case UpdateValidatorIdentity:
+	case Deactivate:
 		return types.NewParsedInstruction(
-			"updateValidatorIdentity",
-			NewParsedUpdateValidatorIdentity(
+			"deactivate",
+			NewParsedDeactivate(
 				accounts,
 			),
 		)
 
-	case UpdateCommission:
-		var instruction UpdateCommissionInstruction
+	case SetLockup:
+		var instruction SetLockupInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"updateCommission",
-			NewParsedUpdateCommission(
+			"setLockup",
+			NewParsedSetLockup(
 				accounts,
 				instruction,
 			),
 		)
 
-	case VoteSwitch:
-		var instruction VoteSwitchInstruction
+	case Merge:
+		return types.NewParsedInstruction(
+			"merge",
+			NewParsedMerge(
+				accounts,
+			),
+		)
+
+	case AuthorizeWithSeed:
+		var instruction AuthorizeWithSeedInstruction
 		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
-			"voteSwitch",
-			NewParsedVoteSwitch(
+			"authorizeWithSeed",
+			NewParsedAuthorizedWithSeed(
 				accounts,
 				instruction,
+			),
+		)
+
+	case InitializeChecked:
+		return types.NewParsedInstruction(
+			"initializeChecked",
+			NewInitializeChecked(
+				accounts,
 			),
 		)
 
@@ -99,8 +126,30 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 				instruction,
 			),
 		)
-	}
 
+	case AuthorizeCheckedWithSeed:
+		var instruction AuthorizeCheckedWithSeedInstruction
+		decoder.Decode(data[4:], &instruction)
+		return types.NewParsedInstruction(
+			"authorizeCheckedWithSeed",
+			NewParsedAuthorizeCheckedWithSeed(
+				accounts,
+				instruction,
+			),
+		)
+
+	case SetLockupChecked:
+		var instruction SetLockupCheckedInstruction
+		decoder.Decode(data[4:], &instruction)
+		return types.NewParsedInstruction(
+			"setLockupChecked",
+			NewParsedSetLockupChecked(
+				accounts,
+				instruction,
+			),
+		)
+
+	}
 	return types.NewParsedInstruction(
 		"unknown",
 		nil,
