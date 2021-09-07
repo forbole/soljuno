@@ -1,6 +1,8 @@
 package bank
 
 import (
+	"fmt"
+
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
 )
@@ -20,6 +22,10 @@ func (m *Module) Name() string {
 	return "bank"
 }
 
-func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
-	return nil
+func (m *Module) HandleTx(tx types.Tx) error {
+	bankDb, ok := m.db.(db.BankDb)
+	if !ok {
+		return fmt.Errorf("bank is enabled, but your database does not implement BankDb")
+	}
+	return HandleTx(tx, bankDb)
 }

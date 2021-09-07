@@ -6,6 +6,7 @@ import (
 
 	"github.com/forbole/soljuno/types"
 
+	"github.com/forbole/soljuno/modules/bank"
 	"github.com/forbole/soljuno/modules/pruning"
 
 	"github.com/forbole/soljuno/modules"
@@ -76,6 +77,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	return modules.Modules{
 		pruning.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Logger),
 		messages.NewModule(ctx.Database),
+		bank.NewModule(ctx.Database),
 	}
 }
 

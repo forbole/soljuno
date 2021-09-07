@@ -44,6 +44,7 @@ func NewBlock(slot uint64, hash, proposer string, timestamp time.Time, txs []Tx)
 	}
 }
 
+// NewBlockFromResult allows to build new Block instance from BlockResult
 func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockResult) Block {
 	proposer := ""
 	for _, reward := range b.Rewards {
@@ -97,6 +98,7 @@ func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockRe
 				txResult.Meta.Fee,
 				txResult.Meta.LogMessages,
 				msgs,
+				txResult.Transaction.Message.AccountKeys,
 				txResult.Meta.PostBalances,
 				txResult.Meta.PreTokenBalances,
 			),
@@ -133,6 +135,7 @@ type Tx struct {
 	Logs     []string
 	Messages []Message
 
+	Accounts          []string
 	PostBalances      []uint64
 	PostTokenBalances []clienttypes.TransactionTokenBalance
 }
@@ -145,6 +148,7 @@ func NewTx(
 	fee uint64,
 	logs []string,
 	msgs []Message,
+	accounts []string,
 	postBalances []uint64,
 	postTokenBalances []clienttypes.TransactionTokenBalance,
 ) Tx {
@@ -156,6 +160,7 @@ func NewTx(
 		Logs:     logs,
 		Messages: msgs,
 
+		Accounts:          accounts,
 		PostBalances:      postBalances,
 		PostTokenBalances: postTokenBalances,
 	}

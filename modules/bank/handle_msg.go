@@ -1,16 +1,23 @@
 package bank
 
 import (
+	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
+
 	"github.com/rs/zerolog/log"
 )
 
-func HandleMsg(tx types.Tx, msg types.Message) error {
+func HandleTx(tx types.Tx, db db.BankDb) error {
 	if !tx.Successful() {
 		return nil
 	}
 
-	log.Info().Str("module", "bank").Str("message", msg.Value.Type()).Uint64("slot", tx.Slot).
-		Msg("handled message")
+	err := db.SaveAccountBalances(tx.Slot, tx.Accounts, tx.PostBalances)
+	if err != nil {
+		return err
+	}
+
+	log.Info().Str("module", "bank").Str("tx", tx.Hash).Uint64("slot", tx.Slot).
+		Msg("handled tx")
 	return nil
 }
