@@ -49,7 +49,9 @@ type PruningDb interface {
 	GetLastPruned() (uint64, error)
 }
 
+// BankDb represents a database that supports bank properly
 type BankDb interface {
+	// SaveAccountBalances allows to store the given native balance data inside the database
 	SaveAccountBalances(slot uint64, accounts []string, balances []uint64) error
 }
 
