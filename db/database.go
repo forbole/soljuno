@@ -49,6 +49,12 @@ type PruningDb interface {
 	GetLastPruned() (uint64, error)
 }
 
+// BankDb represents a database that supports bank properly
+type BankDb interface {
+	// SaveAccountBalances allows to store the given native balance data inside the database
+	SaveAccountBalances(slot uint64, accounts []string, balances []uint64) error
+}
+
 // Context contains the data that might be used to build a Database instance
 type Context struct {
 	Cfg    types.DatabaseConfig
