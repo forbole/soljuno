@@ -25,6 +25,6 @@ func (m *Module) Name() string {
 }
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg types.Message, tx types.Tx) error {
+func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	return m.db.SaveMessage(msg)
 }

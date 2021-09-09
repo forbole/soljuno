@@ -103,35 +103,6 @@ VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 	return err
 }
 
-// HasValidator implements db.Database
-func (db *Database) HasValidator(pubkey string) (bool, error) {
-	var res bool
-	stmt := `SELECT EXISTS(SELECT 1 FROM validator WHERE vote_pubkey = $1 OR node_pubkey = $1);`
-	err := db.Sql.QueryRow(stmt, pubkey).Scan(&res)
-	return res, err
-}
-
-// SaveValidators implements db.Database
-func (db *Database) SaveValidators(validators []types.Validator) error {
-	if len(validators) == 0 {
-		return nil
-	}
-	stmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
-
-	var vparams []interface{}
-	for i, val := range validators {
-		vi := i * 2
-
-		stmt += fmt.Sprintf("($%d, $%d),", vi+1, vi+2)
-		vparams = append(vparams, val.VotePubkey, val.NodePubKey)
-	}
-
-	stmt = stmt[:len(stmt)-1] // Remove trailing ,
-	stmt += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(stmt, vparams...)
-	return err
-}
-
 // SaveMessage implements db.Database
 func (db *Database) SaveMessage(msg types.Message) error {
 	stmt := `
