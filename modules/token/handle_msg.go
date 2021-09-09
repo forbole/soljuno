@@ -18,6 +18,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.TokenDb) error {
 	case "initializeAccount":
 	case "initializeAccount2":
 	case "initializeAccount3":
+		handleMsgInitializeAccount(msg, tx, db)
 
 	case "initializeMultisig":
 	case "initializeMultisig2":
@@ -39,6 +40,23 @@ func handleMsgInitializeMint(msg types.Message, tx types.Tx, db db.TokenDb) erro
 		instruction.Decimals,
 		instruction.MintAuthority,
 		instruction.FreezeAuthority,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func handleMsgInitializeAccount(msg types.Message, tx types.Tx, db db.TokenDb) error {
+	instruction, ok := msg.Value.Data().(token.ParsedInitializeAccount)
+	if !ok {
+		return fmt.Errorf("instruction does not match initialize account type: %s", msg.Value.Type())
+	}
+	err := db.SaveTokenAccount(
+		instruction.Account,
+		tx.Slot,
+		instruction.Mint,
+		instruction.Owner,
 	)
 	if err != nil {
 		return err

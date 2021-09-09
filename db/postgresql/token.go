@@ -11,7 +11,7 @@ func (db *Database) SaveToken(
 INSERT INTO token
     (mint, slot, decimals, mint_authority, freeze_authority)
 VALUES ($1, $2, $3, $4, $5) 
-(mint) DO UPDATE
+ON CONFLICT (mint) DO UPDATE
     SET slot = excluded.slot,
 	decimals = excluded.decimals
 	mint_authority = excluded.mint_authority
@@ -28,4 +28,21 @@ WHERE token.slot <= excluded.slot`
 	return err
 }
 
-func (db *Database) InitializeAccount()
+func (db *Database) SaveTokenAccount(address string, slot uint64, mint, owner string) error {
+	stmt := `
+INSERT INTO token_account
+	(address, slot, mint, owner)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (address)
+	SET slot = excluded.slot
+	mint = excluded.mint
+	owner = excluded.owner
+WHERE token_account.slot <= excluded.slot`
+	_, err := db.Sql.Exec(
+		stmt,
+		slot,
+		mint,
+		owner,
+	)
+	return err
+}

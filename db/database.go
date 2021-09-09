@@ -53,6 +53,8 @@ type BankDb interface {
 
 type TokenDb interface {
 	SaveToken(mint string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
+
+	SaveTokenAccount(address string, slot uint64, mint, owner string) error
 }
 
 // Context contains the data that might be used to build a Database instance
