@@ -1,6 +1,7 @@
 package db
 
 import (
+	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/types/logging"
 )
@@ -53,6 +54,9 @@ type PruningDb interface {
 type BankDb interface {
 	// SaveAccountBalances allows to store the given native balance data inside the database
 	SaveAccountBalances(slot uint64, accounts []string, balances []uint64) error
+
+	// SaveAccountBalances allows to store the given token balance data inside the database
+	SaveAccountTokenBalances(slot uint64, accounts []string, balances []clienttypes.TransactionTokenBalance) error
 }
 
 // Context contains the data that might be used to build a Database instance

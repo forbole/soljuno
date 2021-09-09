@@ -17,6 +17,11 @@ func HandleTx(tx types.Tx, db db.BankDb) error {
 		return err
 	}
 
+	err = db.SaveAccountTokenBalances(tx.Slot, tx.Accounts, tx.PostTokenBalances)
+	if err != nil {
+		return err
+	}
+
 	log.Info().Str("module", "bank").Str("tx", tx.Hash).Uint64("slot", tx.Slot).
 		Msg("handled tx")
 	return nil
