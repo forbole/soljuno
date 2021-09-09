@@ -2,7 +2,12 @@ package postgresql
 
 import (
 	"fmt"
+
+	"github.com/forbole/soljuno/db"
 )
+
+// type check to ensure interface is properly implemented
+var _ db.BankDb = &Database{}
 
 func (db *Database) SaveAccountBalances(slot uint64, accounts []string, balances []uint64) error {
 	// Store up-to-date data
