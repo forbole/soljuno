@@ -5,6 +5,7 @@ import "encoding/json"
 type ParsedInstruction interface {
 	Type() string
 	JSON() []byte
+	Data() interface{}
 }
 
 func NewParsedInstruction(typ string, data interface{}) ParsedInstruction {
@@ -29,4 +30,8 @@ func (i parsedInstruction) JSON() []byte {
 	}
 	bz, _ := json.Marshal(i.data)
 	return bz
+}
+
+func (i parsedInstruction) Data() interface{} {
+	return i.data
 }
