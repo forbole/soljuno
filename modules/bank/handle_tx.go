@@ -8,10 +8,6 @@ import (
 )
 
 func HandleTx(tx types.Tx, db db.BankDb) error {
-	if !tx.Successful() {
-		return nil
-	}
-
 	err := db.SaveAccountBalances(tx.Slot, tx.Accounts, tx.PostBalances)
 	if err != nil {
 		return err
