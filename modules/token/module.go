@@ -1,6 +1,8 @@
 package token
 
 import (
+	"fmt"
+
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
 )
@@ -21,9 +23,13 @@ func (m *Module) Name() string {
 }
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg types.Message, tx types.Tx) error {
+func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if !tx.Successful() {
 		return nil
 	}
-	return m.db.SaveMessage(msg)
+	tokenDb, ok := m.db.(db.TokenDb)
+	if !ok {
+		return fmt.Errorf("pruning is enabled, but your database does not implement PruningDb")
+	}
+	return HandleMsg(msg, tx, tokenDb)
 }

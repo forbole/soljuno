@@ -22,14 +22,6 @@ type Database interface {
 	// An error is returned if the operation fails.
 	SaveTx(tx types.Tx) error
 
-	// HasValidator returns true if a given validator by consensus address exists.
-	// An error is returned if the operation fails.
-	HasValidator(address string) (bool, error)
-
-	// SaveValidators stores a list of validators if they do not already exist.
-	// An error is returned if the operation fails.
-	SaveValidators(validators []types.Validator) error
-
 	// SaveMessage stores a single message.
 	// An error is returned if the operation fails.
 	SaveMessage(msg types.Message) error
@@ -57,6 +49,10 @@ type BankDb interface {
 
 	// SaveAccountBalances allows to store the given token balance data inside the database
 	SaveAccountTokenBalances(slot uint64, accounts []string, balances []clienttypes.TransactionTokenBalance) error
+}
+
+type TokenDb interface {
+	SaveToken(mint string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
 }
 
 // Context contains the data that might be used to build a Database instance
