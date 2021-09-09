@@ -63,7 +63,7 @@ func (db *Database) saveUpToDateTokenBalances(paramsNumber int, slot uint64, acc
 		return nil
 	}
 
-	stmt := `INSERT INTO token_account (address, slot, balance) VALUES`
+	stmt := `INSERT INTO token_account_balance (address, slot, balance) VALUES`
 	var params []interface{}
 
 	for i, bal := range balances {
