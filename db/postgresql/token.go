@@ -11,7 +11,7 @@ func (db *Database) SaveToken(
 INSERT INTO token
     (mint, slot, decimals, mint_authority, freeze_authority)
 VALUES ($1, $2, $3, $4, $5) 
-(address) DO UPDATE
+(mint) DO UPDATE
     SET slot = excluded.slot,
 	decimals = excluded.decimals
 	mint_authority = excluded.mint_authority
