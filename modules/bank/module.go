@@ -23,10 +23,6 @@ func (m *Module) Name() string {
 }
 
 func (m *Module) HandleTx(tx types.Tx) error {
-	if !tx.Successful() {
-		return nil
-	}
-
 	bankDb, ok := m.db.(db.BankDb)
 	if !ok {
 		return fmt.Errorf("bank is enabled, but your database does not implement BankDb")
