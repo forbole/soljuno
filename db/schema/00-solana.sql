@@ -1,9 +1,3 @@
-CREATE TABLE validator
-(
-    vote_pubkey TEXT NOT NULL PRIMARY KEY,
-    node_pubkey  TEXT NOT NULL UNIQUE 
-);
-
 CREATE TABLE block
 (
     slot        BIGINT UNIQUE PRIMARY KEY,
