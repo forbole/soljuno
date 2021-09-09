@@ -25,6 +25,7 @@ CREATE TABLE token_account
 CREATE TABLE multisig
 (
     address TEXT    NOT NULL PRIMARY KEY,
+    slot    BIGINT  NOT NULL,
     signers TEXT[]  NOT NULL,
     m       INT     NOT NULL
 );

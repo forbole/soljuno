@@ -55,6 +55,8 @@ type TokenDb interface {
 	SaveToken(mint string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
 
 	SaveTokenAccount(address string, slot uint64, mint, owner string) error
+
+	SaveMultisig(address string, slot uint64, singers []string, m uint8) error
 }
 
 // Context contains the data that might be used to build a Database instance

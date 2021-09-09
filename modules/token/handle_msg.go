@@ -32,7 +32,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.TokenDb) error {
 func handleMsgInitializeMint(msg types.Message, tx types.Tx, db db.TokenDb) error {
 	instruction, ok := msg.Value.Data().(token.ParsedInitializeMint)
 	if !ok {
-		return fmt.Errorf("instruction does not match initialize mint type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match initializeMint type: %s", msg.Value.Type())
 	}
 	err := db.SaveToken(
 		instruction.Mint,
@@ -50,13 +50,30 @@ func handleMsgInitializeMint(msg types.Message, tx types.Tx, db db.TokenDb) erro
 func handleMsgInitializeAccount(msg types.Message, tx types.Tx, db db.TokenDb) error {
 	instruction, ok := msg.Value.Data().(token.ParsedInitializeAccount)
 	if !ok {
-		return fmt.Errorf("instruction does not match initialize account type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match initializeAccount type: %s", msg.Value.Type())
 	}
 	err := db.SaveTokenAccount(
 		instruction.Account,
 		tx.Slot,
 		instruction.Mint,
 		instruction.Owner,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func handleMsgInitializeMultisig(msg types.Message, tx types.Tx, db db.TokenDb) error {
+	instruction, ok := msg.Value.Data().(token.ParsedInitializeMultisig)
+	if !ok {
+		return fmt.Errorf("instruction does not match initializeMultisig type: %s", msg.Value.Type())
+	}
+	err := db.SaveMultisig(
+		instruction.MultiSig,
+		tx.Slot,
+		instruction.Signers,
+		instruction.M,
 	)
 	if err != nil {
 		return err

@@ -1,5 +1,7 @@
 package postgresql
 
+import "github.com/lib/pq"
+
 func (db *Database) SaveToken(
 	mint string,
 	slot uint64,
@@ -40,9 +42,30 @@ ON CONFLICT (address)
 WHERE token_account.slot <= excluded.slot`
 	_, err := db.Sql.Exec(
 		stmt,
+		address,
 		slot,
 		mint,
 		owner,
+	)
+	return err
+}
+
+func (db *Database) SaveMultisig(address string, slot uint64, singers []string, m uint8) error {
+	stmt := `
+INSERT INTO multisig
+	(address, slot, signers, m)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (address)
+	SET slot = excluded.slot
+	signers = excluded.signers
+	m = excluded.m
+WHERE token_account.slot <= excluded.slot`
+	_, err := db.Sql.Exec(
+		stmt,
+		address,
+		slot,
+		pq.Array(singers),
+		m,
 	)
 	return err
 }
