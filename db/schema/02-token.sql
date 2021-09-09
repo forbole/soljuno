@@ -3,11 +3,16 @@ CREATE TABLE token
     mint                TEXT    NOT NULL PRIMARY KEY,
     slot                BIGINT  NOT NULL,
     decimals            INT     NOT NULL,
-    supply              BIGINT  NOT NULL,
     mint_authority      TEXT,
     freeze_authority    TEXT
+);
+
+CREATE TABLE token_supply
+(
+    mint    TEXT    NOT NULL REFERENCES token (mint),
+    slot    BIGINT  NOT NULL,
+    supply  BIGINT  NOT NULL
 )
-CREATE INDEX token_slot_index ON token (slot);
 
 CREATE TABLE token_account
 (
@@ -15,11 +20,9 @@ CREATE TABLE token_account
     slot    BIGINT  NOT NULL,
     mint    TEXT    NOT NULL,
     owner   TEXT    NOT NULL,
-    balance BIGINT  NOT NULL
 );
-CREATE INDEX token_account_slot_index ON token_account (slot);
 
-CREATE TABLE multisig 
+CREATE TABLE multisig
 (
     address TEXT    NOT NULL PRIMARY KEY,
     signers TEXT[]  NOT NULL,
