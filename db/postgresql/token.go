@@ -10,7 +10,13 @@ func (db *Database) SaveToken(
 	stmt := `
 INSERT INTO token
     (mint, slot, decimals, mint_authority, freeze_authority)
-VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
+VALUES ($1, $2, $3, $4, $5) 
+(address) DO UPDATE
+    SET slot = excluded.slot,
+	decimals = excluded.decimals
+	mint_authority = excluded.mint_authority
+	freeze_authority = excluded.freeze_authority
+WHERE token.slot <= excluded.slot`
 	_, err := db.Sql.Exec(
 		stmt,
 		mint,
