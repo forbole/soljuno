@@ -1,7 +1,13 @@
 package postgresql
 
-import "github.com/lib/pq"
+import (
+	"github.com/forbole/soljuno/db"
+	"github.com/lib/pq"
+)
 
+var _ db.TokenDb = &Database{}
+
+// SaveToken implements the db.Token
 func (db *Database) SaveToken(
 	mint string,
 	slot uint64,
@@ -30,6 +36,7 @@ WHERE token.slot <= excluded.slot`
 	return err
 }
 
+// SaveTokenAccount implements the db.Token
 func (db *Database) SaveTokenAccount(address string, slot uint64, mint, owner string) error {
 	stmt := `
 INSERT INTO token_account
@@ -50,6 +57,7 @@ WHERE token_account.slot <= excluded.slot`
 	return err
 }
 
+// SaveMultisig implements the db.Token
 func (db *Database) SaveMultisig(address string, slot uint64, singers []string, m uint8) error {
 	stmt := `
 INSERT INTO multisig
