@@ -17,7 +17,7 @@ type client struct {
 	rpcClient jsonrpc.RPCClient
 }
 
-func NewClient(endpoint string) *client {
+func NewClient(endpoint string) Client {
 	rpcClient := jsonrpc.NewClient(endpoint)
 	return &client{
 		endpoint:  endpoint,

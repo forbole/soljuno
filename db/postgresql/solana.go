@@ -7,7 +7,6 @@ import (
 	"github.com/forbole/soljuno/types/logging"
 
 	"github.com/lib/pq"
-	_ "github.com/lib/pq" // nolint
 
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
