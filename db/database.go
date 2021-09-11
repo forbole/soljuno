@@ -56,7 +56,7 @@ type TokenDb interface {
 	SaveToken(mint string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
 
 	// SaveTokenAccount allows to store the given token account data inside the database
-	SaveTokenAccount(address string, slot uint64, mint, owner string) error
+	SaveTokenAccount(address string, slot uint64, mint, owner, state string) error
 
 	// SaveMultisig allows to store the given multisig data inside the database
 	SaveMultisig(address string, slot uint64, singers []string, m uint8) error

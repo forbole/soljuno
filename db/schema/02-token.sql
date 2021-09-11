@@ -20,6 +20,7 @@ CREATE TABLE token_account
     slot    BIGINT  NOT NULL,
     mint    TEXT    NOT NULL,
     owner   TEXT    NOT NULL,
+    state   TEXT    NOT NULL,
 );
 
 CREATE TABLE multisig

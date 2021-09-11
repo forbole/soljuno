@@ -23,6 +23,18 @@ type COptionUint64 struct {
 
 type AccountState uint8
 
+func (a AccountState) String() string {
+	switch a {
+	case 0:
+		return "uninitialized"
+	case 1:
+		return "initialized"
+	case 2:
+		return "frozen"
+	}
+	return "unknown"
+}
+
 type TokenAccount struct {
 	Mint           types.Pubkey
 	Owner          types.Pubkey

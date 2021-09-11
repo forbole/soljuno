@@ -37,15 +37,16 @@ WHERE token.slot <= excluded.slot`
 }
 
 // SaveTokenAccount implements the db.TokenDb
-func (db *Database) SaveTokenAccount(address string, slot uint64, mint, owner string) error {
+func (db *Database) SaveTokenAccount(address string, slot uint64, mint, owner, state string) error {
 	stmt := `
 INSERT INTO token_account
-	(address, slot, mint, owner)
-VALUES ($1, $2, $3, $4)
+	(address, slot, mint, owner, state)
+VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT (address)
 	SET slot = excluded.slot
 	mint = excluded.mint
 	owner = excluded.owner
+	state = excluded.state
 WHERE token_account.slot <= excluded.slot`
 	_, err := db.Sql.Exec(
 		stmt,

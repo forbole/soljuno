@@ -28,19 +28,36 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.TokenDb, client client.Prox
 	case "initializeMultisig2":
 		return handleMsgInitializeMultisig(msg, tx, db)
 
+	// TODO: make decision if handle token balance instead of bank module
+	case "transfer":
+	case "transferChecked":
+		return nil
+
 	case "approve":
 		return handleMsgApprove(msg, tx, db, client)
 	case "approveChecked":
 		return handleMsgApproveChecked(msg, tx, db, client)
+	case "revoke":
+		return handleMsgRevoke(msg, tx, db, client)
 
+	case "mintTo":
+	case "mintToChecked":
+		return nil
+
+	case "burn":
+	case "burnChecked":
+		return nil
+
+	case "closeAccount":
+	case "freezeAccount":
+	case "thawAccount":
+		return nil
 	}
 
 	log.Info().Str("module", "token").Str("message", msg.Value.Type()).Uint64("slot", tx.Slot).
 		Msg("handled message")
 	return nil
 }
-
-//____________________________________________________________________________
 
 // handleMsgInitializeMint handles a MsgInitializeMint and properly stores the new token inside the database
 func handleMsgInitializeMint(msg types.Message, tx types.Tx, db db.TokenDb) error {
@@ -61,8 +78,6 @@ func handleMsgInitializeMint(msg types.Message, tx types.Tx, db db.TokenDb) erro
 	return nil
 }
 
-//____________________________________________________________________________
-
 // handleMsgInitializeAccount handles a MsgInitializeAccount and properly stores the new token account inside the database
 func handleMsgInitializeAccount(msg types.Message, tx types.Tx, db db.TokenDb) error {
 	instruction, ok := msg.Value.Data().(token.ParsedInitializeAccount)
@@ -74,14 +89,13 @@ func handleMsgInitializeAccount(msg types.Message, tx types.Tx, db db.TokenDb) e
 		tx.Slot,
 		instruction.Mint,
 		instruction.Owner,
+		"initialized",
 	)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-
-//____________________________________________________________________________
 
 // handleMsgInitializeMultisig handles a MsgInitializeMultisig and properly stores the new multisig inside the database
 func handleMsgInitializeMultisig(msg types.Message, tx types.Tx, db db.TokenDb) error {
@@ -101,28 +115,8 @@ func handleMsgInitializeMultisig(msg types.Message, tx types.Tx, db db.TokenDb) 
 	return nil
 }
 
-//____________________________________________________________________________
-
-// handleMsgApproveChecked handles a MsgApprove
-func handleMsgApprove(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
-	instruction, ok := msg.Value.Data().(token.ParsedApprove)
-	if !ok {
-		return fmt.Errorf("instruction does not match approve type: %s", msg.Value.Type())
-	}
-	return handleApproveMsgs(instruction.Source, tx.Slot, db, client)
-}
-
-// handleMsgApproveChecked handles a MsgApproveChecked
-func handleMsgApproveChecked(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
-	instruction, ok := msg.Value.Data().(token.ParsedApproveChecked)
-	if !ok {
-		return fmt.Errorf("instruction does not match approve type: %s", msg.Value.Type())
-	}
-	return handleApproveMsgs(instruction.Source, tx.Slot, db, client)
-}
-
-// handleApproveMsgs handles approve messages and properly stores the statement of approve inside the database
-func handleApproveMsgs(source string, slot uint64, db db.TokenDb, client client.Proxy) error {
+// handleDelegateMsgs handles delegate messages and properly stores the statement of approve inside the database
+func handleDelegateMsgs(source string, slot uint64, db db.TokenDb, client client.Proxy) error {
 	info, err := client.AccountInfo(source)
 	if err != nil {
 		return err
@@ -149,4 +143,39 @@ func handleApproveMsgs(source string, slot uint64, db db.TokenDb, client client.
 	return db.SaveDelegate(source, tokenAccount.Delegate.Value.String(), slot, tokenAccount.DelegateAmount)
 }
 
-//____________________________________________________________________________
+// handleMsgApproveChecked handles a MsgApprove
+func handleMsgApprove(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
+	instruction, ok := msg.Value.Data().(token.ParsedApprove)
+	if !ok {
+		return fmt.Errorf("instruction does not match approve type: %s", msg.Value.Type())
+	}
+	return handleDelegateMsgs(instruction.Source, tx.Slot, db, client)
+}
+
+// handleMsgApproveChecked handles a MsgApproveChecked
+func handleMsgApproveChecked(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
+	instruction, ok := msg.Value.Data().(token.ParsedApproveChecked)
+	if !ok {
+		return fmt.Errorf("instruction does not match approveChecked type: %s", msg.Value.Type())
+	}
+	return handleDelegateMsgs(instruction.Source, tx.Slot, db, client)
+}
+
+// handleMsgRevoke handles a MsgRevoke
+func handleMsgRevoke(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
+	instruction, ok := msg.Value.Data().(token.ParsedRevoke)
+	if !ok {
+		return fmt.Errorf("instruction does not match approveChecked type: %s", msg.Value.Type())
+	}
+	return handleDelegateMsgs(instruction.Source, tx.Slot, db, client)
+}
+
+// handleMsgMintTo
+func handleMsgMintTo(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
+	return nil
+}
+
+// handleMsgMintToChecked
+func handleMsgMintToChecked(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
+	return nil
+}
