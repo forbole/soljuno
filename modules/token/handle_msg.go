@@ -34,19 +34,21 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.TokenDb, client client.Prox
 		return nil
 
 	case "approve":
-		return handleMsgApprove(msg, tx, db, client)
+		return handleMsgApprove(msg, db, client)
 	case "approveChecked":
-		return handleMsgApproveChecked(msg, tx, db, client)
+		return handleMsgApproveChecked(msg, db, client)
 	case "revoke":
-		return handleMsgRevoke(msg, tx, db, client)
+		return handleMsgRevoke(msg, db, client)
 
 	case "mintTo":
+		return handleMsgMintTo(msg, db, client)
 	case "mintToChecked":
-		return nil
+		return handleMsgMintToChecked(msg, db, client)
 
 	case "burn":
+		return handleMsgBurn(msg, db, client)
 	case "burnChecked":
-		return nil
+		return handleMsgBurnChecked(msg, db, client)
 
 	case "closeAccount":
 	case "freezeAccount":
@@ -115,15 +117,15 @@ func handleMsgInitializeMultisig(msg types.Message, tx types.Tx, db db.TokenDb) 
 	return nil
 }
 
-// handleDelegateMsgs handles delegate messages and properly stores the statement of approve inside the database
-func handleDelegateMsgs(source string, slot uint64, db db.TokenDb, client client.Proxy) error {
+// updateDelegation properly stores the statement of delegation inside the database
+func updateDelegation(source string, db db.TokenDb, client client.Proxy) error {
 	info, err := client.AccountInfo(source)
 	if err != nil {
 		return err
 	}
 
 	if info.Value == nil {
-		return db.SaveDelegate(source, "", slot, 0)
+		return db.SaveDelegate(source, "", info.Context.Slot, 0)
 	}
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
@@ -133,49 +135,94 @@ func handleDelegateMsgs(source string, slot uint64, db db.TokenDb, client client
 
 	tokenAccount, ok := account.Parse(token.ProgramID, bz).(account.TokenAccount)
 	if !ok {
-		return db.SaveDelegate(source, "", slot, 0)
+		return db.SaveDelegate(source, "", info.Context.Slot, 0)
 	}
 
 	if !tokenAccount.Delegate.Option.Bool() {
-		return db.SaveDelegate(source, "", slot, 0)
+		return db.SaveDelegate(source, "", info.Context.Slot, 0)
 	}
 
-	return db.SaveDelegate(source, tokenAccount.Delegate.Value.String(), slot, tokenAccount.DelegateAmount)
+	return db.SaveDelegate(source, tokenAccount.Delegate.Value.String(), info.Context.Slot, tokenAccount.DelegateAmount)
 }
 
 // handleMsgApproveChecked handles a MsgApprove
-func handleMsgApprove(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
+func handleMsgApprove(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedApprove)
 	if !ok {
 		return fmt.Errorf("instruction does not match approve type: %s", msg.Value.Type())
 	}
-	return handleDelegateMsgs(instruction.Source, tx.Slot, db, client)
+	return updateDelegation(instruction.Source, db, client)
 }
 
 // handleMsgApproveChecked handles a MsgApproveChecked
-func handleMsgApproveChecked(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
+func handleMsgApproveChecked(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedApproveChecked)
 	if !ok {
 		return fmt.Errorf("instruction does not match approveChecked type: %s", msg.Value.Type())
 	}
-	return handleDelegateMsgs(instruction.Source, tx.Slot, db, client)
+	return updateDelegation(instruction.Source, db, client)
 }
 
 // handleMsgRevoke handles a MsgRevoke
-func handleMsgRevoke(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
+func handleMsgRevoke(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedRevoke)
 	if !ok {
 		return fmt.Errorf("instruction does not match approveChecked type: %s", msg.Value.Type())
 	}
-	return handleDelegateMsgs(instruction.Source, tx.Slot, db, client)
+	return updateDelegation(instruction.Source, db, client)
 }
 
-// handleMsgMintTo
-func handleMsgMintTo(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
-	return nil
+// updateTokenSupply properly stores the supply of the given mint inside the database
+func updateTokenSupply(mint string, db db.TokenDb, client client.Proxy) error {
+	info, err := client.AccountInfo(mint)
+	if err != nil {
+		return err
+	}
+
+	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
+	if err != nil {
+		return err
+	}
+
+	token, ok := account.Parse(token.ProgramID, bz).(account.TokenMint)
+	if !ok {
+		return fmt.Errorf("failed to parse token:%s", mint)
+	}
+	return db.SaveTokenSupply(mint, info.Context.Slot, token.Supply)
 }
 
-// handleMsgMintToChecked
-func handleMsgMintToChecked(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
-	return nil
+// handleMsgMintTo handles a MsgMintTo
+func handleMsgMintTo(msg types.Message, db db.TokenDb, client client.Proxy) error {
+	instruction, ok := msg.Value.Data().(token.ParsedMintTo)
+	if !ok {
+		return fmt.Errorf("instruction does not match mintTo type: %s", msg.Value.Type())
+	}
+	return updateTokenSupply(instruction.Mint, db, client)
+}
+
+// handleMsgMintToChecked handles a MsgMintToChecked
+func handleMsgMintToChecked(msg types.Message, db db.TokenDb, client client.Proxy) error {
+	instruction, ok := msg.Value.Data().(token.ParsedMintToChecked)
+	if !ok {
+		return fmt.Errorf("instruction does not match mintToChecked type: %s", msg.Value.Type())
+	}
+	return updateTokenSupply(instruction.Mint, db, client)
+}
+
+// handleBurn handles a MsgBurn
+func handleMsgBurn(msg types.Message, db db.TokenDb, client client.Proxy) error {
+	instruction, ok := msg.Value.Data().(token.ParsedBurn)
+	if !ok {
+		return fmt.Errorf("instruction does not match burn type: %s", msg.Value.Type())
+	}
+	return updateTokenSupply(instruction.Mint, db, client)
+}
+
+// handleBurn handles a MsgBurnChecked
+func handleMsgBurnChecked(msg types.Message, db db.TokenDb, client client.Proxy) error {
+	instruction, ok := msg.Value.Data().(token.ParsedBurn)
+	if !ok {
+		return fmt.Errorf("instruction does not match burnChecked type: %s", msg.Value.Type())
+	}
+	return updateTokenSupply(instruction.Mint, db, client)
 }

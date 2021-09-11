@@ -61,8 +61,11 @@ type TokenDb interface {
 	// SaveMultisig allows to store the given multisig data inside the database
 	SaveMultisig(address string, slot uint64, singers []string, m uint8) error
 
-	// SaveDelegate allows to store the given approve state of the given address inside the database
+	// SaveDelegate allows to store the given approve state inside the database
 	SaveDelegate(source string, destination string, slot uint64, amount uint64) error
+
+	// SaveTokenSupply allows to store the given token data inside the database
+	SaveTokenSupply(mint string, slot uint64, supply uint64) error
 }
 
 // Context contains the data that might be used to build a Database instance

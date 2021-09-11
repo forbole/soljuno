@@ -98,3 +98,22 @@ WHERE token_delegate.slot <= excluded.slot`
 	)
 	return err
 }
+
+// SaveTokenSupply implements the db.TokenDb
+func (db *Database) SaveTokenSupply(mint string, slot uint64, supply uint64) error {
+	stmt := `
+INSERT INTO token_supply
+	(mint, slot, supply)
+VALUES ($1, $2, $3)
+ON CONFLICT (mint)
+	SET slot = excluded.slot
+	supply = excluded.slot
+WHERE token_supply.slot <= excluded.slot`
+	_, err := db.Sql.Exec(
+		stmt,
+		mint,
+		slot,
+		supply,
+	)
+	return err
+}
