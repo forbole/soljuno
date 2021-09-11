@@ -24,6 +24,10 @@ type Proxy interface {
 	// Validators returns vote accounts of validators in the current chain.
 	// An error is returned if the query fails
 	Validators() (clienttype.VoteAccounts, error)
+
+	// AccountInfo returns the information of the given account in the current chain.
+	// An error is returned if the query fails
+	AccountInfo(address string) (clienttype.AccountInfo, error)
 }
 
 // proxy implements a wrapper around both a Tendermint RPC client and a
@@ -72,4 +76,12 @@ func (cp *proxy) Validators() (clienttype.VoteAccounts, error) {
 		return clienttype.VoteAccounts{}, err
 	}
 	return validators, nil
+}
+
+func (cp *proxy) AccountInfo(address string) (clienttype.AccountInfo, error) {
+	info, err := cp.rpcClient.GetAccountInfo(address)
+	if err != nil {
+		return clienttype.AccountInfo{}, err
+	}
+	return info, nil
 }

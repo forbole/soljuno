@@ -10,6 +10,7 @@ type Client interface {
 	GetBlock(uint64) (types.BlockResult, error)
 	GetBlocks(uint64, uint64) ([]uint64, error)
 	GetVoteAccounts() (types.VoteAccounts, error)
+	GetAccountInfo(string) (types.AccountInfo, error)
 }
 
 type client struct {
@@ -59,4 +60,13 @@ func (c *client) GetVoteAccounts() (types.VoteAccounts, error) {
 		return validators, err
 	}
 	return validators, nil
+}
+
+func (c *client) GetAccountInfo(address string) (types.AccountInfo, error) {
+	var accountInfo types.AccountInfo
+	err := c.rpcClient.CallFor(&accountInfo, "getAccountInfo", address, types.NewAccountInfoOption("base64"))
+	if err != nil {
+		return accountInfo, err
+	}
+	return accountInfo, nil
 }
