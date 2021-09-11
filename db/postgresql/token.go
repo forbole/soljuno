@@ -7,7 +7,7 @@ import (
 
 var _ db.TokenDb = &Database{}
 
-// SaveToken implements the db.Token
+// SaveToken implements the db.TokenDb
 func (db *Database) SaveToken(
 	mint string,
 	slot uint64,
@@ -36,7 +36,7 @@ WHERE token.slot <= excluded.slot`
 	return err
 }
 
-// SaveTokenAccount implements the db.Token
+// SaveTokenAccount implements the db.TokenDb
 func (db *Database) SaveTokenAccount(address string, slot uint64, mint, owner string) error {
 	stmt := `
 INSERT INTO token_account
@@ -57,7 +57,7 @@ WHERE token_account.slot <= excluded.slot`
 	return err
 }
 
-// SaveMultisig implements the db.Token
+// SaveMultisig implements the db.TokenDb
 func (db *Database) SaveMultisig(address string, slot uint64, singers []string, m uint8) error {
 	stmt := `
 INSERT INTO multisig
@@ -74,6 +74,26 @@ WHERE token_account.slot <= excluded.slot`
 		slot,
 		pq.Array(singers),
 		m,
+	)
+	return err
+}
+
+// SaveDelegate implements the db.TokenDb
+func (db *Database) SaveDelegate(source string, delegate string, slot uint64, amount uint64) error {
+	stmt := `
+INSERT INTO token_delegate
+	(source_address, delegate_address, slot, amount)
+VALUES ($1, $2, $3)
+ON CONFLICT (address)
+	SET slot = excluded.slot
+	amount = excluded.amount
+WHERE token_delegate.slot <= excluded.slot`
+	_, err := db.Sql.Exec(
+		stmt,
+		source,
+		delegate,
+		slot,
+		amount,
 	)
 	return err
 }

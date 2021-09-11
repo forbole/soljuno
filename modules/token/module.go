@@ -3,17 +3,20 @@ package token
 import (
 	"fmt"
 
+	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
 )
 
 type Module struct {
-	db db.Database
+	db     db.Database
+	client client.Proxy
 }
 
-func NewModule(db db.Database) *Module {
+func NewModule(db db.Database, client client.Proxy) *Module {
 	return &Module{
-		db: db,
+		db:     db,
+		client: client,
 	}
 }
 
@@ -31,5 +34,5 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if !ok {
 		return fmt.Errorf("pruning is enabled, but your database does not implement PruningDb")
 	}
-	return HandleMsg(msg, tx, tokenDb)
+	return HandleMsg(msg, tx, tokenDb, m.client)
 }

@@ -15,8 +15,8 @@ func NewAccountInfoOption(encoding string) AccountInfoOption {
 }
 
 type AccountInfo struct {
-	Context Context      `json:"context"`
-	Value   AccountValue `json:"value"`
+	Context Context       `json:"context"`
+	Value   *AccountValue `json:"value"`
 }
 
 type AccountValue struct {
