@@ -5,6 +5,23 @@ import (
 	"github.com/forbole/soljuno/solana/types"
 )
 
+func tokenParse(decoder bincode.Decoder, bz []byte) interface{} {
+	switch len(bz) {
+	case TokenAccountLen:
+		var account TokenAccount
+		decoder.Decode(bz, &account)
+		return account
+
+	case TokenMintLen:
+		var mint TokenMint
+		decoder.Decode(bz, &mint)
+		return mint
+	}
+	return nil
+}
+
+//____________________________________________________________________________
+
 type COption uint32
 
 func (c COption) Bool() bool {
@@ -20,6 +37,10 @@ type COptionUint64 struct {
 	Option COption
 	Value  uint64
 }
+
+//____________________________________________________________________________
+
+const TokenAccountLen = 165
 
 type AccountState uint8
 
@@ -46,12 +67,14 @@ type TokenAccount struct {
 	CloseAuthority COptionPubkey
 }
 
-func tokenParse(decoder bincode.Decoder, bz []byte) interface{} {
-	switch len(bz) {
-	case TokenAccountLen:
-		var tokenAccount TokenAccount
-		decoder.Decode(bz, &tokenAccount)
-		return tokenAccount
-	}
-	return nil
+//____________________________________________________________________________
+
+const TokenMintLen = 82
+
+type TokenMint struct {
+	MintAuthority   COptionPubkey
+	Supply          uint64
+	Decimals        uint8
+	IsIntialized    bool
+	FreezeAuthority COptionPubkey
 }
