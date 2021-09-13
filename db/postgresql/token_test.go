@@ -21,9 +21,9 @@ func (suite *DbTestSuite) TestSaveToken() {
 
 	// Verify the data
 	var rows []TokenRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM inflation`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token`)
 	suite.Require().NoError(err)
-	suite.Require().Len(rows, 1, "no duplicated inflation rows should be inserted")
+	suite.Require().Len(rows, 1, "no duplicated token rows should be inserted")
 
 	expected := TokenRow{"mint", 0, 9, "owner", "freeze"}
 	suite.Require().Equal(expected, rows[0])
