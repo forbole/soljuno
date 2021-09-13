@@ -21,8 +21,8 @@ INSERT INTO token
 VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT (mint) DO UPDATE
     SET slot = excluded.slot,
-	decimals = excluded.decimals
-	mint_authority = excluded.mint_authority
+	decimals = excluded.decimals,
+	mint_authority = excluded.mint_authority,
 	freeze_authority = excluded.freeze_authority
 WHERE token.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
@@ -43,9 +43,9 @@ INSERT INTO token_account
 	(address, slot, mint, owner, state)
 VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT (address) DO UPDATE
-	SET slot = excluded.slot
-	mint = excluded.mint
-	owner = excluded.owner
+	SET slot = excluded.slot,
+	mint = excluded.mint,
+	owner = excluded.owner,
 	state = excluded.state
 WHERE token_account.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
@@ -65,8 +65,8 @@ INSERT INTO multisig
 	(address, slot, signers, m)
 VALUES ($1, $2, $3, $4)
 ON CONFLICT (address) DO UPDATE
-	SET slot = excluded.slot
-	signers = excluded.signers
+	SET slot = excluded.slot,
+	signers = excluded.signers,
 	m = excluded.m
 WHERE token_account.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
@@ -86,7 +86,7 @@ INSERT INTO token_delegate
 	(source_address, delegate_address, slot, amount)
 VALUES ($1, $2, $3)
 ON CONFLICT (address) DO UPDATE
-	SET slot = excluded.slot
+	SET slot = excluded.slot,
 	amount = excluded.amount
 WHERE token_delegate.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
@@ -106,8 +106,8 @@ INSERT INTO token_supply
 	(mint, slot, supply)
 VALUES ($1, $2, $3)
 ON CONFLICT (mint) DO UPDATE
-	SET slot = excluded.slot
-	supply = excluded.slot
+	SET slot = excluded.slot,
+	supply = excluded.supply
 WHERE token_supply.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
