@@ -28,7 +28,7 @@ type DbTestSuite struct {
 func (suite *DbTestSuite) SetupTest() {
 	dbCfg := types.NewDatabaseConfig(
 		"soljuno",
-		"0.0.0.0",
+		"localhost",
 		5433,
 		"soljuno",
 		"password",
