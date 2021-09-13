@@ -33,6 +33,13 @@ type COptionPubkey struct {
 	Value  types.Pubkey
 }
 
+func (c COptionPubkey) String() string {
+	if !c.Option.Bool() {
+		return ""
+	}
+	return c.Value.String()
+}
+
 type COptionUint64 struct {
 	Option COption
 	Value  uint64

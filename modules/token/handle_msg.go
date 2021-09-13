@@ -70,7 +70,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.TokenDb, client client.Prox
 func handleMsgInitializeMint(msg types.Message, tx types.Tx, db db.TokenDb) error {
 	instruction, ok := msg.Value.Data().(token.ParsedInitializeMint)
 	if !ok {
-		return fmt.Errorf("instruction does not match initializeMint type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "initializeMint", msg.Value.Type())
 	}
 	err := db.SaveToken(
 		instruction.Mint,
@@ -89,7 +89,7 @@ func handleMsgInitializeMint(msg types.Message, tx types.Tx, db db.TokenDb) erro
 func handleMsgInitializeAccount(msg types.Message, tx types.Tx, db db.TokenDb) error {
 	instruction, ok := msg.Value.Data().(token.ParsedInitializeAccount)
 	if !ok {
-		return fmt.Errorf("instruction does not match initializeAccount type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "initializeAccount", msg.Value.Type())
 	}
 	err := db.SaveTokenAccount(
 		instruction.Account,
@@ -108,7 +108,7 @@ func handleMsgInitializeAccount(msg types.Message, tx types.Tx, db db.TokenDb) e
 func handleMsgInitializeMultisig(msg types.Message, tx types.Tx, db db.TokenDb) error {
 	instruction, ok := msg.Value.Data().(token.ParsedInitializeMultisig)
 	if !ok {
-		return fmt.Errorf("instruction does not match initializeMultisig type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "initializeMultisig", msg.Value.Type())
 	}
 	err := db.SaveMultisig(
 		instruction.MultiSig,
@@ -126,7 +126,7 @@ func handleMsgInitializeMultisig(msg types.Message, tx types.Tx, db db.TokenDb) 
 func handleMsgApprove(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedApprove)
 	if !ok {
-		return fmt.Errorf("instruction does not match approve type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "approve", msg.Value.Type())
 	}
 	return updateDelegation(instruction.Source, db, client)
 }
@@ -135,7 +135,7 @@ func handleMsgApprove(msg types.Message, db db.TokenDb, client client.Proxy) err
 func handleMsgApproveChecked(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedApproveChecked)
 	if !ok {
-		return fmt.Errorf("instruction does not match approveChecked type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "approveChecked", msg.Value.Type())
 	}
 	return updateDelegation(instruction.Source, db, client)
 }
@@ -144,16 +144,28 @@ func handleMsgApproveChecked(msg types.Message, db db.TokenDb, client client.Pro
 func handleMsgRevoke(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedRevoke)
 	if !ok {
-		return fmt.Errorf("instruction does not match approveChecked type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "approveChecked", msg.Value.Type())
 	}
 	return updateDelegation(instruction.Source, db, client)
+}
+
+// handleSetAuthority handles a MsgSetAuthority
+func handleSetAuthority(msg types.Message, db db.TokenDb, client client.Proxy) error {
+	instruction, ok := msg.Value.Data().(token.ParsedSetAuthority)
+	if !ok {
+		return fmt.Errorf("instruction does not match %s type: %s", "setAuthority", msg.Value.Type())
+	}
+	if instruction.Mint != "" {
+		return updateMintState(instruction.Mint, db, client)
+	}
+	return updateAccountState(instruction.Account, db, client)
 }
 
 // handleMsgMintTo handles a MsgMintTo
 func handleMsgMintTo(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedMintTo)
 	if !ok {
-		return fmt.Errorf("instruction does not match mintTo type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "mintTo", msg.Value.Type())
 	}
 	return updateTokenSupply(instruction.Mint, db, client)
 }
@@ -162,7 +174,7 @@ func handleMsgMintTo(msg types.Message, db db.TokenDb, client client.Proxy) erro
 func handleMsgMintToChecked(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedMintToChecked)
 	if !ok {
-		return fmt.Errorf("instruction does not match mintToChecked type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "mintToChecked", msg.Value.Type())
 	}
 	return updateTokenSupply(instruction.Mint, db, client)
 }
@@ -171,7 +183,7 @@ func handleMsgMintToChecked(msg types.Message, db db.TokenDb, client client.Prox
 func handleMsgBurn(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedBurn)
 	if !ok {
-		return fmt.Errorf("instruction does not match burn type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "burn", msg.Value.Type())
 	}
 	return updateTokenSupply(instruction.Mint, db, client)
 }
@@ -180,7 +192,7 @@ func handleMsgBurn(msg types.Message, db db.TokenDb, client client.Proxy) error 
 func handleMsgBurnChecked(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedBurn)
 	if !ok {
-		return fmt.Errorf("instruction does not match burnChecked type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "burnChecked", msg.Value.Type())
 	}
 	return updateTokenSupply(instruction.Mint, db, client)
 }
@@ -189,7 +201,7 @@ func handleMsgBurnChecked(msg types.Message, db db.TokenDb, client client.Proxy)
 func handleMsgCloseAccount(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedCloseAccount)
 	if !ok {
-		return fmt.Errorf("instruction does not match closeAccount type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "closeAccount", msg.Value.Type())
 	}
 	return updateAccountState(instruction.Account, db, client)
 }
@@ -198,7 +210,7 @@ func handleMsgCloseAccount(msg types.Message, db db.TokenDb, client client.Proxy
 func handleMsgFreezeAccount(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedFreezeAccount)
 	if !ok {
-		return fmt.Errorf("instruction does not match freezeAccount type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "freezeAccount", msg.Value.Type())
 	}
 	return updateAccountState(instruction.Account, db, client)
 }
@@ -207,7 +219,7 @@ func handleMsgFreezeAccount(msg types.Message, db db.TokenDb, client client.Prox
 func handleMsgThawAccount(msg types.Message, db db.TokenDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(token.ParsedThawAccount)
 	if !ok {
-		return fmt.Errorf("instruction does not match thawAccount type: %s", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "thawAccount", msg.Value.Type())
 	}
 	return updateAccountState(instruction.Account, db, client)
 }
