@@ -33,7 +33,7 @@ endif
 ###############################################################################
 
 install: go.sum
-	@echo "installing juno binary..."
+	@echo "installing soljuno binary..."
 	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/juno
 
 ###############################################################################
@@ -47,14 +47,14 @@ stop-docker-test:
 
 start-docker-test: stop-docker-test
 	@echo "Starting Docker container..."
-	@docker run --name soljuno-test-db -e POSTGRES_USER=soljuno -e POSTGRES_PASSWORD=password -e POSTGRES_DB=bdjuno -d -p 5433:5432 postgres
+	@docker run --name soljuno-test-db -e POSTGRES_USER=soljuno -e POSTGRES_PASSWORD=password -e POSTGRES_DB=soljuno -d -p 5433:5432 postgres
 .PHONY: start-docker-test
 
 coverage:
 	@echo "viewing test coverage..."
 	@go tool cover --html=coverage.out
 
-test-unit:	start-docker-test
+test-unit: start-docker-test
 	@echo "executing unit tests..."
 	@go test -mod=readonly -v -coverprofile coverage.txt ./...
 

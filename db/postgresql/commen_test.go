@@ -30,7 +30,7 @@ func (suite *DbTestSuite) SetupTest() {
 		"soljuno",
 		"0.0.0.0",
 		5433,
-		"bdjuno",
+		"soljuno",
 		"password",
 		"",
 		"public",
