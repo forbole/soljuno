@@ -54,6 +54,7 @@ WHERE token_account.slot <= excluded.slot`
 		slot,
 		mint,
 		owner,
+		state,
 	)
 	return err
 }
@@ -84,7 +85,7 @@ func (db *Database) SaveDelegate(source string, delegate string, slot uint64, am
 	stmt := `
 INSERT INTO token_delegate
 	(source_address, delegate_address, slot, amount)
-VALUES ($1, $2, $3)
+VALUES ($1, $2, $3, $4)
 ON CONFLICT (address) DO UPDATE
 	SET slot = excluded.slot,
 	amount = excluded.amount
