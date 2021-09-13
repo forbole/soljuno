@@ -33,7 +33,7 @@ CREATE TABLE multisig
 
 CREATE TABLE token_delegate
 (
-    source_address      TEXT    NOT NULL,
+    source_address      TEXT    NOT NULL PRIMARY KEY,
     delegate_address    TEXT    NOT NULL,
     slot                BIGINT  NOT NULL,
     amount              BIGINT  NOT NULL

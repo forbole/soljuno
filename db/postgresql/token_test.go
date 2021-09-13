@@ -1,5 +1,7 @@
 package postgresql_test
 
+import "github.com/lib/pq"
+
 func (suite *DbTestSuite) TestSaveToken() {
 	type TokenRow struct {
 		Mint            string `db:"mint"`
@@ -150,10 +152,10 @@ func (suite *DbTestSuite) TestSaveTokenAccount() {
 
 func (suite *DbTestSuite) TestSaveMultisig() {
 	type MultisigRow struct {
-		Address string   `db:"address"`
-		Slot    uint64   `db:"slot"`
-		Signers []string `db:"signers"`
-		M       uint8    `db:"m"`
+		Address string         `db:"address"`
+		Slot    uint64         `db:"slot"`
+		Signers pq.StringArray `db:"signers"`
+		M       uint8          `db:"m"`
 	}
 
 	testCases := []struct {
@@ -213,6 +215,7 @@ func (suite *DbTestSuite) TestSaveMultisig() {
 			// Verify the data
 			rows := []MultisigRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM multisig")
+
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
 			suite.Require().Equal(tc.expected, rows[0])

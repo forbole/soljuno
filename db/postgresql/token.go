@@ -69,7 +69,7 @@ ON CONFLICT (address) DO UPDATE
 	SET slot = excluded.slot,
 	signers = excluded.signers,
 	m = excluded.m
-WHERE token_account.slot <= excluded.slot`
+WHERE multisig.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
 		address,
@@ -86,7 +86,7 @@ func (db *Database) SaveDelegate(source string, delegate string, slot uint64, am
 INSERT INTO token_delegate
 	(source_address, delegate_address, slot, amount)
 VALUES ($1, $2, $3, $4)
-ON CONFLICT (address) DO UPDATE
+ON CONFLICT (source_address) DO UPDATE
 	SET slot = excluded.slot,
 	amount = excluded.amount
 WHERE token_delegate.slot <= excluded.slot`

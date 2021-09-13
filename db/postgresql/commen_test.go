@@ -16,8 +16,7 @@ import (
 )
 
 func TestDatabaseTestSuite(t *testing.T) {
-	testSuite := new(DbTestSuite)
-	suite.Run(t, testSuite)
+	suite.Run(t, new(DbTestSuite))
 }
 
 type DbTestSuite struct {
@@ -68,4 +67,8 @@ func (suite *DbTestSuite) SetupTest() {
 	}
 
 	suite.database = solDb
+}
+
+func (suite *DbTestSuite) TearDownSuite() {
+	suite.database.Close()
 }
