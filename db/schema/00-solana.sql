@@ -1,15 +1,9 @@
-CREATE TABLE validator
-(
-    vote_pubkey TEXT NOT NULL PRIMARY KEY,
-    node_pubkey  TEXT NOT NULL UNIQUE 
-);
-
 CREATE TABLE block
 (
-    slot        BIGINT UNIQUE PRIMARY KEY,
-    hash        TEXT   NOT NULL UNIQUE,
-    proposer    TEXT   DEFAULT '',
-    timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    slot        BIGINT      UNIQUE PRIMARY KEY,
+    hash        TEXT        NOT NULL UNIQUE,
+    proposer    TEXT        DEFAULT '',
+    timestamp   TIMESTAMP   WITHOUT TIME ZONE NOT NULL
 );
 CREATE INDEX block_hash_index ON block (hash);
 CREATE INDEX block_proposer_index ON block (proposer);
@@ -40,4 +34,4 @@ CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 CREATE TABLE pruning
 (
     last_pruned_slot BIGINT NOT NULL
-)
+);

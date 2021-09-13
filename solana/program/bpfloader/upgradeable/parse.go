@@ -1,4 +1,4 @@
-package upgradableLoader
+package upgradable_loader
 
 import (
 	"github.com/forbole/soljuno/solana/bincode"
@@ -10,7 +10,6 @@ type Parser struct {
 	parser.ProgramParser
 }
 
-// nolint: gocyclo
 func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 	decoder := bincode.NewDecoder()
 	var id InstructionID

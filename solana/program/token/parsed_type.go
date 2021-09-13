@@ -560,7 +560,7 @@ func TokenAmountToUiAmount(
 ) types.UiTokenAmount {
 	amountDecimals := float64(amount)
 	if decimals != 0 {
-		amountDecimals = amountDecimals / math.Pow(10, float64(decimals))
+		amountDecimals /= math.Pow(10, float64(decimals))
 	}
 	return types.UiTokenAmount{
 		UiAmount: amountDecimals,

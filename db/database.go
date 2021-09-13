@@ -1,6 +1,7 @@
 package db
 
 import (
+	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/types/logging"
 )
@@ -20,14 +21,6 @@ type Database interface {
 	// SaveTx will be called to save each transaction contained inside a block.
 	// An error is returned if the operation fails.
 	SaveTx(tx types.Tx) error
-
-	// HasValidator returns true if a given validator by consensus address exists.
-	// An error is returned if the operation fails.
-	HasValidator(address string) (bool, error)
-
-	// SaveValidators stores a list of validators if they do not already exist.
-	// An error is returned if the operation fails.
-	SaveValidators(validators []types.Validator) error
 
 	// SaveMessage stores a single message.
 	// An error is returned if the operation fails.
@@ -53,6 +46,26 @@ type PruningDb interface {
 type BankDb interface {
 	// SaveAccountBalances allows to store the given native balance data inside the database
 	SaveAccountBalances(slot uint64, accounts []string, balances []uint64) error
+
+	// SaveAccountBalances allows to store the given token balance data inside the database
+	SaveAccountTokenBalances(slot uint64, accounts []string, balances []clienttypes.TransactionTokenBalance) error
+}
+
+type TokenDb interface {
+	// SaveToken allows to store the given token data inside the database
+	SaveToken(mint string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
+
+	// SaveTokenAccount allows to store the given token account data inside the database
+	SaveTokenAccount(address string, slot uint64, mint, owner, state string) error
+
+	// SaveMultisig allows to store the given multisig data inside the database
+	SaveMultisig(address string, slot uint64, singers []string, m uint8) error
+
+	// SaveDelegate allows to store the given approve state inside the database
+	SaveDelegate(source string, destination string, slot uint64, amount uint64) error
+
+	// SaveTokenSupply allows to store the given token data inside the database
+	SaveTokenSupply(mint string, slot uint64, supply uint64) error
 }
 
 // Context contains the data that might be used to build a Database instance

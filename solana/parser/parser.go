@@ -9,7 +9,7 @@ type ProgramParser interface {
 	Parse(accounts []string, data []byte) types.ParsedInstruction
 }
 
-func NewParser() *parser {
+func NewParser() Parser {
 	var p parser
 	p.programs = make(map[string]ProgramParser)
 	return &p

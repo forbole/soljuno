@@ -22,6 +22,7 @@ func (m *Module) Name() string {
 	return "bank"
 }
 
+// HandleTx implements modules.TransactionModule
 func (m *Module) HandleTx(tx types.Tx) error {
 	bankDb, ok := m.db.(db.BankDb)
 	if !ok {

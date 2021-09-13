@@ -102,7 +102,7 @@ func StartParsing(ctx *Context) error {
 
 	// Create workers
 	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parser, ctx.Logger, exportQueue, ctx.Modules)
-	workers := make([]worker.Worker, cfg.GetWorkers(), cfg.GetWorkers())
+	workers := make([]worker.Worker, cfg.GetWorkers())
 	for i := range workers {
 		workers[i] = worker.NewWorker(i, workerCtx)
 	}
