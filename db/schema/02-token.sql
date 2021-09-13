@@ -12,7 +12,7 @@ CREATE TABLE token_supply
     mint    TEXT    NOT NULL REFERENCES token (mint),
     slot    BIGINT  NOT NULL,
     supply  BIGINT  NOT NULL
-)
+);
 
 CREATE TABLE token_account
 (

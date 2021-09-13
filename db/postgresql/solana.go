@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/types/logging"
+	"github.com/jmoiron/sqlx"
 
 	"github.com/lib/pq"
 
@@ -45,7 +46,7 @@ func Builder(ctx *db.Context) (db.Database, error) {
 	postgresDb.SetMaxIdleConns(ctx.Cfg.GetMaxIdleConnections())
 
 	return &Database{
-		Sql:    postgresDb,
+		Sqlx:   sqlx.NewDb(postgresDb, "postgresql"),
 		Logger: ctx.Logger,
 	}, nil
 }
@@ -56,21 +57,21 @@ var _ db.Database = &Database{}
 // Database defines a wrapper around a SQL database and implements functionality
 // for data aggregation and exporting.
 type Database struct {
-	Sql    *sql.DB
+	Sqlx   *sqlx.DB
 	Logger logging.Logger
 }
 
 // LastBlockSlot implements db.Database
 func (db *Database) LastBlockSlot() (int64, error) {
 	var height int64
-	err := db.Sql.QueryRow(`SELECT coalesce(MAX(slot),0) AS slot FROM block;`).Scan(&height)
+	err := db.Sqlx.QueryRow(`SELECT coalesce(MAX(slot),0) AS slot FROM block;`).Scan(&height)
 	return height, err
 }
 
 // HasBlock implements db.Database
 func (db *Database) HasBlock(height uint64) (bool, error) {
 	var res bool
-	err := db.Sql.QueryRow(`SELECT EXISTS(SELECT 1 FROM block WHERE slot = $1);`, height).Scan(&res)
+	err := db.Sqlx.QueryRow(`SELECT EXISTS(SELECT 1 FROM block WHERE slot = $1);`, height).Scan(&res)
 	return res, err
 }
 
@@ -80,7 +81,7 @@ func (db *Database) SaveBlock(block types.Block) error {
 INSERT INTO block (slot, hash, proposer, timestamp)
 VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	proposer := sql.NullString{Valid: len(block.Proposer) != 0, String: block.Proposer}
-	_, err := db.Sql.Exec(sqlStatement,
+	_, err := db.Sqlx.Exec(sqlStatement,
 		block.Slot, block.Hash, proposer, block.Timestamp,
 	)
 	return err
@@ -92,7 +93,7 @@ func (db *Database) SaveTx(tx types.Tx) error {
 INSERT INTO transaction 
     (hash, slot, error, fee, logs) 
 VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(sqlStatement,
+	_, err := db.Sqlx.Exec(sqlStatement,
 		tx.Hash,
 		tx.Slot,
 		tx.Successful(),
@@ -107,7 +108,7 @@ func (db *Database) SaveMessage(msg types.Message) error {
 	stmt := `
 INSERT INTO message(transaction_hash, index, program, involved_accounts, type, value) 
 VALUES ($1, $2, $3, $4, $5, $6)`
-	_, err := db.Sql.Exec(
+	_, err := db.Sqlx.Exec(
 		stmt,
 		msg.TxHash,
 		msg.Index,
@@ -121,7 +122,7 @@ VALUES ($1, $2, $3, $4, $5, $6)`
 
 // Close implements db.Database
 func (db *Database) Close() {
-	err := db.Sql.Close()
+	err := db.Sqlx.Close()
 	if err != nil {
 		db.Logger.Error("error while closing connection", "err", err)
 	}

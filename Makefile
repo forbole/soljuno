@@ -6,36 +6,55 @@ export GO111MODULE = on
 all: lint test-unit install
 
 ###############################################################################
-# Build / Install
+###                                Build flags                              ###
 ###############################################################################
 
-LD_FLAGS = -X github.com/desmos-labs/juno.Version=$(VERSION) \
-	-X github.com/desmos-labs/juno.Commit=$(COMMIT)
+LD_FLAGS = -X github.com/forbole/soljuno.Version=$(VERSION) \
+	-X github.com/forbole/soljuno.Commit=$(COMMIT)
 
 BUILD_FLAGS := -ldflags '$(LD_FLAGS)'
 
+###############################################################################
+###                                  Build                                  ###
+###############################################################################
+
 build: go.sum
 ifeq ($(OS),Windows_NT)
-	@echo "building juno binary..."
-	@go build -mod=readonly $(BUILD_FLAGS) -o build/juno.exe ./cmd/juno
+	@echo "building soljuno binary..."
+	@go build -mod=readonly $(BUILD_FLAGS) -o build/soljuno.exe ./cmd/juno
 else
-	@echo "building juno binary..."
-	@go build -mod=readonly $(BUILD_FLAGS) -o build/juno ./cmd/juno
+	@echo "building soljuno binary..."
+	@go build -mod=readonly $(BUILD_FLAGS) -o build/soljuno ./cmd/juno
 endif
+.PHONY: build
+
+###############################################################################
+###                                 Install                                 ###
+###############################################################################
 
 install: go.sum
 	@echo "installing juno binary..."
 	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/juno
 
 ###############################################################################
-# Tests / CI
+###                           Tests & Simulation                            ###
 ###############################################################################
+
+stop-docker-test:
+	@echo "Stopping Docker container..."
+	@docker stop soljuno-test-db || true && docker rm soljuno-test-db || true
+.PHONY: stop-docker-test
+
+start-docker-test: stop-docker-test
+	@echo "Starting Docker container..."
+	@docker run --name soljuno-test-db -e POSTGRES_USER=soljuno -e POSTGRES_PASSWORD=password -e POSTGRES_DB=bdjuno -d -p 5433:5432 postgres
+.PHONY: start-docker-test
 
 coverage:
 	@echo "viewing test coverage..."
 	@go tool cover --html=coverage.out
 
-test-unit:
+test-unit:	start-docker-test
 	@echo "executing unit tests..."
 	@go test -mod=readonly -v -coverprofile coverage.txt ./...
 

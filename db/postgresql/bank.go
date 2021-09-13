@@ -43,7 +43,7 @@ ON CONFLICT (address) DO UPDATE
 WHERE account_balance.slot <= excluded.slot
 `
 
-	_, err := db.Sql.Exec(stmt, params...)
+	_, err := db.Sqlx.Exec(stmt, params...)
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ ON CONFLICT (address) DO UPDATE
 WHERE account_balance.slot <= excluded.slot
 `
 
-	_, err := db.Sql.Exec(stmt, params...)
+	_, err := db.Sqlx.Exec(stmt, params...)
 	if err != nil {
 		return err
 	}
