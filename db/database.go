@@ -68,6 +68,11 @@ type TokenDb interface {
 	SaveTokenSupply(mint string, slot uint64, supply uint64) error
 }
 
+type SystemDb interface {
+	// Save Nonce allows to store the given nonce account data inside the database
+	SaveNonce(address string) error
+}
+
 // Context contains the data that might be used to build a Database instance
 type Context struct {
 	Cfg    types.DatabaseConfig

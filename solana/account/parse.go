@@ -2,6 +2,7 @@ package account_parser
 
 import (
 	"github.com/forbole/soljuno/solana/bincode"
+	"github.com/forbole/soljuno/solana/program/system"
 	"github.com/forbole/soljuno/solana/program/token"
 )
 
@@ -10,6 +11,8 @@ func Parse(programID string, bz []byte) interface{} {
 	switch programID {
 	case token.ProgramID:
 		return tokenParse(decoder, bz)
+	case system.ProgramID:
+		return systemParse(decoder, bz)
 	}
 	return nil
 }

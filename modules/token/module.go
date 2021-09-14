@@ -32,7 +32,7 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	}
 	tokenDb, ok := m.db.(db.TokenDb)
 	if !ok {
-		return fmt.Errorf("pruning is enabled, but your database does not implement PruningDb")
+		return fmt.Errorf("token is enabled, but your database does not implement TokenDb")
 	}
 	return HandleMsg(msg, tx, tokenDb, m.client)
 }
