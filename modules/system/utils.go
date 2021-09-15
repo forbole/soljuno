@@ -7,7 +7,6 @@ import (
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
 	"github.com/forbole/soljuno/solana/program/system"
-	"github.com/forbole/soljuno/solana/types"
 )
 
 // updateNonce properly stores the statement of nonce inside the database
@@ -18,7 +17,7 @@ func updateNonce(address string, db db.SystemDb, client client.Proxy) error {
 	}
 
 	if info.Value == nil {
-		return db.SaveNonce(address, info.Context.Slot, "", "", types.FeeCalculator{}, "closed")
+		return db.SaveNonce(address, info.Context.Slot, "", "", 0, "closed")
 	}
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
@@ -28,8 +27,8 @@ func updateNonce(address string, db db.SystemDb, client client.Proxy) error {
 
 	nonce, ok := accountParser.Parse(system.ProgramID, bz).(accountParser.NonceAccount)
 	if !ok {
-		return db.SaveNonce(address, info.Context.Slot, "", "", types.FeeCalculator{}, "closed")
+		return db.SaveNonce(address, info.Context.Slot, "", "", 0, "closed")
 	}
 
-	return db.SaveNonce(address, info.Context.Slot, nonce.Authority.String(), nonce.BlockHash.String(), nonce.FeeCalculator, nonce.State.String())
+	return db.SaveNonce(address, info.Context.Slot, nonce.Authority.String(), nonce.BlockHash.String(), nonce.FeeCalculator.LamportsPerSignature, nonce.State.String())
 }

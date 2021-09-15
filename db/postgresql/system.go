@@ -1,8 +1,8 @@
 package postgresql
 
-import (
-	solana "github.com/forbole/soljuno/solana/types"
-)
+import "github.com/forbole/soljuno/db"
+
+var _ db.SystemDb = &Database{}
 
 // SaveToken implements the db.SystemDb
 func (db *Database) SaveNonce(
@@ -10,14 +10,14 @@ func (db *Database) SaveNonce(
 	slot uint64,
 	authority string,
 	blockhash string,
-	feeCalculator solana.FeeCalculator,
+	lamportsPerSignature uint64,
 	state string,
 ) error {
 	stmt := `
     INSERT INTO nonce
         (address, slot, authority, blockhash, lamports_per_signature, state)
-    VALUES ($1, $2, $3, $4, $5)
-    ON CONFLICT (mint) DO UPDATE
+    VALUES ($1, $2, $3, $4, $5, $6)
+    ON CONFLICT (address) DO UPDATE
         SET slot = excluded.slot,
         authority = excluded.authority,
         blockhash = excluded.blockhash,
@@ -30,7 +30,7 @@ func (db *Database) SaveNonce(
 		slot,
 		authority,
 		blockhash,
-		feeCalculator.LamportsPerSignature,
+		lamportsPerSignature,
 		state,
 	)
 	return err
