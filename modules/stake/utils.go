@@ -57,7 +57,7 @@ func updateStakeAccount(address string, db db.StakeDb, client client.Proxy) erro
 		info.Context.Slot,
 		stakeAccount.Meta.Lockup.Custodian.String(),
 		stakeAccount.Meta.Lockup.Epoch,
-		uint64(stakeAccount.Meta.Lockup.UnixTimestamp),
+		stakeAccount.Meta.Lockup.UnixTimestamp,
 	)
 	if err != nil {
 		return err

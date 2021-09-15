@@ -53,7 +53,7 @@ func handleMsgInitialize(msg types.Message, tx types.Tx, db db.StakeDb) error {
 	if err != nil {
 		return err
 	}
-	return db.SaveStakeLockup(instruction.StakeAccount, tx.Slot, instruction.Lockup.Custodian, instruction.Lockup.Epoch, uint64(instruction.Lockup.UnixTimestamp))
+	return db.SaveStakeLockup(instruction.StakeAccount, tx.Slot, instruction.Lockup.Custodian, instruction.Lockup.Epoch, instruction.Lockup.UnixTimestamp)
 }
 
 // handleMsgAuthorize handles a MsgAuthorize
