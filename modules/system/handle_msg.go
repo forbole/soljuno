@@ -13,10 +13,13 @@ import (
 func HandleMsg(msg types.Message, tx types.Tx, db db.SystemDb, client client.Proxy) error {
 	switch msg.Value.Type() {
 	case "advanceNonce":
+		return handleMsgAdvaceNonce(msg, tx, db, client)
 	case "withdrawFromNonce":
+		return handleMsgWithdrawFromNonce(msg, tx, db, client)
 	case "initializeNonce":
 		return handleMsgInitializeNonce(msg, tx, db, client)
 	case "authorizeNonce":
+		return handleMsgAuthorizeNonce(msg, tx, db, client)
 	}
 	return nil
 }
