@@ -151,7 +151,7 @@ func (suite *DbTestSuite) TestSaveStakeLockup() {
 			suite.Require().Equal(tc.expected.Slot, rows[0].Slot)
 			suite.Require().Equal(tc.expected.Custodian, rows[0].Custodian)
 			suite.Require().Equal(tc.expected.Epoch, rows[0].Epoch)
-			suite.Require().Equal(tc.expected.UnixTimestamp, rows[0].UnixTimestamp)
+			suite.Require().Equal(tc.expected.UnixTimestamp.Unix(), rows[0].UnixTimestamp.Unix())
 		})
 	}
 }
