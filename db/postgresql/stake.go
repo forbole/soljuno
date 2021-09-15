@@ -1,6 +1,10 @@
 package postgresql
 
-import "github.com/forbole/soljuno/db"
+import (
+	"time"
+
+	"github.com/forbole/soljuno/db"
+)
 
 var _ db.StakeDb = &Database{}
 
@@ -14,7 +18,7 @@ ON CONFLICT (address) DO UPDATE
 	staker = excluded.staker,
 	withdrawer = excluded.withdrawer,
 	state = excluded.state
-WHERE nonce.slot <= excluded.slot`
+WHERE stake.slot <= excluded.slot`
 
 	_, err := db.Sqlx.Exec(
 		stmt,
@@ -27,17 +31,17 @@ WHERE nonce.slot <= excluded.slot`
 	return err
 }
 
-func (db *Database) SaveStakeLockup(address string, slot uint64, custodian string, epoch uint64, unixTimestamp uint64) error {
+func (db *Database) SaveStakeLockup(address string, slot uint64, custodian string, epoch uint64, unixTimestamp int64) error {
 	stmt := `
 INSERT INTO stake_lockup
-    (address, slot, custodian, epoch, unixTimestamp)
+    (address, slot, custodian, epoch, unix_timestamp)
 VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT (address) DO UPDATE
     SET slot = excluded.slot,
     custodian = excluded.custodian,
     epoch = excluded.epoch,
-    unixTimestamp = excluded.unixTimestamp
-WHERE nonce.slot <= excluded.slot`
+    unix_timestamp = excluded.unix_timestamp
+WHERE stake_lockup.slot <= excluded.slot`
 
 	_, err := db.Sqlx.Exec(
 		stmt,
@@ -45,7 +49,7 @@ WHERE nonce.slot <= excluded.slot`
 		slot,
 		custodian,
 		epoch,
-		unixTimestamp,
+		time.Unix(unixTimestamp, 0),
 	)
 	return err
 }
@@ -53,17 +57,16 @@ WHERE nonce.slot <= excluded.slot`
 func (db *Database) SaveStakeDelegation(address string, slot uint64, activationEpoch uint64, deactivationEpoch uint64, stake uint64, voter string, rate float64) error {
 	stmt := `
 INSERT INTO stake_delegation
-    (address, slot, activationEpoch, deactivationEpoch, stake, voter, warmup_cooldown_rate)
+    (address, slot, activation_epoch, deactivation_epoch, stake, voter, warmup_cooldown_rate)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
 ON CONFLICT (address) DO UPDATE
     SET slot = excluded.slot,
-    activationEpoch = excluded.activationEpoch,
-    blockhash = excluded.blockhash,
-    deactivationEpoch = excluded.deactivationEpoch,
+    activation_epoch = excluded.activation_epoch,
+    deactivation_epoch = excluded.deactivation_epoch,
     stake = excluded.stake,
     voter = excluded.voter,
     warmup_cooldown_rate = excluded.warmup_cooldown_rate
-WHERE nonce.slot <= excluded.slot`
+WHERE stake_delegation.slot <= excluded.slot`
 
 	_, err := db.Sqlx.Exec(
 		stmt,
