@@ -1,6 +1,8 @@
 package stake
 
 import (
+	"fmt"
+
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
@@ -28,5 +30,9 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if !tx.Successful() {
 		return nil
 	}
-	return nil
+	stakeDb, ok := m.db.(db.StakeDb)
+	if !ok {
+		return fmt.Errorf("stake is enabled, but your database does not implement stakeDb")
+	}
+	return HandleMsg(msg, tx, stakeDb, m.client)
 }

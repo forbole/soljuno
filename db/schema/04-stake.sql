@@ -3,7 +3,8 @@ CREATE TABLE stake
     address     TEXT    NOT NULL PRIMARY KEY,
     slot        BIGINT  NOT NULL,
     staker      TEXT    NOT NULL,
-    withdrawer  TEXT    NOT NULL
+    withdrawer  TEXT    NOT NULL,
+    state       TEXT    NOT NULL
 );
 
 CREATE TABLE stake_lockup

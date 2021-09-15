@@ -9,11 +9,11 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-// HandleMsg allows to handle different messages types for the token module
+// HandleMsg allows to handle different messages types for the system module
 func HandleMsg(msg types.Message, tx types.Tx, db db.SystemDb, client client.Proxy) error {
 	switch msg.Value.Type() {
 	case "advanceNonce":
-		return handleMsgAdvaceNonce(msg, tx, db, client)
+		return handleMsgAdvanceNonce(msg, tx, db, client)
 	case "withdrawFromNonce":
 		return handleMsgWithdrawFromNonce(msg, tx, db, client)
 	case "initializeNonce":
@@ -24,8 +24,8 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.SystemDb, client client.Pro
 	return nil
 }
 
-// handleMsgAdvaceNonce handles a MsgAdvaceNonce
-func handleMsgAdvaceNonce(msg types.Message, tx types.Tx, db db.SystemDb, client client.Proxy) error {
+// handleMsgAdvanceNonce handles a MsgAdvaceNonce
+func handleMsgAdvanceNonce(msg types.Message, tx types.Tx, db db.SystemDb, client client.Proxy) error {
 	instruction, ok := msg.Value.Data().(system.ParsedAdvanceNonceAccount)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "advanceNonce", msg.Value.Type())
