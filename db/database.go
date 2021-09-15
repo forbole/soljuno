@@ -2,6 +2,7 @@ package db
 
 import (
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
+	solana "github.com/forbole/soljuno/solana/types"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/types/logging"
 )
@@ -72,7 +73,8 @@ type TokenDb interface {
 // SystemDb represents a database that supports system properly
 type SystemDb interface {
 	// Save Nonce allows to store the given nonce account data inside the database
-	SaveNonce(address string) error
+	SaveNonce(address string,
+		slot uint64, authority string, blockhash string, feeCalculator solana.FeeCalculator, state string) error
 }
 
 // Context contains the data that might be used to build a Database instance

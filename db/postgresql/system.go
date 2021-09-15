@@ -1,6 +1,8 @@
 package postgresql
 
-import "github.com/forbole/soljuno/solana/types"
+import (
+	solana "github.com/forbole/soljuno/solana/types"
+)
 
 // SaveToken implements the db.SystemDb
 func (db *Database) SaveNonce(
@@ -8,7 +10,7 @@ func (db *Database) SaveNonce(
 	slot uint64,
 	authority string,
 	blockhash string,
-	feeCalculator types.FeeCalculator,
+	feeCalculator solana.FeeCalculator,
 	state string,
 ) error {
 	stmt := `
