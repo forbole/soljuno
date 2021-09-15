@@ -1,4 +1,4 @@
-package token
+package system
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func NewModule(db db.Database, client client.Proxy) *Module {
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "token"
+	return "system"
 }
 
 // HandleMsg implements modules.MessageModule
@@ -30,9 +30,9 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if !tx.Successful() {
 		return nil
 	}
-	tokenDb, ok := m.db.(db.TokenDb)
+	systemDb, ok := m.db.(db.SystemDb)
 	if !ok {
-		return fmt.Errorf("token is enabled, but your database does not implement TokenDb")
+		return fmt.Errorf("system is enabled, but your database does not implement systemDb")
 	}
-	return HandleMsg(msg, tx, tokenDb, m.client)
+	return HandleMsg(msg, tx, systemDb, m.client)
 }

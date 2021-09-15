@@ -51,6 +51,7 @@ type BankDb interface {
 	SaveAccountTokenBalances(slot uint64, accounts []string, balances []clienttypes.TransactionTokenBalance) error
 }
 
+// TokenDb represents a database that supports token properly
 type TokenDb interface {
 	// SaveToken allows to store the given token data inside the database
 	SaveToken(mint string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
@@ -66,6 +67,13 @@ type TokenDb interface {
 
 	// SaveTokenSupply allows to store the given token data inside the database
 	SaveTokenSupply(mint string, slot uint64, supply uint64) error
+}
+
+// SystemDb represents a database that supports system properly
+type SystemDb interface {
+	// SaveNonce allows to store the given nonce account data inside the database
+	SaveNonce(address string,
+		slot uint64, authority string, blockhash string, lamportsPerSignature uint64, state string) error
 }
 
 // Context contains the data that might be used to build a Database instance
