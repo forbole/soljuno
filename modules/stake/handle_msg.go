@@ -83,7 +83,11 @@ func handleMsgSplit(msg types.Message, db db.StakeDb, client client.Proxy) error
 		return fmt.Errorf("instruction does not match %s type: %s", "split", msg.Value.Type())
 
 	}
-	return updateStakeAccount(instruction.StakeAccount, db, client)
+	err := updateStakeAccount(instruction.StakeAccount, db, client)
+	if err != nil {
+		return nil
+	}
+	return updateStakeAccount(instruction.NewSplitAccount, db, client)
 }
 
 // handleMsgWithdraw handles a MsgWithdraw
