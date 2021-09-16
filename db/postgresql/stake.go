@@ -49,7 +49,7 @@ WHERE stake_lockup.slot <= excluded.slot`
 		slot,
 		custodian,
 		epoch,
-		time.Unix(unixTimestamp, 0),
+		time.Unix(unixTimestamp, 0).UTC(),
 	)
 	return err
 }

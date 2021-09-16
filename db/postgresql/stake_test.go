@@ -145,8 +145,6 @@ func (suite *DbTestSuite) TestSaveStakeLockup() {
 
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
-			suite.T().Log(tc.data.UnixTimestamp)
-			suite.T().Log(rows[0].UnixTimestamp)
 			suite.Require().Equal(tc.expected.Address, rows[0].Address)
 			suite.Require().Equal(tc.expected.Slot, rows[0].Slot)
 			suite.Require().Equal(tc.expected.Custodian, rows[0].Custodian)
