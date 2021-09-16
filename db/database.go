@@ -87,6 +87,12 @@ type StakeDb interface {
 	SaveStakeDelegation(address string, slot uint64, activationEpoch uint64, deactivationEpoch uint64, stake uint64, voter string, rate float64) error
 }
 
+// VoteDb represents a database that supports vote properly
+type VoteDb interface {
+	// SaveVoteAccount allows to store the given vote account data inside the database
+	SaveVoteAccount(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
+}
+
 // Context contains the data that might be used to build a Database instance
 type Context struct {
 	Cfg    types.DatabaseConfig

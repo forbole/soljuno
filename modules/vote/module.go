@@ -3,6 +3,7 @@ package vote
 import (
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/solana/program/vote"
 	"github.com/forbole/soljuno/types"
 )
 
@@ -28,6 +29,8 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if !tx.Successful() {
 		return nil
 	}
-
+	if msg.Program != vote.ProgramID {
+		return nil
+	}
 	return HandleMsg(msg, tx, m.db, m.client)
 }
