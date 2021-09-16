@@ -9,6 +9,7 @@ import (
 	"github.com/forbole/soljuno/solana/program/stake"
 )
 
+// updateStakeAccount properly stores the statement of stake account inside the database
 func updateStakeAccount(address string, db db.StakeDb, client client.Proxy) error {
 	info, err := client.AccountInfo(address)
 	if err != nil {
