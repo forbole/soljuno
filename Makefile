@@ -47,7 +47,7 @@ stop-docker-test:
 
 start-docker-test: stop-docker-test
 	@echo "Starting Docker container..."
-	@docker run --name soljuno-test-db -e POSTGRES_USER=soljuno -e POSTGRES_PASSWORD=password -e POSTGRES_DB=soljuno -e -d -p 5433:5432 postgres
+	@docker run --name soljuno-test-db -e POSTGRES_USER=soljuno -e POSTGRES_PASSWORD=password -e POSTGRES_DB=soljuno -d -p 5433:5432 postgres
 .PHONY: start-docker-test
 
 coverage:
