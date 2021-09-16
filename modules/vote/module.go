@@ -1,6 +1,8 @@
 package vote
 
 import (
+	"fmt"
+
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/solana/program/vote"
@@ -32,5 +34,9 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if msg.Program != vote.ProgramID {
 		return nil
 	}
-	return HandleMsg(msg, tx, m.db, m.client)
+	voteDb, ok := m.db.(db.VoteDb)
+	if !ok {
+		return fmt.Errorf("token is enabled, but your database does not implement VoteDb")
+	}
+	return HandleMsg(msg, tx, voteDb, m.client)
 }

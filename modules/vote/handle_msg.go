@@ -7,7 +7,7 @@ import (
 )
 
 // HandleMsg allows to handle different messages types for the vote module
-func HandleMsg(msg types.Message, tx types.Tx, db db.Database, client client.Proxy) error {
+func HandleMsg(msg types.Message, tx types.Tx, db db.VoteDb, client client.Proxy) error {
 	switch msg.Value.Type() {
 	case "initialize":
 	case "authorize":
@@ -19,7 +19,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.Database, client client.Pro
 	return nil
 }
 
-func handleMsgInitialize(msg types.Message, tx types.Tx, db db.Database) error {
+func handleMsgInitialize(msg types.Message, tx types.Tx, db db.VoteDb) error {
 	return nil
 }
 
