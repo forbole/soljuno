@@ -93,6 +93,12 @@ type VoteDb interface {
 	SaveVoteAccount(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
 }
 
+// ConfigDb represents a database that supports config properly
+type ConfigDb interface {
+	// SaveConfigAccount allows to store the given config account data inside the database
+	SaveConfigAccount(address string, slot uint64, owner string, data string) error
+}
+
 // Context contains the data that might be used to build a Database instance
 type Context struct {
 	Cfg    types.DatabaseConfig
