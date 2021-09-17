@@ -5,6 +5,7 @@ import (
 	"github.com/forbole/soljuno/solana/program/stake"
 	"github.com/forbole/soljuno/solana/program/system"
 	"github.com/forbole/soljuno/solana/program/token"
+	"github.com/forbole/soljuno/solana/program/vote"
 )
 
 func Parse(programID string, bz []byte) interface{} {
@@ -16,6 +17,8 @@ func Parse(programID string, bz []byte) interface{} {
 		return systemParse(decoder, bz)
 	case stake.ProgramID:
 		return stakeParse(decoder, bz)
+	case vote.ProgramID:
+		return voteParse(decoder, bz)
 	}
 	return nil
 }
