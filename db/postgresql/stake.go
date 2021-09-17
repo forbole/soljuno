@@ -8,6 +8,7 @@ import (
 
 var _ db.StakeDb = &Database{}
 
+// SaveStake implements the db.StakeDb
 func (db *Database) SaveStake(address string, slot uint64, staker string, withdrawer string, state string) error {
 	stmt := `
 INSERT INTO stake
@@ -31,6 +32,7 @@ WHERE stake.slot <= excluded.slot`
 	return err
 }
 
+// SaveStakeLockup implements the db.StakeDb
 func (db *Database) SaveStakeLockup(address string, slot uint64, custodian string, epoch uint64, unixTimestamp int64) error {
 	stmt := `
 INSERT INTO stake_lockup
@@ -54,6 +56,7 @@ WHERE stake_lockup.slot <= excluded.slot`
 	return err
 }
 
+// SaveStakeDelegation implements the db.StakeDb
 func (db *Database) SaveStakeDelegation(address string, slot uint64, activationEpoch uint64, deactivationEpoch uint64, stake uint64, voter string, rate float64) error {
 	stmt := `
 INSERT INTO stake_delegation

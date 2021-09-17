@@ -4,6 +4,7 @@ import "github.com/forbole/soljuno/db"
 
 var _ db.ConfigDb = &Database{}
 
+// SaveConfigAccount implements the db.ConfigDb
 func (db *Database) SaveConfigAccount(address string, slot uint64, owner string, data string) error {
 	stmt := `
 INSERT INTO config_account
