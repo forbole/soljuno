@@ -1,0 +1,3 @@
+package config
+
+const ProgramID = "Config1111111111111111111111111111111111111"

@@ -36,7 +36,7 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	}
 	voteDb, ok := m.db.(db.VoteDb)
 	if !ok {
-		return fmt.Errorf("token is enabled, but your database does not implement VoteDb")
+		return fmt.Errorf("vote is enabled, but your database does not implement VoteDb")
 	}
 	return HandleMsg(msg, tx, voteDb, m.client)
 }
