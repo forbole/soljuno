@@ -32,7 +32,7 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	}
 	stakeDb, ok := m.db.(db.StakeDb)
 	if !ok {
-		return fmt.Errorf("stake is enabled, but your database does not implement stakeDb")
+		return fmt.Errorf("stake is enabled, but your database does not implement StakeDb")
 	}
 	return HandleMsg(msg, tx, stakeDb, m.client)
 }
