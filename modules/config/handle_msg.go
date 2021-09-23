@@ -11,6 +11,7 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
+// HandleMsg allows to handle different messages types for the config module
 func HandleMsg(msg types.Message, tx types.Tx, db db.ConfigDb, client client.Proxy) error {
 	if len(msg.InvolvedAccounts) != 2 {
 		return nil
