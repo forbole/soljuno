@@ -105,10 +105,10 @@ type BpfLoaderDb interface {
 	SaveBufferAccount(address string, slot uint64, authority string, state string) error
 
 	// SaveProgramAccount allows to store the given program account data inside the database
-	SaveProgramAccount(address string, slot uint64, programAccount string, state string)
+	SaveProgramAccount(address string, slot uint64, programDataAccount string, state string) error
 
 	// SaveProgramDataAccount allows to store the given program data account inside the database
-	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string, state string)
+	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string, state string) error
 }
 
 // Context contains the data that might be used to build a Database instance
