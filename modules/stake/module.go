@@ -5,6 +5,7 @@ import (
 
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/solana/program/stake"
 	"github.com/forbole/soljuno/types"
 )
 
@@ -28,6 +29,9 @@ func (m *Module) Name() string {
 // HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if !tx.Successful() {
+		return nil
+	}
+	if msg.Program != stake.ProgramID {
 		return nil
 	}
 	stakeDb, ok := m.db.(db.StakeDb)
