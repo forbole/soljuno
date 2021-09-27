@@ -11,12 +11,14 @@ import (
 )
 
 type Module struct {
-	db db.Database
+	db     db.Database
+	client client.Proxy
 }
 
 func NewModule(db db.Database, client client.Proxy) *Module {
 	return &Module{
-		db: db,
+		db:     db,
+		client: client,
 	}
 }
 
@@ -37,5 +39,5 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if !ok {
 		return fmt.Errorf("bpfloader is enabled, but your database does not implement BpfLoaderDb")
 	}
-	return HandleMsg(msg, tx, bpfLoaderDb)
+	return HandleMsg(msg, tx, bpfLoaderDb, m.client)
 }
