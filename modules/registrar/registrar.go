@@ -7,7 +7,12 @@ import (
 	"github.com/forbole/soljuno/types"
 
 	"github.com/forbole/soljuno/modules/bank"
+	"github.com/forbole/soljuno/modules/bpfloader"
+	"github.com/forbole/soljuno/modules/config"
 	"github.com/forbole/soljuno/modules/pruning"
+	"github.com/forbole/soljuno/modules/stake"
+	"github.com/forbole/soljuno/modules/system"
+	"github.com/forbole/soljuno/modules/token"
 
 	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/modules/messages"
@@ -78,6 +83,11 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		pruning.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Logger),
 		messages.NewModule(ctx.Database),
 		bank.NewModule(ctx.Database),
+		system.NewModule(ctx.Database, ctx.Proxy),
+		stake.NewModule(ctx.Database, ctx.Proxy),
+		token.NewModule(ctx.Database, ctx.Proxy),
+		config.NewModule(ctx.Database, ctx.Proxy),
+		bpfloader.NewModule(ctx.Database, ctx.Proxy),
 	}
 }
 
