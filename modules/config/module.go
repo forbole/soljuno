@@ -34,9 +34,9 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if msg.Program != config.ProgramID {
 		return nil
 	}
-	_, ok := m.db.(db.ConfigDb)
+	configDb, ok := m.db.(db.ConfigDb)
 	if !ok {
 		return fmt.Errorf("config is enabled, but your database does not implement ConfigDb")
 	}
-	return nil
+	return HandleMsg(msg, tx, configDb, m.client)
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
-	"github.com/forbole/soljuno/solana/program/system"
 )
 
 // updateNonce properly stores the statement of nonce inside the database
@@ -25,7 +24,7 @@ func updateNonce(address string, db db.SystemDb, client client.Proxy) error {
 		return err
 	}
 
-	nonce, ok := accountParser.Parse(system.ProgramID, bz).(accountParser.NonceAccount)
+	nonce, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.NonceAccount)
 	if !ok {
 		return db.SaveNonce(address, info.Context.Slot, "", "", 0, "closed")
 	}

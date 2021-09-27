@@ -6,7 +6,6 @@ import (
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
-	"github.com/forbole/soljuno/solana/program/stake"
 )
 
 // updateStakeAccount properly stores the statement of stake account inside the database
@@ -31,7 +30,7 @@ func updateStakeAccount(address string, db db.StakeDb, client client.Proxy) erro
 		return err
 	}
 
-	stakeAccount, ok := accountParser.Parse(stake.ProgramID, bz).(accountParser.StakeAccount)
+	stakeAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.StakeAccount)
 	if !ok {
 		return db.SaveStake(
 			address,

@@ -12,31 +12,31 @@ func stakeParse(decoder bincode.Decoder, bz []byte) interface{} {
 	return stakeAccount
 }
 
-type State uint32
+type StakeState uint32
 
-func (s State) String() string {
+func (s StakeState) String() string {
 	switch s {
-	case UninitializedState:
+	case UninitializedStakeState:
 		return "uninitialized"
-	case InitializedState:
+	case InitializedStakeState:
 		return "initialized"
-	case StakeState:
+	case StakedStakeState:
 		return "stake"
-	case RewardsPoolState:
+	case RewardsPoolStakeState:
 		return "rewardsPool"
 	}
 	return "unknown"
 }
 
 const (
-	UninitializedState State = iota
-	InitializedState
-	StakeState
-	RewardsPoolState
+	UninitializedStakeState StakeState = iota
+	InitializedStakeState
+	StakedStakeState
+	RewardsPoolStakeState
 )
 
 type StakeAccount struct {
-	State State
+	State StakeState
 	Meta  Meta
 	Stake Stake
 }

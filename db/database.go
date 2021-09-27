@@ -99,6 +99,18 @@ type ConfigDb interface {
 	SaveConfigAccount(address string, slot uint64, owner string, data string) error
 }
 
+// BpfLoaderDb represents a database that supports bpf loader properly
+type BpfLoaderDb interface {
+	// SaveBufferAccount allows to store the given buffer account data inside the database
+	SaveBufferAccount(address string, slot uint64, authority string, state string) error
+
+	// SaveProgramAccount allows to store the given program account data inside the database
+	SaveProgramAccount(address string, slot uint64, programDataAccount string, state string) error
+
+	// SaveProgramDataAccount allows to store the given program data account inside the database
+	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string, state string) error
+}
+
 // Context contains the data that might be used to build a Database instance
 type Context struct {
 	Cfg    types.DatabaseConfig

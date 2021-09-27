@@ -7,10 +7,10 @@ import (
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
-	"github.com/forbole/soljuno/solana/program/config"
 	"github.com/forbole/soljuno/types"
 )
 
+// HandleMsg allows to handle different messages types for the config module
 func HandleMsg(msg types.Message, tx types.Tx, db db.ConfigDb, client client.Proxy) error {
 	if len(msg.InvolvedAccounts) != 2 {
 		return nil
@@ -24,7 +24,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.ConfigDb, client client.Pro
 	if err != nil {
 		return err
 	}
-	configAccount, ok := accountParser.Parse(config.ProgramID, bz).(accountParser.ConfigAccount)
+	configAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.ConfigAccount)
 	if !ok {
 		return fmt.Errorf("failed to parse config account")
 	}

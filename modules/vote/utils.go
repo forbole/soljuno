@@ -6,7 +6,6 @@ import (
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
-	"github.com/forbole/soljuno/solana/program/vote"
 )
 
 // updateVoteAccount properly stores the statement of vote account inside the database
@@ -22,7 +21,7 @@ func updateVoteAccount(address string, db db.VoteDb, client client.Proxy) error 
 	if err != nil {
 		return err
 	}
-	voteAccount, ok := accountParser.Parse(vote.ProgramID, bz).(accountParser.VoteAccount)
+	voteAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.VoteAccount)
 	if !ok {
 		return db.SaveVoteAccount(address, info.Context.Slot, "", "", "", 0)
 	}
