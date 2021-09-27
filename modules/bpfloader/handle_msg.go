@@ -43,8 +43,13 @@ func handleMsgDeployWithMaxDataLen(msg types.Message, db db.BpfLoaderDb, client 
 		return fmt.Errorf("instruction does not match %s type: %s", "deployWithMaxDataLen", msg.Value.Type())
 
 	}
-	return updateProgramAccount(instruction.ProgramAccount, db, client)
-
+	if err := updateBufferAccount(instruction.BufferAccount, db, client); err != nil {
+		return err
+	}
+	if err := updateProgramAccount(instruction.ProgramAccount, db, client); err != nil {
+		return err
+	}
+	return updateProgramDataAccount(instruction.ProgramDataAccount, db, client)
 }
 
 // handleMsgUpgrade handles a MsgUpgrade
@@ -54,6 +59,12 @@ func handleMsgUpgrade(msg types.Message, db db.BpfLoaderDb, client client.Proxy)
 		return fmt.Errorf("instruction does not match %s type: %s", "upgrade", msg.Value.Type())
 
 	}
+	if err := updateBufferAccount(instruction.BufferAccount, db, client); err != nil {
+		return err
+	}
+	if err := updateProgramAccount(instruction.ProgramAccount, db, client); err != nil {
+		return err
+	}
 	return updateProgramDataAccount(instruction.ProgramDataAccount, db, client)
 }
 
@@ -62,9 +73,10 @@ func handleMsgSetAuthority(msg types.Message, db db.BpfLoaderDb, client client.P
 	instruction, ok := msg.Value.Data().(upgradableLoader.ParsedSetAuthority)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "setAuthority", msg.Value.Type())
-
 	}
-
+	if err := updateBufferAccount(instruction.Account, db, client); err != nil {
+		return err
+	}
 	return updateProgramDataAccount(instruction.Account, db, client)
 }
 
