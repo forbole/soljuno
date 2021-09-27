@@ -7,7 +7,6 @@ import (
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
-	"github.com/forbole/soljuno/solana/program/token"
 )
 
 // updateDelegation properly stores the statement of delegation inside the database
@@ -26,7 +25,7 @@ func updateDelegation(source string, db db.TokenDb, client client.Proxy) error {
 		return err
 	}
 
-	tokenAccount, ok := accountParser.Parse(token.ProgramID, bz).(accountParser.TokenAccount)
+	tokenAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenAccount)
 	if !ok {
 		return db.SaveDelegate(source, "", info.Context.Slot, 0)
 	}
@@ -46,7 +45,7 @@ func updateMintState(mint string, db db.TokenDb, client client.Proxy) error {
 		return err
 	}
 
-	token, ok := accountParser.Parse(token.ProgramID, bz).(accountParser.TokenMint)
+	token, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenMint)
 	if !ok {
 		return fmt.Errorf("failed to parse token:%s", mint)
 	}
@@ -76,7 +75,7 @@ func updateAccountState(address string, db db.TokenDb, client client.Proxy) erro
 		return err
 	}
 
-	tokenAccount, ok := accountParser.Parse(token.ProgramID, bz).(accountParser.TokenAccount)
+	tokenAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenAccount)
 	if !ok {
 		return db.SaveTokenAccount(address, info.Context.Slot, "", "", "closed")
 	}
@@ -95,7 +94,7 @@ func updateTokenSupply(mint string, db db.TokenDb, client client.Proxy) error {
 		return err
 	}
 
-	token, ok := accountParser.Parse(token.ProgramID, bz).(accountParser.TokenMint)
+	token, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenMint)
 	if !ok {
 		return fmt.Errorf("failed to parse token:%s", mint)
 	}
