@@ -79,7 +79,7 @@ func (db *Database) saveUpToDateTokenBalances(paramsNumber int, slot uint64, acc
 ON CONFLICT (address) DO UPDATE
     SET slot = excluded.slot,
         balance = excluded.balance
-WHERE account_balance.slot <= excluded.slot
+WHERE token_account_balance.slot <= excluded.slot
 `
 
 	_, err := db.Sqlx.Exec(stmt, params...)
