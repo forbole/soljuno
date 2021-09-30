@@ -29,6 +29,7 @@ type Block struct {
 	Slot      uint64
 	Hash      string
 	Proposer  string
+	Rewards   []clienttypes.Reward
 	Timestamp time.Time
 	Txs       []Tx
 }
@@ -47,7 +48,8 @@ func NewBlock(slot uint64, hash, proposer string, timestamp time.Time, txs []Tx)
 // NewBlockFromResult allows to build new Block instance from BlockResult
 func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockResult) Block {
 	proposer := ""
-	for _, reward := range b.Rewards {
+	rewards := b.Rewards
+	for _, reward := range rewards {
 		if reward.RewardType == clienttypes.RewardFee {
 			proposer = reward.Pubkey
 			break
@@ -108,6 +110,7 @@ func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockRe
 	return Block{
 		Slot:      slot,
 		Hash:      b.Blockhash,
+		Rewards:   rewards,
 		Proposer:  proposer,
 		Timestamp: time.Unix(int64(b.BlockTime), 0),
 		Txs:       txs,
