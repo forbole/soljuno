@@ -56,7 +56,7 @@ func (suite *DbTestSuite) TestSaveNonce() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveNonce(
+			err := suite.database.SaveNonceAccount(
 				tc.data.Address,
 				tc.data.Slot,
 				tc.data.Authority,
@@ -68,7 +68,7 @@ func (suite *DbTestSuite) TestSaveNonce() {
 
 			// Verify the data
 			rows := []NonceRow{}
-			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM nonce")
+			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM nonce_account")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
 			suite.Require().Equal(tc.expected, rows[0])

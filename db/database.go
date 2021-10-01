@@ -71,14 +71,14 @@ type TokenDb interface {
 
 // SystemDb represents a database that supports system properly
 type SystemDb interface {
-	// SaveNonce allows to store the given nonce account data inside the database
-	SaveNonce(address string, slot uint64, authority string, blockhash string, lamportsPerSignature uint64, state string) error
+	// SaveNonceAccount allows to store the given nonce account data inside the database
+	SaveNonceAccount(address string, slot uint64, authority string, blockhash string, lamportsPerSignature uint64, state string) error
 }
 
 // StakeDb represents a database that supports stake properly
 type StakeDb interface {
-	// SaveStake allows to store the given stake account data inside the database
-	SaveStake(address string, slot uint64, staker string, withdrawer string, state string) error
+	// SaveStakeAccount allows to store the given stake account data inside the database
+	SaveStakeAccount(address string, slot uint64, staker string, withdrawer string, state string) error
 
 	// SaveStakeLockup allows to store the given stake account lockup state inside the database
 	SaveStakeLockup(address string, slot uint64, custodian string, epoch uint64, unixTimestamp int64) error
