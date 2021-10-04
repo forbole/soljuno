@@ -117,7 +117,7 @@ type StakeDb interface {
 	StakeCheckerDb
 }
 
-// SystemCheckerDb represents a database that checks account statement of stake properly
+// SystemCheckerDb represents a database that checks account statement of system properly
 type StakeCheckerDb interface {
 	// CheckStakeAccountLatest checks if the stake account statement is latest
 	CheckStakeAccountLatest(address string, currentSlot uint64) bool
@@ -128,11 +128,12 @@ type VoteDb interface {
 	// SaveVoteAccount allows to store the given vote account data inside the database
 	SaveVoteAccount(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
 
-	VoteChecker
+	VoteCheckerDb
 }
 
-type VoteChecker interface {
-	// CheckVoteAccountLatest checks if the stake account statement is latest
+// VoteCheckerDb represents a database that checks account statement of vote properly
+type VoteCheckerDb interface {
+	// CheckVoteAccountLatest checks if the vote account statement is latest
 	CheckVoteAccountLatest(address string, currentSlot uint64) bool
 }
 
@@ -152,6 +153,19 @@ type BpfLoaderDb interface {
 
 	// SaveProgramDataAccount allows to store the given program data account inside the database
 	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string, state string) error
+
+	BpfLoaderCheckerDb
+}
+
+type BpfLoaderCheckerDb interface {
+	// CheckBufferAccountLatest checks if the buffer account statement is latest
+	CheckBufferAccountLatest(address string, currentSlot uint64) bool
+
+	// CheckProgramAccountLatest checks if the program account statement is latest
+	CheckProgramAccountLatest(address string, currentSlot uint64) bool
+
+	// CheckProgramDataAccountLatest checks if the program data account statement is latest
+	CheckProgramDataAccountLatest(address string, currentSlot uint64) bool
 }
 
 // Context contains the data that might be used to build a Database instance
