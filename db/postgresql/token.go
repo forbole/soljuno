@@ -80,8 +80,8 @@ WHERE multisig.slot <= excluded.slot`
 	return err
 }
 
-// SaveDelegate implements the db.TokenDb
-func (db *Database) SaveDelegate(source string, delegate string, slot uint64, amount uint64) error {
+// SaveTokenDelegate implements the db.TokenDb
+func (db *Database) SaveTokenDelegate(source string, delegate string, slot uint64, amount uint64) error {
 	stmt := `
 INSERT INTO token_delegate
 	(source_address, delegate_address, slot, amount)
