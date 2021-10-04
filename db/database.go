@@ -71,7 +71,7 @@ type TokenDb interface {
 	TokenCheckerDb
 }
 
-// TokenCheckerDb represents a database that checks if token statement is latest
+// TokenCheckerDb represents a database that checks account statement of token properly
 type TokenCheckerDb interface {
 	// CheckTokenLatest checks if the token statement is latest
 	CheckTokenLatest(address string, currentSlot uint64) bool
@@ -89,10 +89,18 @@ type TokenCheckerDb interface {
 	CheckTokenSupplyLatest(address string, currentSlot uint64) bool
 }
 
-// SystemDb represents a database that supports system properly
+// SystemDb represents a database that checks account statement of system properly
 type SystemDb interface {
 	// SaveNonceAccount allows to store the given nonce account data inside the database
 	SaveNonceAccount(address string, slot uint64, authority string, blockhash string, lamportsPerSignature uint64, state string) error
+
+	SystemCheckerDb
+}
+
+// SystemCheckerDb represents a database that checks account statement of stake properly
+type SystemCheckerDb interface {
+	// CheckNonceAccountLatest checks if the nonce account statement is latest
+	CheckNonceAccountLatest(address string, currentSlot uint64) bool
 }
 
 // StakeDb represents a database that supports stake properly
@@ -106,6 +114,8 @@ type StakeDb interface {
 	// SaveStakeDelegation allows to store the given delegation of stake account inside the database
 	SaveStakeDelegation(address string, slot uint64, activationEpoch uint64, deactivationEpoch uint64, stake uint64, voter string, rate float64) error
 }
+
+type StakeCheckerDb interface{}
 
 // VoteDb represents a database that supports vote properly
 type VoteDb interface {

@@ -9,7 +9,11 @@ import (
 )
 
 // updateNonce properly stores the statement of nonce inside the database
-func updateNonce(address string, db db.SystemDb, client client.Proxy) error {
+func updateNonce(address string, currentSlot uint64, db db.SystemDb, client client.Proxy) error {
+	if !db.CheckNonceAccountLatest(address, currentSlot) {
+		return nil
+	}
+
 	info, err := client.AccountInfo(address)
 	if err != nil {
 		return err
