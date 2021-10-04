@@ -54,7 +54,7 @@ type BankDb interface {
 // TokenDb represents a database that supports token properly
 type TokenDb interface {
 	// SaveToken allows to store the given token data inside the database
-	SaveToken(mint string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
+	SaveToken(address string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
 
 	// SaveTokenAccount allows to store the given token account data inside the database
 	SaveTokenAccount(address string, slot uint64, mint, owner, state string) error
@@ -63,34 +63,78 @@ type TokenDb interface {
 	SaveMultisig(address string, slot uint64, singers []string, m uint8) error
 
 	// SaveDelegate allows to store the given approve state inside the database
-	SaveDelegate(source string, destination string, slot uint64, amount uint64) error
+	SaveTokenDelegate(source string, destination string, slot uint64, amount uint64) error
 
 	// SaveTokenSupply allows to store the given token data inside the database
-	SaveTokenSupply(mint string, slot uint64, supply uint64) error
+	SaveTokenSupply(address string, slot uint64, supply uint64) error
+
+	TokenCheckerDb
 }
 
-// SystemDb represents a database that supports system properly
+// TokenCheckerDb represents a database that checks account statement of token properly
+type TokenCheckerDb interface {
+	// CheckTokenLatest checks if the token statement is latest
+	CheckTokenLatest(address string, currentSlot uint64) bool
+
+	// CheckTokenAccountLatest checks if the token account statement is latest
+	CheckTokenAccountLatest(address string, currentSlot uint64) bool
+
+	// CheckMultisigLatest checks if the multisig statement is latest
+	CheckMultisigLatest(address string, currentSlot uint64) bool
+
+	// CheckTokenDelegateLatest checks delegate statement
+	CheckTokenDelegateLatest(address string, currentSlot uint64) bool
+
+	// CheckTokenSupplyLatest checks if the token supply statement is latest
+	CheckTokenSupplyLatest(address string, currentSlot uint64) bool
+}
+
+// SystemDb represents a database that checks account statement of system properly
 type SystemDb interface {
-	// SaveNonce allows to store the given nonce account data inside the database
-	SaveNonce(address string, slot uint64, authority string, blockhash string, lamportsPerSignature uint64, state string) error
+	// SaveNonceAccount allows to store the given nonce account data inside the database
+	SaveNonceAccount(address string, slot uint64, authority string, blockhash string, lamportsPerSignature uint64, state string) error
+
+	SystemCheckerDb
+}
+
+// SystemCheckerDb represents a database that checks account statement of system properly
+type SystemCheckerDb interface {
+	// CheckNonceAccountLatest checks if the nonce account statement is latest
+	CheckNonceAccountLatest(address string, currentSlot uint64) bool
 }
 
 // StakeDb represents a database that supports stake properly
 type StakeDb interface {
-	// SaveStake allows to store the given stake account data inside the database
-	SaveStake(address string, slot uint64, staker string, withdrawer string, state string) error
+	// SaveStakeAccount allows to store the given stake account data inside the database
+	SaveStakeAccount(address string, slot uint64, staker string, withdrawer string, state string) error
 
 	// SaveStakeLockup allows to store the given stake account lockup state inside the database
 	SaveStakeLockup(address string, slot uint64, custodian string, epoch uint64, unixTimestamp int64) error
 
 	// SaveStakeDelegation allows to store the given delegation of stake account inside the database
 	SaveStakeDelegation(address string, slot uint64, activationEpoch uint64, deactivationEpoch uint64, stake uint64, voter string, rate float64) error
+
+	StakeCheckerDb
+}
+
+// SystemCheckerDb represents a database that checks account statement of system properly
+type StakeCheckerDb interface {
+	// CheckStakeAccountLatest checks if the stake account statement is latest
+	CheckStakeAccountLatest(address string, currentSlot uint64) bool
 }
 
 // VoteDb represents a database that supports vote properly
 type VoteDb interface {
 	// SaveVoteAccount allows to store the given vote account data inside the database
 	SaveVoteAccount(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
+
+	VoteCheckerDb
+}
+
+// VoteCheckerDb represents a database that checks account statement of vote properly
+type VoteCheckerDb interface {
+	// CheckVoteAccountLatest checks if the vote account statement is latest
+	CheckVoteAccountLatest(address string, currentSlot uint64) bool
 }
 
 // ConfigDb represents a database that supports config properly
@@ -109,6 +153,19 @@ type BpfLoaderDb interface {
 
 	// SaveProgramDataAccount allows to store the given program data account inside the database
 	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string, state string) error
+
+	BpfLoaderCheckerDb
+}
+
+type BpfLoaderCheckerDb interface {
+	// CheckBufferAccountLatest checks if the buffer account statement is latest
+	CheckBufferAccountLatest(address string, currentSlot uint64) bool
+
+	// CheckProgramAccountLatest checks if the program account statement is latest
+	CheckProgramAccountLatest(address string, currentSlot uint64) bool
+
+	// CheckProgramDataAccountLatest checks if the program data account statement is latest
+	CheckProgramDataAccountLatest(address string, currentSlot uint64) bool
 }
 
 // Context contains the data that might be used to build a Database instance

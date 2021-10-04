@@ -1,4 +1,4 @@
-CREATE TABLE stake
+CREATE TABLE stake_account
 (
     address     TEXT    NOT NULL PRIMARY KEY,
     slot        BIGINT  NOT NULL,

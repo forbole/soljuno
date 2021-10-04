@@ -9,7 +9,7 @@ CREATE TABLE token
 
 CREATE TABLE token_supply
 (
-    mint    TEXT    NOT NULL REFERENCES token (mint),
+    mint    TEXT    NOT NULL PRIMARY KEY,
     slot    BIGINT  NOT NULL,
     supply  BIGINT  NOT NULL
 );

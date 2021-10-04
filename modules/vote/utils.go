@@ -9,7 +9,11 @@ import (
 )
 
 // updateVoteAccount properly stores the statement of vote account inside the database
-func updateVoteAccount(address string, db db.VoteDb, client client.Proxy) error {
+func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client client.Proxy) error {
+	if !db.CheckVoteAccountLatest(address, currentSlot) {
+		return nil
+	}
+
 	info, err := client.AccountInfo(address)
 	if err != nil {
 		return err
