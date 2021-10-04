@@ -54,7 +54,7 @@ type BankDb interface {
 // TokenDb represents a database that supports token properly
 type TokenDb interface {
 	// SaveToken allows to store the given token data inside the database
-	SaveToken(mint string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
+	SaveToken(address string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
 
 	// SaveTokenAccount allows to store the given token account data inside the database
 	SaveTokenAccount(address string, slot uint64, mint, owner, state string) error
@@ -63,10 +63,30 @@ type TokenDb interface {
 	SaveMultisig(address string, slot uint64, singers []string, m uint8) error
 
 	// SaveDelegate allows to store the given approve state inside the database
-	SaveDelegate(source string, destination string, slot uint64, amount uint64) error
+	SaveTokenDelegate(source string, destination string, slot uint64, amount uint64) error
 
 	// SaveTokenSupply allows to store the given token data inside the database
-	SaveTokenSupply(mint string, slot uint64, supply uint64) error
+	SaveTokenSupply(address string, slot uint64, supply uint64) error
+
+	TokenCheckerDb
+}
+
+// TokenCheckerDb represents a database that checks if token statement is latest
+type TokenCheckerDb interface {
+	// CheckTokenLatest checks if the token statement is latest
+	CheckTokenLatest(address string, currentSlot uint64) bool
+
+	// CheckTokenAccountLatest checks if the token account statement is latest
+	CheckTokenAccountLatest(address string, currentSlot uint64) bool
+
+	// CheckMultisigLatest checks if the multisig statement is latest
+	CheckMultisigLatest(address string, currentSlot uint64) bool
+
+	// CheckTokenDelegateLatest checks delegate statement
+	CheckTokenDelegateLatest(address string, currentSlot uint64) bool
+
+	// CheckTokenSupplyLatest checks if the token supply statement is latest
+	CheckTokenSupplyLatest(address string, currentSlot uint64) bool
 }
 
 // SystemDb represents a database that supports system properly

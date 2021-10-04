@@ -10,14 +10,18 @@ import (
 )
 
 // updateDelegation properly stores the statement of delegation inside the database
-func updateDelegation(source string, db db.TokenDb, client client.Proxy) error {
+func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+	if !db.CheckTokenDelegateLatest(source, currentSlot) {
+		return nil
+	}
+
 	info, err := client.AccountInfo(source)
 	if err != nil {
 		return err
 	}
 
 	if info.Value == nil {
-		return db.SaveDelegate(source, "", info.Context.Slot, 0)
+		return db.SaveTokenDelegate(source, "", info.Context.Slot, 0)
 	}
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
@@ -27,14 +31,18 @@ func updateDelegation(source string, db db.TokenDb, client client.Proxy) error {
 
 	tokenAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenAccount)
 	if !ok {
-		return db.SaveDelegate(source, "", info.Context.Slot, 0)
+		return db.SaveTokenDelegate(source, "", info.Context.Slot, 0)
 	}
 
-	return db.SaveDelegate(source, tokenAccount.Delegate.String(), info.Context.Slot, tokenAccount.DelegateAmount)
+	return db.SaveTokenDelegate(source, tokenAccount.Delegate.String(), info.Context.Slot, tokenAccount.DelegateAmount)
 }
 
 // updateMintState properly stores the authority of mint inside the database
-func updateMintState(mint string, db db.TokenDb, client client.Proxy) error {
+func updateMintState(mint string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+	if !db.CheckTokenLatest(mint, currentSlot) {
+		return nil
+	}
+
 	info, err := client.AccountInfo(mint)
 	if err != nil {
 		return err
@@ -60,7 +68,11 @@ func updateMintState(mint string, db db.TokenDb, client client.Proxy) error {
 }
 
 // updateAccountState properly stores the account state inside database
-func updateAccountState(address string, db db.TokenDb, client client.Proxy) error {
+func updateAccountState(address string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+	if !db.CheckTokenAccountLatest(address, currentSlot) {
+		return nil
+	}
+
 	info, err := client.AccountInfo(address)
 	if err != nil {
 		return err
@@ -83,7 +95,11 @@ func updateAccountState(address string, db db.TokenDb, client client.Proxy) erro
 }
 
 // updateTokenSupply properly stores the supply of the given mint inside the database
-func updateTokenSupply(mint string, db db.TokenDb, client client.Proxy) error {
+func updateTokenSupply(mint string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+	if !db.CheckTokenSupplyLatest(mint, currentSlot) {
+		return nil
+	}
+
 	info, err := client.AccountInfo(mint)
 	if err != nil {
 		return err
