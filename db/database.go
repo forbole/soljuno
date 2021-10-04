@@ -119,7 +119,7 @@ type StakeDb interface {
 
 // SystemCheckerDb represents a database that checks account statement of stake properly
 type StakeCheckerDb interface {
-	// CheckNonceAccountLatest checks if the stake account statement is latest
+	// CheckStakeAccountLatest checks if the stake account statement is latest
 	CheckStakeAccountLatest(address string, currentSlot uint64) bool
 }
 
@@ -127,6 +127,13 @@ type StakeCheckerDb interface {
 type VoteDb interface {
 	// SaveVoteAccount allows to store the given vote account data inside the database
 	SaveVoteAccount(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
+
+	VoteChecker
+}
+
+type VoteChecker interface {
+	// CheckVoteAccountLatest checks if the stake account statement is latest
+	CheckVoteAccountLatest(address string, currentSlot uint64) bool
 }
 
 // ConfigDb represents a database that supports config properly
