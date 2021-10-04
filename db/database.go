@@ -97,7 +97,7 @@ type SystemDb interface {
 	SystemCheckerDb
 }
 
-// SystemCheckerDb represents a database that checks account statement of stake properly
+// SystemCheckerDb represents a database that checks account statement of system properly
 type SystemCheckerDb interface {
 	// CheckNonceAccountLatest checks if the nonce account statement is latest
 	CheckNonceAccountLatest(address string, currentSlot uint64) bool
@@ -113,9 +113,15 @@ type StakeDb interface {
 
 	// SaveStakeDelegation allows to store the given delegation of stake account inside the database
 	SaveStakeDelegation(address string, slot uint64, activationEpoch uint64, deactivationEpoch uint64, stake uint64, voter string, rate float64) error
+
+	StakeCheckerDb
 }
 
-type StakeCheckerDb interface{}
+// SystemCheckerDb represents a database that checks account statement of stake properly
+type StakeCheckerDb interface {
+	// CheckNonceAccountLatest checks if the stake account statement is latest
+	CheckStakeAccountLatest(address string, currentSlot uint64) bool
+}
 
 // VoteDb represents a database that supports vote properly
 type VoteDb interface {

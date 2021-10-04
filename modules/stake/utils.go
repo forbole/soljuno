@@ -9,7 +9,11 @@ import (
 )
 
 // updateStakeAccount properly stores the statement of stake account inside the database
-func updateStakeAccount(address string, db db.StakeDb, client client.Proxy) error {
+func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, client client.Proxy) error {
+	if !db.CheckStakeAccountLatest(address, currentSlot) {
+		return nil
+	}
+
 	info, err := client.AccountInfo(address)
 	if err != nil {
 		return err
