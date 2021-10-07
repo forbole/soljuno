@@ -7,3 +7,4 @@ CREATE TABLE vote_account
     withdrawer  TEXT    NOT NULL,
     commission  INT     NOT NULL
 );
+CREATE INDEX vote_account_voter_index ON vote_account (voter);

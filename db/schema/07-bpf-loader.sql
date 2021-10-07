@@ -5,6 +5,7 @@ CREATE TABLE buffer_account
     authority   TEXT    NOT NULL,
     state       TEXT    NOT NULL
 );
+CREATE INDEX buffer_account_authority_index ON buffer_account (authority);
 
 CREATE TABLE program_account
 (
@@ -23,4 +24,6 @@ CREATE TABLE program_data_account
     update_authority        TEXT    NOT NULL,
     state                   TEXT    NOT NULL
 );
+CREATE INDEX program_data_account_authority_index ON program_data_account (update_authority);
+
 
