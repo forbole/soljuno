@@ -6,6 +6,7 @@ CREATE TABLE stake
     withdrawer  TEXT    NOT NULL,
     state       TEXT    NOT NULL
 );
+CREATE INDEX stake_staker_index ON stake (staker);
 
 CREATE TABLE stake_lockup
 (

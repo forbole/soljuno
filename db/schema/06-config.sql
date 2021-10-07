@@ -5,3 +5,4 @@ CREATE TABLE config_account
     owner       TEXT    NOT NULL,
     value       JSONB   NOT NULL DEFAULT '{}'::JSONB
 );
+CREATE INDEX config_account_owner_index ON config_account (owner);

@@ -6,6 +6,7 @@ CREATE TABLE token
     mint_authority      TEXT,
     freeze_authority    TEXT
 );
+CREATE INDEX token_authority_index ON token (mint_authority);
 
 CREATE TABLE token_supply
 (
@@ -22,6 +23,7 @@ CREATE TABLE token_account
     owner   TEXT    NOT NULL,
     state   TEXT    NOT NULL
 );
+CREATE INDEX token_account_owner_index ON token_account (owner);
 
 CREATE TABLE multisig
 (
