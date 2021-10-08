@@ -131,12 +131,17 @@ func StartParsing(ctx *Context) error {
 		exportQueue <- 0
 	}
 
+	latestSlot, err := ctx.Proxy.LatestSlot()
+	if err != nil {
+		panic(fmt.Errorf("failed to get last block from RPC client: %s", err))
+	}
 	if cfg.ShouldParseOldBlocks() {
-		go enqueueMissingSlots(exportQueue, ctx)
+		cfg := types.Cfg.GetParsingConfig()
+		go enqueueMissingSlots(ctx, exportQueue, cfg.GetStartSlot(), latestSlot)
 	}
 
 	if cfg.ShouldParseNewBlocks() {
-		go startNewBlockListener(exportQueue, ctx)
+		go startNewBlockListener(ctx, exportQueue, latestSlot)
 	}
 
 	// Block main process (signal capture will call WaitGroup's Done)
@@ -146,31 +151,38 @@ func StartParsing(ctx *Context) error {
 
 // enqueueMissingSlots enqueue jobs (block slots) for missed blocks starting
 // at the startSlot up until the latest known slot.
-func enqueueMissingSlots(exportQueue types.SlotQueue, ctx *Context) {
-	// Get the config
-	cfg := types.Cfg.GetParsingConfig()
-
-	// Get the latest slot
-	latestBlockSlot, err := ctx.Proxy.LatestSlot()
-	if err != nil {
-		panic(fmt.Errorf("failed to get last block from RPC client: %s", err))
-	}
-
-	// TODO solana fastsync module
-
-	ctx.Logger.Info("syncing missing blocks...", "latest_block_slot", latestBlockSlot)
-	for i := cfg.GetStartSlot(); i <= latestBlockSlot; i++ {
-		ctx.Logger.Debug("enqueueing missing block", "slot", i)
-		exportQueue <- i
+func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64, end uint64) {
+	ctx.Logger.Info("syncing missing blocks...", "latest_block_slot", end)
+	for i := start; i < end; {
+		next := i + 25
+		if next > end {
+			next = end
+		}
+		slots, err := ctx.Proxy.Slots(i, i+next)
+		if err != nil {
+			continue
+		}
+		for _, slot := range slots {
+			ctx.Logger.Debug("enqueueing missing block", "slot", slot)
+			exportQueue <- slot
+		}
+		i = next
 	}
 }
 
-// TODO rebuild for json rpc websocket to subscribe
-// startNewBlockListener subscribes to new block events via the Tendermint RPC
-// and enqueues each new block height onto the provided queue. It blocks as new
+// startNewBlockListener subscribes to new block events via the RPC
+// and enqueues each new block slot onto the provided queue. It blocks as new
 // blocks are incoming.
-func startNewBlockListener(exportQueue types.SlotQueue, ctx *Context) {
-
+func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint64) {
+	for {
+		end, err := ctx.Proxy.LatestSlot()
+		if err != nil {
+			continue
+		}
+		enqueueMissingSlots(ctx, exportQueue, start, end)
+		start = end
+		time.Sleep(time.Second)
+	}
 }
 
 // trapSignal will listen for any OS signal and invoke Done on the main
