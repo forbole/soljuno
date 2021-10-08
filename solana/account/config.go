@@ -1,8 +1,6 @@
 package account_parser
 
 import (
-	"fmt"
-
 	"github.com/forbole/soljuno/solana/bincode"
 	"github.com/forbole/soljuno/solana/types"
 )
@@ -18,7 +16,6 @@ func configParse(decoder bincode.Decoder, bz []byte) interface{} {
 		decoder.Decode(bz[pos:], &configAccount.Keys[i])
 		pos += 33
 	}
-	fmt.Println(bz[pos:])
 	decoder.Decode(bz[pos:], &configAccount.Info)
 	return configAccount
 }
