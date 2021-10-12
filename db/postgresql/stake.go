@@ -9,9 +9,9 @@ import (
 var _ db.StakeDb = &Database{}
 
 // SaveStake implements the db.StakeDb
-func (db *Database) SaveStake(address string, slot uint64, staker string, withdrawer string, state string) error {
+func (db *Database) SaveStakeAccount(address string, slot uint64, staker string, withdrawer string, state string) error {
 	stmt := `
-INSERT INTO stake
+INSERT INTO stake_account
 	(address, slot, staker, withdrawer, state)
 VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT (address) DO UPDATE
@@ -19,7 +19,7 @@ ON CONFLICT (address) DO UPDATE
 	staker = excluded.staker,
 	withdrawer = excluded.withdrawer,
 	state = excluded.state
-WHERE stake.slot <= excluded.slot`
+WHERE stake_account.slot <= excluded.slot`
 
 	_, err := db.Sqlx.Exec(
 		stmt,

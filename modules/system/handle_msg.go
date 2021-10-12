@@ -31,7 +31,7 @@ func handleMsgAdvanceNonce(msg types.Message, tx types.Tx, db db.SystemDb, clien
 		return fmt.Errorf("instruction does not match %s type: %s", "advanceNonce", msg.Value.Type())
 
 	}
-	return updateNonce(instruction.NonceAccount, db, client)
+	return updateNonce(instruction.NonceAccount, tx.Slot, db, client)
 }
 
 // handleMsgAuthorizeNonce handles a MsgWithdrawFromNonce
@@ -41,7 +41,7 @@ func handleMsgWithdrawFromNonce(msg types.Message, tx types.Tx, db db.SystemDb, 
 		return fmt.Errorf("instruction does not match %s type: %s", "withdrawNonce", msg.Value.Type())
 
 	}
-	return updateNonce(instruction.NonceAccount, db, client)
+	return updateNonce(instruction.NonceAccount, tx.Slot, db, client)
 }
 
 // handleMsgAuthorizeNonce handles a MsgInitializeNonce
@@ -51,7 +51,7 @@ func handleMsgInitializeNonce(msg types.Message, tx types.Tx, db db.SystemDb, cl
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeNonce", msg.Value.Type())
 
 	}
-	return updateNonce(instruction.NonceAccount, db, client)
+	return updateNonce(instruction.NonceAccount, tx.Slot, db, client)
 }
 
 // handleMsgAuthorizeNonce handles a MsgAuthorizeNonce
@@ -61,5 +61,5 @@ func handleMsgAuthorizeNonce(msg types.Message, tx types.Tx, db db.SystemDb, cli
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeNonce", msg.Value.Type())
 
 	}
-	return updateNonce(instruction.NonceAccount, db, client)
+	return updateNonce(instruction.NonceAccount, tx.Slot, db, client)
 }

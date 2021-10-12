@@ -45,7 +45,7 @@ func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.VoteDb, client cli
 		return fmt.Errorf("instruction does not match %s type: %s", "authorize", msg.Value.Type())
 
 	}
-	return updateVoteAccount(instruction.VoteAccount, db, client)
+	return updateVoteAccount(instruction.VoteAccount, tx.Slot, db, client)
 }
 
 // handleMsgWithdraw handles a MsgWithdraw
@@ -55,7 +55,7 @@ func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.VoteDb, client clie
 		return fmt.Errorf("instruction does not match %s type: %s", "withdraw", msg.Value.Type())
 
 	}
-	return updateVoteAccount(instruction.VoteAccount, db, client)
+	return updateVoteAccount(instruction.VoteAccount, tx.Slot, db, client)
 }
 
 // handleMsgUpdateValidatorIdentity handles a MsgUpdateValidatorIdentity
@@ -65,7 +65,7 @@ func handleMsgUpdateValidatorIdentity(msg types.Message, tx types.Tx, db db.Vote
 		return fmt.Errorf("instruction does not match %s type: %s", "updateValidatorIdentity", msg.Value.Type())
 
 	}
-	return updateVoteAccount(instruction.VoteAccount, db, client)
+	return updateVoteAccount(instruction.VoteAccount, tx.Slot, db, client)
 }
 
 // handleMsgUpdateCommission handles a MsgUpdateCommission
@@ -75,7 +75,7 @@ func handleMsgUpdateCommission(msg types.Message, tx types.Tx, db db.VoteDb, cli
 		return fmt.Errorf("instruction does not match %s type: %s", "updateCommission", msg.Value.Type())
 
 	}
-	return updateVoteAccount(instruction.VoteAccount, db, client)
+	return updateVoteAccount(instruction.VoteAccount, tx.Slot, db, client)
 }
 
 // handleMsgAuthorizeChecked handles a MsgAuthorizeChecked
@@ -85,5 +85,5 @@ func handleMsgAuthorizeChecked(msg types.Message, tx types.Tx, db db.VoteDb, cli
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeChecked", msg.Value.Type())
 
 	}
-	return updateVoteAccount(instruction.VoteAccount, db, client)
+	return updateVoteAccount(instruction.VoteAccount, tx.Slot, db, client)
 }
