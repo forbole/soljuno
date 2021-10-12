@@ -44,7 +44,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.TokenDb, client client.Prox
 		return handleMsgRevoke(msg, tx, db, client)
 
 	case "setAuthority":
-		return handleSetAuthority(msg, db, client)
+		return handleSetAuthority(msg, tx, db, client)
 
 	// Token supply msgs
 	case "mintTo":
