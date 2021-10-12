@@ -7,27 +7,31 @@ import (
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/solana/program/token"
 	"github.com/forbole/soljuno/types"
-	"github.com/rs/zerolog/log"
 )
 
 // HandleMsg allows to handle different messages types for the token module
 func HandleMsg(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
 	switch msg.Value.Type() {
 	case "initializeMint":
+		return handleMsgInitializeMint(msg, tx, db)
 	case "initializeMint2":
 		return handleMsgInitializeMint(msg, tx, db)
 
 	case "initializeAccount":
+		return handleMsgInitializeAccount(msg, tx, db)
 	case "initializeAccount2":
+		return handleMsgInitializeAccount(msg, tx, db)
 	case "initializeAccount3":
 		return handleMsgInitializeAccount(msg, tx, db)
 
 	case "initializeMultisig":
+		return handleMsgInitializeMultisig(msg, tx, db)
 	case "initializeMultisig2":
 		return handleMsgInitializeMultisig(msg, tx, db)
 
 	// TODO: make decision if handle token balance instead of bank module
 	case "transfer":
+		return nil
 	case "transferChecked":
 		return nil
 
@@ -40,7 +44,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.TokenDb, client client.Prox
 		return handleMsgRevoke(msg, tx, db, client)
 
 	case "setAuthority":
-		return nil
+		return handleSetAuthority(msg, tx, db, client)
 
 	// Token supply msgs
 	case "mintTo":
@@ -61,8 +65,6 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.TokenDb, client client.Prox
 		return handleMsgThawAccount(msg, tx, db, client)
 	}
 
-	log.Info().Str("module", "token").Str("message", msg.Value.Type()).Uint64("slot", tx.Slot).
-		Msg("handled message")
 	return nil
 }
 
@@ -82,7 +84,7 @@ func handleMsgInitializeMint(msg types.Message, tx types.Tx, db db.TokenDb) erro
 	if err != nil {
 		return err
 	}
-	return nil
+	return db.SaveTokenSupply(instruction.Mint, tx.Slot, 0)
 }
 
 // handleMsgInitializeAccount handles a MsgInitializeAccount and properly stores the new token account inside the database
