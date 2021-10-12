@@ -57,7 +57,7 @@ func (suite *DbTestSuite) TestSaveStake() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveStake(
+			err := suite.database.SaveStakeAccount(
 				tc.data.Address,
 				tc.data.Slot,
 				tc.data.Staker,

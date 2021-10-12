@@ -9,7 +9,7 @@ import (
 var _ db.StakeDb = &Database{}
 
 // SaveStake implements the db.StakeDb
-func (db *Database) SaveStake(address string, slot uint64, staker string, withdrawer string, state string) error {
+func (db *Database) SaveStakeAccount(address string, slot uint64, staker string, withdrawer string, state string) error {
 	stmt := `
 INSERT INTO stake_account
 	(address, slot, staker, withdrawer, state)

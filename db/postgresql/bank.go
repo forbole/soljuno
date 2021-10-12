@@ -69,7 +69,7 @@ func (db *Database) saveUpToDateTokenBalances(paramsNumber int, slot uint64, acc
 	for i, bal := range balances {
 		bi := i * paramsNumber
 		stmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
-		params = append(params, accounts[i], slot, bal.UiTokenAmount.Amount)
+		params = append(params, accounts[bal.AccountIndex], slot, bal.UiTokenAmount.Amount)
 
 	}
 
@@ -79,7 +79,7 @@ func (db *Database) saveUpToDateTokenBalances(paramsNumber int, slot uint64, acc
 ON CONFLICT (address) DO UPDATE
     SET slot = excluded.slot,
         balance = excluded.balance
-WHERE account_balance.slot <= excluded.slot
+WHERE token_account_balance.slot <= excluded.slot
 `
 
 	_, err := db.Sqlx.Exec(stmt, params...)

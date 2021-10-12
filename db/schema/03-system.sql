@@ -7,3 +7,4 @@ CREATE TABLE nonce_account
     lamports_per_signature  INT     NOT NULL,
     state                   TEXT    NOT NULL
 );
+CREATE INDEX nonce_authority_index ON nonce (authority);

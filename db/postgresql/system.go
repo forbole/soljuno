@@ -5,7 +5,7 @@ import "github.com/forbole/soljuno/db"
 var _ db.SystemDb = &Database{}
 
 // SaveToken implements the db.SystemDb
-func (db *Database) SaveNonce(
+func (db *Database) SaveNonceAccount(
 	address string,
 	slot uint64,
 	authority string,

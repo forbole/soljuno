@@ -9,7 +9,11 @@ import (
 )
 
 // updateBufferAccount properly stores the statement of buffer account inside the database
-func updateBufferAccount(address string, db db.BpfLoaderDb, client client.Proxy) error {
+func updateBufferAccount(address string, currentSlot uint64, db db.BpfLoaderDb, client client.Proxy) error {
+	if !db.CheckBufferAccountLatest(address, currentSlot) {
+		return nil
+	}
+
 	info, err := client.AccountInfo(address)
 	if err != nil {
 		return err
@@ -48,7 +52,11 @@ func updateBufferAccount(address string, db db.BpfLoaderDb, client client.Proxy)
 }
 
 // updateProgramAccount properly stores the statement of program account inside the database
-func updateProgramAccount(address string, db db.BpfLoaderDb, client client.Proxy) error {
+func updateProgramAccount(address string, currentSlot uint64, db db.BpfLoaderDb, client client.Proxy) error {
+	if !db.CheckProgramAccountLatest(address, currentSlot) {
+		return nil
+	}
+
 	info, err := client.AccountInfo(address)
 	if err != nil {
 		return err
@@ -86,7 +94,11 @@ func updateProgramAccount(address string, db db.BpfLoaderDb, client client.Proxy
 }
 
 // updateProgramDataAccount properly stores the statement of program data account inside the database
-func updateProgramDataAccount(address string, db db.BpfLoaderDb, client client.Proxy) error {
+func updateProgramDataAccount(address string, currentSlot uint64, db db.BpfLoaderDb, client client.Proxy) error {
+	if !db.CheckProgramDataAccountLatest(address, currentSlot) {
+		return nil
+	}
+
 	info, err := client.AccountInfo(address)
 	if err != nil {
 		return err

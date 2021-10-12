@@ -56,7 +56,7 @@ func (suite *DbTestSuite) TestSaveNonce() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveNonce(
+			err := suite.database.SaveNonceAccount(
 				tc.data.Address,
 				tc.data.Slot,
 				tc.data.Authority,
