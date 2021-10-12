@@ -1,4 +1,4 @@
-CREATE TABLE nonce
+CREATE TABLE nonce_account
 (
     address                 TEXT    NOT NULL PRIMARY KEY,
     slot                    BIGINT  NOT NULL,

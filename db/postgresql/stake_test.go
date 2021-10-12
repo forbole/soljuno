@@ -68,7 +68,7 @@ func (suite *DbTestSuite) TestSaveStake() {
 
 			// Verify the data
 			rows := []StakeRow{}
-			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM stake")
+			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM stake_account")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
 			suite.Require().Equal(tc.expected, rows[0])
