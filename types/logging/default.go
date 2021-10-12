@@ -105,6 +105,7 @@ func (d *defaultLogger) MsgError(module modules.Module, tx types.Tx, msg types.M
 		LogKeyModule, module.Name(),
 		LogKeySlot, tx.Slot,
 		LogKeyTxHash, tx.Hash,
+		LogKeyProgram, msg.Program,
 		LogKeyMsgType, msg.Value.Type(),
 	)
 }
