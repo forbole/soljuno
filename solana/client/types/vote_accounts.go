@@ -12,5 +12,6 @@ type VoteAccount struct {
 	EpochVoteAccount bool     `json:"epochVoteAccount"`
 	Commission       uint8    `json:"commission"`
 	LastVote         uint64   `json:"lastVote"`
+	RootSlot         uint64   `json:"rootSlot"`
 	EpochCredits     [][3]int `json:"epochCredits"`
 }

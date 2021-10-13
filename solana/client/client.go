@@ -1,6 +1,8 @@
 package client
 
 import (
+	"fmt"
+
 	"github.com/forbole/soljuno/solana/client/types"
 	jsonrpc "github.com/ybbus/jsonrpc/v2"
 )
@@ -11,6 +13,7 @@ type Client interface {
 	GetBlocks(uint64, uint64) ([]uint64, error)
 	GetVoteAccounts() (types.VoteAccounts, error)
 	GetAccountInfo(string) (types.AccountInfo, error)
+	GetVoteAccountsWithSlot() (uint64, types.VoteAccounts, error)
 }
 
 type client struct {
@@ -54,12 +57,42 @@ func (c *client) GetBlocks(start uint64, end uint64) ([]uint64, error) {
 }
 
 func (c *client) GetVoteAccounts() (types.VoteAccounts, error) {
-	var validators types.VoteAccounts
-	err := c.rpcClient.CallFor(&validators, "getVoteAccounts")
+	var voteAccounts types.VoteAccounts
+	err := c.rpcClient.CallFor(&voteAccounts, "getVoteAccounts")
 	if err != nil {
-		return validators, err
+		return voteAccounts, err
 	}
-	return validators, nil
+	return voteAccounts, nil
+}
+
+func (c *client) GetVoteAccountsWithSlot() (uint64, types.VoteAccounts, error) {
+	var slot uint64
+	var voteAccounts types.VoteAccounts
+
+	slotReq := jsonrpc.NewRequest("getSlot")
+	voteAccountsReq := jsonrpc.NewRequest("getVoteAccounts")
+	res, err := c.rpcClient.CallBatch(
+		[]*jsonrpc.RPCRequest{
+			slotReq,
+			voteAccountsReq,
+		},
+	)
+	if err != nil {
+		return slot, voteAccounts, err
+	}
+
+	if res.HasError() {
+		return slot, voteAccounts, fmt.Errorf("failed to get vote accounts or slot")
+	}
+
+	if err := res.GetByID(0).GetObject(&slot); err != nil {
+		return slot, voteAccounts, err
+	}
+
+	if err := res.GetByID(1).GetObject(&voteAccounts); err != nil {
+		return slot, voteAccounts, err
+	}
+	return slot, voteAccounts, nil
 }
 
 func (c *client) GetAccountInfo(address string) (types.AccountInfo, error) {
