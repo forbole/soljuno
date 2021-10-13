@@ -68,7 +68,7 @@ func (suite *DbTestSuite) TestSaveNonce() {
 
 			// Verify the data
 			rows := []VoteAccountRow{}
-			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM vote_accounts")
+			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM vote_account")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
 			suite.Require().Equal(tc.expected, rows[0])
