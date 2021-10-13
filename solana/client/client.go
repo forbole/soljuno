@@ -49,7 +49,7 @@ func (c *client) GetSlot() (uint64, error) {
 
 func (c *client) GetBlocks(start uint64, end uint64) ([]uint64, error) {
 	var slots []uint64
-	err := c.rpcClient.CallFor(&slots, "getConfirmedBlock", start, end)
+	err := c.rpcClient.CallFor(&slots, "getConfirmedBlocks", start, end)
 	if err != nil {
 		return slots, err
 	}

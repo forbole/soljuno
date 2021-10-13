@@ -9,6 +9,7 @@ const (
 	LogKeyModule  = "module"
 	LogKeySlot    = "slot"
 	LogKeyTxHash  = "tx_hash"
+	LogKeyProgram = "program"
 	LogKeyMsgType = "msg_type"
 )
 

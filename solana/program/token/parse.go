@@ -12,12 +12,12 @@ type Parser struct {
 
 func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 	decoder := bincode.NewDecoder()
-	var id InstructionID
-	decoder.Decode(data[:4], &id)
-	switch id {
+	var id uint8
+	decoder.Decode(data[:1], &id)
+	switch InstructionID(id) {
 	case InitializeMint:
 		var instruction InitializeMintInstruction
-		decoder.Decode(data[4:], &instruction)
+		decoder.Decode(data[1:], &instruction)
 		return types.NewParsedInstruction(
 			"initializeMint",
 			NewParsedParsedInitializeMint(
@@ -36,7 +36,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case InitializeMultisig:
 		var instruction InitializeMultisigInstruction
-		decoder.Decode(data[4:], &instruction)
+		decoder.Decode(data[1:], &instruction)
 		return types.NewParsedInstruction(
 			"initializeMultisig",
 			NewParsedInitializeMultiisig(
@@ -47,7 +47,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case Transfer:
 		var instruction TransferInstruction
-		decoder.Decode(data[4:], &instruction)
+		decoder.Decode(data[1:], &instruction)
 		return types.NewParsedInstruction(
 			"transfer",
 			NewParsedTransfer(
@@ -58,7 +58,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case Approve:
 		var instruction ApproveInstruction
-		decoder.Decode(data[4:], &instruction)
+		decoder.Decode(data[1:], &instruction)
 		return types.NewParsedInstruction(
 			"approve",
 			NewParsedApprove(
@@ -77,7 +77,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case SetAuthority:
 		var instruction SetAuthorityInstruction
-		decoder.Decode(data[4:], &instruction)
+		decoder.Decode(data[1:], &instruction)
 		return types.NewParsedInstruction(
 			"setAuthority",
 			NewParsedSetAuthority(
@@ -88,7 +88,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case MintTo:
 		var instruction MintToInstruction
-		decoder.Decode(data[4:], &instruction)
+		decoder.Decode(data[1:], &instruction)
 		return types.NewParsedInstruction(
 			"mintTo",
 			NewParsedMintTo(
@@ -99,7 +99,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 
 	case Burn:
 		var instruction BurnInstruction
-		decoder.Decode(data[4:], &instruction)
+		decoder.Decode(data[1:], &instruction)
 		return types.NewParsedInstruction(
 			"burn",
 			NewParsedBurn(

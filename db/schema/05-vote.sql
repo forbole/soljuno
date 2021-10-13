@@ -17,3 +17,4 @@ CREATE TABLE validator_status
     last_vote       BIGINT  NOT NULL,
     root_slot       BIGINT  NOT NULL
 );
+CREATE INDEX vote_account_voter_index ON vote_account (voter);

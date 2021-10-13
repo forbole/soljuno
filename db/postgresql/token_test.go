@@ -277,7 +277,7 @@ func (suite *DbTestSuite) TestSaveDelegate() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveDelegate(
+			err := suite.database.SaveTokenDelegate(
 				tc.data.SourceAddress,
 				tc.data.DelegateAddress,
 				tc.data.Slot,

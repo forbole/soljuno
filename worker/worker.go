@@ -140,11 +140,11 @@ func (w Worker) ExportTxs(txs []types.Tx) error {
 		}
 
 		// Handle all the messages contained inside the transaction
-		for i, msg := range tx.Messages {
+		for _, msg := range tx.Messages {
 			// Call the handlers
 			for _, module := range w.modules {
 				if messageModule, ok := module.(modules.MessageModule); ok {
-					err = messageModule.HandleMsg(i, msg, tx)
+					err = messageModule.HandleMsg(msg, tx)
 					if err != nil {
 						w.logger.MsgError(module, tx, msg, err)
 					}
