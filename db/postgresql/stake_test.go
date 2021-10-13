@@ -2,7 +2,7 @@ package postgresql_test
 
 import "time"
 
-func (suite *DbTestSuite) TestSaveStake() {
+func (suite *DbTestSuite) TestSaveStakeAccount() {
 	type StakeRow struct {
 		Address    string `db:"address"`
 		Slot       uint64 `db:"slot"`

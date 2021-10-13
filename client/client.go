@@ -21,13 +21,13 @@ type Proxy interface {
 	// An error is returned if the query fails.
 	Slots(uint64, uint64) ([]uint64, error)
 
-	// Validators returns vote accounts of validators in the current chain.
-	// An error is returned if the query fails
-	Validators() (clienttype.VoteAccounts, error)
-
 	// AccountInfo returns the information of the given account in the current chain.
 	// An error is returned if the query fails
 	AccountInfo(address string) (clienttype.AccountInfo, error)
+
+	// Validators returns vote accounts of validators in the current chain.
+	// An error is returned if the query fails
+	ValidatorsWithSlot() (uint64, clienttype.VoteAccounts, error)
 }
 
 // proxy implements a wrapper around both a Tendermint RPC client and a
@@ -76,6 +76,14 @@ func (cp *proxy) Validators() (clienttype.VoteAccounts, error) {
 		return clienttype.VoteAccounts{}, err
 	}
 	return validators, nil
+}
+
+func (cp *proxy) ValidatorsWithSlot() (uint64, clienttype.VoteAccounts, error) {
+	slot, voteAccounts, err := cp.rpcClient.GetVoteAccountsWithSlot()
+	if err != nil {
+		return 0, clienttype.VoteAccounts{}, err
+	}
+	return slot, voteAccounts, nil
 }
 
 func (cp *proxy) AccountInfo(address string) (clienttype.AccountInfo, error) {
