@@ -1,6 +1,6 @@
 package postgresql_test
 
-func (suite *DbTestSuite) TestSaveNonce() {
+func (suite *DbTestSuite) TestSaveVoteAccount() {
 	type VoteAccountRow struct {
 		Address    string `db:"address"`
 		Slot       uint64 `db:"slot"`
@@ -72,6 +72,72 @@ func (suite *DbTestSuite) TestSaveNonce() {
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
 			suite.Require().Equal(tc.expected, rows[0])
+		})
+	}
+}
+
+func (suite *DbTestSuite) TestSaveValidatorStatus() {
+	type ValidatorStatusRow struct {
+		Address        string `db:"address"`
+		Slot           uint64 `db:"slot"`
+		ActivatedStake uint64 `db:"activated_stake"`
+		LastVote       uint64 `db:"last_vote"`
+		RootSlot       uint64 `db:"root_slot"`
+	}
+
+	testCases := []struct {
+		name     string
+		data     ValidatorStatusRow
+		expected []ValidatorStatusRow
+	}{
+		{
+			name: "initialize the data",
+			data: ValidatorStatusRow{
+				"address", 1, 100, 0, 0,
+			},
+			expected: []ValidatorStatusRow{
+				{"address", 1, 100, 0, 0},
+			},
+		},
+		{
+			name: "insert with same slot",
+			data: ValidatorStatusRow{
+				"address", 1, 1000, 0, 0,
+			},
+			expected: []ValidatorStatusRow{
+				{"address", 1, 100, 0, 0},
+			},
+		},
+		{
+			name: "insert with higher slot",
+			data: ValidatorStatusRow{
+				"address", 2, 2000, 0, 0,
+			},
+			expected: []ValidatorStatusRow{
+				{"address", 1, 100, 0, 0},
+				{"address", 2, 2000, 0, 0},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			err := suite.database.SaveValidatorStatus(
+				tc.data.Address,
+				tc.data.Slot,
+				tc.data.ActivatedStake,
+				tc.data.LastVote,
+				tc.data.RootSlot,
+			)
+			suite.Require().NoError(err)
+
+			// Verify the data
+			rows := []ValidatorStatusRow{}
+			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_status")
+			suite.Require().NoError(err)
+			suite.Require().Len(rows, len(tc.expected))
+			suite.Require().Equal(tc.expected, rows)
 		})
 	}
 }

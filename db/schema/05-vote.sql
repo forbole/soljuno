@@ -13,7 +13,7 @@ CREATE TABLE validator_status
 (
     address         TEXT    NOT NULL,
     slot            BIGINT  NOT NULL,
-    activited_stake BIGINT  NOT NULL,
+    activated_stake BIGINT  NOT NULL,
     last_vote       BIGINT  NOT NULL,
     root_slot       BIGINT  NOT NULL,
     PRIMARY KEY (address, slot)
