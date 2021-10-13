@@ -128,6 +128,9 @@ type VoteDb interface {
 	// SaveVoteAccount allows to store the given vote account data inside the database
 	SaveVoteAccount(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
 
+	// SaveValidatorStatus allows to store the given current validator status inside the database
+	SaveValidatorStatus(address string, slot uint64, activatedStake uint64, lastVote uint64, rootSlot uint64, active bool) error
+
 	VoteCheckerDb
 }
 

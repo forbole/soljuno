@@ -16,6 +16,7 @@ CREATE TABLE validator_status
     activated_stake BIGINT  NOT NULL,
     last_vote       BIGINT  NOT NULL,
     root_slot       BIGINT  NOT NULL,
+    active          BOOLEAN NOT NULL,
     PRIMARY KEY (address, slot)
 );
 CREATE INDEX vote_account_voter_index ON validator_status (address);

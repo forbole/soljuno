@@ -83,6 +83,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 		ActivatedStake uint64 `db:"activated_stake"`
 		LastVote       uint64 `db:"last_vote"`
 		RootSlot       uint64 `db:"root_slot"`
+		Active         bool   `db:"active"`
 	}
 
 	testCases := []struct {
@@ -93,29 +94,29 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 		{
 			name: "initialize the data",
 			data: ValidatorStatusRow{
-				"address", 1, 100, 0, 0,
+				"address", 1, 100, 0, 0, true,
 			},
 			expected: []ValidatorStatusRow{
-				{"address", 1, 100, 0, 0},
+				{"address", 1, 100, 0, 0, true},
 			},
 		},
 		{
 			name: "insert with same slot",
 			data: ValidatorStatusRow{
-				"address", 1, 1000, 0, 0,
+				"address", 1, 1000, 0, 0, true,
 			},
 			expected: []ValidatorStatusRow{
-				{"address", 1, 100, 0, 0},
+				{"address", 1, 100, 0, 0, true},
 			},
 		},
 		{
 			name: "insert with higher slot",
 			data: ValidatorStatusRow{
-				"address", 2, 2000, 0, 0,
+				"address", 2, 2000, 0, 0, true,
 			},
 			expected: []ValidatorStatusRow{
-				{"address", 1, 100, 0, 0},
-				{"address", 2, 2000, 0, 0},
+				{"address", 1, 100, 0, 0, true},
+				{"address", 2, 2000, 0, 0, true},
 			},
 		},
 	}
@@ -129,6 +130,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 				tc.data.ActivatedStake,
 				tc.data.LastVote,
 				tc.data.RootSlot,
+				tc.data.Active,
 			)
 			suite.Require().NoError(err)
 
