@@ -1,6 +1,6 @@
 package postgresql_test
 
-func (suite *DbTestSuite) TestSaveNonce() {
+func (suite *DbTestSuite) TestSaveNonceAccount() {
 	type NonceRow struct {
 		Address              string `db:"address"`
 		Slot                 uint64 `db:"slot"`
