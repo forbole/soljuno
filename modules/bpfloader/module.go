@@ -6,6 +6,7 @@ import (
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	upgradableLoader "github.com/forbole/soljuno/solana/program/bpfloader/upgradeable"
+	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/soljuno/types"
 )
@@ -39,5 +40,12 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if !ok {
 		return fmt.Errorf("bpfloader is enabled, but your database does not implement BpfLoaderDb")
 	}
-	return HandleMsg(msg, tx, bpfLoaderDb, m.client)
+
+	err := HandleMsg(msg, tx, bpfLoaderDb, m.client)
+	if err != nil {
+		return err
+	}
+	log.Debug().Str("module", m.Name()).Str("tx", tx.Hash).Uint64("slot", tx.Slot).
+		Msg("handled msg")
+	return nil
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
+	"github.com/rs/zerolog/log"
 )
 
 type Module struct {
@@ -28,7 +29,14 @@ func (m *Module) HandleTx(tx types.Tx) error {
 	if !ok {
 		return fmt.Errorf("bank is enabled, but your database does not implement BankDb")
 	}
-	return HandleTx(tx, bankDb)
+
+	err := HandleTx(tx, bankDb)
+	if err != nil {
+		return err
+	}
+	log.Debug().Str("module", m.Name()).Str("tx", tx.Hash).Uint64("slot", tx.Slot).
+		Msg("handled tx")
+	return nil
 }
 
 // HandleTx implements modules.BlockModule
@@ -37,5 +45,11 @@ func (m *Module) HandleBlock(block types.Block) error {
 	if !ok {
 		return fmt.Errorf("bank is enabled, but your database does not implement BankDb")
 	}
-	return HandleBlock(block, bankDb)
+
+	err := HandleBlock(block, bankDb)
+	if err != nil {
+		return err
+	}
+	log.Debug().Str("module", m.Name()).Uint64("slot", block.Slot).Msg("handled block")
+	return nil
 }

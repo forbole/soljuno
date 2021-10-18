@@ -29,5 +29,9 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.ConfigDb, client client.Pro
 		return fmt.Errorf("failed to parse config account")
 	}
 
-	return db.SaveConfigAccount(address, tx.Slot, configAccount.Keys[1].Pubkey.String(), configAccount.Info)
+	err = db.SaveConfigAccount(address, tx.Slot, configAccount.Keys[1].Pubkey.String(), configAccount.Info)
+	if err != nil {
+		return err
+	}
+	return nil
 }
