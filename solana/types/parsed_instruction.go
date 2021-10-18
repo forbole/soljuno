@@ -26,7 +26,7 @@ func (i parsedInstruction) Type() string {
 
 func (i parsedInstruction) JSON() []byte {
 	if i.data == nil {
-		return []byte{}
+		return []byte("{}")
 	}
 	bz, _ := json.Marshal(i.data)
 	return bz

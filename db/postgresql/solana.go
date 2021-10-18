@@ -108,6 +108,9 @@ func (db *Database) SaveMessage(msg types.Message) error {
 	stmt := `
 INSERT INTO message(transaction_hash, index, program, involved_accounts, type, value) 
 VALUES ($1, $2, $3, $4, $5, $6)`
+	if msg.InvolvedAccounts == nil {
+		msg.InvolvedAccounts = []string{}
+	}
 	_, err := db.Sqlx.Exec(
 		stmt,
 		msg.TxHash,
@@ -117,6 +120,7 @@ VALUES ($1, $2, $3, $4, $5, $6)`
 		msg.Value.Type(),
 		msg.Value.JSON(),
 	)
+
 	return err
 }
 
