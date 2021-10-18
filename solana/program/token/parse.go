@@ -14,7 +14,7 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 	decoder := bincode.NewDecoder()
 	var id InstructionID
 	decoder.Decode(data[:1], &id)
-	switch InstructionID(id) {
+	switch id {
 	case InitializeMint:
 		var instruction InitializeMintInstruction
 		decoder.Decode(data[1:], &instruction)
