@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"math"
 	"time"
 
 	"github.com/forbole/soljuno/db"
@@ -70,7 +71,9 @@ ON CONFLICT (address) DO UPDATE
     voter = excluded.voter,
     warmup_cooldown_rate = excluded.warmup_cooldown_rate
 WHERE stake_delegation.slot <= excluded.slot`
-
+	if deactivationEpoch > math.MaxInt64 {
+		deactivationEpoch = math.MaxInt64
+	}
 	_, err := db.Sqlx.Exec(
 		stmt,
 		address,
