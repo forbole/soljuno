@@ -72,7 +72,7 @@ func (w Worker) process(slot uint64) error {
 		return nil
 	}
 
-	w.logger.Debug("processing block", "slot", slot)
+	w.logger.Info("processing block", "slot", slot)
 
 	b, err := w.cp.Block(slot)
 	if err != nil {
