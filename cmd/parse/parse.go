@@ -127,8 +127,7 @@ func StartParsing(ctx *Context) error {
 	trapSignal(ctx)
 
 	if cfg.ShouldParseGenesis() {
-		// Add the genesis to the queue if requested
-		exportQueue <- 0
+		// TODO add genesis block
 	}
 
 	latestSlot, err := ctx.Proxy.LatestSlot()

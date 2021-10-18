@@ -67,29 +67,26 @@ func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, clien
 		return err
 	}
 
-	if stakeAccount.State.String() == "stake" {
-		delegation := stakeAccount.Stake.Delegation
-		err := db.SaveStakeDelegation(
+	if stakeAccount.State.String() != "stake" {
+		return db.SaveStakeDelegation(
 			address,
 			info.Context.Slot,
-			delegation.ActivationEpoch,
-			delegation.DeactivationEpoch,
-			delegation.Stake,
-			delegation.VoterPubkey.String(),
-			delegation.WarmupCooldownRate,
+			0,
+			0,
+			0,
+			"",
+			0,
 		)
-		if err != nil {
-			return err
-		}
 	}
 
+	delegation := stakeAccount.Stake.Delegation
 	return db.SaveStakeDelegation(
 		address,
 		info.Context.Slot,
-		0,
-		0,
-		0,
-		"",
-		0,
+		delegation.ActivationEpoch,
+		delegation.DeactivationEpoch,
+		delegation.Stake,
+		delegation.VoterPubkey.String(),
+		delegation.WarmupCooldownRate,
 	)
 }

@@ -64,7 +64,6 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.TokenDb, client client.Prox
 	case "thawAccount":
 		return handleMsgThawAccount(msg, tx, db, client)
 	}
-
 	return nil
 }
 

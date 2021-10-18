@@ -149,10 +149,10 @@ func NewParsedTransfer(
 	}
 
 	if len(accounts) > 3 {
-		parsed.MultisigAuthority = accounts[3]
-		parsed.Signers = accounts[4:]
+		parsed.MultisigAuthority = accounts[2]
+		parsed.Signers = accounts[3:]
 	} else {
-		parsed.Authority = accounts[3]
+		parsed.Authority = accounts[2]
 	}
 	return parsed
 }

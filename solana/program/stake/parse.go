@@ -38,8 +38,6 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 		)
 
 	case DelegateStake:
-		var instruction InitializeInstruction
-		decoder.Decode(data[4:], &instruction)
 		return types.NewParsedInstruction(
 			"delegate",
 			NewParsedDelegateStake(

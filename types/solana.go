@@ -82,9 +82,9 @@ func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockRe
 
 			if inner, ok := innerInstructionMap[uint8(i)]; ok {
 				for _, innerMsg := range inner {
-					accounts = getAccounts(accountKeys, msg.Accounts)
+					accounts = getAccounts(accountKeys, innerMsg.Accounts)
 					programID := accountKeys[innerMsg.ProgramIDIndex]
-					parsed := parser.Parse(accounts, programID, msg.Data)
+					parsed := parser.Parse(accounts, programID, innerMsg.Data)
 					msgs = append(msgs, NewMessage(hash, count, accountKeys[innerMsg.ProgramIDIndex], accounts, parsed))
 					count++
 				}

@@ -7,6 +7,7 @@ import (
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/solana/program/token"
 	"github.com/forbole/soljuno/types"
+	"github.com/rs/zerolog/log"
 )
 
 type Module struct {
@@ -38,5 +39,12 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if !ok {
 		return fmt.Errorf("token is enabled, but your database does not implement TokenDb")
 	}
-	return HandleMsg(msg, tx, tokenDb, m.client)
+
+	err := HandleMsg(msg, tx, tokenDb, m.client)
+	if err != nil {
+		return err
+	}
+	log.Debug().Str("module", m.Name()).Str("tx", tx.Hash).Uint64("slot", tx.Slot).
+		Msg("handled msg")
+	return nil
 }
