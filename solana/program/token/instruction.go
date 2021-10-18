@@ -2,7 +2,7 @@ package token
 
 import "github.com/forbole/soljuno/solana/types"
 
-type InstructionID uint32
+type InstructionID uint8
 
 const (
 	// Initializes a new mint and optionally deposits all the newly minted
@@ -129,7 +129,7 @@ type InitializeAccountInstruction struct {
 
 // The instance used by instructions
 
-type AuthorityType uint32
+type AuthorityType uint8
 
 const (
 	// Authority to mint new tokens
