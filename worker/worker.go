@@ -43,7 +43,6 @@ func NewWorker(index int, ctx *Context) Worker {
 // given worker queue. Any failed job is logged and re-enqueued.
 func (w Worker) Start() {
 	logging.WorkerCount.Inc()
-
 	for i := range w.queue {
 		if err := w.process(i); err != nil {
 			// re-enqueue any failed job
@@ -53,7 +52,6 @@ func (w Worker) Start() {
 				w.queue <- i
 			}()
 		}
-
 		logging.WorkerSlot.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(i))
 	}
 }
@@ -84,38 +82,32 @@ func (w Worker) process(slot uint64) error {
 	return w.ExportBlock(block)
 }
 
-// SaveValidators persists a list of validators with an address and a
-// consensus public key. An error is returned if the DB write fails.
-func (w Worker) SaveValidators(vals []types.Validator) error {
-
-	// TODO: Save validators
-
-	return nil
-}
-
 // ExportBlock accepts a finalized block and a corresponding set of transactions
 // and persists them to the database along with attributable metadata. An error
 // is returned if the write fails.
 func (w Worker) ExportBlock(block types.Block) error {
-
 	// Save the block
 	err := w.db.SaveBlock(block)
 	if err != nil {
 		return fmt.Errorf("failed to persist block: %s", err)
 	}
 
-	// Call the block handlers
+	go w.handleBlockModules(block)
+
+	// Export the transactions
+	return w.ExportTxs(block.Txs)
+}
+
+// handleBlockModules handles the block with modules
+func (w Worker) handleBlockModules(block types.Block) {
 	for _, module := range w.modules {
 		if blockModule, ok := module.(modules.BlockModule); ok {
-			err = blockModule.HandleBlock(block)
+			err := blockModule.HandleBlock(block)
 			if err != nil {
 				w.logger.BlockError(module, block, err)
 			}
 		}
 	}
-
-	// Export the transactions
-	return w.ExportTxs(block.Txs)
 }
 
 // ExportTxs accepts a slice of transactions and persists then inside the database.
@@ -123,35 +115,40 @@ func (w Worker) ExportBlock(block types.Block) error {
 func (w Worker) ExportTxs(txs []types.Tx) error {
 	// Handle all the transactions inside the block
 	for _, tx := range txs {
-		// Save the transaction itself
-		err := w.db.SaveTx(tx)
-		if err != nil {
-			return fmt.Errorf("failed to handle transaction with hash %s: %s", tx.Hash, err)
-		}
+		go w.handleTx(tx)
+	}
 
-		// Call the tx handlers
-		for _, module := range w.modules {
-			if transactionModule, ok := module.(modules.TransactionModule); ok {
-				err = transactionModule.HandleTx(tx)
-				if err != nil {
-					w.logger.TxError(module, tx, err)
-				}
+	return nil
+}
+
+// handleTx handles all the the element contained inside the transaction
+func (w Worker) handleTx(tx types.Tx) {
+	err := w.db.SaveTx(tx)
+	if err != nil {
+		w.logger.Error(fmt.Sprintf("failed to persist block: %s", err))
+		return
+	}
+	for _, module := range w.modules {
+		if transactionModule, ok := module.(modules.TransactionModule); ok {
+			err := transactionModule.HandleTx(tx)
+			if err != nil {
+				w.logger.TxError(module, tx, err)
 			}
 		}
+	}
+	go w.handleMessageModules(tx)
+}
 
-		// Handle all the messages contained inside the transaction
-		for _, msg := range tx.Messages {
-			// Call the handlers
-			for _, module := range w.modules {
-				if messageModule, ok := module.(modules.MessageModule); ok {
-					err = messageModule.HandleMsg(msg, tx)
-					if err != nil {
-						w.logger.MsgError(module, tx, msg, err)
-					}
+// handleMessageModules handles all the messages contained inside the transaction with modules
+func (w Worker) handleMessageModules(tx types.Tx) {
+	for _, msg := range tx.Messages {
+		for _, module := range w.modules {
+			if messageModule, ok := module.(modules.MessageModule); ok {
+				err := messageModule.HandleMsg(msg, tx)
+				if err != nil {
+					w.logger.MsgError(module, tx, msg, err)
 				}
 			}
 		}
 	}
-
-	return nil
 }
