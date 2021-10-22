@@ -81,7 +81,9 @@ func (db *Database) SaveBlock(block types.Block) error {
 	if err != nil {
 		return err
 	}
-	defer dbTx.Rollback()
+	defer func() {
+		err = dbTx.Rollback()
+	}()
 	if err := saveBlock(dbTx, block); err != nil {
 		return err
 	}
@@ -89,7 +91,8 @@ func (db *Database) SaveBlock(block types.Block) error {
 	if err := saveTxs(dbTx, block.Txs); err != nil {
 		return err
 	}
-	return dbTx.Commit()
+	err = dbTx.Commit()
+	return err
 }
 
 // saveBlocks store a block inside the database
