@@ -191,7 +191,7 @@ func handleMsgBurn(msg types.Message, tx types.Tx, db db.TokenDb, client client.
 
 // handleBurn handles a MsgBurnChecked
 func handleMsgBurnChecked(msg types.Message, tx types.Tx, db db.TokenDb, client client.Proxy) error {
-	instruction, ok := msg.Value.Data().(token.ParsedBurn)
+	instruction, ok := msg.Value.Data().(token.ParsedBurnChecked)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "burnChecked", msg.Value.Type())
 	}

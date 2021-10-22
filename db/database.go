@@ -15,12 +15,7 @@ type Database interface {
 	// SaveBlock will be called when a new block is parsed, passing the block itself
 	// and the transactions contained inside that block.
 	// An error is returned if the operation fails.
-	// NOTE. For each transaction inside txs, SaveTx will be called as well.
 	SaveBlock(block types.Block) error
-
-	// SaveTx will be called to save each transaction contained inside a block.
-	// An error is returned if the operation fails.
-	SaveTx(tx types.Tx) error
 
 	// SaveMessage stores a single message.
 	// An error is returned if the operation fails.
