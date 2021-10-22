@@ -77,30 +77,65 @@ func (db *Database) HasBlock(height uint64) (bool, error) {
 
 // SaveBlock implements db.Database
 func (db *Database) SaveBlock(block types.Block) error {
-	sqlStatement := `
+	dbTx, err := db.Sqlx.Beginx()
+	if err != nil {
+		return err
+	}
+	defer dbTx.Rollback()
+	if err := saveBlock(dbTx, block); err != nil {
+		return err
+	}
+
+	if err := saveTxs(dbTx, block.Txs); err != nil {
+		return err
+	}
+	return dbTx.Commit()
+}
+
+// saveBlocks store a block inside the database
+func saveBlock(dbTx *sqlx.Tx, block types.Block) error {
+	stmt := `
 INSERT INTO block (slot, hash, proposer, timestamp)
 VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	proposer := sql.NullString{Valid: len(block.Proposer) != 0, String: block.Proposer}
-	_, err := db.Sqlx.Exec(sqlStatement,
-		block.Slot, block.Hash, proposer, block.Timestamp,
+	_, err := dbTx.Exec(
+		stmt, block.Slot, block.Hash, proposer, block.Timestamp,
 	)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-// SaveTx implements db.Database
-func (db *Database) SaveTx(tx types.Tx) error {
-	sqlStatement := `
-INSERT INTO transaction 
-    (hash, slot, error, fee, logs) 
-VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
-	_, err := db.Sqlx.Exec(sqlStatement,
-		tx.Hash,
-		tx.Slot,
-		tx.Successful(),
-		tx.Fee,
-		pq.Array(tx.Logs),
-	)
-	return err
+// saveTxs stores all the given transactions inside the database
+func saveTxs(dbTx *sqlx.Tx, txs []types.Tx) error {
+	if len(txs) == 0 {
+		return nil
+	}
+	stmt := `INSERT INTO transaction (hash, slot, error, fee, logs) VALUES`
+	var params []interface{}
+	paramsNumber := 5
+	for i, tx := range txs {
+		bi := i * paramsNumber
+		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", bi+1, bi+2, bi+3, bi+4, bi+5)
+		params = append(
+			params,
+			tx.Hash,
+			tx.Slot,
+			tx.Successful(),
+			tx.Fee,
+			pq.Array(tx.Logs),
+		)
+	}
+	stmt = stmt[:len(stmt)-1]
+	stmt += `
+ON CONFLICT (hash) DO NOTHING
+	`
+	_, err := dbTx.Exec(stmt, params...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // SaveMessage implements db.Database

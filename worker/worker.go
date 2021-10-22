@@ -123,11 +123,6 @@ func (w Worker) ExportTxs(txs []types.Tx) error {
 
 // handleTx handles all the the element contained inside the transaction
 func (w Worker) handleTx(tx types.Tx) {
-	err := w.db.SaveTx(tx)
-	if err != nil {
-		w.logger.Error(fmt.Sprintf("failed to persist block: %s", err))
-		return
-	}
 	for _, module := range w.modules {
 		if transactionModule, ok := module.(modules.TransactionModule); ok {
 			err := transactionModule.HandleTx(tx)
