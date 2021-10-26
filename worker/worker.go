@@ -2,9 +2,11 @@ package worker
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/forbole/soljuno/solana/parser"
 	"github.com/forbole/soljuno/types/logging"
+	"github.com/panjf2000/ants/v2"
 
 	"github.com/forbole/soljuno/modules"
 
@@ -22,6 +24,7 @@ type Worker struct {
 	parser parser.Parser
 	logger logging.Logger
 
+	pool    *ants.Pool
 	index   int
 	modules []modules.Module
 }
@@ -36,6 +39,7 @@ func NewWorker(index int, ctx *Context) Worker {
 		parser:  ctx.Parser,
 		modules: ctx.Modules,
 		logger:  ctx.Logger,
+		pool:    ctx.Pool,
 	}
 }
 
@@ -44,15 +48,17 @@ func NewWorker(index int, ctx *Context) Worker {
 func (w Worker) Start() {
 	logging.WorkerCount.Inc()
 	for i := range w.queue {
+		start := time.Now()
 		if err := w.process(i); err != nil {
 			// re-enqueue any failed job
 			// TODO: Implement exponential backoff or max retries for a block slot.
-			go func() {
+			w.pool.Submit(func() {
 				w.logger.Error("re-enqueueing failed block", "slot", i, "err", err)
 				w.queue <- i
-			}()
+			})
 		}
 		logging.WorkerSlot.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(i))
+		w.logger.Debug("process block time", "seconds", time.Since(start).Seconds())
 	}
 }
 
@@ -92,10 +98,24 @@ func (w Worker) ExportBlock(block types.Block) error {
 		return fmt.Errorf("failed to persist block: %s", err)
 	}
 
-	go w.handleBlockModules(block)
+	w.handleBlockModules(block)
 
-	// Export the transactions
-	return w.ExportTxs(block.Txs)
+	// Handle modules
+	w.pool.Submit(func() {
+		w.HandleModules(block)
+	})
+	return nil
+}
+
+// ExportTxs accepts a slice of transactions and persists then inside the database.
+// An error is returned if the write fails.
+func (w Worker) HandleModules(block types.Block) {
+	// Handle all the transactions inside the block
+	w.handleBlockModules(block)
+	for _, tx := range block.Txs {
+		w.handleTx(tx)
+	}
+	w.logger.Info("block indexed", "slot", block.Slot)
 }
 
 // handleBlockModules handles the block with modules
@@ -110,17 +130,6 @@ func (w Worker) handleBlockModules(block types.Block) {
 	}
 }
 
-// ExportTxs accepts a slice of transactions and persists then inside the database.
-// An error is returned if the write fails.
-func (w Worker) ExportTxs(txs []types.Tx) error {
-	// Handle all the transactions inside the block
-	for _, tx := range txs {
-		go w.handleTx(tx)
-	}
-
-	return nil
-}
-
 // handleTx handles all the the element contained inside the transaction
 func (w Worker) handleTx(tx types.Tx) {
 	for _, module := range w.modules {
@@ -131,7 +140,7 @@ func (w Worker) handleTx(tx types.Tx) {
 			}
 		}
 	}
-	go w.handleMessageModules(tx)
+	w.handleMessageModules(tx)
 }
 
 // handleMessageModules handles all the messages contained inside the transaction with modules

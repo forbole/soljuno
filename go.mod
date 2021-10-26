@@ -10,6 +10,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.9.0
 	github.com/mr-tron/base58 v1.2.0
+	github.com/panjf2000/ants/v2 v2.4.6
 	github.com/pelletier/go-toml v1.8.1
 	github.com/prometheus/client_golang v1.11.0
 	github.com/prometheus/common v0.30.0 // indirect

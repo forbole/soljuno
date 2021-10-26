@@ -60,6 +60,9 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 	telemetryEnabled, _ := cmd.Flags().GetBool(flagTelemetryEnabled)
 	telemetryPort, _ := cmd.Flags().GetUint(flagTelemetryPort)
 
+	workerPoolSize, _ := cmd.Flags().GetInt(flagWorkerPoolSize)
+	workerBlockingTaskSize, _ := cmd.Flags().GetInt(flagWorkerBlockingTaskSize)
+
 	return types.NewConfig(
 		types.NewRPCConfig(rpcClientName, rpcAddr),
 		types.NewGrpcConfig(grpcAddr, grpcInsecure),
@@ -93,6 +96,10 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 		types.NewTelemetryConfig(
 			telemetryEnabled,
 			telemetryPort,
+		),
+		types.NewWorkerConfig(
+			workerPoolSize,
+			workerBlockingTaskSize,
 		),
 	)
 }
