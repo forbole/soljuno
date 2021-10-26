@@ -623,7 +623,7 @@ func NewWorkerConfig(poolSize, blockingTaskSize int) WorkerConfig {
 
 // DefaultWorkerConfig returns the default WorkerConfig instance
 func DefaultWorkerConfig() WorkerConfig {
-	return NewWorkerConfig(25, 25)
+	return NewWorkerConfig(500, 500)
 }
 
 // GetPoolSize implements WorkerConfig
