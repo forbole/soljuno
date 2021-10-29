@@ -52,13 +52,19 @@ func (w Worker) Start() {
 		if err := w.process(i); err != nil {
 			// re-enqueue any failed job
 			// TODO: Implement exponential backoff or max retries for a block slot.
-			w.pool.Submit(func() {
-				w.logger.Error("re-enqueueing failed block", "slot", i, "err", err)
-				w.queue <- i
-			})
+			w.logger.Error("re-enqueueing failed block", "slot", i, "err", err)
+			w.queue <- i
 		}
 		logging.WorkerSlot.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(i))
 		w.logger.Debug("process block time", "seconds", time.Since(start).Seconds())
+		wait := make(chan bool)
+		go func() {
+			for w.pool.Free() == 0 {
+				time.Sleep(time.Second)
+			}
+			wait <- true
+		}()
+		<-wait
 	}
 }
 
@@ -98,18 +104,13 @@ func (w Worker) ExportBlock(block types.Block) error {
 		return fmt.Errorf("failed to persist block: %s", err)
 	}
 
-	w.handleBlockModules(block)
-
 	// Handle modules
-	w.pool.Submit(func() {
-		w.HandleModules(block)
-	})
-	return nil
+	return w.pool.Submit(func() { w.handleBlock(block) })
 }
 
 // ExportTxs accepts a slice of transactions and persists then inside the database.
 // An error is returned if the write fails.
-func (w Worker) HandleModules(block types.Block) {
+func (w Worker) handleBlock(block types.Block) {
 	// Handle all the transactions inside the block
 	w.handleBlockModules(block)
 	for _, tx := range block.Txs {
@@ -132,6 +133,11 @@ func (w Worker) handleBlockModules(block types.Block) {
 
 // handleTx handles all the the element contained inside the transaction
 func (w Worker) handleTx(tx types.Tx) {
+	err := w.db.SaveTx(tx)
+	if err != nil {
+		w.logger.Error("failed to save tx", "slot", tx.Slot, "hash", tx.Hash, "err", err)
+		return
+	}
 	for _, module := range w.modules {
 		if transactionModule, ok := module.(modules.TransactionModule); ok {
 			err := transactionModule.HandleTx(tx)
