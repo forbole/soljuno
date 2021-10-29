@@ -61,7 +61,6 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 	telemetryPort, _ := cmd.Flags().GetUint(flagTelemetryPort)
 
 	workerPoolSize, _ := cmd.Flags().GetInt(flagWorkerPoolSize)
-	workerBlockingTaskSize, _ := cmd.Flags().GetInt(flagWorkerBlockingTaskSize)
 
 	return types.NewConfig(
 		types.NewRPCConfig(rpcClientName, rpcAddr),
@@ -99,7 +98,6 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 		),
 		types.NewWorkerConfig(
 			workerPoolSize,
-			workerBlockingTaskSize,
 		),
 	)
 }

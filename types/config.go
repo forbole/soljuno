@@ -603,35 +603,27 @@ func (p *telemetryConfig) GetPort() uint {
 // WorkerConfig contains the configuration of the worker strategy
 type WorkerConfig interface {
 	GetPoolSize() int
-	GetBlockingTaskSize() int
 }
 
 var _ WorkerConfig = &workerConfig{}
 
 type workerConfig struct {
-	PoolSize         int `toml:"poll_size"`
-	BlockingTaskSize int `toml:"blocking_task_size"`
+	PoolSize int `toml:"poll_size"`
 }
 
 // NewWorkerConfig allows to build a new WorkerConfig instance
-func NewWorkerConfig(poolSize, blockingTaskSize int) WorkerConfig {
+func NewWorkerConfig(poolSize int) WorkerConfig {
 	return &workerConfig{
-		PoolSize:         poolSize,
-		BlockingTaskSize: blockingTaskSize,
+		PoolSize: poolSize,
 	}
 }
 
 // DefaultWorkerConfig returns the default WorkerConfig instance
 func DefaultWorkerConfig() WorkerConfig {
-	return NewWorkerConfig(500, 500)
+	return NewWorkerConfig(500)
 }
 
 // GetPoolSize implements WorkerConfig
 func (w *workerConfig) GetPoolSize() int {
 	return w.PoolSize
-}
-
-// GetBlockingTaskSize implements WorkerConfig
-func (w *workerConfig) GetBlockingTaskSize() int {
-	return w.BlockingTaskSize
 }

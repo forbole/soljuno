@@ -103,7 +103,7 @@ func StartParsing(ctx *Context) error {
 
 	workerCfg := types.Cfg.GetWorkerConfig()
 	// Create workers
-	pool, err := ants.NewPool(workerCfg.GetPoolSize(), ants.WithMaxBlockingTasks(workerCfg.GetBlockingTaskSize()))
+	pool, err := ants.NewPool(workerCfg.GetPoolSize())
 	if err != nil {
 		return err
 	}
