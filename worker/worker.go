@@ -104,12 +104,11 @@ func (w Worker) ExportBlock(block types.Block) error {
 		return fmt.Errorf("failed to persist block: %s", err)
 	}
 
-	// Handle modules
+	// Handle block events
 	return w.pool.Submit(func() { w.handleBlock(block) })
 }
 
-// ExportTxs accepts a slice of transactions and persists then inside the database.
-// An error is returned if the write fails.
+// handleBlock handles all the events in a block
 func (w Worker) handleBlock(block types.Block) {
 	// Handle all the transactions inside the block
 	w.handleBlockModules(block)
@@ -131,7 +130,7 @@ func (w Worker) handleBlockModules(block types.Block) {
 	}
 }
 
-// handleTx handles all the the element contained inside the transaction
+// handleTx handles all the events in a transaction
 func (w Worker) handleTx(tx types.Tx) {
 	err := w.db.SaveTx(tx)
 	if err != nil {
@@ -149,7 +148,7 @@ func (w Worker) handleTx(tx types.Tx) {
 	w.handleMessageModules(tx)
 }
 
-// handleMessageModules handles all the messages contained inside the transaction with modules
+// handleMessageModules handles all the messages events in a transaction
 func (w Worker) handleMessageModules(tx types.Tx) {
 	for _, msg := range tx.Messages {
 		for _, module := range w.modules {
