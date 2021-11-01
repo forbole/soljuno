@@ -22,6 +22,7 @@ type configToml struct {
 	Parsing   *parsingConfig   `toml:"parsing"`
 	Pruning   *pruningConfig   `toml:"pruning"`
 	Telemetry *telemetryConfig `toml:"telemetry"`
+	Worker    *workerConfig    `toml:"worker"`
 }
 
 // DefaultConfigParser attempts to read and parse a Juno config from the given string bytes.
@@ -38,6 +39,7 @@ func DefaultConfigParser(configData []byte) (Config, error) {
 		cfg.Parsing,
 		cfg.Pruning,
 		cfg.Telemetry,
+		cfg.Worker,
 	), err
 }
 
@@ -53,6 +55,7 @@ type Config interface {
 	GetParsingConfig() ParsingConfig
 	GetPruningConfig() PruningConfig
 	GetTelemetryConfig() TelemetryConfig
+	GetWorkerConfig() WorkerConfig
 }
 
 var _ Config = &config{}
@@ -67,6 +70,7 @@ type config struct {
 	Parsing   ParsingConfig   `toml:"parsing"`
 	Pruning   PruningConfig   `toml:"pruning"`
 	Telemetry TelemetryConfig `toml:"telemetry"`
+	Worker    WorkerConfig    `toml:"worker"`
 }
 
 // NewConfig builds a new Config instance
@@ -75,6 +79,7 @@ func NewConfig(
 	chainConfig ChainConfig, dbConfig DatabaseConfig,
 	loggingConfig LoggingConfig, parsingConfig ParsingConfig,
 	pruningConfig PruningConfig, telemetryConfig TelemetryConfig,
+	workerConfig WorkerConfig,
 ) Config {
 	return &config{
 		RPC:       rpcConfig,
@@ -85,6 +90,7 @@ func NewConfig(
 		Parsing:   parsingConfig,
 		Pruning:   pruningConfig,
 		Telemetry: telemetryConfig,
+		Worker:    workerConfig,
 	}
 }
 
@@ -150,6 +156,14 @@ func (c *config) GetTelemetryConfig() TelemetryConfig {
 		return DefaultTelemetryConfig()
 	}
 	return c.Telemetry
+}
+
+// GetWorkerConfig implements Config
+func (c *config) GetWorkerConfig() WorkerConfig {
+	if c.Worker == nil {
+		return DefaultWorkerConfig()
+	}
+	return c.Worker
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -548,7 +562,7 @@ func (p *pruningConfig) GetInterval() int64 {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-// TelemetryConfig contains the configuration of the pruning strategy
+// TelemetryConfig contains the configuration of the telemetry strategy
 type TelemetryConfig interface {
 	IsEnabled() bool
 	GetPort() uint
@@ -582,4 +596,34 @@ func (p *telemetryConfig) IsEnabled() bool {
 // GetPort implements TelemetryConfig
 func (p *telemetryConfig) GetPort() uint {
 	return p.Port
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+// WorkerConfig contains the configuration of the worker strategy
+type WorkerConfig interface {
+	GetPoolSize() int
+}
+
+var _ WorkerConfig = &workerConfig{}
+
+type workerConfig struct {
+	PoolSize int `toml:"poll_size"`
+}
+
+// NewWorkerConfig allows to build a new WorkerConfig instance
+func NewWorkerConfig(poolSize int) WorkerConfig {
+	return &workerConfig{
+		PoolSize: poolSize,
+	}
+}
+
+// DefaultWorkerConfig returns the default WorkerConfig instance
+func DefaultWorkerConfig() WorkerConfig {
+	return NewWorkerConfig(1_000_000)
+}
+
+// GetPoolSize implements WorkerConfig
+func (w *workerConfig) GetPoolSize() int {
+	return w.PoolSize
 }

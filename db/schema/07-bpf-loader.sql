@@ -25,5 +25,3 @@ CREATE TABLE program_data_account
     state                   TEXT    NOT NULL
 );
 CREATE INDEX program_data_account_authority_index ON program_data_account (update_authority);
-
-

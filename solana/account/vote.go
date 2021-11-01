@@ -8,7 +8,7 @@ import (
 func voteParse(decoder bincode.Decoder, bz []byte) interface{} {
 	if len(bz) != 0 {
 		var voteAccount VoteAccount
-		decoder.Decode(bz, &voteAccount)
+		decoder.Decode(bz[4:], &voteAccount)
 		return voteAccount
 	}
 	return nil

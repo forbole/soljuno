@@ -48,6 +48,9 @@ const (
 
 	flagTelemetryEnabled = "telemetry-enabled"
 	flagTelemetryPort    = "telemetry-port"
+
+	flagWorkerPoolSize         = "worker-pool-size"
+	flagWorkerBlockingTaskSize = "worker-blocking-task-size"
 )
 
 // InitCmd returns the command that should be run in order to properly initialize BDJuno

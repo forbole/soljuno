@@ -1,6 +1,8 @@
 package worker
 
 import (
+	"github.com/panjf2000/ants/v2"
+
 	"github.com/forbole/soljuno/solana/parser"
 	"github.com/forbole/soljuno/types/logging"
 
@@ -17,6 +19,7 @@ type Context struct {
 	Parser      parser.Parser
 	Logger      logging.Logger
 
+	Pool    *ants.Pool
 	Queue   types.SlotQueue
 	Modules []modules.Module
 }
@@ -27,6 +30,7 @@ func NewContext(
 	db db.Database,
 	parser parser.Parser,
 	logger logging.Logger,
+	pool *ants.Pool,
 	queue types.SlotQueue,
 	modules []modules.Module,
 ) *Context {
@@ -36,6 +40,7 @@ func NewContext(
 		Parser:      parser,
 		Logger:      logger,
 
+		Pool:    pool,
 		Queue:   queue,
 		Modules: modules,
 	}

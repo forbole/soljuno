@@ -13,7 +13,6 @@ func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client 
 	if !db.CheckVoteAccountLatest(address, currentSlot) {
 		return nil
 	}
-
 	info, err := client.AccountInfo(address)
 	if err != nil {
 		return err
@@ -35,6 +34,6 @@ func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client 
 		voteAccount.Node.String(),
 		voteAccount.Withdrawer.String(),
 		voteAccount.Voter[0].Pubkey.String(),
-		0,
+		voteAccount.Commission,
 	)
 }
