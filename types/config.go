@@ -620,7 +620,7 @@ func NewWorkerConfig(poolSize int) WorkerConfig {
 
 // DefaultWorkerConfig returns the default WorkerConfig instance
 func DefaultWorkerConfig() WorkerConfig {
-	return NewWorkerConfig(500)
+	return NewWorkerConfig(1_000_000)
 }
 
 // GetPoolSize implements WorkerConfig
