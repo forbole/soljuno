@@ -117,6 +117,7 @@ func StartParsing(ctx *Context) error {
 
 	waitGroup.Add(1)
 
+	// Hanle bank module tasks synchronously to prevent dead locks
 	go func() {
 		for {
 			task := <-bankTasks
