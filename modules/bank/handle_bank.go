@@ -6,7 +6,7 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-func HandleBlock(block types.Block, db db.BankDb) error {
+func HandleBank(block types.Block, db db.BankDb) error {
 	var accounts []string
 	var balances []uint64
 	var tokenAccounts []string

@@ -23,14 +23,13 @@ func (m *Module) Name() string {
 	return "bank"
 }
 
-// HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(block types.Block) error {
+// HandleBank implements modules.BankModule
+func (m *Module) HandleBank(block types.Block) error {
 	bankDb, ok := m.db.(db.BankDb)
 	if !ok {
 		return fmt.Errorf("bank is enabled, but your database does not implement BankDb")
 	}
-
-	err := HandleBlock(block, bankDb)
+	err := HandleBank(block, bankDb)
 	if err != nil {
 		return err
 	}
