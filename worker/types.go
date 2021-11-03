@@ -22,7 +22,7 @@ type Context struct {
 	Pool      *ants.Pool
 	Queue     types.SlotQueue
 	Modules   []modules.Module
-	BankTasks chan func()
+	BankTasks types.BankTaskQueue
 }
 
 // NewContext allows to build a new Worker Context instance
