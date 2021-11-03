@@ -23,7 +23,7 @@ type UiTransaction struct {
 }
 
 type TransactionTokenBalance struct {
-	AccountIndex  uint8         `json:"accountIndex"`
+	AccountIndex  uint          `json:"accountIndex"`
 	Mint          string        `json:"mint"`
 	UiTokenAmount UiTokenAmount `json:"uiTokenAmount"`
 }

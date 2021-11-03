@@ -111,8 +111,8 @@ func (w Worker) ExportBlock(block types.Block) error {
 
 // handleBlock handles all the events in a block
 func (w Worker) handleBlock(block types.Block) {
-	// Handle all the transactions inside the block
 	w.handleBlockModules(block)
+
 	for _, tx := range block.Txs {
 		w.handleTx(tx)
 	}
@@ -148,7 +148,7 @@ func (w Worker) handleTx(tx types.Tx) {
 		}
 		w.handleMessageModules(tx)
 	}); err != nil {
-		w.logger.Error("failed to add tx handler to pool", "slot", tx.Slot, "hash", tx.Hash, "err", err)
+		w.logger.Error("failed to add tx handler into pool", "slot", tx.Slot, "hash", tx.Hash, "err", err)
 	}
 }
 
