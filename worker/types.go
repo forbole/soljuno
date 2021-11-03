@@ -34,7 +34,7 @@ func NewContext(
 	pool *ants.Pool,
 	queue types.SlotQueue,
 	modules []modules.Module,
-	bankTasks chan func(),
+	bankTasks types.BankTaskQueue,
 ) *Context {
 	return &Context{
 		ClientProxy: clientProxy,
