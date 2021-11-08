@@ -6,12 +6,12 @@ import (
 	"github.com/forbole/soljuno/types"
 
 	client "github.com/forbole/soljuno/solana/client"
-	clienttype "github.com/forbole/soljuno/solana/client/types"
+	clienttypes "github.com/forbole/soljuno/solana/client/types"
 )
 
 type Proxy interface {
 	// Block queries for a block by slot. An error is returned if the query fails.
-	Block(uint64) (clienttype.BlockResult, error)
+	Block(uint64) (clienttypes.BlockResult, error)
 
 	// LatestSlot returns the latest slot on the active chain. An error
 	// is returned if the query fails.
@@ -23,11 +23,11 @@ type Proxy interface {
 
 	// AccountInfo returns the information of the given account in the current chain.
 	// An error is returned if the query fails
-	AccountInfo(address string) (clienttype.AccountInfo, error)
+	AccountInfo(address string) (clienttypes.AccountInfo, error)
 
 	// Validators returns vote accounts of validators in the current chain.
 	// An error is returned if the query fails
-	ValidatorsWithSlot() (uint64, clienttype.VoteAccounts, error)
+	ValidatorsWithSlot() (uint64, clienttypes.VoteAccounts, error)
 }
 
 // proxy implements a wrapper around both a Tendermint RPC client and a
@@ -66,30 +66,30 @@ func (cp *proxy) Slots(start uint64, end uint64) ([]uint64, error) {
 	return slots, nil
 }
 
-func (cp *proxy) Block(slot uint64) (clienttype.BlockResult, error) {
+func (cp *proxy) Block(slot uint64) (clienttypes.BlockResult, error) {
 	return cp.rpcClient.GetBlock(slot)
 }
 
-func (cp *proxy) Validators() (clienttype.VoteAccounts, error) {
+func (cp *proxy) Validators() (clienttypes.VoteAccounts, error) {
 	validators, err := cp.rpcClient.GetVoteAccounts()
 	if err != nil {
-		return clienttype.VoteAccounts{}, err
+		return clienttypes.VoteAccounts{}, err
 	}
 	return validators, nil
 }
 
-func (cp *proxy) ValidatorsWithSlot() (uint64, clienttype.VoteAccounts, error) {
+func (cp *proxy) ValidatorsWithSlot() (uint64, clienttypes.VoteAccounts, error) {
 	slot, voteAccounts, err := cp.rpcClient.GetVoteAccountsWithSlot()
 	if err != nil {
-		return 0, clienttype.VoteAccounts{}, err
+		return 0, clienttypes.VoteAccounts{}, err
 	}
 	return slot, voteAccounts, nil
 }
 
-func (cp *proxy) AccountInfo(address string) (clienttype.AccountInfo, error) {
+func (cp *proxy) AccountInfo(address string) (clienttypes.AccountInfo, error) {
 	info, err := cp.rpcClient.GetAccountInfo(address)
 	if err != nil {
-		return clienttype.AccountInfo{}, err
+		return clienttypes.AccountInfo{}, err
 	}
 	return info, nil
 }
