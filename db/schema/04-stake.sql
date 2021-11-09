@@ -19,11 +19,11 @@ CREATE TABLE stake_lockup
 
 CREATE TABLE stake_delegation
 (
-    address                 TEXT    NOT NULL PRIMARY KEY,
-    slot                    BIGINT  NOT NULL,
-    activation_epoch        BIGINT  NOT NULL,
-    deactivation_epoch      BIGINT  NOT NULL,
-    stake                   BIGINT  NOT NULL,
-    voter                   TEXT    NOT NULL,
-    warmup_cooldown_rate    FLOAT   NOT NULL
+    address                 TEXT            NOT NULL PRIMARY KEY,
+    slot                    BIGINT          NOT NULL,
+    activation_epoch        NUMERIC(20,0)   NOT NULL,
+    deactivation_epoch      NUMERIC(20,0)   NOT NULL,
+    stake                   BIGINT          NOT NULL,
+    voter                   TEXT            NOT NULL,
+    warmup_cooldown_rate    FLOAT           NOT NULL
 );

@@ -7,7 +7,7 @@ CREATE TABLE account_balance
 
 CREATE TABLE token_account_balance
 (
-    address TEXT    NOT NULL PRIMARY KEY,
-    slot    BIGINT  NOT NULL,
-    balance BIGINT  NOT NULL
+    address TEXT            NOT NULL PRIMARY KEY,
+    slot    BIGINT          NOT NULL,
+    balance NUMERIC(20,0)   NOT NULL
 );
