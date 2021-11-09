@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/types/logging"
@@ -8,6 +10,31 @@ import (
 
 // Database represents an abstract database that can be used to save data inside it
 type Database interface {
+	BasicDb
+
+	ExceutorDb
+
+	PruningDb
+
+	BankDb
+
+	TokenDb
+
+	SystemDb
+
+	StakeDb
+
+	VoteDb
+
+	BpfLoaderDb
+
+	ConfigDb
+
+	// Close closes the connection to the database
+	Close()
+}
+
+type BasicDb interface {
 	// HasBlock tells whether or not the database has already stored the block having the given height.
 	// An error is returned if the operation fails.
 	HasBlock(slot uint64) (bool, error)
@@ -24,9 +51,12 @@ type Database interface {
 	// SaveMessage stores a single message.
 	// An error is returned if the operation fails.
 	SaveMessage(msg types.Message) error
+}
 
-	// Close closes the connection to the database
-	Close()
+// ExceutorDb represents an abstract database that can excute a raw sql
+type ExceutorDb interface {
+	// Exec will run the given raw sql
+	Exec(string) (sql.Result, error)
 }
 
 // PruningDb represents a database that supports pruning properly
