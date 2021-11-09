@@ -16,6 +16,11 @@ func tokenParse(decoder bincode.Decoder, bz []byte) interface{} {
 		var mint TokenMint
 		decoder.Decode(bz, &mint)
 		return mint
+
+	case MultisigLen:
+		var multisig Multisig
+		decoder.Decode(bz, &multisig)
+		return multisig
 	}
 	return nil
 }
@@ -84,4 +89,25 @@ type TokenMint struct {
 	Decimals        uint8
 	IsIntialized    bool
 	FreezeAuthority COptionPubkey
+}
+
+//____________________________________________________________________________
+
+const MultisigLen = 355
+
+type Signers [11]types.Pubkey
+
+type Multisig struct {
+	M            uint8
+	N            uint8
+	IsIntialized bool
+	Signers      Signers
+}
+
+func (s Signers) Strings() []string {
+	var pkStr []string
+	for _, p := range s {
+		pkStr = append(pkStr, p.String())
+	}
+	return pkStr
 }

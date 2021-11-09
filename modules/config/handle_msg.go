@@ -24,7 +24,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.ConfigDb, client client.Pro
 	if err != nil {
 		return err
 	}
-	configAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.ConfigAccount)
+	configAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.ValidatorConfig)
 	if !ok {
 		return fmt.Errorf("failed to parse config account")
 	}

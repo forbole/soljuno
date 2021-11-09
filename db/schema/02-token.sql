@@ -10,9 +10,9 @@ CREATE INDEX token_authority_index ON token (mint_authority);
 
 CREATE TABLE token_supply
 (
-    mint    TEXT    NOT NULL PRIMARY KEY,
-    slot    BIGINT  NOT NULL,
-    supply  BIGINT  NOT NULL
+    mint    TEXT            NOT NULL PRIMARY KEY,
+    slot    BIGINT          NOT NULL,
+    supply  NUMERIC(20,0)   NOT NULL
 );
 
 CREATE TABLE token_account
