@@ -9,6 +9,7 @@ import (
 	"github.com/forbole/soljuno/db/builder"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/types/logging"
+	"github.com/panjf2000/ants/v2"
 	"github.com/spf13/cobra"
 )
 
@@ -93,15 +94,17 @@ type Context struct {
 	Proxy    client.Proxy
 	Database db.Database
 	Logger   logging.Logger
+	Pool     *ants.Pool
 }
 
 // NewContext builds a new Context instance
 func NewContext(
-	proxy client.Proxy, db db.Database, logger logging.Logger,
+	proxy client.Proxy, db db.Database, logger logging.Logger, pool *ants.Pool,
 ) *Context {
 	return &Context{
 		Proxy:    proxy,
 		Database: db,
 		Logger:   logger,
+		Pool:     pool,
 	}
 }

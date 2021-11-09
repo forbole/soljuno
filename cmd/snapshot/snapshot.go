@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -22,7 +24,7 @@ func ImportSnapshotCmd(cmdCfg *Config) *cobra.Command {
 		PreRunE: ReadConfig(cmdCfg),
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			context, err := GetParsingContext(cmdCfg)
+			context, err := GetSnapshotContext(cmdCfg)
 			if err != nil {
 				return err
 			}
@@ -54,7 +56,12 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader) error {
 	if err != nil {
 		return err
 	}
+	wg := new(sync.WaitGroup)
 	for {
+		if ctx.Pool.Free() == 0 {
+			time.Sleep(1 * time.Second)
+			continue
+		}
 		pubkey, buf, err := readSection(reader)
 		if err == io.EOF {
 			break
@@ -67,12 +74,19 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader) error {
 			return err
 		}
 		account.Pubkey = pubkey
-
-		err = handleAccount(ctx, account.Pubkey)
-		if err != nil {
-			return err
-		}
+		wg.Add(1)
+		err = ctx.Pool.Submit(
+			func() {
+				defer wg.Done()
+				ctx.Logger.Info("Start handling account", "address", pubkey)
+				err = handleAccount(ctx, account.Pubkey)
+				if err != nil {
+					ctx.Logger.Error("failed to import account", "address", pubkey, "err", err)
+				}
+			},
+		)
 	}
+	wg.Wait()
 	return nil
 }
 
