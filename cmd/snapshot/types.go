@@ -1,6 +1,6 @@
 package snapshot
 
-type AccountInfo struct {
+type Account struct {
 	Pubkey string
 	Detail AccountDetail `yaml:"account"`
 }
