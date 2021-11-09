@@ -43,7 +43,7 @@ func StartImportSnapshot(ctx *Context, snapshotFile string) error {
 	if err != nil {
 		return err
 	}
-	defer func() { err = file.Close() }()
+	defer func() { _ = file.Close() }()
 	reader := bufio.NewReader(file)
 
 	return handleSnapshot(ctx, reader)
@@ -55,10 +55,19 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader) error {
 		return err
 	}
 	for {
-		account, err := readSection(reader)
+		pubkey, buf, err := readSection(reader)
 		if err == io.EOF {
 			break
 		}
+
+		var account Account
+		// Process the line here.
+		err = yaml.Unmarshal(buf.Bytes(), &account)
+		if err != nil {
+			return err
+		}
+		account.Pubkey = pubkey
+
 		err = handleAccount(ctx, account.Pubkey)
 		if err != nil {
 			return err
@@ -67,20 +76,19 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader) error {
 	return nil
 }
 
-func readSection(reader *bufio.Reader) (Account, error) {
+// readSection reads a section of account in the snapshot returns a pubkey and a buffer of detail
+func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 	var err error
-	var detailBuf bytes.Buffer
-	var l []byte
-	count := 0
+	var buf bytes.Buffer
 	var pubkey string
-	for {
+	for count := 0; count < 7; count++ {
+		var l []byte
 		l, _, err = reader.ReadLine()
 		// If we're at the EOF, break.
-		if err != nil {
-			if err != io.EOF {
-				return Account{}, err
-			}
+		if err == io.EOF {
 			break
+		} else if err != nil {
+			return "", bytes.Buffer{}, err
 		}
 
 		if count == 0 {
@@ -88,30 +96,17 @@ func readSection(reader *bufio.Reader) (Account, error) {
 			l = []byte(`account:`)
 		}
 		l = []byte(strings.Replace(string(l), "- ", "", 1))
-		detailBuf.Write(l)
-		count++
-		if count == 7 {
-			count = 0
-			break
-		}
+		buf.Write(l)
 
-		_, err = detailBuf.WriteString("\n")
+		_, err = buf.WriteString("\n")
 		if err != nil {
-			return Account{}, err
+			return "", bytes.Buffer{}, err
 		}
 	}
 	if err == io.EOF {
-		return Account{}, err
+		return "", bytes.Buffer{}, err
 	}
-
-	var account Account
-	// Process the line here.
-	err = yaml.Unmarshal(detailBuf.Bytes(), &account)
-	if err != nil {
-		return Account{}, err
-	}
-	account.Pubkey = pubkey
-	return account, err
+	return pubkey, buf, nil
 }
 
 func handleAccount(ctx *Context, address string) error {

@@ -2,6 +2,7 @@ package snapshot
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
@@ -35,12 +36,33 @@ func updateTokenAccount(ctx *Context, address string, slot uint64, account accou
 	if !ok {
 		return fmt.Errorf("database does not implement TokenDb")
 	}
-	return tokenDb.SaveTokenAccount(
+	err := tokenDb.SaveTokenAccount(
 		address,
 		slot,
 		account.Mint.String(),
 		account.Owner.String(),
 		"initialized",
+	)
+	if err != nil {
+		return err
+	}
+	bankDb, ok := ctx.Database.(db.BankDb)
+	if !ok {
+		return fmt.Errorf("database does not implement BankDb")
+	}
+
+	return bankDb.SaveAccountTokenBalances(
+		slot,
+		[]string{address},
+		[]clienttypes.TransactionTokenBalance{
+			{
+				AccountIndex: 0,
+				Mint:         account.Mint.String(),
+				UiTokenAmount: clienttypes.UiTokenAmount{
+					Amount: strconv.FormatUint(account.Amount, 10),
+				},
+			},
+		},
 	)
 }
 
