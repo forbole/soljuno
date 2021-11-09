@@ -151,9 +151,6 @@ func handleAccount(ctx *Context, address string) error {
 	case accountParser.ProgramDataAccount:
 		return updateProgramDataAccount(ctx, address, info.Context.Slot, account)
 
-	case accountParser.StakeConfig:
-		return nil
-
 	case accountParser.ValidatorConfig:
 		return updateValidatorConfig(ctx, address, info.Context.Slot, account)
 
