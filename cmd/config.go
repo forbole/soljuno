@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	dbcmd "github.com/forbole/soljuno/cmd/db"
 	initcmd "github.com/forbole/soljuno/cmd/init"
 	parsecmd "github.com/forbole/soljuno/cmd/parse"
 	snapshotcmd "github.com/forbole/soljuno/cmd/snapshot"
@@ -12,6 +13,7 @@ type Config struct {
 	initConfig     *initcmd.Config
 	parseConfig    *parsecmd.Config
 	snapshotConfig *snapshotcmd.Config
+	dbConfig       *dbcmd.Config
 }
 
 // NewConfig allows to build a new Config instance
@@ -66,4 +68,16 @@ func (c *Config) GetSnapshotConfig() *snapshotcmd.Config {
 		return snapshotcmd.NewConfig()
 	}
 	return c.snapshotConfig
+}
+
+func (c *Config) WithDbConfig(cfg *dbcmd.Config) *Config {
+	c.dbConfig = cfg
+	return c
+}
+
+func (c *Config) GetDbConfig() *dbcmd.Config {
+	if c.dbConfig == nil {
+		return dbcmd.NewConfig()
+	}
+	return c.dbConfig
 }
