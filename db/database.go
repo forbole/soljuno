@@ -129,6 +129,9 @@ type SystemDb interface {
 	// SaveNonceAccount allows to store the given nonce account data inside the database
 	SaveNonceAccount(address string, slot uint64, authority string, blockhash string, lamportsPerSignature uint64, state string) error
 
+	// DeleteNonceAccount allows to delete the given address of the nonce account inside the database
+	DeleteNonceAccount(address string) error
+
 	SystemCheckerDb
 }
 

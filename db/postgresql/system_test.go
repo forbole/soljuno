@@ -75,3 +75,35 @@ func (suite *DbTestSuite) TestSaveNonceAccount() {
 		})
 	}
 }
+
+func (suite *DbTestSuite) TestDeleteNonceAccount() {
+	err := suite.database.SaveNonceAccount(
+		"address",
+		0,
+		"owner",
+		"hash",
+		20,
+		"initialzied",
+	)
+	suite.Require().NoError(err)
+	rows := []struct {
+		Address              string `db:"address"`
+		Slot                 uint64 `db:"slot"`
+		Authority            string `db:"authority"`
+		Blockhash            string `db:"blockhash"`
+		LamportsPerSignature uint64 `db:"lamports_per_signature"`
+		State                string `db:"state"`
+	}{}
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM nonce_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	rows = nil
+
+	err = suite.database.DeleteNonceAccount("address")
+	suite.Require().NoError(err)
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM nonce_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
+}

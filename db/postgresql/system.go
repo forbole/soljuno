@@ -4,7 +4,7 @@ import "github.com/forbole/soljuno/db"
 
 var _ db.SystemDb = &Database{}
 
-// SaveToken implements the db.SystemDb
+// SaveNonceAccount implements the db.SystemDb
 func (db *Database) SaveNonceAccount(
 	address string,
 	slot uint64,
@@ -33,5 +33,12 @@ WHERE nonce_account.slot <= excluded.slot`
 		lamportsPerSignature,
 		state,
 	)
+	return err
+}
+
+// DeleteNonceAccount implements the db.SystemDb
+func (db *Database) DeleteNonceAccount(address string) error {
+	stmt := `DELETE FROM nonce_account WHERE address = $1`
+	_, err := db.Sqlx.Exec(stmt, address)
 	return err
 }
