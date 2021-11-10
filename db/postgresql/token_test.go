@@ -150,6 +150,36 @@ func (suite *DbTestSuite) TestSaveTokenAccount() {
 	}
 }
 
+func (suite *DbTestSuite) TestDeleteTokenAccount() {
+	err := suite.database.SaveTokenAccount(
+		"address",
+		0,
+		"mint",
+		"owner",
+		"initialized",
+	)
+	suite.Require().NoError(err)
+	rows := []struct {
+		Address string `db:"address"`
+		Slot    uint64 `db:"slot"`
+		Mint    string `db:"mint"`
+		Owner   string `db:"owner"`
+		State   string `db:"state"`
+	}{}
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	rows = nil
+
+	err = suite.database.DeleteTokenAccount("address")
+	suite.Require().NoError(err)
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
+}
+
 func (suite *DbTestSuite) TestSaveMultisig() {
 	type MultisigRow struct {
 		Address string         `db:"address"`
@@ -223,7 +253,7 @@ func (suite *DbTestSuite) TestSaveMultisig() {
 	}
 }
 
-func (suite *DbTestSuite) TestSaveDelegate() {
+func (suite *DbTestSuite) TestSaveDelegation() {
 	type DelegateRow struct {
 		SourceAddress   string `db:"source_address"`
 		DelegateAddress string `db:"delegate_address"`
@@ -277,7 +307,7 @@ func (suite *DbTestSuite) TestSaveDelegate() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveTokenDelegate(
+			err := suite.database.SaveTokenDelegation(
 				tc.data.SourceAddress,
 				tc.data.DelegateAddress,
 				tc.data.Slot,
@@ -287,12 +317,40 @@ func (suite *DbTestSuite) TestSaveDelegate() {
 
 			// Verify the data
 			rows := []DelegateRow{}
-			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_delegate")
+			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_delegation")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
 			suite.Require().Equal(tc.expected, rows[0])
 		})
 	}
+}
+
+func (suite *DbTestSuite) TestDeleteTokenDelegation() {
+	err := suite.database.SaveTokenDelegation(
+		"address",
+		"dest",
+		0,
+		100,
+	)
+	suite.Require().NoError(err)
+	rows := []struct {
+		SourceAddress   string `db:"source_address"`
+		DelegateAddress string `db:"delegate_address"`
+		Slot            uint64 `db:"slot"`
+		Amount          uint64 `db:"amount"`
+	}{}
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_delegation")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	rows = nil
+
+	err = suite.database.DeleteTokenDelegation("address")
+	suite.Require().NoError(err)
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_delegation")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
 }
 
 func (suite *DbTestSuite) SaveTokenSupply() {

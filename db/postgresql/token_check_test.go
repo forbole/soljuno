@@ -56,7 +56,7 @@ func (suite *DbTestSuite) TestCheckTokenDelegateLatest() {
 	isLatest := suite.database.CheckTokenDelegateLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveTokenDelegate("source", "destination", 1, 100)
+	err := suite.database.SaveTokenDelegation("source", "destination", 1, 100)
 	suite.Require().NoError(err)
 
 	// older slot returns false

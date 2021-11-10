@@ -39,7 +39,7 @@ func (db *Database) CheckMultisigLatest(address string, currentSlot uint64) bool
 // CheckDelegateLatest implements the db.TokenCheckerDb
 // if error, it returns true since there is no address statement inside database
 func (db *Database) CheckTokenDelegateLatest(sourceAddress string, currentSlot uint64) bool {
-	stmt := `SELECT slot FROM token_delegate WHERE source_address=$1`
+	stmt := `SELECT slot FROM token_delegation WHERE source_address=$1`
 	var latestSlot uint64
 	err := db.Sqlx.Get(&latestSlot, stmt, sourceAddress)
 	if err != nil {

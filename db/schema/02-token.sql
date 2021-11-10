@@ -33,7 +33,7 @@ CREATE TABLE multisig
     m       INT     NOT NULL
 );
 
-CREATE TABLE token_delegate
+CREATE TABLE token_delegation
 (
     source_address      TEXT    NOT NULL PRIMARY KEY,
     delegate_address    TEXT    NOT NULL,

@@ -88,11 +88,17 @@ type TokenDb interface {
 	// SaveTokenAccount allows to store the given token account data inside the database
 	SaveTokenAccount(address string, slot uint64, mint, owner, state string) error
 
+	// DeleteTokenAccount allows to delete the given address of the token account inside the database
+	DeleteTokenAccount(address string) error
+
 	// SaveMultisig allows to store the given multisig data inside the database
 	SaveMultisig(address string, slot uint64, singers []string, m uint8) error
 
 	// SaveDelegate allows to store the given approve state inside the database
-	SaveTokenDelegate(source string, destination string, slot uint64, amount uint64) error
+	SaveTokenDelegation(source string, destination string, slot uint64, amount uint64) error
+
+	// DeleteTokenDelegation allows to delete the given address of the token delegation inside the database
+	DeleteTokenDelegation(address string) error
 
 	// SaveTokenSupply allows to store the given token data inside the database
 	SaveTokenSupply(address string, slot uint64, supply uint64) error
@@ -186,11 +192,13 @@ type BpfLoaderDb interface {
 	// SaveProgramAccount allows to store the given program account data inside the database
 	SaveProgramAccount(address string, slot uint64, programDataAccount string, state string) error
 
+	// DeleteBufferAccount allows to delete the given address of the program account inside the database
 	DeleteProgramAccount(address string) error
 
 	// SaveProgramDataAccount allows to store the given program data account inside the database
 	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string, state string) error
 
+	// DeleteBufferAccount allows to delete the given address of the program data account inside the database
 	DeleteProgramDataAccount(address string) error
 
 	BpfLoaderCheckerDb

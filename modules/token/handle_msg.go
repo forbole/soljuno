@@ -157,9 +157,9 @@ func handleSetAuthority(msg types.Message, tx types.Tx, db db.TokenDb, client cl
 		return fmt.Errorf("instruction does not match %s type: %s", "setAuthority", msg.Value.Type())
 	}
 	if instruction.Mint != "" {
-		return updateMintState(instruction.Mint, tx.Slot, db, client)
+		return updateToken(instruction.Mint, tx.Slot, db, client)
 	}
-	return updateAccountState(instruction.Account, tx.Slot, db, client)
+	return updateTokenAccount(instruction.Account, tx.Slot, db, client)
 }
 
 // handleMsgMintTo handles a MsgMintTo
@@ -204,7 +204,7 @@ func handleMsgCloseAccount(msg types.Message, tx types.Tx, db db.TokenDb, client
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "closeAccount", msg.Value.Type())
 	}
-	return updateAccountState(instruction.Account, tx.Slot, db, client)
+	return updateTokenAccount(instruction.Account, tx.Slot, db, client)
 }
 
 // handleMsgFreezeAccount handles a MsgFreezeAccount
@@ -213,7 +213,7 @@ func handleMsgFreezeAccount(msg types.Message, tx types.Tx, db db.TokenDb, clien
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "freezeAccount", msg.Value.Type())
 	}
-	return updateAccountState(instruction.Account, tx.Slot, db, client)
+	return updateTokenAccount(instruction.Account, tx.Slot, db, client)
 }
 
 // handleMsgThawAccount handles a MsgThawAccount
@@ -222,5 +222,5 @@ func handleMsgThawAccount(msg types.Message, tx types.Tx, db db.TokenDb, client 
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "thawAccount", msg.Value.Type())
 	}
-	return updateAccountState(instruction.Account, tx.Slot, db, client)
+	return updateTokenAccount(instruction.Account, tx.Slot, db, client)
 }

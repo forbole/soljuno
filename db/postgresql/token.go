@@ -61,6 +61,13 @@ WHERE token_account.slot <= excluded.slot`
 	return err
 }
 
+// DeleteTokenAccount implements the db.TokenDb
+func (db *Database) DeleteTokenAccount(address string) error {
+	stmt := `DELETE FROM token_account WHERE address = $1`
+	_, err := db.Sqlx.Exec(stmt, address)
+	return err
+}
+
 // SaveMultisig implements the db.TokenDb
 func (db *Database) SaveMultisig(address string, slot uint64, singers []string, m uint8) error {
 	stmt := `
@@ -83,15 +90,15 @@ WHERE multisig.slot <= excluded.slot`
 }
 
 // SaveTokenDelegate implements the db.TokenDb
-func (db *Database) SaveTokenDelegate(source string, delegate string, slot uint64, amount uint64) error {
+func (db *Database) SaveTokenDelegation(source string, delegate string, slot uint64, amount uint64) error {
 	stmt := `
-INSERT INTO token_delegate
+INSERT INTO token_delegation
 	(source_address, delegate_address, slot, amount)
 VALUES ($1, $2, $3, $4)
 ON CONFLICT (source_address) DO UPDATE
 	SET slot = excluded.slot,
 	amount = excluded.amount
-WHERE token_delegate.slot <= excluded.slot`
+WHERE token_delegation.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
 		source,
@@ -99,6 +106,13 @@ WHERE token_delegate.slot <= excluded.slot`
 		slot,
 		amount,
 	)
+	return err
+}
+
+// DeleteTokenDelegation implements the db.TokenDb
+func (db *Database) DeleteTokenDelegation(address string) error {
+	stmt := `DELETE FROM token_delegation WHERE source_address = $1`
+	_, err := db.Sqlx.Exec(stmt, address)
 	return err
 }
 
