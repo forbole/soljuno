@@ -131,7 +131,15 @@ func (suite *DbTestSuite) TestSaveStakeLockup() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveStakeLockup(
+			err := suite.database.SaveStakeAccount(
+				tc.data.Address,
+				0,
+				"staker",
+				"withdrawer",
+				"state",
+			)
+			suite.Require().NoError(err)
+			err = suite.database.SaveStakeLockup(
 				tc.data.Address,
 				tc.data.Slot,
 				tc.data.Custodian,
@@ -211,7 +219,15 @@ func (suite *DbTestSuite) TestStakeDelegation() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveStakeDelegation(
+			err := suite.database.SaveStakeAccount(
+				tc.data.Address,
+				0,
+				"staker",
+				"withdrawer",
+				"state",
+			)
+			suite.Require().NoError(err)
+			err = suite.database.SaveStakeDelegation(
 				tc.data.Address,
 				tc.data.Slot,
 				tc.data.ActivationEpoch,

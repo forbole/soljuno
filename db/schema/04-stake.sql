@@ -10,7 +10,7 @@ CREATE INDEX stake_staker_index ON stake_account (staker);
 
 CREATE TABLE stake_lockup
 (
-    address         TEXT        NOT NULL PRIMARY KEY,
+    address         TEXT        NOT NULL PRIMARY KEY REFERENCES stake_account(address) ON DELETE CASCADE,
     slot            BIGINT      NOT NULL,
     custodian       TEXT        NOT NULL,
     epoch           BIGINT      NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE stake_lockup
 
 CREATE TABLE stake_delegation
 (
-    address                 TEXT            NOT NULL PRIMARY KEY,
+    address                 TEXT            NOT NULL PRIMARY KEY REFERENCES stake_account(address) ON DELETE CASCADE,
     slot                    BIGINT          NOT NULL,
     activation_epoch        NUMERIC(20,0)   NOT NULL,
     deactivation_epoch      NUMERIC(20,0)   NOT NULL,
