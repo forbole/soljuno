@@ -2,12 +2,11 @@ package postgresql_test
 
 func (suite *DbTestSuite) TestSaveBufferAccount() {
 	type BufferAccountRow struct {
-		Mint      string `db:"address"`
+		Address   string `db:"address"`
 		Slot      uint64 `db:"slot"`
 		Authority string `db:"authority"`
 		State     string `db:"state"`
 	}
-
 	testCases := []struct {
 		name     string
 		data     BufferAccountRow
@@ -55,7 +54,7 @@ func (suite *DbTestSuite) TestSaveBufferAccount() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			err := suite.database.SaveBufferAccount(
-				tc.data.Mint,
+				tc.data.Address,
 				tc.data.Slot,
 				tc.data.Authority,
 				tc.data.State,
@@ -72,9 +71,37 @@ func (suite *DbTestSuite) TestSaveBufferAccount() {
 	}
 }
 
+func (suite *DbTestSuite) TestDeleteBufferAccount() {
+	err := suite.database.SaveBufferAccount(
+		"address",
+		0,
+		"owner",
+		"initialized",
+	)
+	suite.Require().NoError(err)
+
+	rows := []struct {
+		Address   string `db:"address"`
+		Slot      uint64 `db:"slot"`
+		Authority string `db:"authority"`
+		State     string `db:"state"`
+	}{}
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM buffer_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	rows = nil
+
+	err = suite.database.DeleteBufferAccount("address")
+	suite.Require().NoError(err)
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM buffer_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
+}
+
 func (suite *DbTestSuite) TestSaveProgramAccount() {
 	type ProgramAccountAccountRow struct {
-		Mint               string `db:"address"`
+		Address            string `db:"address"`
 		Slot               uint64 `db:"slot"`
 		ProgramDataAccount string `db:"program_data_account"`
 		State              string `db:"state"`
@@ -127,7 +154,7 @@ func (suite *DbTestSuite) TestSaveProgramAccount() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			err := suite.database.SaveProgramAccount(
-				tc.data.Mint,
+				tc.data.Address,
 				tc.data.Slot,
 				tc.data.ProgramDataAccount,
 				tc.data.State,
@@ -144,9 +171,37 @@ func (suite *DbTestSuite) TestSaveProgramAccount() {
 	}
 }
 
+func (suite *DbTestSuite) TestDeleteProgramAccount() {
+	err := suite.database.SaveProgramAccount(
+		"address",
+		0,
+		"data",
+		"initialized",
+	)
+	suite.Require().NoError(err)
+
+	rows := []struct {
+		Address            string `db:"address"`
+		Slot               uint64 `db:"slot"`
+		ProgramDataAccount string `db:"program_data_account"`
+		State              string `db:"state"`
+	}{}
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM program_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	rows = nil
+
+	err = suite.database.DeleteProgramAccount("address")
+	suite.Require().NoError(err)
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM program_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
+}
+
 func (suite *DbTestSuite) TestSaveProgramDataAccount() {
 	type ProgramDataAccountRow struct {
-		Mint             string `db:"address"`
+		Address          string `db:"address"`
 		Slot             uint64 `db:"slot"`
 		LastModifiedSlot uint64 `db:"last_modified_slot"`
 		UpdateAuthority  string `db:"update_authority"`
@@ -200,7 +255,7 @@ func (suite *DbTestSuite) TestSaveProgramDataAccount() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			err := suite.database.SaveProgramDataAccount(
-				tc.data.Mint,
+				tc.data.Address,
 				tc.data.Slot,
 				tc.data.LastModifiedSlot,
 				tc.data.UpdateAuthority,
@@ -216,4 +271,34 @@ func (suite *DbTestSuite) TestSaveProgramDataAccount() {
 			suite.Require().Equal(tc.expected, rows[0])
 		})
 	}
+}
+
+func (suite *DbTestSuite) TestDeleteProgramDataAccount() {
+	err := suite.database.SaveProgramDataAccount(
+		"address",
+		0,
+		0,
+		"owner",
+		"initialized",
+	)
+	suite.Require().NoError(err)
+	rows := []struct {
+		Address          string `db:"address"`
+		Slot             uint64 `db:"slot"`
+		LastModifiedSlot uint64 `db:"last_modified_slot"`
+		UpdateAuthority  string `db:"update_authority"`
+		State            string `db:"state"`
+	}{}
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM program_data_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	rows = nil
+
+	err = suite.database.DeleteProgramDataAccount("address")
+	suite.Require().NoError(err)
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM program_data_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
 }
