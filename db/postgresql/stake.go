@@ -33,6 +33,13 @@ WHERE stake_account.slot <= excluded.slot`
 	return err
 }
 
+// DeleteStakeAccount implements the db.StakeDb
+func (db *Database) DeleteStakeAccount(address string) error {
+	stmt := `DELETE FROM stake_account WHERE address = $1`
+	_, err := db.Sqlx.Exec(stmt, address)
+	return err
+}
+
 // SaveStakeLockup implements the db.StakeDb
 func (db *Database) SaveStakeLockup(address string, slot uint64, custodian string, epoch uint64, unixTimestamp int64) error {
 	stmt := `
@@ -45,7 +52,6 @@ ON CONFLICT (address) DO UPDATE
     epoch = excluded.epoch,
     unix_timestamp = excluded.unix_timestamp
 WHERE stake_lockup.slot <= excluded.slot`
-
 	_, err := db.Sqlx.Exec(
 		stmt,
 		address,
@@ -81,5 +87,12 @@ WHERE stake_delegation.slot <= excluded.slot`
 		voter,
 		rate,
 	)
+	return err
+}
+
+// DeleteStakeDelegation implements the db.StakeDb
+func (db *Database) DeleteStakeDelegation(address string) error {
+	stmt := `DELETE FROM stake_delegation WHERE address = $1`
+	_, err := db.Sqlx.Exec(stmt, address)
 	return err
 }

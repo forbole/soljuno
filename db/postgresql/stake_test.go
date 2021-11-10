@@ -76,6 +76,89 @@ func (suite *DbTestSuite) TestSaveStakeAccount() {
 	}
 }
 
+func (suite *DbTestSuite) TestDeleteStakeAccount() {
+	err := suite.database.SaveStakeAccount(
+		"address",
+		0,
+		"staker",
+		"withdrawer",
+		"initialzied",
+	)
+	suite.Require().NoError(err)
+	err = suite.database.SaveStakeLockup(
+		"address",
+		0,
+		"custodian",
+		0,
+		0,
+	)
+	suite.Require().NoError(err)
+	err = suite.database.SaveStakeDelegation(
+		"address",
+		0,
+		0,
+		0,
+		1,
+		"validator",
+		0,
+	)
+	suite.Require().NoError(err)
+	accountRows := []struct {
+		Address    string `db:"address"`
+		Slot       uint64 `db:"slot"`
+		Staker     string `db:"staker"`
+		Withdrawer string `db:"withdrawer"`
+		State      string `db:"state"`
+	}{}
+
+	err = suite.database.Sqlx.Select(&accountRows, "SELECT * FROM stake_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(accountRows, 1)
+	accountRows = nil
+
+	lockupRows := []struct {
+		Address       string    `db:"address"`
+		Slot          uint64    `db:"slot"`
+		Custodian     string    `db:"custodian"`
+		Epoch         uint64    `db:"epoch"`
+		UnixTimestamp time.Time `db:"unix_timestamp"`
+	}{}
+	err = suite.database.Sqlx.Select(&lockupRows, "SELECT * FROM stake_lockup")
+	suite.Require().NoError(err)
+	suite.Require().Len(lockupRows, 1)
+	lockupRows = nil
+
+	delegationRows := []struct {
+		Address           string  `db:"address"`
+		Slot              uint64  `db:"slot"`
+		ActivationEpoch   uint64  `db:"activation_epoch"`
+		DeactivationEpoch uint64  `db:"deactivation_epoch"`
+		Stake             uint64  `db:"stake"`
+		Voter             string  `db:"voter"`
+		Rate              float64 `db:"warmup_cooldown_rate"`
+	}{}
+	err = suite.database.Sqlx.Select(&delegationRows, "SELECT * FROM stake_delegation")
+	suite.Require().NoError(err)
+	suite.Require().Len(delegationRows, 1)
+	delegationRows = nil
+
+	err = suite.database.DeleteStakeAccount("address")
+	suite.Require().NoError(err)
+
+	err = suite.database.Sqlx.Select(&accountRows, "SELECT * FROM stake_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(accountRows, 0)
+
+	err = suite.database.Sqlx.Select(&lockupRows, "SELECT * FROM stake_lockup")
+	suite.Require().NoError(err)
+	suite.Require().Len(lockupRows, 0)
+	accountRows = nil
+
+	err = suite.database.Sqlx.Select(&delegationRows, "SELECT * FROM stake_delegation")
+	suite.Require().NoError(err)
+	suite.Require().Len(delegationRows, 0)
+}
+
 func (suite *DbTestSuite) TestSaveStakeLockup() {
 	type LockupRow struct {
 		Address       string    `db:"address"`
