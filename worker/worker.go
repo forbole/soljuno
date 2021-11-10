@@ -24,22 +24,24 @@ type Worker struct {
 	parser parser.Parser
 	logger logging.Logger
 
-	pool    *ants.Pool
-	index   int
-	modules []modules.Module
+	pool      *ants.Pool
+	index     int
+	modules   []modules.Module
+	bankTasks types.BankTaskQueue
 }
 
 // NewWorker allows to create a new Worker implementation.
 func NewWorker(index int, ctx *Context) Worker {
 	return Worker{
-		index:   index,
-		cp:      ctx.ClientProxy,
-		queue:   ctx.Queue,
-		db:      ctx.Database,
-		parser:  ctx.Parser,
-		modules: ctx.Modules,
-		logger:  ctx.Logger,
-		pool:    ctx.Pool,
+		index:     index,
+		cp:        ctx.ClientProxy,
+		queue:     ctx.Queue,
+		db:        ctx.Database,
+		parser:    ctx.Parser,
+		modules:   ctx.Modules,
+		logger:    ctx.Logger,
+		pool:      ctx.Pool,
+		bankTasks: ctx.BankTasks,
 	}
 }
 
@@ -111,8 +113,8 @@ func (w Worker) ExportBlock(block types.Block) error {
 
 // handleBlock handles all the events in a block
 func (w Worker) handleBlock(block types.Block) {
-	// Handle all the transactions inside the block
 	w.handleBlockModules(block)
+
 	for _, tx := range block.Txs {
 		w.handleTx(tx)
 	}
@@ -121,6 +123,14 @@ func (w Worker) handleBlock(block types.Block) {
 // handleBlockModules handles the block with modules
 func (w Worker) handleBlockModules(block types.Block) {
 	for _, module := range w.modules {
+		if bankModule, ok := module.(modules.BankModule); ok {
+			w.bankTasks <- func() {
+				err := bankModule.HandleBank(block)
+				if err != nil {
+					w.logger.BlockError(module, block, err)
+				}
+			}
+		}
 		if blockModule, ok := module.(modules.BlockModule); ok {
 			err := blockModule.HandleBlock(block)
 			if err != nil {
@@ -148,7 +158,7 @@ func (w Worker) handleTx(tx types.Tx) {
 		}
 		w.handleMessageModules(tx)
 	}); err != nil {
-		w.logger.Error("failed to add tx handler to pool", "slot", tx.Slot, "hash", tx.Hash, "err", err)
+		w.logger.Error("failed to add tx handler into pool", "slot", tx.Slot, "hash", tx.Hash, "err", err)
 	}
 }
 

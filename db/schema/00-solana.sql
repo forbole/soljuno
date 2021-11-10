@@ -23,7 +23,7 @@ CREATE INDEX transaction_slot_index ON transaction (slot);
 CREATE TABLE message
 (
     transaction_hash    TEXT    NOT NULL REFERENCES transaction (hash),
-    index               BIGINT  NOT NULL,
+    index               INT     NOT NULL,
     program             TEXT    NOT NULL,      
     involved_accounts   TEXT[]  NOT NULL DEFAULT array[]::TEXT[],
     type                TEXT    NOT NULL DEFAULT 'unknown',

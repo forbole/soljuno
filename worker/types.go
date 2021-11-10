@@ -19,9 +19,10 @@ type Context struct {
 	Parser      parser.Parser
 	Logger      logging.Logger
 
-	Pool    *ants.Pool
-	Queue   types.SlotQueue
-	Modules []modules.Module
+	Pool      *ants.Pool
+	Queue     types.SlotQueue
+	Modules   []modules.Module
+	BankTasks types.BankTaskQueue
 }
 
 // NewContext allows to build a new Worker Context instance
@@ -33,6 +34,7 @@ func NewContext(
 	pool *ants.Pool,
 	queue types.SlotQueue,
 	modules []modules.Module,
+	bankTasks types.BankTaskQueue,
 ) *Context {
 	return &Context{
 		ClientProxy: clientProxy,
@@ -40,8 +42,9 @@ func NewContext(
 		Parser:      parser,
 		Logger:      logger,
 
-		Pool:    pool,
-		Queue:   queue,
-		Modules: modules,
+		Pool:      pool,
+		Queue:     queue,
+		Modules:   modules,
+		BankTasks: bankTasks,
 	}
 }

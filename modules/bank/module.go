@@ -23,30 +23,13 @@ func (m *Module) Name() string {
 	return "bank"
 }
 
-// HandleTx implements modules.TransactionModule
-func (m *Module) HandleTx(tx types.Tx) error {
+// HandleBank implements modules.BankModule
+func (m *Module) HandleBank(block types.Block) error {
 	bankDb, ok := m.db.(db.BankDb)
 	if !ok {
 		return fmt.Errorf("bank is enabled, but your database does not implement BankDb")
 	}
-
-	err := HandleTx(tx, bankDb)
-	if err != nil {
-		return err
-	}
-	log.Debug().Str("module", m.Name()).Str("tx", tx.Hash).Uint64("slot", tx.Slot).
-		Msg("handled tx")
-	return nil
-}
-
-// HandleTx implements modules.BlockModule
-func (m *Module) HandleBlock(block types.Block) error {
-	bankDb, ok := m.db.(db.BankDb)
-	if !ok {
-		return fmt.Errorf("bank is enabled, but your database does not implement BankDb")
-	}
-
-	err := HandleBlock(block, bankDb)
+	err := HandleBank(block, bankDb)
 	if err != nil {
 		return err
 	}

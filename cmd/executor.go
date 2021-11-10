@@ -5,8 +5,10 @@ import (
 	"os"
 	"path"
 
+	dbcmd "github.com/forbole/soljuno/cmd/db"
 	initcmd "github.com/forbole/soljuno/cmd/init"
 	parsecmd "github.com/forbole/soljuno/cmd/parse"
+	snapshotcmd "github.com/forbole/soljuno/cmd/snapshot"
 
 	"github.com/forbole/soljuno/types"
 
@@ -39,6 +41,8 @@ func BuildDefaultExecutor(config *Config) cli.Executor {
 		VersionCmd(),
 		initcmd.InitCmd(config.GetInitConfig()),
 		parsecmd.ParseCmd(config.GetParseConfig()),
+		snapshotcmd.ImportSnapshotCmd(config.GetSnapshotConfig()),
+		dbcmd.InitDatabaseCmd(config.GetDbConfig()),
 	)
 
 	return PrepareRootCmd(config.GetName(), rootCmd)

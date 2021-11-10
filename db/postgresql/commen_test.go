@@ -43,11 +43,11 @@ func (suite *DbTestSuite) SetupTest() {
 	suite.Require().True(ok)
 
 	// Delete the public schema
-	_, err = solDb.Sqlx.Exec(`DROP SCHEMA public CASCADE;`)
+	_, err = db.Exec(`DROP SCHEMA public CASCADE;`)
 	suite.Require().NoError(err)
 
 	// Re-create the schema
-	_, err = solDb.Sqlx.Exec(`CREATE SCHEMA public;`)
+	_, err = db.Exec(`CREATE SCHEMA public;`)
 	suite.Require().NoError(err)
 
 	dirPath := path.Join("../", "schema")
@@ -61,7 +61,7 @@ func (suite *DbTestSuite) SetupTest() {
 		commentsRegExp := regexp.MustCompile(`/\*.*\*/`)
 		requests := strings.Split(string(file), ";")
 		for _, request := range requests {
-			_, err := solDb.Sqlx.Exec(commentsRegExp.ReplaceAllString(request, ""))
+			_, err := db.Exec(commentsRegExp.ReplaceAllString(request, ""))
 			suite.Require().NoError(err)
 		}
 	}

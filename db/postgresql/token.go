@@ -1,6 +1,8 @@
 package postgresql
 
 import (
+	"strconv"
+
 	"github.com/forbole/soljuno/db"
 	"github.com/lib/pq"
 )
@@ -114,7 +116,7 @@ WHERE token_supply.slot <= excluded.slot`
 		stmt,
 		mint,
 		slot,
-		supply,
+		strconv.FormatUint(supply, 10),
 	)
 	return err
 }

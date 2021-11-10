@@ -20,7 +20,7 @@ type VoteAccount struct {
 	Commission     uint8
 	Votes          []Lockout
 	RootSlot       *uint64
-	Voter          []Voter
+	Voters         []Voter
 	PriorVoters    [32]PriorVoter
 	CircBufCfg     CircBufCfg
 	EpochCredits   []EpochCredit
