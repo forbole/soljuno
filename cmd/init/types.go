@@ -60,7 +60,7 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 	telemetryEnabled, _ := cmd.Flags().GetBool(flagTelemetryEnabled)
 	telemetryPort, _ := cmd.Flags().GetUint(flagTelemetryPort)
 
-	workerPoolSize, _ := cmd.Flags().GetInt(flagWorkerPoolSize)
+	workerPoolSize, _ := cmd.Flags().GetInt(flagPoolSize)
 
 	return types.NewConfig(
 		types.NewRPCConfig(rpcClientName, rpcAddr),
