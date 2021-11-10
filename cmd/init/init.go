@@ -49,8 +49,7 @@ const (
 	flagTelemetryEnabled = "telemetry-enabled"
 	flagTelemetryPort    = "telemetry-port"
 
-	flagWorkerPoolSize         = "worker-pool-size"
-	flagWorkerBlockingTaskSize = "worker-blocking-task-size"
+	flagPoolSize = "worker-pool-size"
 )
 
 // InitCmd returns the command that should be run in order to properly initialize BDJuno
@@ -136,6 +135,9 @@ func InitCmd(cfg *Config) *cobra.Command {
 	defTelemetryConfig := types.DefaultTelemetryConfig()
 	command.Flags().Bool(flagTelemetryEnabled, false, "Whether the telemetry server should be enabled or not")
 	command.Flags().Uint(flagTelemetryPort, defTelemetryConfig.GetPort(), "Port on which the telemetry server will listen")
+
+	defWorkerConfig := types.DefaultWorkerConfig()
+	command.Flags().Int(flagPoolSize, defWorkerConfig.GetPoolSize(), "Size of worker pool to handle tasks")
 
 	// Set additional flags
 	cfg.GetConfigSetupFlag()(command)
