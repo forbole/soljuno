@@ -1,16 +1,15 @@
-package snapshot
+package db
 
 import (
 	"fmt"
 	"os"
 
-	"github.com/forbole/soljuno/client"
+	"github.com/spf13/cobra"
+
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/db/builder"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/types/logging"
-	"github.com/panjf2000/ants/v2"
-	"github.com/spf13/cobra"
 )
 
 // ReadConfig parses the configuration file for the executable having the give name using
@@ -93,20 +92,16 @@ func (config *Config) GetLogger() logging.Logger {
 
 // Context contains the snapshot context
 type Context struct {
-	Proxy    client.Proxy
-	Database db.Database
+	Database db.ExceutorDb
 	Logger   logging.Logger
-	Pool     *ants.Pool
 }
 
 // NewContext builds a new Context instance
 func NewContext(
-	proxy client.Proxy, db db.Database, logger logging.Logger, pool *ants.Pool,
+	db db.ExceutorDb, logger logging.Logger,
 ) *Context {
 	return &Context{
-		Proxy:    proxy,
 		Database: db,
 		Logger:   logger,
-		Pool:     pool,
 	}
 }
