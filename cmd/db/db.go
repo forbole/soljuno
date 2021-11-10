@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
@@ -10,17 +11,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const FlagInitConfirmation = "yes"
+
 func InitDatabaseCmd(cmdCfg *Config) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:     "init-db [schema-folder]",
 		Short:   "Init the database by schemas in the given folder",
 		Args:    cobra.ExactArgs(1),
 		PreRunE: ReadConfig(cmdCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			ctx, err := GetDatabaseContext(cmdCfg)
-			if err != nil {
-				return err
+			confirm, _ := cmd.Flags().GetBool(FlagInitConfirmation)
+			if !confirm {
+				return fmt.Errorf("If you want to initialize database, use the --%s flag", FlagInitConfirmation)
 			}
+
+			ctx, err := GetDatabaseContext(cmdCfg)
 			if err != nil {
 				return err
 			}
@@ -33,6 +38,8 @@ func InitDatabaseCmd(cmdCfg *Config) *cobra.Command {
 			return nil
 		},
 	}
+	cmd.Flags().BoolP(FlagInitConfirmation, "y", false, "Skip tx broadcasting prompt confirmation")
+	return cmd
 }
 
 func InitDatabase(db db.ExceutorDb, schemaDir string) error {
