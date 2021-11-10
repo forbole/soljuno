@@ -49,7 +49,7 @@ func handleMsgInitialize(msg types.Message, tx types.Tx, db db.StakeDb) error {
 		return fmt.Errorf("instruction does not match %s type: %s", "initialize", msg.Value.Type())
 
 	}
-	err := db.SaveStakeAccount(instruction.StakeAccount, tx.Slot, instruction.Authorized.Staker, instruction.Authorized.Withdrawer, "initialized")
+	err := db.SaveStakeAccount(instruction.StakeAccount, tx.Slot, instruction.Authorized.Staker, instruction.Authorized.Withdrawer)
 	if err != nil {
 		return err
 	}

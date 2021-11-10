@@ -5,7 +5,7 @@ func (suite *DbTestSuite) TestCheckBufferAccountLatest() {
 	isLatest := suite.database.CheckBufferAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveBufferAccount("address", 1, "owner", "initialized")
+	err := suite.database.SaveBufferAccount("address", 1, "owner")
 	suite.Require().NoError(err)
 
 	// older slot returns false
@@ -22,7 +22,7 @@ func (suite *DbTestSuite) TestCheckProgramAccountLatest() {
 	isLatest := suite.database.CheckBufferAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveProgramAccount("address", 1, "program_data", "initialized")
+	err := suite.database.SaveProgramAccount("address", 1, "program_data")
 	suite.Require().NoError(err)
 
 	// older slot returns false
@@ -39,7 +39,7 @@ func (suite *DbTestSuite) TestCheckProgramDataAccountLatest() {
 	isLatest := suite.database.CheckProgramDataAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveProgramDataAccount("address", 1, 1, "owner", "initialized")
+	err := suite.database.SaveProgramDataAccount("address", 1, 1, "owner")
 	suite.Require().NoError(err)
 
 	// older slot returns false

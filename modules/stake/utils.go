@@ -38,7 +38,6 @@ func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, clien
 		info.Context.Slot,
 		stakeAccount.Meta.Authorized.Staker.String(),
 		stakeAccount.Meta.Authorized.Withdrawer.String(),
-		stakeAccount.State.String(),
 	)
 	if err != nil {
 		return err

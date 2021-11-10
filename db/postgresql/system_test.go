@@ -7,7 +7,6 @@ func (suite *DbTestSuite) TestSaveNonceAccount() {
 		Authority            string `db:"authority"`
 		Blockhash            string `db:"blockhash"`
 		LamportsPerSignature uint64 `db:"lamports_per_signature"`
-		State                string `db:"state"`
 	}
 
 	testCases := []struct {
@@ -18,37 +17,37 @@ func (suite *DbTestSuite) TestSaveNonceAccount() {
 		{
 			name: "initialize the data",
 			data: NonceRow{
-				"address", 1, "owner", "blockhash", 5000, "initialized",
+				"address", 1, "owner", "blockhash", 5000,
 			},
 			expected: NonceRow{
-				"address", 1, "owner", "blockhash", 5000, "initialized",
+				"address", 1, "owner", "blockhash", 5000,
 			},
 		},
 		{
 			name: "update with lower slot",
 			data: NonceRow{
-				"address", 0, "pre_owner", "blockhash", 5000, "initialized",
+				"address", 0, "pre_owner", "blockhash", 5000,
 			},
 			expected: NonceRow{
-				"address", 1, "owner", "blockhash", 5000, "initialized",
+				"address", 1, "owner", "blockhash", 5000,
 			},
 		},
 		{
 			name: "update with same slot",
 			data: NonceRow{
-				"address", 1, "same_owner", "blockhash", 5000, "initialized",
+				"address", 1, "same_owner", "blockhash", 5000,
 			},
 			expected: NonceRow{
-				"address", 1, "same_owner", "blockhash", 5000, "initialized",
+				"address", 1, "same_owner", "blockhash", 5000,
 			},
 		},
 		{
 			name: "update with higher slot",
 			data: NonceRow{
-				"address", 2, "new_owner", "blockhash", 5000, "initialized",
+				"address", 2, "new_owner", "blockhash", 5000,
 			},
 			expected: NonceRow{
-				"address", 2, "new_owner", "blockhash", 5000, "initialized",
+				"address", 2, "new_owner", "blockhash", 5000,
 			},
 		},
 	}
@@ -62,7 +61,6 @@ func (suite *DbTestSuite) TestSaveNonceAccount() {
 				tc.data.Authority,
 				tc.data.Blockhash,
 				tc.data.LamportsPerSignature,
-				tc.data.State,
 			)
 			suite.Require().NoError(err)
 
@@ -83,7 +81,6 @@ func (suite *DbTestSuite) TestDeleteNonceAccount() {
 		"owner",
 		"hash",
 		20,
-		"initialzied",
 	)
 	suite.Require().NoError(err)
 	rows := []struct {
@@ -92,7 +89,6 @@ func (suite *DbTestSuite) TestDeleteNonceAccount() {
 		Authority            string `db:"authority"`
 		Blockhash            string `db:"blockhash"`
 		LamportsPerSignature uint64 `db:"lamports_per_signature"`
-		State                string `db:"state"`
 	}{}
 
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM nonce_account")

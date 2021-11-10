@@ -82,7 +82,6 @@ func (suite *DbTestSuite) TestSaveTokenAccount() {
 		Slot    uint64 `db:"slot"`
 		Mint    string `db:"mint"`
 		Owner   string `db:"owner"`
-		State   string `db:"state"`
 	}
 
 	testCases := []struct {
@@ -93,37 +92,37 @@ func (suite *DbTestSuite) TestSaveTokenAccount() {
 		{
 			name: "initialize the data",
 			data: TokenAccountRow{
-				"mint", 1, "mint", "owner", "state",
+				"mint", 1, "mint", "owner",
 			},
 			expected: TokenAccountRow{
-				"mint", 1, "mint", "owner", "state",
+				"mint", 1, "mint", "owner",
 			},
 		},
 		{
 			name: "update with lower slot",
 			data: TokenAccountRow{
-				"mint", 0, "mint", "pre_owner", "state",
+				"mint", 0, "mint", "pre_owner",
 			},
 			expected: TokenAccountRow{
-				"mint", 1, "mint", "owner", "state",
+				"mint", 1, "mint", "owner",
 			},
 		},
 		{
 			name: "update with same slot",
 			data: TokenAccountRow{
-				"mint", 1, "mint", "new_owner", "state",
+				"mint", 1, "mint", "new_owner",
 			},
 			expected: TokenAccountRow{
-				"mint", 1, "mint", "new_owner", "state",
+				"mint", 1, "mint", "new_owner",
 			},
 		},
 		{
 			name: "update with higher slot",
 			data: TokenAccountRow{
-				"mint", 2, "mint", "new_owner", "new_state",
+				"mint", 2, "mint", "new_owner",
 			},
 			expected: TokenAccountRow{
-				"mint", 2, "mint", "new_owner", "new_state",
+				"mint", 2, "mint", "new_owner",
 			},
 		},
 	}
@@ -136,7 +135,6 @@ func (suite *DbTestSuite) TestSaveTokenAccount() {
 				tc.data.Slot,
 				tc.data.Mint,
 				tc.data.Owner,
-				tc.data.State,
 			)
 			suite.Require().NoError(err)
 
@@ -156,7 +154,6 @@ func (suite *DbTestSuite) TestDeleteTokenAccount() {
 		0,
 		"mint",
 		"owner",
-		"initialized",
 	)
 	suite.Require().NoError(err)
 	rows := []struct {

@@ -97,7 +97,6 @@ func handleMsgInitializeAccount(msg types.Message, tx types.Tx, db db.TokenDb) e
 		tx.Slot,
 		instruction.Mint,
 		instruction.Owner,
-		"initialized",
 	)
 	if err != nil {
 		return err

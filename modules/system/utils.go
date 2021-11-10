@@ -33,5 +33,11 @@ func updateNonce(address string, currentSlot uint64, db db.SystemDb, client clie
 		return db.DeleteNonceAccount(address)
 	}
 
-	return db.SaveNonceAccount(address, info.Context.Slot, nonce.Authority.String(), nonce.BlockHash.String(), nonce.FeeCalculator.LamportsPerSignature, nonce.State.String())
+	return db.SaveNonceAccount(
+		address,
+		info.Context.Slot,
+		nonce.Authority.String(),
+		nonce.BlockHash.String(),
+		nonce.FeeCalculator.LamportsPerSignature,
+	)
 }

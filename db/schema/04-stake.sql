@@ -3,8 +3,7 @@ CREATE TABLE stake_account
     address     TEXT    NOT NULL PRIMARY KEY,
     slot        BIGINT  NOT NULL,
     staker      TEXT    NOT NULL,
-    withdrawer  TEXT    NOT NULL,
-    state       TEXT    NOT NULL
+    withdrawer  TEXT    NOT NULL
 );
 CREATE INDEX stake_staker_index ON stake_account (withdrawer);
 

@@ -41,7 +41,6 @@ func updateTokenAccount(ctx *Context, address string, slot uint64, account accou
 		slot,
 		account.Mint.String(),
 		account.Owner.String(),
-		"initialized",
 	)
 	if err != nil {
 		return err
@@ -85,7 +84,6 @@ func updateStakeAccount(ctx *Context, address string, slot uint64, account accou
 		slot,
 		account.Meta.Authorized.Staker.String(),
 		account.Meta.Authorized.Withdrawer.String(),
-		account.State.String(),
 	)
 	if err != nil {
 		return err
@@ -140,7 +138,6 @@ func updateNonceAccount(ctx *Context, address string, slot uint64, account accou
 		account.Authority.String(),
 		account.BlockHash.String(),
 		account.FeeCalculator.LamportsPerSignature,
-		"initialized",
 	)
 }
 
@@ -153,7 +150,6 @@ func updateBufferAccount(ctx *Context, address string, slot uint64, account acco
 		address,
 		slot,
 		account.Authority.String(),
-		"initialized",
 	)
 }
 
@@ -166,7 +162,6 @@ func updateProgramAccount(ctx *Context, address string, slot uint64, account acc
 		address,
 		slot,
 		account.ProgramDataAccount.String(),
-		"initialized",
 	)
 }
 
@@ -180,7 +175,6 @@ func updateProgramDataAccount(ctx *Context, address string, slot uint64, account
 		slot,
 		account.Slot,
 		account.Authority.String(),
-		"initialized",
 	)
 }
 

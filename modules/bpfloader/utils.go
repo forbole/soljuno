@@ -37,7 +37,6 @@ func updateBufferAccount(address string, currentSlot uint64, db db.BpfLoaderDb, 
 		address,
 		info.Context.Slot,
 		bufferAccount.Authority.String(),
-		"initialized",
 	)
 }
 
@@ -70,7 +69,6 @@ func updateProgramAccount(address string, currentSlot uint64, db db.BpfLoaderDb,
 		address,
 		info.Context.Slot,
 		programAccount.ProgramDataAccount.String(),
-		"initialized",
 	)
 }
 
@@ -103,6 +101,5 @@ func updateProgramDataAccount(address string, currentSlot uint64, db db.BpfLoade
 		info.Context.Slot,
 		programDataAccount.Slot,
 		programDataAccount.Authority.String(),
-		"initialized",
 	)
 }

@@ -91,7 +91,7 @@ func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, clien
 	if !ok {
 		return db.DeleteTokenAccount(address)
 	}
-	return db.SaveTokenAccount(address, info.Context.Slot, tokenAccount.Mint.String(), tokenAccount.Owner.String(), tokenAccount.State.String())
+	return db.SaveTokenAccount(address, info.Context.Slot, tokenAccount.Mint.String(), tokenAccount.Owner.String())
 }
 
 // updateTokenSupply properly stores the supply of the given mint inside the database

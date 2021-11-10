@@ -4,7 +4,6 @@ CREATE TABLE nonce_account
     slot                    BIGINT  NOT NULL,
     authority               TEXT    NOT NULL,
     blockhash               TEXT    NOT NULL,
-    lamports_per_signature  INT     NOT NULL,
-    state                   TEXT    NOT NULL
+    lamports_per_signature  INT     NOT NULL
 );
 CREATE INDEX nonce_authority_index ON nonce_account (authority);

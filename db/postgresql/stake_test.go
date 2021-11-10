@@ -8,7 +8,6 @@ func (suite *DbTestSuite) TestSaveStakeAccount() {
 		Slot       uint64 `db:"slot"`
 		Staker     string `db:"staker"`
 		Withdrawer string `db:"withdrawer"`
-		State      string `db:"state"`
 	}
 
 	testCases := []struct {
@@ -19,37 +18,37 @@ func (suite *DbTestSuite) TestSaveStakeAccount() {
 		{
 			name: "initialize the data",
 			data: StakeRow{
-				"address", 1, "staker", "withdrawer", "initialized",
+				"address", 1, "staker", "withdrawer",
 			},
 			expected: StakeRow{
-				"address", 1, "staker", "withdrawer", "initialized",
+				"address", 1, "staker", "withdrawer",
 			},
 		},
 		{
 			name: "update with lower slot",
 			data: StakeRow{
-				"address", 0, "pre_staker", "withdrawer", "initialized",
+				"address", 0, "pre_staker", "withdrawer",
 			},
 			expected: StakeRow{
-				"address", 1, "staker", "withdrawer", "initialized",
+				"address", 1, "staker", "withdrawer",
 			},
 		},
 		{
 			name: "update with same slot",
 			data: StakeRow{
-				"address", 1, "curr_staker", "withdrawer", "initialized",
+				"address", 1, "curr_staker", "withdrawer",
 			},
 			expected: StakeRow{
-				"address", 1, "curr_staker", "withdrawer", "initialized",
+				"address", 1, "curr_staker", "withdrawer",
 			},
 		},
 		{
 			name: "update with higher slot",
 			data: StakeRow{
-				"address", 2, "new_staker", "withdrawer", "initialized",
+				"address", 2, "new_staker", "withdrawer",
 			},
 			expected: StakeRow{
-				"address", 2, "new_staker", "withdrawer", "initialized",
+				"address", 2, "new_staker", "withdrawer",
 			},
 		},
 	}
@@ -62,7 +61,6 @@ func (suite *DbTestSuite) TestSaveStakeAccount() {
 				tc.data.Slot,
 				tc.data.Staker,
 				tc.data.Withdrawer,
-				tc.data.State,
 			)
 			suite.Require().NoError(err)
 
@@ -82,7 +80,6 @@ func (suite *DbTestSuite) TestDeleteStakeAccount() {
 		0,
 		"staker",
 		"withdrawer",
-		"initialzied",
 	)
 	suite.Require().NoError(err)
 	err = suite.database.SaveStakeLockup(
@@ -219,7 +216,6 @@ func (suite *DbTestSuite) TestSaveStakeLockup() {
 				0,
 				"staker",
 				"withdrawer",
-				"state",
 			)
 			suite.Require().NoError(err)
 			err = suite.database.SaveStakeLockup(
@@ -307,7 +303,6 @@ func (suite *DbTestSuite) TestStakeDelegation() {
 				0,
 				"staker",
 				"withdrawer",
-				"state",
 			)
 			suite.Require().NoError(err)
 			err = suite.database.SaveStakeDelegation(
