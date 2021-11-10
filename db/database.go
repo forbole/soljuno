@@ -180,11 +180,18 @@ type BpfLoaderDb interface {
 	// SaveBufferAccount allows to store the given buffer account data inside the database
 	SaveBufferAccount(address string, slot uint64, authority string, state string) error
 
+	// DeleteBufferAccount allows to delete the given address of the buffer account inside the database
+	DeleteBufferAccount(address string) error
+
 	// SaveProgramAccount allows to store the given program account data inside the database
 	SaveProgramAccount(address string, slot uint64, programDataAccount string, state string) error
 
+	DeleteProgramAccount(address string) error
+
 	// SaveProgramDataAccount allows to store the given program data account inside the database
 	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string, state string) error
+
+	DeleteProgramDataAccount(address string) error
 
 	BpfLoaderCheckerDb
 }
