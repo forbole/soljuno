@@ -86,13 +86,19 @@ type TokenDb interface {
 	SaveToken(address string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
 
 	// SaveTokenAccount allows to store the given token account data inside the database
-	SaveTokenAccount(address string, slot uint64, mint, owner, state string) error
+	SaveTokenAccount(address string, slot uint64, mint, owner string) error
+
+	// DeleteTokenAccount allows to delete the given address of the token account inside the database
+	DeleteTokenAccount(address string) error
 
 	// SaveMultisig allows to store the given multisig data inside the database
 	SaveMultisig(address string, slot uint64, singers []string, m uint8) error
 
 	// SaveDelegate allows to store the given approve state inside the database
-	SaveTokenDelegate(source string, destination string, slot uint64, amount uint64) error
+	SaveTokenDelegation(source string, destination string, slot uint64, amount uint64) error
+
+	// DeleteTokenDelegation allows to delete the given address of the token delegation inside the database
+	DeleteTokenDelegation(address string) error
 
 	// SaveTokenSupply allows to store the given token data inside the database
 	SaveTokenSupply(address string, slot uint64, supply uint64) error
@@ -121,7 +127,10 @@ type TokenCheckerDb interface {
 // SystemDb represents a database that checks account statement of system properly
 type SystemDb interface {
 	// SaveNonceAccount allows to store the given nonce account data inside the database
-	SaveNonceAccount(address string, slot uint64, authority string, blockhash string, lamportsPerSignature uint64, state string) error
+	SaveNonceAccount(address string, slot uint64, authority string, blockhash string, lamportsPerSignature uint64) error
+
+	// DeleteNonceAccount allows to delete the given address of the nonce account inside the database
+	DeleteNonceAccount(address string) error
 
 	SystemCheckerDb
 }
@@ -135,13 +144,19 @@ type SystemCheckerDb interface {
 // StakeDb represents a database that supports stake properly
 type StakeDb interface {
 	// SaveStakeAccount allows to store the given stake account data inside the database
-	SaveStakeAccount(address string, slot uint64, staker string, withdrawer string, state string) error
+	SaveStakeAccount(address string, slot uint64, staker string, withdrawer string) error
+
+	// DeleteStakeAccount allows to delete the given address of the stake account inside the database
+	DeleteStakeAccount(address string) error
 
 	// SaveStakeLockup allows to store the given stake account lockup state inside the database
 	SaveStakeLockup(address string, slot uint64, custodian string, epoch uint64, unixTimestamp int64) error
 
 	// SaveStakeDelegation allows to store the given delegation of stake account inside the database
 	SaveStakeDelegation(address string, slot uint64, activationEpoch uint64, deactivationEpoch uint64, stake uint64, voter string, rate float64) error
+
+	// DeleteStakeDelegation allows to delete the given address of the stake delegation inside the database
+	DeleteStakeDelegation(address string) error
 
 	StakeCheckerDb
 }
@@ -178,13 +193,22 @@ type ConfigDb interface {
 // BpfLoaderDb represents a database that supports bpf loader properly
 type BpfLoaderDb interface {
 	// SaveBufferAccount allows to store the given buffer account data inside the database
-	SaveBufferAccount(address string, slot uint64, authority string, state string) error
+	SaveBufferAccount(address string, slot uint64, authority string) error
+
+	// DeleteBufferAccount allows to delete the given address of the buffer account inside the database
+	DeleteBufferAccount(address string) error
 
 	// SaveProgramAccount allows to store the given program account data inside the database
-	SaveProgramAccount(address string, slot uint64, programDataAccount string, state string) error
+	SaveProgramAccount(address string, slot uint64, programDataAccount string) error
+
+	// DeleteBufferAccount allows to delete the given address of the program account inside the database
+	DeleteProgramAccount(address string) error
 
 	// SaveProgramDataAccount allows to store the given program data account inside the database
-	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string, state string) error
+	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string) error
+
+	// DeleteBufferAccount allows to delete the given address of the program data account inside the database
+	DeleteProgramDataAccount(address string) error
 
 	BpfLoaderCheckerDb
 }

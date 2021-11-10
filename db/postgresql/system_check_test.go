@@ -5,7 +5,7 @@ func (suite *DbTestSuite) TestCheckNonceAccountLatest() {
 	isLatest := suite.database.CheckNonceAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveNonceAccount("address", 1, "new_owner", "blockhash", 5000, "initialized")
+	err := suite.database.SaveNonceAccount("address", 1, "new_owner", "blockhash", 5000)
 	suite.Require().NoError(err)
 
 	// older slot returns false

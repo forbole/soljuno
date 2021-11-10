@@ -20,7 +20,7 @@ func updateNonce(address string, currentSlot uint64, db db.SystemDb, client clie
 	}
 
 	if info.Value == nil {
-		return db.SaveNonceAccount(address, info.Context.Slot, "", "", 0, "closed")
+		return db.DeleteNonceAccount(address)
 	}
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
@@ -30,8 +30,14 @@ func updateNonce(address string, currentSlot uint64, db db.SystemDb, client clie
 
 	nonce, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.NonceAccount)
 	if !ok {
-		return db.SaveNonceAccount(address, info.Context.Slot, "", "", 0, "closed")
+		return db.DeleteNonceAccount(address)
 	}
 
-	return db.SaveNonceAccount(address, info.Context.Slot, nonce.Authority.String(), nonce.BlockHash.String(), nonce.FeeCalculator.LamportsPerSignature, nonce.State.String())
+	return db.SaveNonceAccount(
+		address,
+		info.Context.Slot,
+		nonce.Authority.String(),
+		nonce.BlockHash.String(),
+		nonce.FeeCalculator.LamportsPerSignature,
+	)
 }

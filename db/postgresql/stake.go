@@ -10,16 +10,15 @@ import (
 var _ db.StakeDb = &Database{}
 
 // SaveStake implements the db.StakeDb
-func (db *Database) SaveStakeAccount(address string, slot uint64, staker string, withdrawer string, state string) error {
+func (db *Database) SaveStakeAccount(address string, slot uint64, staker string, withdrawer string) error {
 	stmt := `
 INSERT INTO stake_account
-	(address, slot, staker, withdrawer, state)
-VALUES ($1, $2, $3, $4, $5)
+	(address, slot, staker, withdrawer)
+VALUES ($1, $2, $3, $4)
 ON CONFLICT (address) DO UPDATE
 	SET slot = excluded.slot,
 	staker = excluded.staker,
-	withdrawer = excluded.withdrawer,
-	state = excluded.state
+	withdrawer = excluded.withdrawer
 WHERE stake_account.slot <= excluded.slot`
 
 	_, err := db.Sqlx.Exec(
@@ -28,8 +27,14 @@ WHERE stake_account.slot <= excluded.slot`
 		slot,
 		staker,
 		withdrawer,
-		state,
 	)
+	return err
+}
+
+// DeleteStakeAccount implements the db.StakeDb
+func (db *Database) DeleteStakeAccount(address string) error {
+	stmt := `DELETE FROM stake_account WHERE address = $1`
+	_, err := db.Sqlx.Exec(stmt, address)
 	return err
 }
 
@@ -45,7 +50,6 @@ ON CONFLICT (address) DO UPDATE
     epoch = excluded.epoch,
     unix_timestamp = excluded.unix_timestamp
 WHERE stake_lockup.slot <= excluded.slot`
-
 	_, err := db.Sqlx.Exec(
 		stmt,
 		address,
@@ -81,5 +85,12 @@ WHERE stake_delegation.slot <= excluded.slot`
 		voter,
 		rate,
 	)
+	return err
+}
+
+// DeleteStakeDelegation implements the db.StakeDb
+func (db *Database) DeleteStakeDelegation(address string) error {
+	stmt := `DELETE FROM stake_delegation WHERE address = $1`
+	_, err := db.Sqlx.Exec(stmt, address)
 	return err
 }

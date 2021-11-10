@@ -21,7 +21,7 @@ func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client c
 	}
 
 	if info.Value == nil {
-		return db.SaveTokenDelegate(source, "", info.Context.Slot, 0)
+		return db.DeleteTokenDelegation(source)
 	}
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
@@ -31,14 +31,14 @@ func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client c
 
 	tokenAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenAccount)
 	if !ok {
-		return db.SaveTokenDelegate(source, "", info.Context.Slot, 0)
+		return db.DeleteTokenDelegation(source)
 	}
 
-	return db.SaveTokenDelegate(source, tokenAccount.Delegate.String(), info.Context.Slot, tokenAccount.DelegateAmount)
+	return db.SaveTokenDelegation(source, tokenAccount.Delegate.String(), info.Context.Slot, tokenAccount.DelegateAmount)
 }
 
-// updateMintState properly stores the authority of mint inside the database
-func updateMintState(mint string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+// updateToken properly stores the authority of mint inside the database
+func updateToken(mint string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
 	if !db.CheckTokenLatest(mint, currentSlot) {
 		return nil
 	}
@@ -67,8 +67,8 @@ func updateMintState(mint string, currentSlot uint64, db db.TokenDb, client clie
 	)
 }
 
-// updateAccountState properly stores the account state inside database
-func updateAccountState(address string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+// updateTokenAccount properly stores the account state inside database
+func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
 	if !db.CheckTokenAccountLatest(address, currentSlot) {
 		return nil
 	}
@@ -79,7 +79,7 @@ func updateAccountState(address string, currentSlot uint64, db db.TokenDb, clien
 	}
 
 	if info.Value == nil {
-		return db.SaveTokenAccount(address, info.Context.Slot, "", "", "closed")
+		return db.DeleteTokenAccount(address)
 	}
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
@@ -89,9 +89,9 @@ func updateAccountState(address string, currentSlot uint64, db db.TokenDb, clien
 
 	tokenAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenAccount)
 	if !ok {
-		return db.SaveTokenAccount(address, info.Context.Slot, "", "", "closed")
+		return db.DeleteTokenAccount(address)
 	}
-	return db.SaveTokenAccount(address, info.Context.Slot, tokenAccount.Mint.String(), tokenAccount.Owner.String(), tokenAccount.State.String())
+	return db.SaveTokenAccount(address, info.Context.Slot, tokenAccount.Mint.String(), tokenAccount.Owner.String())
 }
 
 // updateTokenSupply properly stores the supply of the given mint inside the database

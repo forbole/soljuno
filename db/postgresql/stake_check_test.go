@@ -5,7 +5,7 @@ func (suite *DbTestSuite) TestCheckStakeAccountLatest() {
 	isLatest := suite.database.CheckStakeAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveStakeAccount("address", 1, "staker", "withdrawer", "initialized")
+	err := suite.database.SaveStakeAccount("address", 1, "staker", "withdrawer")
 	suite.Require().NoError(err)
 
 	// older slot returns false

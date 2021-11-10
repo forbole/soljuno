@@ -20,12 +20,7 @@ func updateBufferAccount(address string, currentSlot uint64, db db.BpfLoaderDb, 
 	}
 
 	if info.Value == nil {
-		return db.SaveBufferAccount(
-			address,
-			info.Context.Slot,
-			"",
-			"closed",
-		)
+		return db.DeleteBufferAccount(address)
 	}
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
@@ -35,19 +30,13 @@ func updateBufferAccount(address string, currentSlot uint64, db db.BpfLoaderDb, 
 
 	bufferAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.BufferAccount)
 	if !ok {
-		return db.SaveBufferAccount(
-			address,
-			info.Context.Slot,
-			"",
-			"closed",
-		)
+		return db.DeleteBufferAccount(address)
 	}
 
 	return db.SaveBufferAccount(
 		address,
 		info.Context.Slot,
 		bufferAccount.Authority.String(),
-		"initialized",
 	)
 }
 
@@ -63,12 +52,7 @@ func updateProgramAccount(address string, currentSlot uint64, db db.BpfLoaderDb,
 	}
 
 	if info.Value == nil {
-		return db.SaveProgramAccount(
-			address,
-			info.Context.Slot,
-			"",
-			"closed",
-		)
+		return db.DeleteProgramAccount(address)
 	}
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
@@ -78,18 +62,13 @@ func updateProgramAccount(address string, currentSlot uint64, db db.BpfLoaderDb,
 
 	programAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.ProgramAccount)
 	if !ok {
-		return db.SaveProgramAccount(
-			address,
-			info.Context.Slot,
-			"",
-			"closed",
-		)
+		return db.DeleteProgramAccount(address)
+
 	}
 	return db.SaveProgramAccount(
 		address,
 		info.Context.Slot,
 		programAccount.ProgramDataAccount.String(),
-		"initialized",
 	)
 }
 
@@ -105,13 +84,7 @@ func updateProgramDataAccount(address string, currentSlot uint64, db db.BpfLoade
 	}
 
 	if info.Value == nil {
-		return db.SaveProgramDataAccount(
-			address,
-			info.Context.Slot,
-			0,
-			"",
-			"closed",
-		)
+		return db.DeleteProgramDataAccount(address)
 	}
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
@@ -121,19 +94,12 @@ func updateProgramDataAccount(address string, currentSlot uint64, db db.BpfLoade
 
 	programDataAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.ProgramDataAccount)
 	if !ok {
-		return db.SaveProgramDataAccount(
-			address,
-			info.Context.Slot,
-			0,
-			"",
-			"closed",
-		)
+		return db.DeleteProgramDataAccount(address)
 	}
 	return db.SaveProgramDataAccount(
 		address,
 		info.Context.Slot,
 		programDataAccount.Slot,
 		programDataAccount.Authority.String(),
-		"initialized",
 	)
 }

@@ -20,13 +20,7 @@ func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, clien
 	}
 
 	if info.Value == nil {
-		return db.SaveStakeAccount(
-			address,
-			info.Context.Slot,
-			"",
-			"",
-			"closed",
-		)
+		return db.DeleteStakeAccount(address)
 	}
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
@@ -36,13 +30,7 @@ func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, clien
 
 	stakeAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.StakeAccount)
 	if !ok {
-		return db.SaveStakeAccount(
-			address,
-			info.Context.Slot,
-			"",
-			"",
-			"closed",
-		)
+		return db.DeleteStakeAccount(address)
 	}
 
 	err = db.SaveStakeAccount(
@@ -50,7 +38,6 @@ func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, clien
 		info.Context.Slot,
 		stakeAccount.Meta.Authorized.Staker.String(),
 		stakeAccount.Meta.Authorized.Withdrawer.String(),
-		stakeAccount.State.String(),
 	)
 	if err != nil {
 		return err
@@ -68,15 +55,7 @@ func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, clien
 	}
 
 	if stakeAccount.State.String() != "stake" {
-		return db.SaveStakeDelegation(
-			address,
-			info.Context.Slot,
-			0,
-			0,
-			0,
-			"",
-			0,
-		)
+		return db.DeleteStakeDelegation(address)
 	}
 
 	delegation := stakeAccount.Stake.Delegation

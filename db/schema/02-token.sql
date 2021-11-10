@@ -20,8 +20,7 @@ CREATE TABLE token_account
     address TEXT    NOT NULL PRIMARY KEY,
     slot    BIGINT  NOT NULL,
     mint    TEXT    NOT NULL,
-    owner   TEXT    NOT NULL,
-    state   TEXT    NOT NULL
+    owner   TEXT    NOT NULL
 );
 CREATE INDEX token_account_owner_index ON token_account (owner);
 
@@ -33,7 +32,7 @@ CREATE TABLE multisig
     m       INT     NOT NULL
 );
 
-CREATE TABLE token_delegate
+CREATE TABLE token_delegation
 (
     source_address      TEXT    NOT NULL PRIMARY KEY,
     delegate_address    TEXT    NOT NULL,

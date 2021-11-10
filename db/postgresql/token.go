@@ -39,16 +39,15 @@ WHERE token.slot <= excluded.slot`
 }
 
 // SaveTokenAccount implements the db.TokenDb
-func (db *Database) SaveTokenAccount(address string, slot uint64, mint, owner, state string) error {
+func (db *Database) SaveTokenAccount(address string, slot uint64, mint, owner string) error {
 	stmt := `
 INSERT INTO token_account
-	(address, slot, mint, owner, state)
-VALUES ($1, $2, $3, $4, $5)
+	(address, slot, mint, owner)
+VALUES ($1, $2, $3, $4)
 ON CONFLICT (address) DO UPDATE
 	SET slot = excluded.slot,
 	mint = excluded.mint,
-	owner = excluded.owner,
-	state = excluded.state
+	owner = excluded.owner
 WHERE token_account.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
@@ -56,8 +55,14 @@ WHERE token_account.slot <= excluded.slot`
 		slot,
 		mint,
 		owner,
-		state,
 	)
+	return err
+}
+
+// DeleteTokenAccount implements the db.TokenDb
+func (db *Database) DeleteTokenAccount(address string) error {
+	stmt := `DELETE FROM token_account WHERE address = $1`
+	_, err := db.Sqlx.Exec(stmt, address)
 	return err
 }
 
@@ -83,15 +88,15 @@ WHERE multisig.slot <= excluded.slot`
 }
 
 // SaveTokenDelegate implements the db.TokenDb
-func (db *Database) SaveTokenDelegate(source string, delegate string, slot uint64, amount uint64) error {
+func (db *Database) SaveTokenDelegation(source string, delegate string, slot uint64, amount uint64) error {
 	stmt := `
-INSERT INTO token_delegate
+INSERT INTO token_delegation
 	(source_address, delegate_address, slot, amount)
 VALUES ($1, $2, $3, $4)
 ON CONFLICT (source_address) DO UPDATE
 	SET slot = excluded.slot,
 	amount = excluded.amount
-WHERE token_delegate.slot <= excluded.slot`
+WHERE token_delegation.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
 		source,
@@ -99,6 +104,13 @@ WHERE token_delegate.slot <= excluded.slot`
 		slot,
 		amount,
 	)
+	return err
+}
+
+// DeleteTokenDelegation implements the db.TokenDb
+func (db *Database) DeleteTokenDelegation(address string) error {
+	stmt := `DELETE FROM token_delegation WHERE source_address = $1`
+	_, err := db.Sqlx.Exec(stmt, address)
 	return err
 }
 

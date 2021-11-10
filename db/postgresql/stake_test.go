@@ -8,7 +8,6 @@ func (suite *DbTestSuite) TestSaveStakeAccount() {
 		Slot       uint64 `db:"slot"`
 		Staker     string `db:"staker"`
 		Withdrawer string `db:"withdrawer"`
-		State      string `db:"state"`
 	}
 
 	testCases := []struct {
@@ -19,37 +18,37 @@ func (suite *DbTestSuite) TestSaveStakeAccount() {
 		{
 			name: "initialize the data",
 			data: StakeRow{
-				"address", 1, "staker", "withdrawer", "initialized",
+				"address", 1, "staker", "withdrawer",
 			},
 			expected: StakeRow{
-				"address", 1, "staker", "withdrawer", "initialized",
+				"address", 1, "staker", "withdrawer",
 			},
 		},
 		{
 			name: "update with lower slot",
 			data: StakeRow{
-				"address", 0, "pre_staker", "withdrawer", "initialized",
+				"address", 0, "pre_staker", "withdrawer",
 			},
 			expected: StakeRow{
-				"address", 1, "staker", "withdrawer", "initialized",
+				"address", 1, "staker", "withdrawer",
 			},
 		},
 		{
 			name: "update with same slot",
 			data: StakeRow{
-				"address", 1, "curr_staker", "withdrawer", "initialized",
+				"address", 1, "curr_staker", "withdrawer",
 			},
 			expected: StakeRow{
-				"address", 1, "curr_staker", "withdrawer", "initialized",
+				"address", 1, "curr_staker", "withdrawer",
 			},
 		},
 		{
 			name: "update with higher slot",
 			data: StakeRow{
-				"address", 2, "new_staker", "withdrawer", "initialized",
+				"address", 2, "new_staker", "withdrawer",
 			},
 			expected: StakeRow{
-				"address", 2, "new_staker", "withdrawer", "initialized",
+				"address", 2, "new_staker", "withdrawer",
 			},
 		},
 	}
@@ -62,7 +61,6 @@ func (suite *DbTestSuite) TestSaveStakeAccount() {
 				tc.data.Slot,
 				tc.data.Staker,
 				tc.data.Withdrawer,
-				tc.data.State,
 			)
 			suite.Require().NoError(err)
 
@@ -74,6 +72,88 @@ func (suite *DbTestSuite) TestSaveStakeAccount() {
 			suite.Require().Equal(tc.expected, rows[0])
 		})
 	}
+}
+
+func (suite *DbTestSuite) TestDeleteStakeAccount() {
+	err := suite.database.SaveStakeAccount(
+		"address",
+		0,
+		"staker",
+		"withdrawer",
+	)
+	suite.Require().NoError(err)
+	err = suite.database.SaveStakeLockup(
+		"address",
+		0,
+		"custodian",
+		0,
+		0,
+	)
+	suite.Require().NoError(err)
+	err = suite.database.SaveStakeDelegation(
+		"address",
+		0,
+		0,
+		0,
+		1,
+		"validator",
+		0,
+	)
+	suite.Require().NoError(err)
+	accountRows := []struct {
+		Address    string `db:"address"`
+		Slot       uint64 `db:"slot"`
+		Staker     string `db:"staker"`
+		Withdrawer string `db:"withdrawer"`
+		State      string `db:"state"`
+	}{}
+
+	err = suite.database.Sqlx.Select(&accountRows, "SELECT * FROM stake_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(accountRows, 1)
+	accountRows = nil
+
+	lockupRows := []struct {
+		Address       string    `db:"address"`
+		Slot          uint64    `db:"slot"`
+		Custodian     string    `db:"custodian"`
+		Epoch         uint64    `db:"epoch"`
+		UnixTimestamp time.Time `db:"unix_timestamp"`
+	}{}
+	err = suite.database.Sqlx.Select(&lockupRows, "SELECT * FROM stake_lockup")
+	suite.Require().NoError(err)
+	suite.Require().Len(lockupRows, 1)
+	lockupRows = nil
+
+	delegationRows := []struct {
+		Address           string  `db:"address"`
+		Slot              uint64  `db:"slot"`
+		ActivationEpoch   uint64  `db:"activation_epoch"`
+		DeactivationEpoch uint64  `db:"deactivation_epoch"`
+		Stake             uint64  `db:"stake"`
+		Voter             string  `db:"voter"`
+		Rate              float64 `db:"warmup_cooldown_rate"`
+	}{}
+	err = suite.database.Sqlx.Select(&delegationRows, "SELECT * FROM stake_delegation")
+	suite.Require().NoError(err)
+	suite.Require().Len(delegationRows, 1)
+	delegationRows = nil
+
+	err = suite.database.DeleteStakeAccount("address")
+	suite.Require().NoError(err)
+
+	err = suite.database.Sqlx.Select(&accountRows, "SELECT * FROM stake_account")
+	suite.Require().NoError(err)
+	suite.Require().Len(accountRows, 0)
+
+	err = suite.database.Sqlx.Select(&lockupRows, "SELECT * FROM stake_lockup")
+	suite.Require().NoError(err)
+	suite.Require().Len(lockupRows, 0)
+	accountRows = nil
+
+	err = suite.database.Sqlx.Select(&delegationRows, "SELECT * FROM stake_delegation")
+	suite.Require().NoError(err)
+	suite.Require().Len(delegationRows, 0)
 }
 
 func (suite *DbTestSuite) TestSaveStakeLockup() {
@@ -131,7 +211,14 @@ func (suite *DbTestSuite) TestSaveStakeLockup() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveStakeLockup(
+			err := suite.database.SaveStakeAccount(
+				tc.data.Address,
+				0,
+				"staker",
+				"withdrawer",
+			)
+			suite.Require().NoError(err)
+			err = suite.database.SaveStakeLockup(
 				tc.data.Address,
 				tc.data.Slot,
 				tc.data.Custodian,
@@ -211,7 +298,14 @@ func (suite *DbTestSuite) TestStakeDelegation() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveStakeDelegation(
+			err := suite.database.SaveStakeAccount(
+				tc.data.Address,
+				0,
+				"staker",
+				"withdrawer",
+			)
+			suite.Require().NoError(err)
+			err = suite.database.SaveStakeDelegation(
 				tc.data.Address,
 				tc.data.Slot,
 				tc.data.ActivationEpoch,
