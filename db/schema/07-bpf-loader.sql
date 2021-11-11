@@ -17,7 +17,7 @@ CREATE TABLE program_data_account
 (
     address                 TEXT    NOT NULL PRIMARY KEY,
     slot                    BIGINT  NOT NULL,
-    last_modified_slot      BIGINT  NOT NUll,
+    last_modified_slot      BIGINT  NOT NULL,
     update_authority        TEXT    NOT NULL
 );
 CREATE INDEX program_data_account_authority_index ON program_data_account (update_authority);
