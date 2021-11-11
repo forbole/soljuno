@@ -17,7 +17,7 @@ func updateAccountBalance(ctx *Context, address string, info clienttypes.Account
 	return bankDb.SaveAccountBalances(info.Context.Slot, []string{address}, []uint64{info.Value.Lamports})
 }
 
-func updateToken(ctx *Context, address string, slot uint64, token accountParser.TokenMint) error {
+func updateToken(ctx *Context, address string, slot uint64, token accountParser.Token) error {
 	tokenDb, ok := ctx.Database.(db.TokenDb)
 	if !ok {
 		return fmt.Errorf("database does not implement TokenDb")

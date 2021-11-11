@@ -4,7 +4,7 @@ import "github.com/lib/pq"
 
 func (suite *DbTestSuite) TestSaveToken() {
 	type TokenRow struct {
-		Mint            string `db:"mint"`
+		Address         string `db:"address"`
 		Slot            uint64 `db:"slot"`
 		Decimals        uint8  `db:"decimals"`
 		MintAuthority   string `db:"mint_authority"`
@@ -19,37 +19,37 @@ func (suite *DbTestSuite) TestSaveToken() {
 		{
 			name: "initialize the data",
 			data: TokenRow{
-				"mint", 1, 9, "owner", "freeze",
+				"address", 1, 9, "owner", "freeze",
 			},
 			expected: TokenRow{
-				"mint", 1, 9, "owner", "freeze",
+				"address", 1, 9, "owner", "freeze",
 			},
 		},
 		{
 			name: "update with lower slot",
 			data: TokenRow{
-				"mint", 0, 9, "pre_owner", "freeze",
+				"address", 0, 9, "pre_owner", "freeze",
 			},
 			expected: TokenRow{
-				"mint", 1, 9, "owner", "freeze",
+				"address", 1, 9, "owner", "freeze",
 			},
 		},
 		{
 			name: "update with same slot",
 			data: TokenRow{
-				"mint", 1, 9, "new_owner", "freeze",
+				"address", 1, 9, "new_owner", "freeze",
 			},
 			expected: TokenRow{
-				"mint", 1, 9, "new_owner", "freeze",
+				"address", 1, 9, "new_owner", "freeze",
 			},
 		},
 		{
 			name: "update with higher slot",
 			data: TokenRow{
-				"mint", 2, 9, "new_owner", "new_freeze",
+				"address", 2, 9, "new_owner", "new_freeze",
 			},
 			expected: TokenRow{
-				"mint", 2, 9, "new_owner", "new_freeze",
+				"address", 2, 9, "new_owner", "new_freeze",
 			},
 		},
 	}
@@ -58,7 +58,7 @@ func (suite *DbTestSuite) TestSaveToken() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			err := suite.database.SaveToken(
-				tc.data.Mint,
+				tc.data.Address,
 				tc.data.Slot,
 				tc.data.Decimals,
 				tc.data.MintAuthority,

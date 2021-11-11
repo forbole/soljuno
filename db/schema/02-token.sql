@@ -1,16 +1,16 @@
 CREATE TABLE token
 (
-    mint                TEXT    NOT NULL PRIMARY KEY,
+    address             TEXT    NOT NULL PRIMARY KEY,
     slot                BIGINT  NOT NULL,
     decimals            INT     NOT NULL,
-    mint_authority      TEXT,
-    freeze_authority    TEXT
+    mint_authority      TEXT    NOT NULL,
+    freeze_authority    TEXT    NOT NULL
 );
 CREATE INDEX token_authority_index ON token (mint_authority);
 
 CREATE TABLE token_supply
 (
-    mint    TEXT            NOT NULL PRIMARY KEY,
+    address TEXT            NOT NULL PRIMARY KEY,
     slot    BIGINT          NOT NULL,
     supply  NUMERIC(20,0)   NOT NULL
 );

@@ -11,7 +11,7 @@ var _ db.TokenDb = &Database{}
 
 // SaveToken implements the db.TokenDb
 func (db *Database) SaveToken(
-	mint string,
+	address string,
 	slot uint64,
 	decimals uint8,
 	mintAuthority string,
@@ -19,9 +19,9 @@ func (db *Database) SaveToken(
 ) error {
 	stmt := `
 INSERT INTO token
-    (mint, slot, decimals, mint_authority, freeze_authority)
+    (address, slot, decimals, mint_authority, freeze_authority)
 VALUES ($1, $2, $3, $4, $5)
-ON CONFLICT (mint) DO UPDATE
+ON CONFLICT (address) DO UPDATE
     SET slot = excluded.slot,
 	decimals = excluded.decimals,
 	mint_authority = excluded.mint_authority,
@@ -29,7 +29,7 @@ ON CONFLICT (mint) DO UPDATE
 WHERE token.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		mint,
+		address,
 		slot,
 		decimals,
 		mintAuthority,
@@ -115,18 +115,18 @@ func (db *Database) DeleteTokenDelegation(address string) error {
 }
 
 // SaveTokenSupply implements the db.TokenDb
-func (db *Database) SaveTokenSupply(mint string, slot uint64, supply uint64) error {
+func (db *Database) SaveTokenSupply(address string, slot uint64, supply uint64) error {
 	stmt := `
 INSERT INTO token_supply
-	(mint, slot, supply)
+	(address, slot, supply)
 VALUES ($1, $2, $3)
-ON CONFLICT (mint) DO UPDATE
+ON CONFLICT (address) DO UPDATE
 	SET slot = excluded.slot,
 	supply = excluded.supply
 WHERE token_supply.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		mint,
+		address,
 		slot,
 		strconv.FormatUint(supply, 10),
 	)

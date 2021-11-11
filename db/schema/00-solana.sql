@@ -1,6 +1,6 @@
 CREATE TABLE block
 (
-    slot        BIGINT      UNIQUE PRIMARY KEY,
+    slot        BIGINT      PRIMARY KEY,
     hash        TEXT        NOT NULL UNIQUE,
     proposer    TEXT        DEFAULT '',
     timestamp   TIMESTAMP   WITHOUT TIME ZONE NOT NULL
@@ -11,13 +11,12 @@ CREATE INDEX block_proposer_index ON block (proposer);
 
 CREATE TABLE transaction
 (
-    hash       TEXT     NOT NULL UNIQUE PRIMARY KEY,
+    hash       TEXT     NOT NULL PRIMARY KEY,
     slot       BIGINT   NOT NULL REFERENCES block (slot),
     error      BOOLEAN  NOT NULL,
     fee        INT      NOT NULL,
     logs       TEXT[]
 );
-CREATE INDEX transaction_hash_index ON transaction (hash);
 CREATE INDEX transaction_slot_index ON transaction (slot);
 
 CREATE TABLE message
