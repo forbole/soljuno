@@ -38,12 +38,12 @@ func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client c
 }
 
 // updateToken properly stores the authority of mint inside the database
-func updateToken(mint string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
-	if !db.CheckTokenLatest(mint, currentSlot) {
+func updateToken(address string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+	if !db.CheckTokenLatest(address, currentSlot) {
 		return nil
 	}
 
-	info, err := client.AccountInfo(mint)
+	info, err := client.AccountInfo(address)
 	if err != nil {
 		return err
 	}
@@ -53,13 +53,13 @@ func updateToken(mint string, currentSlot uint64, db db.TokenDb, client client.P
 		return err
 	}
 
-	token, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenMint)
+	token, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.Token)
 	if !ok {
-		return fmt.Errorf("failed to parse token:%s", mint)
+		return fmt.Errorf("failed to parse token:%s", address)
 	}
 
 	return db.SaveToken(
-		mint,
+		address,
 		info.Context.Slot,
 		token.Decimals,
 		token.MintAuthority.String(),
@@ -95,12 +95,12 @@ func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, clien
 }
 
 // updateTokenSupply properly stores the supply of the given mint inside the database
-func updateTokenSupply(mint string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
-	if !db.CheckTokenSupplyLatest(mint, currentSlot) {
+func updateTokenSupply(address string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+	if !db.CheckTokenSupplyLatest(address, currentSlot) {
 		return nil
 	}
 
-	info, err := client.AccountInfo(mint)
+	info, err := client.AccountInfo(address)
 	if err != nil {
 		return err
 	}
@@ -110,9 +110,9 @@ func updateTokenSupply(mint string, currentSlot uint64, db db.TokenDb, client cl
 		return err
 	}
 
-	token, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenMint)
+	token, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.Token)
 	if !ok {
-		return fmt.Errorf("failed to parse token:%s", mint)
+		return fmt.Errorf("failed to parse token:%s", address)
 	}
-	return db.SaveTokenSupply(mint, info.Context.Slot, token.Supply)
+	return db.SaveTokenSupply(address, info.Context.Slot, token.Supply)
 }

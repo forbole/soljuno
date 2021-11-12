@@ -12,8 +12,8 @@ func tokenParse(decoder bincode.Decoder, bz []byte) interface{} {
 		decoder.Decode(bz, &account)
 		return account
 
-	case TokenMintLen:
-		var mint TokenMint
+	case TokenLen:
+		var mint Token
 		decoder.Decode(bz, &mint)
 		return mint
 
@@ -81,9 +81,9 @@ type TokenAccount struct {
 
 //____________________________________________________________________________
 
-const TokenMintLen = 82
+const TokenLen = 82
 
-type TokenMint struct {
+type Token struct {
 	MintAuthority   COptionPubkey
 	Supply          uint64
 	Decimals        uint8

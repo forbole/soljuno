@@ -142,7 +142,7 @@ func handleAccount(ctx *Context, address string) error {
 	}
 	account := accountParser.Parse(info.Value.Owner, bz)
 	switch account := account.(type) {
-	case accountParser.TokenMint:
+	case accountParser.Token:
 		return updateToken(ctx, address, info.Context.Slot, account)
 
 	case accountParser.TokenAccount:
