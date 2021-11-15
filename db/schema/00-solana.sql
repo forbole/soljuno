@@ -8,7 +8,6 @@ CREATE TABLE block
 CREATE INDEX block_hash_index ON block (hash);
 CREATE INDEX block_proposer_index ON block (proposer);
 
-
 CREATE TABLE transaction
 (
     hash       TEXT     NOT NULL PRIMARY KEY,

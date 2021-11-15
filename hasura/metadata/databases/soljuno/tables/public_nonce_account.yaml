@@ -1,0 +1,14 @@
+table:
+  name: nonce_account
+  schema: public
+select_permissions:
+- permission:
+  allow_aggregations: true
+  columns:
+    - address
+    - slot
+    - authority
+    - blockhash
+    - lamports_per_signature
+    filter: {}
+  role: anonymous
