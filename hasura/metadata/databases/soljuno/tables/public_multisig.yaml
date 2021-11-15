@@ -1,0 +1,12 @@
+table:
+  name: multisig
+  schema: public
+- select_permissions:
+  allow_aggregations: true
+  columns:
+    - address
+    - slot
+    - signers
+    - m
+    filter: {}
+  role: anonymous

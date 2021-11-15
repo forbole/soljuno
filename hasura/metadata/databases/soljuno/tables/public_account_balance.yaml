@@ -1,0 +1,12 @@
+table:
+  name: account_balance
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - slot
+    - balance
+    filter: {}
+  role: anonymous

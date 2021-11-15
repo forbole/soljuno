@@ -1,0 +1,21 @@
+table:
+  name: token_account_balance
+  schema: public
+object_relationships:
+- name: token_account
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: token_account
+      column_mapping:
+        address: address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - slot
+    - balance
+    filter: {}
+  role: anonymous

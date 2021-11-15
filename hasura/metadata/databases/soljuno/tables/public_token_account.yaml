@@ -1,0 +1,21 @@
+table:
+  name: token_account
+  schema: public
+array_relationships:
+- name: token
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: token
+      column_mapping:
+        token: address
+- select_permissions:
+  allow_aggregations: true
+  columns:
+    - address
+    - slot
+    - token
+    - owner
+    filter: {}
+  role: anonymous
