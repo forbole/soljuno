@@ -3,7 +3,6 @@ table:
   schema: public
 select_permissions:
 - permission:
-- permission:
     allow_aggregations: true
     columns:
     - address

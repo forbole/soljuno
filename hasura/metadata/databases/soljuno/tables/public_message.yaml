@@ -7,7 +7,6 @@ object_relationships:
     foreign_key_constraint_on: transaction_hash
 select_permissions:
 - permission:
-- permission:
     allow_aggregations: true
     columns:
     - transaction_hash

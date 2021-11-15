@@ -12,7 +12,6 @@ object_relationships:
         address: address
 select_permissions:
 - permission:
-- permission:
     allow_aggregations: true
     columns:
     - address
