@@ -9,7 +9,8 @@ array_relationships:
       table:
         name: transaction
         schema: public
-- select_permissions:
+select_permissions:
+- permission:
   allow_aggregations: true
   columns:
     - slot

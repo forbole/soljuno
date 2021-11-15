@@ -10,7 +10,8 @@ object_relationships:
         name: token_account
       column_mapping:
         source_address: address
-- select_permissions:
+select_permissions:
+- permission:
   allow_aggregations: true
   columns:
     - source_address

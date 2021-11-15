@@ -8,3 +8,4 @@
 - "!include public_token_account.yaml"
 - "!include public_multisig.yaml"
 - "!include public_token_delegation.yaml"
+- "!include public_nonce_account.yaml"

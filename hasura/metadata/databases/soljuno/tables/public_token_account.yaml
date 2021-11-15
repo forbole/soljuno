@@ -10,7 +10,8 @@ array_relationships:
         name: token
       column_mapping:
         token: address
-- select_permissions:
+select_permissions:
+- permission:
   allow_aggregations: true
   columns:
     - address
