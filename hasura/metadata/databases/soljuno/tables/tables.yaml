@@ -12,4 +12,5 @@
 - "!include public_vote_account.yaml"
 - "!include public_validator_status.yaml"
 - "!include public_validator_config.yaml"
-
+- "!include public_program_account.yaml"
+- "!include public_program_data_account.yaml"

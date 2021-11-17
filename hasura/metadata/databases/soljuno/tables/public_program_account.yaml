@@ -1,0 +1,21 @@
+table:
+  name: program_account
+  schema: public
+object_relationships:
+- name: program_data
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: program_data_account
+      column_mapping:
+        program_data_account: address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - slot
+    - program_data_account
+    filter: {}
+  role: anonymous
