@@ -1,15 +1,6 @@
 table:
   name: token_supply
   schema: public
-object_relationships:
-- name: token_by_supply
-  using:
-    manual_configuration:
-      remote_table:
-        schema: public
-        name: token
-      column_mapping:
-        address: address
 select_permissions:
 - permission:
     allow_aggregations: true
