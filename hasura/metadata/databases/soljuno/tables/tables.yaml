@@ -11,4 +11,5 @@
 - "!include public_nonce_account.yaml"
 - "!include public_vote_account.yaml"
 - "!include public_validator_status.yaml"
+- "!include public_validator_config.yaml"
 
