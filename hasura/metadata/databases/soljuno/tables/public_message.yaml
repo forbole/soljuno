@@ -11,6 +11,7 @@ select_permissions:
     columns:
     - transaction_hash
     - index
+    - inner_index
     - program
     - type
     - value
