@@ -11,7 +11,7 @@ import (
 
 // HandleMsg allows to handle different messages types for the bpfloader module
 func HandleMsg(msg types.Message, tx types.Tx, db db.BpfLoaderDb, client client.Proxy) error {
-	switch msg.Value.Type() {
+	switch msg.Parsed.Type() {
 	case "initializeBuffer":
 		return handleMsgInitializeBuffer(msg, tx, db, client)
 	case "deployWithMaxDataLen":
@@ -28,9 +28,9 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.BpfLoaderDb, client client.
 
 // handleMsgInitializeBuffer handles a MsgInitializeBuffer
 func handleMsgInitializeBuffer(msg types.Message, tx types.Tx, db db.BpfLoaderDb, client client.Proxy) error {
-	instruction, ok := msg.Value.Data().(upgradableLoader.ParsedInitializeBuffer)
+	instruction, ok := msg.Parsed.Data().(upgradableLoader.ParsedInitializeBuffer)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "initializeBuffer", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "initializeBuffer", msg.Parsed.Type())
 
 	}
 	return updateBufferAccount(instruction.Account, tx.Slot, db, client)
@@ -38,9 +38,9 @@ func handleMsgInitializeBuffer(msg types.Message, tx types.Tx, db db.BpfLoaderDb
 
 // handleMsgDeployWithMaxDataLen handles a MsgDeployWithMaxDataLen
 func handleMsgDeployWithMaxDataLen(msg types.Message, tx types.Tx, db db.BpfLoaderDb, client client.Proxy) error {
-	instruction, ok := msg.Value.Data().(upgradableLoader.ParsedDeployWithMaxDataLen)
+	instruction, ok := msg.Parsed.Data().(upgradableLoader.ParsedDeployWithMaxDataLen)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "deployWithMaxDataLen", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "deployWithMaxDataLen", msg.Parsed.Type())
 
 	}
 	if err := updateBufferAccount(instruction.BufferAccount, tx.Slot, db, client); err != nil {
@@ -54,9 +54,9 @@ func handleMsgDeployWithMaxDataLen(msg types.Message, tx types.Tx, db db.BpfLoad
 
 // handleMsgUpgrade handles a MsgUpgrade
 func handleMsgUpgrade(msg types.Message, tx types.Tx, db db.BpfLoaderDb, client client.Proxy) error {
-	instruction, ok := msg.Value.Data().(upgradableLoader.ParsedUpgrade)
+	instruction, ok := msg.Parsed.Data().(upgradableLoader.ParsedUpgrade)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "upgrade", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "upgrade", msg.Parsed.Type())
 
 	}
 	if err := updateBufferAccount(instruction.BufferAccount, tx.Slot, db, client); err != nil {
@@ -70,9 +70,9 @@ func handleMsgUpgrade(msg types.Message, tx types.Tx, db db.BpfLoaderDb, client 
 
 // handleMsgSetAuthority handles a MsgSetAuthority
 func handleMsgSetAuthority(msg types.Message, tx types.Tx, db db.BpfLoaderDb, client client.Proxy) error {
-	instruction, ok := msg.Value.Data().(upgradableLoader.ParsedSetAuthority)
+	instruction, ok := msg.Parsed.Data().(upgradableLoader.ParsedSetAuthority)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "setAuthority", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "setAuthority", msg.Parsed.Type())
 	}
 	if err := updateBufferAccount(instruction.Account, tx.Slot, db, client); err != nil {
 		return err
@@ -82,9 +82,9 @@ func handleMsgSetAuthority(msg types.Message, tx types.Tx, db db.BpfLoaderDb, cl
 
 // handleMsgClose handles a MsgClose
 func handleMsgClose(msg types.Message, tx types.Tx, db db.BpfLoaderDb, client client.Proxy) error {
-	instruction, ok := msg.Value.Data().(upgradableLoader.ParsedClose)
+	instruction, ok := msg.Parsed.Data().(upgradableLoader.ParsedClose)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "close", msg.Value.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "close", msg.Parsed.Type())
 
 	}
 	return updateProgramDataAccount(instruction.Account, tx.Slot, db, client)

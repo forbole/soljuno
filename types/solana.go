@@ -182,7 +182,7 @@ type Message struct {
 	Program          string
 	InvolvedAccounts []string
 	RawData          string
-	Value            types.ParsedInstruction
+	Parsed           types.ParsedInstruction
 }
 
 func NewMessage(
@@ -192,7 +192,7 @@ func NewMessage(
 	program string,
 	involvedAccounts []string,
 	rawData string,
-	value types.ParsedInstruction,
+	parsed types.ParsedInstruction,
 ) Message {
 	return Message{
 		TxHash:           hash,
@@ -201,6 +201,6 @@ func NewMessage(
 		Program:          program,
 		InvolvedAccounts: involvedAccounts,
 		RawData:          rawData,
-		Value:            value,
+		Parsed:           parsed,
 	}
 }

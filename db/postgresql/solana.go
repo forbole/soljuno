@@ -119,8 +119,8 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING`
 		msg.Program,
 		pq.Array(msg.InvolvedAccounts),
 		msg.RawData,
-		msg.Value.Type(),
-		msg.Value.JSON(),
+		msg.Parsed.Type(),
+		msg.Parsed.JSON(),
 	)
 
 	return err
