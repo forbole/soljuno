@@ -19,7 +19,7 @@ CREATE TABLE token_account
 (
     address TEXT    NOT NULL PRIMARY KEY,
     slot    BIGINT  NOT NULL,
-    mint    TEXT    NOT NULL,
+    token   TEXT    NOT NULL,
     owner   TEXT    NOT NULL
 );
 CREATE INDEX token_account_owner_index ON token_account (owner);
