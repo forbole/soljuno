@@ -80,7 +80,7 @@ func (suite *DbTestSuite) TestSaveTokenAccount() {
 	type TokenAccountRow struct {
 		Address string `db:"address"`
 		Slot    uint64 `db:"slot"`
-		Mint    string `db:"mint"`
+		Token   string `db:"token"`
 		Owner   string `db:"owner"`
 	}
 
@@ -133,7 +133,7 @@ func (suite *DbTestSuite) TestSaveTokenAccount() {
 			err := suite.database.SaveTokenAccount(
 				tc.data.Address,
 				tc.data.Slot,
-				tc.data.Mint,
+				tc.data.Token,
 				tc.data.Owner,
 			)
 			suite.Require().NoError(err)
@@ -159,7 +159,7 @@ func (suite *DbTestSuite) TestDeleteTokenAccount() {
 	rows := []struct {
 		Address string `db:"address"`
 		Slot    uint64 `db:"slot"`
-		Mint    string `db:"mint"`
+		Token   string `db:"token"`
 		Owner   string `db:"owner"`
 		State   string `db:"state"`
 	}{}

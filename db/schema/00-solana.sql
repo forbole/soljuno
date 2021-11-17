@@ -22,8 +22,10 @@ CREATE TABLE message
 (
     transaction_hash    TEXT    NOT NULL REFERENCES transaction (hash),
     index               INT     NOT NULL,
+    inner_index         INT     NOT NULL,
     program             TEXT    NOT NULL,      
     involved_accounts   TEXT[]  NOT NULL DEFAULT array[]::TEXT[],
+    raw_data            TEXT    NOT NULL,
     type                TEXT    NOT NULL DEFAULT 'unknown',
     value               JSONB   NOT NULL DEFAULT '{}'::JSONB
 );
@@ -40,7 +42,8 @@ CREATE FUNCTION messages_by_address(
     "offset" BIGINT = 0)
     RETURNS SETOF message AS
 $$
-SELECT message.transaction_hash, message.index, message.program, message.involved_accounts, message.type, message.value
+SELECT 
+    message.transaction_hash, message.index, message.inner_index, message.program, message.involved_accounts, message.raw_data, message.type, message.value
 FROM message
          JOIN transaction t on message.transaction_hash = t.hash
 WHERE (cardinality(types) = 0 OR type = ANY (types))

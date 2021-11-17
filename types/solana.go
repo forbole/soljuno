@@ -70,23 +70,22 @@ func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockRe
 			innerInstructionMap[inner.Index] = append(innerInstructionMap[inner.Index], inner.Instructions...)
 		}
 
-		count := 0
 		for i, msg := range rawMsg.Instructions {
 			var accounts []string
-
+			innerIndex := 0
 			accounts = getAccounts(accountKeys, msg.Accounts)
 			programID := accountKeys[msg.ProgramIDIndex]
 			parsed := parser.Parse(accounts, programID, msg.Data)
-			msgs = append(msgs, NewMessage(hash, count, accountKeys[msg.ProgramIDIndex], accounts, parsed))
-			count++
+			msgs = append(msgs, NewMessage(hash, i, innerIndex, accountKeys[msg.ProgramIDIndex], accounts, msg.Data, parsed))
+			innerIndex++
 
 			if inner, ok := innerInstructionMap[uint8(i)]; ok {
 				for _, innerMsg := range inner {
 					accounts = getAccounts(accountKeys, innerMsg.Accounts)
 					programID := accountKeys[innerMsg.ProgramIDIndex]
 					parsed := parser.Parse(accounts, programID, innerMsg.Data)
-					msgs = append(msgs, NewMessage(hash, count, accountKeys[innerMsg.ProgramIDIndex], accounts, parsed))
-					count++
+					msgs = append(msgs, NewMessage(hash, i, innerIndex, accountKeys[innerMsg.ProgramIDIndex], accounts, innerMsg.Data, parsed))
+					innerIndex++
 				}
 			}
 		}
@@ -179,17 +178,29 @@ func (tx Tx) Successful() bool {
 type Message struct {
 	TxHash           string
 	Index            int
+	InnerIndex       int
 	Program          string
 	InvolvedAccounts []string
-	Value            types.ParsedInstruction
+	RawData          string
+	Parsed           types.ParsedInstruction
 }
 
-func NewMessage(hash string, index int, program string, involvedAccounts []string, value types.ParsedInstruction) Message {
+func NewMessage(
+	hash string,
+	index int,
+	innerIndex int,
+	program string,
+	involvedAccounts []string,
+	rawData string,
+	parsed types.ParsedInstruction,
+) Message {
 	return Message{
 		TxHash:           hash,
 		Index:            index,
+		InnerIndex:       innerIndex,
 		Program:          program,
 		InvolvedAccounts: involvedAccounts,
-		Value:            value,
+		RawData:          rawData,
+		Parsed:           parsed,
 	}
 }
