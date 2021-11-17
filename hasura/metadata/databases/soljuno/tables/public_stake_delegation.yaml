@@ -1,0 +1,19 @@
+table:
+  name: stake_delegation
+  schema: public
+object_relationships:
+- name: stake_account
+  using:
+    foreign_key_constraint_on: address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - activation_epoch
+    - deactivation_epoch
+    - stake
+    - voter
+    - warmup_cooldown_rate
+    filter: {}
+  role: anonymous

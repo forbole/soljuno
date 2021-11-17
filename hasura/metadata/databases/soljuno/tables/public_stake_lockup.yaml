@@ -1,0 +1,17 @@
+table:
+  name: stake_lockup
+  schema: public
+object_relationships:
+- name: stake_account
+  using:
+    foreign_key_constraint_on: address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - custodian
+    - epoch
+    - unix_timestamp
+    filter: {}
+  role: anonymous

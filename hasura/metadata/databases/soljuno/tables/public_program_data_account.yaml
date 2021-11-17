@@ -1,0 +1,12 @@
+table:
+  name: program_data_account
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - last_modified_slot
+    - update_authority
+    filter: {}
+  role: anonymous

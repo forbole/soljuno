@@ -1,0 +1,21 @@
+table:
+  name: token_delegation
+  schema: public
+object_relationships:
+- name: source_token_account
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: token_account
+      column_mapping:
+        source_address: address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - source_address
+    - delegate_address
+    - amount
+    filter: {}
+  role: anonymous

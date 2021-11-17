@@ -1,0 +1,15 @@
+table:
+  name: validator_config
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - owner
+    - name
+    - keybase_username
+    - website
+    - details
+    filter: {}
+  role: anonymous

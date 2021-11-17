@@ -1,0 +1,26 @@
+table:
+  name: transaction
+  schema: public
+object_relationships:
+- name: block
+  using:
+    foreign_key_constraint_on: slot
+array_relationships:
+- name: messages_by_transaction_hash
+  using:
+    foreign_key_constraint_on:
+      column: transaction_hash
+      table:
+        name: message
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - hash
+    - slot
+    - error
+    - fee
+    - logs
+    filter: {}
+  role: anonymous
