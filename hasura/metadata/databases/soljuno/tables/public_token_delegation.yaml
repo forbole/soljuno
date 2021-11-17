@@ -16,7 +16,6 @@ select_permissions:
     columns:
     - source_address
     - delegate_address
-    - slot
     - amount
     filter: {}
   role: anonymous

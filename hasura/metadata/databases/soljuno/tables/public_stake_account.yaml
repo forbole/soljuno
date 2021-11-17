@@ -13,7 +13,6 @@ select_permissions:
     allow_aggregations: true
     columns:
     - address
-    - slot
     - staker
     - withdrawer
     filter: {}

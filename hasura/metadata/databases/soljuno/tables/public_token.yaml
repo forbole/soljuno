@@ -24,7 +24,6 @@ select_permissions:
     allow_aggregations: true
     columns:
     - address
-    - slot
     - decimals
     - mint_authority
     - freeze_authority

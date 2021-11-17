@@ -15,7 +15,6 @@ select_permissions:
     allow_aggregations: true
     columns:
     - address
-    - slot
     - token
     - owner
     filter: {}

@@ -24,7 +24,6 @@ select_permissions:
     allow_aggregations: true
     columns:
     - address
-    - slot
     - node
     - voter
     - withdrawer

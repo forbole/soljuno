@@ -15,7 +15,6 @@ select_permissions:
     allow_aggregations: true
     columns:
     - address
-    - slot
     - program_data_account
     filter: {}
   role: anonymous

@@ -6,7 +6,6 @@ select_permissions:
     allow_aggregations: true
     columns:
     - address
-    - slot
     - authority
     - blockhash
     - lamports_per_signature
