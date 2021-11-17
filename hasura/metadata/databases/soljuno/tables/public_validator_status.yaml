@@ -1,0 +1,15 @@
+table:
+  name: validator_status
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - slot
+    - activated_stake
+    - last_vote
+    - root_slot
+    - active
+    filter: {}
+  role: anonymous

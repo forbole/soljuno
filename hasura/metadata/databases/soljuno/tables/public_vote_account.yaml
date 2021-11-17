@@ -1,0 +1,15 @@
+table:
+  name: vote_account
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - slot
+    - node
+    - voter
+    - withdrawer
+    - commission
+    filter: {}
+  role: anonymous
