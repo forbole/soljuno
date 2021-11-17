@@ -3,8 +3,8 @@ table:
   schema: public
 select_permissions:
 - permission:
-  allow_aggregations: true
-  columns:
+    allow_aggregations: true
+    columns:
     - address
     - slot
     - authority

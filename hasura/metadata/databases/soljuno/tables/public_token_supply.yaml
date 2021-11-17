@@ -2,7 +2,7 @@ table:
   name: token_supply
   schema: public
 object_relationships:
-- name: token
+- name: token_by_supply
   using:
     manual_configuration:
       remote_table:
@@ -12,8 +12,8 @@ object_relationships:
         address: address
 select_permissions:
 - permission:
-  allow_aggregations: true
-  columns:
+    allow_aggregations: true
+    columns:
     - address
     - slot
     - supply

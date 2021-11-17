@@ -1,8 +1,8 @@
 table:
   name: token_account
   schema: public
-array_relationships:
-- name: token
+object_relationships:
+- name: token_by_account
   using:
     manual_configuration:
       remote_table:
@@ -12,8 +12,8 @@ array_relationships:
         token: address
 select_permissions:
 - permission:
-  allow_aggregations: true
-  columns:
+    allow_aggregations: true
+    columns:
     - address
     - slot
     - token

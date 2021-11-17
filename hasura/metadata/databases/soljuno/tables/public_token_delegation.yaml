@@ -12,8 +12,8 @@ object_relationships:
         source_address: address
 select_permissions:
 - permission:
-  allow_aggregations: true
-  columns:
+    allow_aggregations: true
+    columns:
     - source_address
     - delegate_address
     - slot
