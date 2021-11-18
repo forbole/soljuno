@@ -51,8 +51,3 @@ WHERE (cardinality(types) = 0 OR type = ANY (types))
 ORDER BY slot DESC
 LIMIT "limit" OFFSET "offset"
 $$ LANGUAGE sql STABLE;
-
-CREATE TABLE pruning
-(
-    last_pruned_slot BIGINT NOT NULL
-);
