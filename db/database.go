@@ -61,14 +61,8 @@ type ExceutorDb interface {
 
 // PruningDb represents a database that supports pruning properly
 type PruningDb interface {
-	// Prune prunes the data for the given slot, returning any error
+	// Prune prunes the data before the given slot, returning any error
 	Prune(slot uint64) error
-
-	// StoreLastPruned saves the last slot at which the database was pruned
-	StoreLastPruned(slot uint64) error
-
-	// GetLastPruned returns the last slot at which the database was pruned
-	GetLastPruned() (uint64, error)
 }
 
 // BankDb represents a database that supports bank properly

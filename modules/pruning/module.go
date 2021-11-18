@@ -40,38 +40,23 @@ func (m *Module) HandleBlock(block types.Block) error {
 		return nil
 	}
 
-	if block.Slot%uint64(m.cfg.GetInterval()) != 0 {
-		// Not an interval slot, so just skip
-		return nil
-	}
-
 	pruningDb, ok := m.db.(db.PruningDb)
 	if !ok {
 		return fmt.Errorf("pruning is enabled, but your database does not implement PruningDb")
 	}
 
-	// Get last pruned slot
-	var slot, err = pruningDb.GetLastPruned()
+	if block.Slot%uint64(m.cfg.GetInterval()) != 0 {
+		// Not an interval slot, so just skip
+		return nil
+	}
+	slot := block.Slot - uint64(m.cfg.GetKeepRecent())
+
+	// Prune the blocks before the given slot
+	m.logger.Debug("pruning", "module", "pruning", "slot", slot)
+	err := pruningDb.Prune(block.Slot - uint64(m.cfg.GetKeepRecent()))
 	if err != nil {
-		return err
+		return fmt.Errorf("error while pruning slot %d: %s", slot, err.Error())
 	}
 
-	// Iterate from last pruned slot until (current block slot - keep recent) to
-	// avoid pruning the recent blocks that should be kept
-	for ; slot < block.Slot-uint64(m.cfg.GetKeepRecent()); slot++ {
-
-		if slot%uint64(m.cfg.GetKeepEvery()) == 0 {
-			// The slot should be kept, so just skip
-			continue
-		}
-
-		// Prune the block by slot
-		m.logger.Debug("pruning", "module", "pruning", "slot", slot)
-		err = pruningDb.Prune(slot)
-		if err != nil {
-			return fmt.Errorf("error while pruning slot %d: %s", slot, err.Error())
-		}
-	}
-
-	return pruningDb.StoreLastPruned(slot)
+	return nil
 }
