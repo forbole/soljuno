@@ -177,12 +177,11 @@ func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64
 		if err != nil {
 			continue
 		}
-		fmt.Println(i, next, slots)
 		for _, slot := range slots {
 			ctx.Logger.Debug("enqueueing missing block", "slot", slot)
 			exportQueue <- slot
 		}
-		i = next
+		i = next + 1
 	}
 }
 
