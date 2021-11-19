@@ -47,7 +47,7 @@ func TestDefaultConfigParser(t *testing.T) {
 
 	require.Equal(t, []string{"pruning"}, cfg.GetChainConfig().GetModules())
 
-	require.Equal(t, "juno", cfg.GetRPCConfig().GetClientName())
+	require.Equal(t, "soljuno", cfg.GetRPCConfig().GetClientName())
 	require.Equal(t, "http://localhost:8899", cfg.GetRPCConfig().GetAddress())
 
 }
