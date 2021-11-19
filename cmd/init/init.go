@@ -15,11 +15,7 @@ const (
 	flagRPCClientName = "client-name"
 	flagRPCAddress    = "rpc-address"
 
-	flagGRPCAddress  = "grpc-address"
-	flagGRPCInsecure = "grpc-insecure"
-
-	flagCosmosPrefix = "cosmos-prefix"
-	flagModules      = "modules"
+	flagModules = "modules"
 
 	flagDatabaseName               = "database-name"
 	flagDatabaseHost               = "database-host"
