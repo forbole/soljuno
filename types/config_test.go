@@ -9,18 +9,13 @@ import (
 func TestDefaultConfigParser(t *testing.T) {
 	data := `
 [chain]
-  prefix = "cosmos"
   modules = [
     "pruning"
   ]
 
 [rpc]
-  client_name = "juno"
-  address = "http://localhost:26657"
-
-[grpc]
-  address = "localhost:9090"
-  insecure = true
+  client_name = "soljuno"
+  address = "http://localhost:8899"
 
 [logging]
   format = "text"
@@ -30,9 +25,7 @@ func TestDefaultConfigParser(t *testing.T) {
   workers = 5
   listen_new_blocks = true
   parse_old_blocks = true
-  parse_genesis = true
   start_height = 1
-  fast_sync = false
 
 [database]
   host = "localhost"
@@ -52,12 +45,9 @@ func TestDefaultConfigParser(t *testing.T) {
 	cfg, err := DefaultConfigParser([]byte(data))
 	require.NoError(t, err)
 
-	require.Equal(t, "cosmos", cfg.GetChainConfig().GetPrefix())
 	require.Equal(t, []string{"pruning"}, cfg.GetChainConfig().GetModules())
 
-	require.Equal(t, "juno", cfg.GetRPCConfig().GetClientName())
-	require.Equal(t, "http://localhost:26657", cfg.GetRPCConfig().GetAddress())
+	require.Equal(t, "soljuno", cfg.GetRPCConfig().GetClientName())
+	require.Equal(t, "http://localhost:8899", cfg.GetRPCConfig().GetAddress())
 
-	require.Equal(t, "localhost:9090", cfg.GetGrpcConfig().GetAddress())
-	require.Equal(t, true, cfg.GetGrpcConfig().IsInsecure())
 }

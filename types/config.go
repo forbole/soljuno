@@ -15,7 +15,6 @@ type ConfigParser = func(fileContents []byte) (Config, error)
 
 type configToml struct {
 	RPC       *rpcConfig       `toml:"rpc"`
-	Grpc      *grpcConfig      `toml:"grpc"`
 	Chain     *chainConfig     `toml:"chain"`
 	Database  *databaseConfig  `toml:"database"`
 	Logging   *loggingConfig   `toml:"logging"`
@@ -32,7 +31,6 @@ func DefaultConfigParser(configData []byte) (Config, error) {
 	err := toml.Unmarshal(configData, &cfg)
 	return NewConfig(
 		cfg.RPC,
-		cfg.Grpc,
 		cfg.Chain,
 		cfg.Database,
 		cfg.Logging,
@@ -48,7 +46,6 @@ func DefaultConfigParser(configData []byte) (Config, error) {
 // Config represents the configuration to run Juno
 type Config interface {
 	GetRPCConfig() RPCConfig
-	GetGrpcConfig() GrpcConfig
 	GetChainConfig() ChainConfig
 	GetDatabaseConfig() DatabaseConfig
 	GetLoggingConfig() LoggingConfig
@@ -63,7 +60,6 @@ var _ Config = &config{}
 // Config defines all necessary juno configuration parameters.
 type config struct {
 	RPC       RPCConfig       `toml:"rpc"`
-	Grpc      GrpcConfig      `toml:"grpc"`
 	Chain     ChainConfig     `toml:"chain"`
 	Database  DatabaseConfig  `toml:"database"`
 	Logging   LoggingConfig   `toml:"logging"`
@@ -75,15 +71,17 @@ type config struct {
 
 // NewConfig builds a new Config instance
 func NewConfig(
-	rpcConfig RPCConfig, grpConfig GrpcConfig,
-	chainConfig ChainConfig, dbConfig DatabaseConfig,
-	loggingConfig LoggingConfig, parsingConfig ParsingConfig,
-	pruningConfig PruningConfig, telemetryConfig TelemetryConfig,
+	rpcConfig RPCConfig,
+	chainConfig ChainConfig,
+	dbConfig DatabaseConfig,
+	loggingConfig LoggingConfig,
+	parsingConfig ParsingConfig,
+	pruningConfig PruningConfig,
+	telemetryConfig TelemetryConfig,
 	workerConfig WorkerConfig,
 ) Config {
 	return &config{
 		RPC:       rpcConfig,
-		Grpc:      grpConfig,
 		Chain:     chainConfig,
 		Database:  dbConfig,
 		Logging:   loggingConfig,
@@ -100,14 +98,6 @@ func (c *config) GetRPCConfig() RPCConfig {
 		return DefaultRPCConfig()
 	}
 	return c.RPC
-}
-
-// GetGrpcConfig implements Config
-func (c *config) GetGrpcConfig() GrpcConfig {
-	if c.Grpc == nil {
-		return DefaultGrpcConfig()
-	}
-	return c.Grpc
 }
 
 // GetChainConfig implements Config
@@ -206,73 +196,27 @@ func (r *rpcConfig) GetAddress() string {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-// GrpcConfig contains the configuration of the gRPC endpoint
-type GrpcConfig interface {
-	GetAddress() string
-	IsInsecure() bool
-}
-
-var _ GrpcConfig = &grpcConfig{}
-
-type grpcConfig struct {
-	Address  string `toml:"address"`
-	Insecure bool   `toml:"insecure"`
-}
-
-// NewGrpcConfig allows to build a new GrpcConfig instance
-func NewGrpcConfig(address string, insecure bool) GrpcConfig {
-	return &grpcConfig{
-		Address:  address,
-		Insecure: insecure,
-	}
-}
-
-// DefaultGrpcConfig returns the default instance of a GrpcConfig
-func DefaultGrpcConfig() GrpcConfig {
-	return NewGrpcConfig("", true)
-}
-
-// GetAddress implements GrpcConfig
-func (g *grpcConfig) GetAddress() string {
-	return g.Address
-}
-
-// IsInsecure implements GrpcConfig
-func (g *grpcConfig) IsInsecure() bool {
-	return g.Insecure
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-
 // ChainConfig contains the data to configure the ChainConfig SDK
 type ChainConfig interface {
-	GetPrefix() string
 	GetModules() []string
 }
 
 var _ ChainConfig = &chainConfig{}
 
 type chainConfig struct {
-	Prefix  string   `toml:"prefix"`
 	Modules []string `toml:"modules"`
 }
 
 // NewChainConfig returns a new ChainConfig instance
-func NewChainConfig(prefix string, modules []string) ChainConfig {
+func NewChainConfig(modules []string) ChainConfig {
 	return &chainConfig{
-		Prefix:  prefix,
 		Modules: modules,
 	}
 }
 
 // DefaultChainConfig returns the default instance of ChainConfig
 func DefaultChainConfig() ChainConfig {
-	return NewChainConfig("", nil)
-}
-
-// GetPrefix implements ChainConfig
-func (c *chainConfig) GetPrefix() string {
-	return c.Prefix
+	return NewChainConfig(nil)
 }
 
 // GetModules implements ChainConfig
@@ -432,38 +376,29 @@ type ParsingConfig interface {
 	GetWorkers() int64
 	ShouldParseNewBlocks() bool
 	ShouldParseOldBlocks() bool
-	ShouldParseGenesis() bool
-	GetGenesisFilePath() string
 	GetStartSlot() uint64
-	UseFastSync() bool
 }
 
 var _ ParsingConfig = &parsingConfig{}
 
 type parsingConfig struct {
-	Workers         int64  `toml:"workers"`
-	ParseNewBlocks  bool   `toml:"listen_new_blocks"`
-	ParseOldBlocks  bool   `toml:"parse_old_blocks"`
-	GenesisFilePath string `toml:"genesis_file_path"`
-	ParseGenesis    bool   `toml:"parse_genesis"`
-	StartSlot       uint64 `toml:"start_slot"`
-	FastSync        bool   `toml:"fast_sync"`
+	Workers        int64  `toml:"workers"`
+	ParseNewBlocks bool   `toml:"listen_new_blocks"`
+	ParseOldBlocks bool   `toml:"parse_old_blocks"`
+	StartSlot      uint64 `toml:"start_slot"`
 }
 
 // NewParsingConfig allows to build a new ParsingConfig instance
 func NewParsingConfig(
 	workers int64,
 	parseNewBlocks, parseOldBlocks bool,
-	parseGenesis bool, genesisFilePath string, startSlot uint64, fastSync bool,
+	startSlot uint64,
 ) ParsingConfig {
 	return &parsingConfig{
-		Workers:         workers,
-		ParseOldBlocks:  parseOldBlocks,
-		ParseNewBlocks:  parseNewBlocks,
-		ParseGenesis:    parseGenesis,
-		GenesisFilePath: genesisFilePath,
-		StartSlot:       startSlot,
-		FastSync:        fastSync,
+		Workers:        workers,
+		ParseOldBlocks: parseOldBlocks,
+		ParseNewBlocks: parseNewBlocks,
+		StartSlot:      startSlot,
 	}
 }
 
@@ -473,10 +408,7 @@ func DefaultParsingConfig() ParsingConfig {
 		1,
 		true,
 		true,
-		true,
-		"",
 		1,
-		false,
 	)
 }
 
@@ -495,23 +427,9 @@ func (p *parsingConfig) ShouldParseOldBlocks() bool {
 	return p.ParseOldBlocks
 }
 
-// ShouldParseGenesis implements ParsingConfig
-func (p *parsingConfig) ShouldParseGenesis() bool {
-	return p.ParseGenesis
-}
-
-func (p *parsingConfig) GetGenesisFilePath() string {
-	return p.GenesisFilePath
-}
-
 // GetStartHeight implements ParsingConfig
 func (p *parsingConfig) GetStartSlot() uint64 {
 	return p.StartSlot
-}
-
-// UseFastSync implements ParsingConfig
-func (p *parsingConfig) UseFastSync() bool {
-	return p.FastSync
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

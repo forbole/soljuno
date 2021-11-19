@@ -15,11 +15,7 @@ const (
 	flagRPCClientName = "client-name"
 	flagRPCAddress    = "rpc-address"
 
-	flagGRPCAddress  = "grpc-address"
-	flagGRPCInsecure = "grpc-insecure"
-
-	flagCosmosPrefix  = "cosmos-prefix"
-	flagCosmosModules = "cosmos-modules"
+	flagModules = "modules"
 
 	flagDatabaseName               = "database-name"
 	flagDatabaseHost               = "database-host"
@@ -34,13 +30,10 @@ const (
 	flagLoggingLevel  = "logging-level"
 	flagLoggingFormat = "logging-format"
 
-	flagParsingWorkers      = "parsing-workers"
-	flagParsingNewBlocks    = "parsing-new-blocks"
-	flagParsingOldBlocks    = "parsing-old-blocks"
-	flagParsingParseGenesis = "parsing-parse-genesis"
-	flagGenesisFilePath     = "parsing-genesis-file-path"
-	flagParsingStartSlot    = "parsing-start-height"
-	flagParsingFastSync     = "parsing-fast-sync"
+	flagParsingWorkers   = "parsing-workers"
+	flagParsingNewBlocks = "parsing-new-blocks"
+	flagParsingOldBlocks = "parsing-old-blocks"
+	flagParsingStartSlot = "parsing-start-height"
 
 	flagPruningKeepRecent = "pruning-keep-recent"
 	flagPruningKeepEvery  = "pruning-keep-every"
@@ -95,13 +88,8 @@ func InitCmd(cfg *Config) *cobra.Command {
 	command.Flags().String(flagRPCClientName, defRPCConfig.GetClientName(), "Name of the subscriber to use when listening to events")
 	command.Flags().String(flagRPCAddress, defRPCConfig.GetAddress(), "RPC address to use")
 
-	defGRPCConfig := types.DefaultGrpcConfig()
-	command.Flags().String(flagGRPCAddress, defGRPCConfig.GetAddress(), "gRPC address to use")
-	command.Flags().Bool(flagGRPCInsecure, defGRPCConfig.IsInsecure(), "Tells whether the gRPC host should be treated as insecure or not")
-
 	defCosmosConfig := types.DefaultChainConfig()
-	command.Flags().String(flagCosmosPrefix, defCosmosConfig.GetPrefix(), "Bech32 prefix to use for addresses")
-	command.Flags().StringSlice(flagCosmosModules, defCosmosConfig.GetModules(), "List of modules to use")
+	command.Flags().StringSlice(flagModules, defCosmosConfig.GetModules(), "List of modules to use")
 
 	defDatabaseConfig := types.DefaultDatabaseConfig()
 	command.Flags().String(flagDatabaseName, defDatabaseConfig.GetName(), "Name of the database to use")
@@ -122,10 +110,7 @@ func InitCmd(cfg *Config) *cobra.Command {
 	command.Flags().Int64(flagParsingWorkers, defParsingConfig.GetWorkers(), "Number of workers to use")
 	command.Flags().Bool(flagParsingNewBlocks, defParsingConfig.ShouldParseNewBlocks(), "Whether or not to parse new blocks")
 	command.Flags().Bool(flagParsingOldBlocks, defParsingConfig.ShouldParseOldBlocks(), "Whether or not to parse old blocks")
-	command.Flags().Bool(flagParsingParseGenesis, defParsingConfig.ShouldParseGenesis(), "Whether or not to parse the genesis")
-	command.Flags().String(flagGenesisFilePath, defParsingConfig.GetGenesisFilePath(), "(Optional) Path to the genesis file, if it should not be retrieved from the RPC")
 	command.Flags().Uint64(flagParsingStartSlot, defParsingConfig.GetStartSlot(), "Starting height when parsing new block slots")
-	command.Flags().Bool(flagParsingFastSync, defParsingConfig.UseFastSync(), "Whether to use fast sync or not when parsing old blocks")
 
 	defPruningConfig := types.DefaultPruningConfig()
 	command.Flags().Int64(flagPruningKeepRecent, defPruningConfig.GetKeepRecent(), "Number of recent states to keep")

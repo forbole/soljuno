@@ -26,11 +26,7 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 	rpcClientName, _ := cmd.Flags().GetString(flagRPCClientName)
 	rpcAddr, _ := cmd.Flags().GetString(flagRPCAddress)
 
-	grpcAddr, _ := cmd.Flags().GetString(flagGRPCAddress)
-	grpcInsecure, _ := cmd.Flags().GetBool(flagGRPCInsecure)
-
-	cosmosPrefix, _ := cmd.Flags().GetString(flagCosmosPrefix)
-	cosmosModules, _ := cmd.Flags().GetStringSlice(flagCosmosModules)
+	modules, _ := cmd.Flags().GetStringSlice(flagModules)
 
 	dbName, _ := cmd.Flags().GetString(flagDatabaseName)
 	dbHost, _ := cmd.Flags().GetString(flagDatabaseHost)
@@ -48,10 +44,8 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 	parsingWorkers, _ := cmd.Flags().GetInt64(flagParsingWorkers)
 	parsingNewBlocks, _ := cmd.Flags().GetBool(flagParsingNewBlocks)
 	parsingOldBlocks, _ := cmd.Flags().GetBool(flagParsingOldBlocks)
-	parsingParseGenesis, _ := cmd.Flags().GetBool(flagParsingParseGenesis)
-	parsingGenesisFilePath, _ := cmd.Flags().GetString(flagGenesisFilePath)
+
 	parsingStartSlot, _ := cmd.Flags().GetUint64(flagParsingStartSlot)
-	parsingFastSync, _ := cmd.Flags().GetBool(flagParsingFastSync)
 
 	pruningKeepEvery, _ := cmd.Flags().GetInt64(flagPruningKeepEvery)
 	pruningKeepRecent, _ := cmd.Flags().GetInt64(flagPruningKeepRecent)
@@ -64,8 +58,7 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 
 	return types.NewConfig(
 		types.NewRPCConfig(rpcClientName, rpcAddr),
-		types.NewGrpcConfig(grpcAddr, grpcInsecure),
-		types.NewChainConfig(cosmosPrefix, cosmosModules),
+		types.NewChainConfig(modules),
 		types.NewDatabaseConfig(
 			dbName,
 			dbHost,
@@ -82,10 +75,7 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 			parsingWorkers,
 			parsingNewBlocks,
 			parsingOldBlocks,
-			parsingParseGenesis,
-			parsingGenesisFilePath,
 			parsingStartSlot,
-			parsingFastSync,
 		),
 		types.NewPruningConfig(
 			pruningKeepRecent,
