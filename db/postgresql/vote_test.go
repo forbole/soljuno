@@ -158,6 +158,11 @@ func (suite *DbTestSuite) TestPruneValidatorStatus() {
 	)
 	suite.Require().NoError(err)
 
+	err = suite.database.SaveValidatorStatus(
+		"address", 11, 100, 0, 0, true,
+	)
+	suite.Require().NoError(err)
+
 	err = suite.database.PruneValidatorStatus(10)
 	suite.Require().NoError(err)
 
@@ -165,5 +170,5 @@ func (suite *DbTestSuite) TestPruneValidatorStatus() {
 	rows := []ValidatorStatusRow{}
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_status")
 	suite.Require().NoError(err)
-	suite.Require().Len(rows, 0)
+	suite.Require().Len(rows, 1)
 }
