@@ -46,3 +46,8 @@ ON CONFLICT (address, slot) DO NOTHING`
 	)
 	return err
 }
+
+func (db *Database) PruneValidatorStatus(slot uint64) error {
+	_, err := db.Sqlx.Exec(`DELETE FROM validator_status WHERE slot <= $1`, slot)
+	return err
+}

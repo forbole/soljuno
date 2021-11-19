@@ -11,12 +11,14 @@ import (
 )
 
 type Module struct {
+	cfg    types.PruningConfig
 	db     db.Database
 	client client.Proxy
 }
 
-func NewModule(db db.Database, client client.Proxy) *Module {
+func NewModule(cfg types.PruningConfig, db db.Database, client client.Proxy) *Module {
 	return &Module{
+		cfg:    cfg,
 		db:     db,
 		client: client,
 	}
@@ -25,6 +27,11 @@ func NewModule(db db.Database, client client.Proxy) *Module {
 // Name implements modules.Module
 func (m *Module) Name() string {
 	return "vote"
+}
+
+// HandleBlock implements modules.BlockModule
+func (m *Module) HandleBlock(block types.Block) error {
+	return HandleBLock(m, block)
 }
 
 // HandleMsg implements modules.MessageModule

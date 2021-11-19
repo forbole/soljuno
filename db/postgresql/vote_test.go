@@ -143,3 +143,27 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 		})
 	}
 }
+
+func (suite *DbTestSuite) TestPruneValidatorStatus() {
+	type ValidatorStatusRow struct {
+		Address        string `db:"address"`
+		Slot           uint64 `db:"slot"`
+		ActivatedStake uint64 `db:"activated_stake"`
+		LastVote       uint64 `db:"last_vote"`
+		RootSlot       uint64 `db:"root_slot"`
+		Active         bool   `db:"active"`
+	}
+	err := suite.database.SaveValidatorStatus(
+		"address", 1, 100, 0, 0, true,
+	)
+	suite.Require().NoError(err)
+
+	err = suite.database.PruneValidatorStatus(10)
+	suite.Require().NoError(err)
+
+	// Verify the data
+	rows := []ValidatorStatusRow{}
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_status")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
+}

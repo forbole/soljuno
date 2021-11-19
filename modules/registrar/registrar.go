@@ -87,7 +87,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		system.NewModule(ctx.Database, ctx.Proxy),
 		stake.NewModule(ctx.Database, ctx.Proxy),
 		token.NewModule(ctx.Database, ctx.Proxy),
-		vote.NewModule(ctx.Database, ctx.Proxy),
+		vote.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Proxy),
 		config.NewModule(ctx.Database, ctx.Proxy),
 		bpfloader.NewModule(ctx.Database, ctx.Proxy),
 	}
