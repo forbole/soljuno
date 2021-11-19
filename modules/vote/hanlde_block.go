@@ -17,7 +17,7 @@ func HandleBLock(m *Module, block types.Block) error {
 	}
 	slot := block.Slot - uint64(m.cfg.GetKeepRecent())
 
-	// Prune the validator statuses before the given slot
+	// Delete the validator statuses before the given slot
 	err := m.db.PruneValidatorStatus(block.Slot - uint64(m.cfg.GetKeepRecent()))
 	if err != nil {
 		return fmt.Errorf("error while pruning validator statuses %d: %s", slot, err.Error())
