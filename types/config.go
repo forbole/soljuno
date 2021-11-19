@@ -15,7 +15,6 @@ type ConfigParser = func(fileContents []byte) (Config, error)
 
 type configToml struct {
 	RPC       *rpcConfig       `toml:"rpc"`
-	Grpc      *grpcConfig      `toml:"grpc"`
 	Chain     *chainConfig     `toml:"chain"`
 	Database  *databaseConfig  `toml:"database"`
 	Logging   *loggingConfig   `toml:"logging"`
@@ -32,7 +31,6 @@ func DefaultConfigParser(configData []byte) (Config, error) {
 	err := toml.Unmarshal(configData, &cfg)
 	return NewConfig(
 		cfg.RPC,
-		cfg.Grpc,
 		cfg.Chain,
 		cfg.Database,
 		cfg.Logging,
@@ -48,7 +46,6 @@ func DefaultConfigParser(configData []byte) (Config, error) {
 // Config represents the configuration to run Juno
 type Config interface {
 	GetRPCConfig() RPCConfig
-	GetGrpcConfig() GrpcConfig
 	GetChainConfig() ChainConfig
 	GetDatabaseConfig() DatabaseConfig
 	GetLoggingConfig() LoggingConfig
@@ -63,7 +60,6 @@ var _ Config = &config{}
 // Config defines all necessary juno configuration parameters.
 type config struct {
 	RPC       RPCConfig       `toml:"rpc"`
-	Grpc      GrpcConfig      `toml:"grpc"`
 	Chain     ChainConfig     `toml:"chain"`
 	Database  DatabaseConfig  `toml:"database"`
 	Logging   LoggingConfig   `toml:"logging"`
@@ -75,15 +71,17 @@ type config struct {
 
 // NewConfig builds a new Config instance
 func NewConfig(
-	rpcConfig RPCConfig, grpConfig GrpcConfig,
-	chainConfig ChainConfig, dbConfig DatabaseConfig,
-	loggingConfig LoggingConfig, parsingConfig ParsingConfig,
-	pruningConfig PruningConfig, telemetryConfig TelemetryConfig,
+	rpcConfig RPCConfig,
+	chainConfig ChainConfig,
+	dbConfig DatabaseConfig,
+	loggingConfig LoggingConfig,
+	parsingConfig ParsingConfig,
+	pruningConfig PruningConfig,
+	telemetryConfig TelemetryConfig,
 	workerConfig WorkerConfig,
 ) Config {
 	return &config{
 		RPC:       rpcConfig,
-		Grpc:      grpConfig,
 		Chain:     chainConfig,
 		Database:  dbConfig,
 		Logging:   loggingConfig,
@@ -100,14 +98,6 @@ func (c *config) GetRPCConfig() RPCConfig {
 		return DefaultRPCConfig()
 	}
 	return c.RPC
-}
-
-// GetGrpcConfig implements Config
-func (c *config) GetGrpcConfig() GrpcConfig {
-	if c.Grpc == nil {
-		return DefaultGrpcConfig()
-	}
-	return c.Grpc
 }
 
 // GetChainConfig implements Config
@@ -202,44 +192,6 @@ func (r *rpcConfig) GetClientName() string {
 // GetAddress implements RPCConfig
 func (r *rpcConfig) GetAddress() string {
 	return r.Address
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-// GrpcConfig contains the configuration of the gRPC endpoint
-type GrpcConfig interface {
-	GetAddress() string
-	IsInsecure() bool
-}
-
-var _ GrpcConfig = &grpcConfig{}
-
-type grpcConfig struct {
-	Address  string `toml:"address"`
-	Insecure bool   `toml:"insecure"`
-}
-
-// NewGrpcConfig allows to build a new GrpcConfig instance
-func NewGrpcConfig(address string, insecure bool) GrpcConfig {
-	return &grpcConfig{
-		Address:  address,
-		Insecure: insecure,
-	}
-}
-
-// DefaultGrpcConfig returns the default instance of a GrpcConfig
-func DefaultGrpcConfig() GrpcConfig {
-	return NewGrpcConfig("", true)
-}
-
-// GetAddress implements GrpcConfig
-func (g *grpcConfig) GetAddress() string {
-	return g.Address
-}
-
-// IsInsecure implements GrpcConfig
-func (g *grpcConfig) IsInsecure() bool {
-	return g.Insecure
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

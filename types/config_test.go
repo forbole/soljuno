@@ -15,12 +15,8 @@ func TestDefaultConfigParser(t *testing.T) {
   ]
 
 [rpc]
-  client_name = "juno"
-  address = "http://localhost:26657"
-
-[grpc]
-  address = "localhost:9090"
-  insecure = true
+  client_name = "soljuno"
+  address = "http://localhost:8899"
 
 [logging]
   format = "text"
@@ -56,8 +52,6 @@ func TestDefaultConfigParser(t *testing.T) {
 	require.Equal(t, []string{"pruning"}, cfg.GetChainConfig().GetModules())
 
 	require.Equal(t, "juno", cfg.GetRPCConfig().GetClientName())
-	require.Equal(t, "http://localhost:26657", cfg.GetRPCConfig().GetAddress())
+	require.Equal(t, "http://localhost:8899", cfg.GetRPCConfig().GetAddress())
 
-	require.Equal(t, "localhost:9090", cfg.GetGrpcConfig().GetAddress())
-	require.Equal(t, true, cfg.GetGrpcConfig().IsInsecure())
 }

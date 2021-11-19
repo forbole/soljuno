@@ -95,10 +95,6 @@ func InitCmd(cfg *Config) *cobra.Command {
 	command.Flags().String(flagRPCClientName, defRPCConfig.GetClientName(), "Name of the subscriber to use when listening to events")
 	command.Flags().String(flagRPCAddress, defRPCConfig.GetAddress(), "RPC address to use")
 
-	defGRPCConfig := types.DefaultGrpcConfig()
-	command.Flags().String(flagGRPCAddress, defGRPCConfig.GetAddress(), "gRPC address to use")
-	command.Flags().Bool(flagGRPCInsecure, defGRPCConfig.IsInsecure(), "Tells whether the gRPC host should be treated as insecure or not")
-
 	defCosmosConfig := types.DefaultChainConfig()
 	command.Flags().String(flagCosmosPrefix, defCosmosConfig.GetPrefix(), "Bech32 prefix to use for addresses")
 	command.Flags().StringSlice(flagCosmosModules, defCosmosConfig.GetModules(), "List of modules to use")
