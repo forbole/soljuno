@@ -377,7 +377,6 @@ type ParsingConfig interface {
 	ShouldParseNewBlocks() bool
 	ShouldParseOldBlocks() bool
 	GetStartSlot() uint64
-	UseFastSync() bool
 }
 
 var _ ParsingConfig = &parsingConfig{}
@@ -387,21 +386,19 @@ type parsingConfig struct {
 	ParseNewBlocks bool   `toml:"listen_new_blocks"`
 	ParseOldBlocks bool   `toml:"parse_old_blocks"`
 	StartSlot      uint64 `toml:"start_slot"`
-	FastSync       bool   `toml:"fast_sync"`
 }
 
 // NewParsingConfig allows to build a new ParsingConfig instance
 func NewParsingConfig(
 	workers int64,
 	parseNewBlocks, parseOldBlocks bool,
-	startSlot uint64, fastSync bool,
+	startSlot uint64,
 ) ParsingConfig {
 	return &parsingConfig{
 		Workers:        workers,
 		ParseOldBlocks: parseOldBlocks,
 		ParseNewBlocks: parseNewBlocks,
 		StartSlot:      startSlot,
-		FastSync:       fastSync,
 	}
 }
 
@@ -412,7 +409,6 @@ func DefaultParsingConfig() ParsingConfig {
 		true,
 		true,
 		1,
-		false,
 	)
 }
 
@@ -434,11 +430,6 @@ func (p *parsingConfig) ShouldParseOldBlocks() bool {
 // GetStartHeight implements ParsingConfig
 func (p *parsingConfig) GetStartSlot() uint64 {
 	return p.StartSlot
-}
-
-// UseFastSync implements ParsingConfig
-func (p *parsingConfig) UseFastSync() bool {
-	return p.FastSync
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

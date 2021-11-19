@@ -34,7 +34,6 @@ const (
 	flagParsingNewBlocks = "parsing-new-blocks"
 	flagParsingOldBlocks = "parsing-old-blocks"
 	flagParsingStartSlot = "parsing-start-height"
-	flagParsingFastSync  = "parsing-fast-sync"
 
 	flagPruningKeepRecent = "pruning-keep-recent"
 	flagPruningKeepEvery  = "pruning-keep-every"
@@ -112,7 +111,6 @@ func InitCmd(cfg *Config) *cobra.Command {
 	command.Flags().Bool(flagParsingNewBlocks, defParsingConfig.ShouldParseNewBlocks(), "Whether or not to parse new blocks")
 	command.Flags().Bool(flagParsingOldBlocks, defParsingConfig.ShouldParseOldBlocks(), "Whether or not to parse old blocks")
 	command.Flags().Uint64(flagParsingStartSlot, defParsingConfig.GetStartSlot(), "Starting height when parsing new block slots")
-	command.Flags().Bool(flagParsingFastSync, defParsingConfig.UseFastSync(), "Whether to use fast sync or not when parsing old blocks")
 
 	defPruningConfig := types.DefaultPruningConfig()
 	command.Flags().Int64(flagPruningKeepRecent, defPruningConfig.GetKeepRecent(), "Number of recent states to keep")

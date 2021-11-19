@@ -26,7 +26,6 @@ func TestDefaultConfigParser(t *testing.T) {
   listen_new_blocks = true
   parse_old_blocks = true
   start_height = 1
-  fast_sync = false
 
 [database]
   host = "localhost"

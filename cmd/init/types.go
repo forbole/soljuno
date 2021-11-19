@@ -46,7 +46,6 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 	parsingOldBlocks, _ := cmd.Flags().GetBool(flagParsingOldBlocks)
 
 	parsingStartSlot, _ := cmd.Flags().GetUint64(flagParsingStartSlot)
-	parsingFastSync, _ := cmd.Flags().GetBool(flagParsingFastSync)
 
 	pruningKeepEvery, _ := cmd.Flags().GetInt64(flagPruningKeepEvery)
 	pruningKeepRecent, _ := cmd.Flags().GetInt64(flagPruningKeepRecent)
@@ -77,7 +76,6 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 			parsingNewBlocks,
 			parsingOldBlocks,
 			parsingStartSlot,
-			parsingFastSync,
 		),
 		types.NewPruningConfig(
 			pruningKeepRecent,
