@@ -18,8 +18,8 @@ const (
 	flagGRPCAddress  = "grpc-address"
 	flagGRPCInsecure = "grpc-insecure"
 
-	flagCosmosPrefix  = "cosmos-prefix"
-	flagCosmosModules = "cosmos-modules"
+	flagCosmosPrefix = "cosmos-prefix"
+	flagModules      = "modules"
 
 	flagDatabaseName               = "database-name"
 	flagDatabaseHost               = "database-host"
@@ -96,8 +96,7 @@ func InitCmd(cfg *Config) *cobra.Command {
 	command.Flags().String(flagRPCAddress, defRPCConfig.GetAddress(), "RPC address to use")
 
 	defCosmosConfig := types.DefaultChainConfig()
-	command.Flags().String(flagCosmosPrefix, defCosmosConfig.GetPrefix(), "Bech32 prefix to use for addresses")
-	command.Flags().StringSlice(flagCosmosModules, defCosmosConfig.GetModules(), "List of modules to use")
+	command.Flags().StringSlice(flagModules, defCosmosConfig.GetModules(), "List of modules to use")
 
 	defDatabaseConfig := types.DefaultDatabaseConfig()
 	command.Flags().String(flagDatabaseName, defDatabaseConfig.GetName(), "Name of the database to use")

@@ -198,33 +198,25 @@ func (r *rpcConfig) GetAddress() string {
 
 // ChainConfig contains the data to configure the ChainConfig SDK
 type ChainConfig interface {
-	GetPrefix() string
 	GetModules() []string
 }
 
 var _ ChainConfig = &chainConfig{}
 
 type chainConfig struct {
-	Prefix  string   `toml:"prefix"`
 	Modules []string `toml:"modules"`
 }
 
 // NewChainConfig returns a new ChainConfig instance
-func NewChainConfig(prefix string, modules []string) ChainConfig {
+func NewChainConfig(modules []string) ChainConfig {
 	return &chainConfig{
-		Prefix:  prefix,
 		Modules: modules,
 	}
 }
 
 // DefaultChainConfig returns the default instance of ChainConfig
 func DefaultChainConfig() ChainConfig {
-	return NewChainConfig("", nil)
-}
-
-// GetPrefix implements ChainConfig
-func (c *chainConfig) GetPrefix() string {
-	return c.Prefix
+	return NewChainConfig(nil)
 }
 
 // GetModules implements ChainConfig

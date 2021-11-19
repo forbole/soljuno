@@ -9,7 +9,6 @@ import (
 func TestDefaultConfigParser(t *testing.T) {
 	data := `
 [chain]
-  prefix = "cosmos"
   modules = [
     "pruning"
   ]
@@ -48,7 +47,6 @@ func TestDefaultConfigParser(t *testing.T) {
 	cfg, err := DefaultConfigParser([]byte(data))
 	require.NoError(t, err)
 
-	require.Equal(t, "cosmos", cfg.GetChainConfig().GetPrefix())
 	require.Equal(t, []string{"pruning"}, cfg.GetChainConfig().GetModules())
 
 	require.Equal(t, "juno", cfg.GetRPCConfig().GetClientName())
