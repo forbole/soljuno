@@ -169,7 +169,7 @@ type VoteDb interface {
 	// SaveValidatorStatus allows to store the given current validator status inside the database
 	SaveValidatorStatus(address string, slot uint64, activatedStake uint64, lastVote uint64, rootSlot uint64, active bool) error
 
-	// PruneValidatorStatus allows to prune validator statuses before the given slot
+	// PruneValidatorStatus allows to delete validator statuses before the given slot
 	PruneValidatorStatus(slot uint64) error
 
 	VoteCheckerDb
