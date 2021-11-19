@@ -142,10 +142,6 @@ func StartParsing(ctx *Context) error {
 	// Listen for and trap any OS signal to gracefully shutdown and exit
 	trapSignal(ctx)
 
-	if cfg.ShouldParseGenesis() {
-		// TODO add genesis block
-	}
-
 	latestSlot, err := ctx.Proxy.LatestSlot()
 	if err != nil {
 		panic(fmt.Errorf("failed to get last block from RPC client: %s", err))

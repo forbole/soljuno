@@ -44,8 +44,7 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 	parsingWorkers, _ := cmd.Flags().GetInt64(flagParsingWorkers)
 	parsingNewBlocks, _ := cmd.Flags().GetBool(flagParsingNewBlocks)
 	parsingOldBlocks, _ := cmd.Flags().GetBool(flagParsingOldBlocks)
-	parsingParseGenesis, _ := cmd.Flags().GetBool(flagParsingParseGenesis)
-	parsingGenesisFilePath, _ := cmd.Flags().GetString(flagGenesisFilePath)
+
 	parsingStartSlot, _ := cmd.Flags().GetUint64(flagParsingStartSlot)
 	parsingFastSync, _ := cmd.Flags().GetBool(flagParsingFastSync)
 
@@ -77,8 +76,6 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 			parsingWorkers,
 			parsingNewBlocks,
 			parsingOldBlocks,
-			parsingParseGenesis,
-			parsingGenesisFilePath,
 			parsingStartSlot,
 			parsingFastSync,
 		),

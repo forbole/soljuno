@@ -376,8 +376,6 @@ type ParsingConfig interface {
 	GetWorkers() int64
 	ShouldParseNewBlocks() bool
 	ShouldParseOldBlocks() bool
-	ShouldParseGenesis() bool
-	GetGenesisFilePath() string
 	GetStartSlot() uint64
 	UseFastSync() bool
 }
@@ -385,29 +383,25 @@ type ParsingConfig interface {
 var _ ParsingConfig = &parsingConfig{}
 
 type parsingConfig struct {
-	Workers         int64  `toml:"workers"`
-	ParseNewBlocks  bool   `toml:"listen_new_blocks"`
-	ParseOldBlocks  bool   `toml:"parse_old_blocks"`
-	GenesisFilePath string `toml:"genesis_file_path"`
-	ParseGenesis    bool   `toml:"parse_genesis"`
-	StartSlot       uint64 `toml:"start_slot"`
-	FastSync        bool   `toml:"fast_sync"`
+	Workers        int64  `toml:"workers"`
+	ParseNewBlocks bool   `toml:"listen_new_blocks"`
+	ParseOldBlocks bool   `toml:"parse_old_blocks"`
+	StartSlot      uint64 `toml:"start_slot"`
+	FastSync       bool   `toml:"fast_sync"`
 }
 
 // NewParsingConfig allows to build a new ParsingConfig instance
 func NewParsingConfig(
 	workers int64,
 	parseNewBlocks, parseOldBlocks bool,
-	parseGenesis bool, genesisFilePath string, startSlot uint64, fastSync bool,
+	startSlot uint64, fastSync bool,
 ) ParsingConfig {
 	return &parsingConfig{
-		Workers:         workers,
-		ParseOldBlocks:  parseOldBlocks,
-		ParseNewBlocks:  parseNewBlocks,
-		ParseGenesis:    parseGenesis,
-		GenesisFilePath: genesisFilePath,
-		StartSlot:       startSlot,
-		FastSync:        fastSync,
+		Workers:        workers,
+		ParseOldBlocks: parseOldBlocks,
+		ParseNewBlocks: parseNewBlocks,
+		StartSlot:      startSlot,
+		FastSync:       fastSync,
 	}
 }
 
@@ -417,8 +411,6 @@ func DefaultParsingConfig() ParsingConfig {
 		1,
 		true,
 		true,
-		true,
-		"",
 		1,
 		false,
 	)
@@ -437,15 +429,6 @@ func (p *parsingConfig) ShouldParseNewBlocks() bool {
 // ShouldParseOldBlocks implements ParsingConfig
 func (p *parsingConfig) ShouldParseOldBlocks() bool {
 	return p.ParseOldBlocks
-}
-
-// ShouldParseGenesis implements ParsingConfig
-func (p *parsingConfig) ShouldParseGenesis() bool {
-	return p.ParseGenesis
-}
-
-func (p *parsingConfig) GetGenesisFilePath() string {
-	return p.GenesisFilePath
 }
 
 // GetStartHeight implements ParsingConfig

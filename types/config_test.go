@@ -25,7 +25,6 @@ func TestDefaultConfigParser(t *testing.T) {
   workers = 5
   listen_new_blocks = true
   parse_old_blocks = true
-  parse_genesis = true
   start_height = 1
   fast_sync = false
 

@@ -30,13 +30,11 @@ const (
 	flagLoggingLevel  = "logging-level"
 	flagLoggingFormat = "logging-format"
 
-	flagParsingWorkers      = "parsing-workers"
-	flagParsingNewBlocks    = "parsing-new-blocks"
-	flagParsingOldBlocks    = "parsing-old-blocks"
-	flagParsingParseGenesis = "parsing-parse-genesis"
-	flagGenesisFilePath     = "parsing-genesis-file-path"
-	flagParsingStartSlot    = "parsing-start-height"
-	flagParsingFastSync     = "parsing-fast-sync"
+	flagParsingWorkers   = "parsing-workers"
+	flagParsingNewBlocks = "parsing-new-blocks"
+	flagParsingOldBlocks = "parsing-old-blocks"
+	flagParsingStartSlot = "parsing-start-height"
+	flagParsingFastSync  = "parsing-fast-sync"
 
 	flagPruningKeepRecent = "pruning-keep-recent"
 	flagPruningKeepEvery  = "pruning-keep-every"
@@ -113,8 +111,6 @@ func InitCmd(cfg *Config) *cobra.Command {
 	command.Flags().Int64(flagParsingWorkers, defParsingConfig.GetWorkers(), "Number of workers to use")
 	command.Flags().Bool(flagParsingNewBlocks, defParsingConfig.ShouldParseNewBlocks(), "Whether or not to parse new blocks")
 	command.Flags().Bool(flagParsingOldBlocks, defParsingConfig.ShouldParseOldBlocks(), "Whether or not to parse old blocks")
-	command.Flags().Bool(flagParsingParseGenesis, defParsingConfig.ShouldParseGenesis(), "Whether or not to parse the genesis")
-	command.Flags().String(flagGenesisFilePath, defParsingConfig.GetGenesisFilePath(), "(Optional) Path to the genesis file, if it should not be retrieved from the RPC")
 	command.Flags().Uint64(flagParsingStartSlot, defParsingConfig.GetStartSlot(), "Starting height when parsing new block slots")
 	command.Flags().Bool(flagParsingFastSync, defParsingConfig.UseFastSync(), "Whether to use fast sync or not when parsing old blocks")
 
