@@ -42,7 +42,7 @@ func (m *Module) updateValidatorsStatus() error {
 	}
 
 	for _, account := range voteAccounts.Delinquent {
-		if err := voteDb.SaveValidatorStatus(
+		if err := m.db.SaveValidatorStatus(
 			account.VotePubkey,
 			slot,
 			account.ActivatedStake,
