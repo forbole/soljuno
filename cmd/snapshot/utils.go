@@ -1,7 +1,6 @@
 package snapshot
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/forbole/soljuno/db"
@@ -10,18 +9,12 @@ import (
 )
 
 func updateAccountBalance(ctx *Context, address string, info clienttypes.AccountInfo) error {
-	bankDb, ok := ctx.Database.(db.BankDb)
-	if !ok {
-		return fmt.Errorf("database does not implement BankDb")
-	}
+	bankDb := ctx.Database.(db.BankDb)
 	return bankDb.SaveAccountBalances(info.Context.Slot, []string{address}, []uint64{info.Value.Lamports})
 }
 
 func updateToken(ctx *Context, address string, slot uint64, token accountParser.Token) error {
-	tokenDb, ok := ctx.Database.(db.TokenDb)
-	if !ok {
-		return fmt.Errorf("database does not implement TokenDb")
-	}
+	tokenDb := ctx.Database.(db.TokenDb)
 	return tokenDb.SaveToken(
 		address,
 		slot,
@@ -32,10 +25,7 @@ func updateToken(ctx *Context, address string, slot uint64, token accountParser.
 }
 
 func updateTokenAccount(ctx *Context, address string, slot uint64, account accountParser.TokenAccount) error {
-	tokenDb, ok := ctx.Database.(db.TokenDb)
-	if !ok {
-		return fmt.Errorf("database does not implement TokenDb")
-	}
+	tokenDb := ctx.Database.(db.TokenDb)
 	err := tokenDb.SaveTokenAccount(
 		address,
 		slot,
@@ -45,11 +35,8 @@ func updateTokenAccount(ctx *Context, address string, slot uint64, account accou
 	if err != nil {
 		return err
 	}
-	bankDb, ok := ctx.Database.(db.BankDb)
-	if !ok {
-		return fmt.Errorf("database does not implement BankDb")
-	}
 
+	bankDb := ctx.Database.(db.BankDb)
 	return bankDb.SaveAccountTokenBalances(
 		slot,
 		[]string{address},
@@ -66,19 +53,12 @@ func updateTokenAccount(ctx *Context, address string, slot uint64, account accou
 }
 
 func updateMultisig(ctx *Context, address string, slot uint64, multisig accountParser.Multisig) error {
-	tokenDb, ok := ctx.Database.(db.TokenDb)
-	if !ok {
-		return fmt.Errorf("database does not implement TokenDb")
-	}
+	tokenDb := ctx.Database.(db.TokenDb)
 	return tokenDb.SaveMultisig(address, slot, multisig.Signers.Strings(), multisig.M)
 }
 
 func updateStakeAccount(ctx *Context, address string, slot uint64, account accountParser.StakeAccount) error {
-	stakeDb, ok := ctx.Database.(db.StakeDb)
-	if !ok {
-		return fmt.Errorf("database does not implement StakeDb")
-	}
-
+	stakeDb := ctx.Database.(db.StakeDb)
 	err := stakeDb.SaveStakeAccount(
 		address,
 		slot,
@@ -113,10 +93,7 @@ func updateStakeAccount(ctx *Context, address string, slot uint64, account accou
 }
 
 func updateVoteAccount(ctx *Context, address string, slot uint64, account accountParser.VoteAccount) error {
-	voteDb, ok := ctx.Database.(db.VoteDb)
-	if !ok {
-		return fmt.Errorf("database does not implement VoteDb")
-	}
+	voteDb := ctx.Database.(db.VoteDb)
 	return voteDb.SaveVoteAccount(
 		address,
 		slot,
@@ -128,10 +105,7 @@ func updateVoteAccount(ctx *Context, address string, slot uint64, account accoun
 }
 
 func updateNonceAccount(ctx *Context, address string, slot uint64, account accountParser.NonceAccount) error {
-	systemDb, ok := ctx.Database.(db.SystemDb)
-	if !ok {
-		return fmt.Errorf("database does not implement SystemDb")
-	}
+	systemDb := ctx.Database.(db.SystemDb)
 	return systemDb.SaveNonceAccount(
 		address,
 		slot,
@@ -142,10 +116,7 @@ func updateNonceAccount(ctx *Context, address string, slot uint64, account accou
 }
 
 func updateBufferAccount(ctx *Context, address string, slot uint64, account accountParser.BufferAccount) error {
-	bpfLoaderDb, ok := ctx.Database.(db.BpfLoaderDb)
-	if !ok {
-		return fmt.Errorf("database does not implement BpfLoaderDb")
-	}
+	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
 	return bpfLoaderDb.SaveBufferAccount(
 		address,
 		slot,
@@ -154,10 +125,7 @@ func updateBufferAccount(ctx *Context, address string, slot uint64, account acco
 }
 
 func updateProgramAccount(ctx *Context, address string, slot uint64, account accountParser.ProgramAccount) error {
-	bpfLoaderDb, ok := ctx.Database.(db.BpfLoaderDb)
-	if !ok {
-		return fmt.Errorf("database does not implement BpfLoaderDb")
-	}
+	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
 	return bpfLoaderDb.SaveProgramAccount(
 		address,
 		slot,
@@ -166,10 +134,7 @@ func updateProgramAccount(ctx *Context, address string, slot uint64, account acc
 }
 
 func updateProgramDataAccount(ctx *Context, address string, slot uint64, account accountParser.ProgramDataAccount) error {
-	bpfLoaderDb, ok := ctx.Database.(db.BpfLoaderDb)
-	if !ok {
-		return fmt.Errorf("database does not implement BpfLoaderDb")
-	}
+	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
 	return bpfLoaderDb.SaveProgramDataAccount(
 		address,
 		slot,
@@ -179,10 +144,7 @@ func updateProgramDataAccount(ctx *Context, address string, slot uint64, account
 }
 
 func updateValidatorConfig(ctx *Context, address string, slot uint64, config accountParser.ValidatorConfig) error {
-	configDb, ok := ctx.Database.(db.ConfigDb)
-	if !ok {
-		return fmt.Errorf("database does not implement ConfigDb")
-	}
+	configDb := ctx.Database.(db.ConfigDb)
 	return configDb.SaveConfigAccount(
 		address,
 		slot,

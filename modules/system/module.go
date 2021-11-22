@@ -1,8 +1,6 @@
 package system
 
 import (
-	"fmt"
-
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/solana/program/system"
@@ -35,12 +33,8 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if msg.Program != system.ProgramID {
 		return nil
 	}
-	systemDb, ok := m.db.(db.SystemDb)
-	if !ok {
-		return fmt.Errorf("system is enabled, but your database does not implement SystemDb")
-	}
 
-	err := HandleMsg(msg, tx, systemDb, m.client)
+	err := HandleMsg(msg, tx, m.db, m.client)
 	if err != nil {
 		return err
 	}

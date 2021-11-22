@@ -1,8 +1,6 @@
 package bank
 
 import (
-	"fmt"
-
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
@@ -25,11 +23,7 @@ func (m *Module) Name() string {
 
 // HandleBank implements modules.BankModule
 func (m *Module) HandleBank(block types.Block) error {
-	bankDb, ok := m.db.(db.BankDb)
-	if !ok {
-		return fmt.Errorf("bank is enabled, but your database does not implement BankDb")
-	}
-	err := HandleBank(block, bankDb)
+	err := HandleBank(block, m.db)
 	if err != nil {
 		return err
 	}

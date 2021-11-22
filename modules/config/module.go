@@ -1,8 +1,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/solana/program/config"
@@ -35,12 +33,8 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if msg.Program != config.ProgramID {
 		return nil
 	}
-	configDb, ok := m.db.(db.ConfigDb)
-	if !ok {
-		return fmt.Errorf("config is enabled, but your database does not implement ConfigDb")
-	}
 
-	err := HandleMsg(msg, tx, configDb, m.client)
+	err := HandleMsg(msg, tx, m.db, m.client)
 	if err != nil {
 		return err
 	}

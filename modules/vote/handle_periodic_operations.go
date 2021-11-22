@@ -3,7 +3,6 @@ package vote
 import (
 	"fmt"
 
-	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/modules/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -24,18 +23,13 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 // updateValidatorsStatus insert current validators status
 func (m *Module) updateValidatorsStatus() error {
-	voteDb, ok := m.db.(db.VoteDb)
-	if !ok {
-		return fmt.Errorf("vote is enabled, but your database does not implement VoteDb")
-	}
-
 	slot, voteAccounts, err := m.client.ValidatorsWithSlot()
 	if err != nil {
 		return nil
 	}
 
 	for _, account := range voteAccounts.Current {
-		if err := voteDb.SaveValidatorStatus(
+		if err := m.db.SaveValidatorStatus(
 			account.VotePubkey,
 			slot,
 			account.ActivatedStake,

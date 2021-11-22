@@ -1,8 +1,6 @@
 package bpfloader
 
 import (
-	"fmt"
-
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	upgradableLoader "github.com/forbole/soljuno/solana/program/bpfloader/upgradeable"
@@ -36,12 +34,8 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if msg.Program != upgradableLoader.ProgramID {
 		return nil
 	}
-	bpfLoaderDb, ok := m.db.(db.BpfLoaderDb)
-	if !ok {
-		return fmt.Errorf("bpfloader is enabled, but your database does not implement BpfLoaderDb")
-	}
 
-	err := HandleMsg(msg, tx, bpfLoaderDb, m.client)
+	err := HandleMsg(msg, tx, m.db, m.client)
 	if err != nil {
 		return err
 	}
