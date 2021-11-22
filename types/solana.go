@@ -76,7 +76,7 @@ func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockRe
 			accounts = getAccounts(accountKeys, msg.Accounts)
 			programID := accountKeys[msg.ProgramIDIndex]
 			parsed := parser.Parse(accounts, programID, msg.Data)
-			msgs = append(msgs, NewMessage(hash, i, innerIndex, accountKeys[msg.ProgramIDIndex], accounts, msg.Data, parsed))
+			msgs = append(msgs, NewMessage(hash, slot, i, innerIndex, accountKeys[msg.ProgramIDIndex], accounts, msg.Data, parsed))
 			innerIndex++
 
 			if inner, ok := innerInstructionMap[uint8(i)]; ok {
@@ -84,7 +84,7 @@ func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockRe
 					accounts = getAccounts(accountKeys, innerMsg.Accounts)
 					programID := accountKeys[innerMsg.ProgramIDIndex]
 					parsed := parser.Parse(accounts, programID, innerMsg.Data)
-					msgs = append(msgs, NewMessage(hash, i, innerIndex, accountKeys[innerMsg.ProgramIDIndex], accounts, innerMsg.Data, parsed))
+					msgs = append(msgs, NewMessage(hash, slot, i, innerIndex, accountKeys[innerMsg.ProgramIDIndex], accounts, innerMsg.Data, parsed))
 					innerIndex++
 				}
 			}
@@ -177,6 +177,7 @@ func (tx Tx) Successful() bool {
 
 type Message struct {
 	TxHash           string
+	Slot             uint64
 	Index            int
 	InnerIndex       int
 	Program          string
@@ -187,6 +188,7 @@ type Message struct {
 
 func NewMessage(
 	hash string,
+	slot uint64,
 	index int,
 	innerIndex int,
 	program string,
@@ -196,6 +198,7 @@ func NewMessage(
 ) Message {
 	return Message{
 		TxHash:           hash,
+		Slot:             slot,
 		Index:            index,
 		InnerIndex:       innerIndex,
 		Program:          program,

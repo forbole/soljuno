@@ -106,14 +106,15 @@ VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 // SaveMessage implements db.Database
 func (db *Database) SaveMessage(msg types.Message) error {
 	stmt := `
-INSERT INTO message(transaction_hash, index, inner_index, program, involved_accounts, raw_data, type, value) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING`
+INSERT INTO message(transaction_hash, slot, index, inner_index, program, involved_accounts, raw_data, type, value) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT DO NOTHING`
 	if msg.InvolvedAccounts == nil {
 		msg.InvolvedAccounts = []string{}
 	}
 	_, err := db.Sqlx.Exec(
 		stmt,
 		msg.TxHash,
+		msg.Slot,
 		msg.Index,
 		msg.InnerIndex,
 		msg.Program,
