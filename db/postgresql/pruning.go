@@ -9,8 +9,7 @@ var _ db.PruningDb = &Database{}
 func (db *Database) Prune(slot uint64) error {
 	_, err := db.Sqlx.Exec(`
 DELETE FROM message 
-USING transaction 
-WHERE message.transaction_hash = transaction.hash AND transaction.slot <= $1
+WHERE slot <= $1
 `, slot)
 	return err
 }
