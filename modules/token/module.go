@@ -1,8 +1,6 @@
 package token
 
 import (
-	"fmt"
-
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/solana/program/token"
@@ -35,12 +33,8 @@ func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if msg.Program != token.ProgramID {
 		return nil
 	}
-	tokenDb, ok := m.db.(db.TokenDb)
-	if !ok {
-		return fmt.Errorf("token is enabled, but your database does not implement TokenDb")
-	}
 
-	err := HandleMsg(msg, tx, tokenDb, m.client)
+	err := HandleMsg(msg, tx, m.db, m.client)
 	if err != nil {
 		return err
 	}

@@ -40,11 +40,6 @@ func (m *Module) HandleBlock(block types.Block) error {
 		return nil
 	}
 
-	pruningDb, ok := m.db.(db.PruningDb)
-	if !ok {
-		return fmt.Errorf("pruning is enabled, but your database does not implement PruningDb")
-	}
-
 	if block.Slot%uint64(m.cfg.GetInterval()) != 0 {
 		// Not an interval slot, so just skip
 		return nil
@@ -53,7 +48,7 @@ func (m *Module) HandleBlock(block types.Block) error {
 
 	// Prune the blocks before the given slot
 	m.logger.Debug("pruning", "module", "pruning", "slot", slot)
-	err := pruningDb.Prune(block.Slot - uint64(m.cfg.GetKeepRecent()))
+	err := m.db.Prune(block.Slot - uint64(m.cfg.GetKeepRecent()))
 	if err != nil {
 		return fmt.Errorf("error while pruning slot %d: %s", slot, err.Error())
 	}
