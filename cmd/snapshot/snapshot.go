@@ -78,7 +78,7 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader) error {
 		err = ctx.Pool.Submit(
 			func() {
 				defer wg.Done()
-				ctx.Logger.Debug("Start handling account", "address", pubkey)
+				ctx.Logger.Info("Start handling account", "address", pubkey)
 				err = handleAccount(ctx, account.Pubkey)
 				if err != nil {
 					ctx.Logger.Error("failed to import account", "address", pubkey, "err", err)
