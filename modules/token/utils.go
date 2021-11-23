@@ -30,10 +30,9 @@ func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client c
 	}
 
 	tokenAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenAccount)
-	if !ok {
+	if !ok || tokenAccount.Delegate.String() == "" {
 		return db.DeleteTokenDelegation(source)
 	}
-
 	return db.SaveTokenDelegation(source, tokenAccount.Delegate.String(), info.Context.Slot, tokenAccount.DelegateAmount)
 }
 
