@@ -20,3 +20,4 @@ CREATE TABLE validator_status
     PRIMARY KEY (address, slot)
 );
 CREATE INDEX vote_account_voter_index ON validator_status (address);
+CREATE INDEX vote_account_slot_index ON validator_status (slot);
