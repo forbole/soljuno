@@ -22,13 +22,6 @@ func (db *Database) SaveTokensPrices(prices []types.TokenPrice) error {
 	}
 
 	query = query[:len(query)-1] // Remove trailing ","
-	query += `
-ON CONFLICT (unit_name) DO UPDATE 
-	SET price = excluded.price,
-	    market_cap = excluded.market_cap,
-	    timestamp = excluded.timestamp
-WHERE token_price.timestamp <= excluded.timestamp`
-
 	_, err := db.Sqlx.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while saving tokens prices: %s", err)
