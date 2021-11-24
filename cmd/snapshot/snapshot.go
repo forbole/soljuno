@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
 
 	accountParser "github.com/forbole/soljuno/solana/account"
 )
@@ -51,40 +50,42 @@ func StartImportSnapshot(ctx *Context, snapshotFile string) error {
 	return handleSnapshot(ctx, reader)
 }
 
+// handleSnapshot handles all accounts inside the snapshot file
 func handleSnapshot(ctx *Context, reader *bufio.Reader) error {
 	_, _, err := reader.ReadLine()
 	if err != nil {
 		return err
 	}
 	wg := new(sync.WaitGroup)
-	for {
-		if ctx.Pool.Free() == 0 {
-			time.Sleep(1 * time.Second)
-			continue
+	for i := 0; ; i++ {
+		if ctx.Pool.Free() == 0 || i%ctx.Pool.Cap()+1 == 0 {
+			time.Sleep(time.Second)
 		}
-		pubkey, buf, err := readSection(reader)
+
+		// Read account section from yaml
+		pubkey, _, err := readSection(reader)
+		// Break the loop when there is no new account
 		if err == io.EOF {
 			break
 		}
-
-		var account Account
-		// Process the line here.
-		err = yaml.Unmarshal(buf.Bytes(), &account)
 		if err != nil {
 			return err
 		}
-		account.Pubkey = pubkey
+
 		wg.Add(1)
 		err = ctx.Pool.Submit(
 			func() {
 				defer wg.Done()
 				ctx.Logger.Info("Start handling account", "address", pubkey)
-				err = handleAccount(ctx, account.Pubkey)
+				err = handleAccount(ctx, pubkey)
 				if err != nil {
 					ctx.Logger.Error("failed to import account", "address", pubkey, "err", err)
 				}
 			},
 		)
+		if err != nil {
+			return err
+		}
 	}
 	wg.Wait()
 	return nil
