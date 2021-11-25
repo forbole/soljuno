@@ -224,6 +224,12 @@ type BpfLoaderCheckerDb interface {
 }
 
 type PriceDb interface {
+	// GetTokenUnits returns the slice of all the names of the different tokens units
+	GetTokenUnits() ([]types.TokenUnit, error)
+
+	// SaveTokenUnit allows to save the given token unit details
+	SaveTokenUnit(unit types.TokenUnit) error
+
 	// SaveTokensPrices allows to store the token prices inside the database
 	SaveTokensPrices(prices []types.TokenPrice) error
 }

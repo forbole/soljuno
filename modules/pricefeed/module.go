@@ -21,5 +21,5 @@ func (m *Module) Name() string {
 }
 
 func (m *Module) PeriodicOperationsModule(scheduler *gocron.Scheduler) error {
-	return nil
+	return m.RegisterPeriodicOperations(scheduler)
 }
