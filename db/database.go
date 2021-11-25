@@ -30,6 +30,8 @@ type Database interface {
 
 	ConfigDb
 
+	PriceDb
+
 	// Close closes the connection to the database
 	Close()
 }
@@ -219,6 +221,17 @@ type BpfLoaderCheckerDb interface {
 
 	// CheckProgramDataAccountLatest checks if the program data account statement is latest
 	CheckProgramDataAccountLatest(address string, currentSlot uint64) bool
+}
+
+type PriceDb interface {
+	// GetTokenUnits returns the slice of all the names of the different tokens units
+	GetTokenUnits() ([]types.TokenUnit, error)
+
+	// SaveTokenUnit allows to save the given token unit details
+	SaveTokenUnit(unit types.TokenUnit) error
+
+	// SaveTokensPrices allows to store the token prices inside the database
+	SaveTokensPrices(prices []types.TokenPrice) error
 }
 
 // Context contains the data that might be used to build a Database instance
