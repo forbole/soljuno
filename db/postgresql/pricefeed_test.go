@@ -1,23 +1,36 @@
 package postgresql_test
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/forbole/soljuno/types"
 )
 
-func (suite *DbTestSuite) insertToken(name string, address string) {
-	query := fmt.Sprintf(
-		`INSERT INTO token_unit (token_name, address) VALUES ('%[1]s', '%[2]s')`,
-		name, address)
-	_, err := suite.database.Sqlx.Query(query)
+func (suite *DbTestSuite) insertToken(unit types.TokenUnit) {
+	err := suite.database.SaveTokenUnit(unit)
 	suite.Require().NoError(err)
 }
 
-func (suite *DbTestSuite) SaveTokenPrice() {
-	suite.insertToken("sol", "sol")
-	suite.insertToken("usdc", "usdc")
+func (suite *DbTestSuite) TestGetTokenUnits() {
+	suite.insertToken(types.NewTokenUnit("sol", "sol", "sol"))
+	suite.insertToken(types.NewTokenUnit("usdc", "usdc", "usdc"))
+
+	units, err := suite.database.GetTokenUnits()
+	suite.Require().NoError(err)
+
+	var expected = []types.TokenUnit{
+		types.NewTokenUnit("sol", "sol", "sol"),
+		types.NewTokenUnit("usdc", "usdc", "usdc"),
+	}
+	suite.Require().Len(units, len(expected))
+	for _, name := range expected {
+		suite.Require().Contains(units, name)
+	}
+}
+
+func (suite *DbTestSuite) TestSaveTokenPrice() {
+	suite.insertToken(types.NewTokenUnit("sol", "sol", "sol"))
+	suite.insertToken(types.NewTokenUnit("usdc", "usdc", "usdc"))
 
 	type TokenPriceRow struct {
 		Name      string    `db:"unit_name"`
@@ -66,8 +79,7 @@ func (suite *DbTestSuite) SaveTokenPrice() {
 	for i, row := range rows {
 		suite.Require().True(expected[i].Name == row.Name)
 		suite.Require().True(expected[i].Price == row.Price)
-		suite.Require().True(expected[i].MarketCap == row.MarketCap)
-		suite.Require().True(expected[i].Timestamp == row.Timestamp)
+		suite.Require().True(expected[i].Timestamp.Equal(row.Timestamp))
 	}
 
 	// Update data
@@ -111,6 +123,6 @@ func (suite *DbTestSuite) SaveTokenPrice() {
 		suite.Require().True(expected[i].Name == row.Name)
 		suite.Require().True(expected[i].Price == row.Price)
 		suite.Require().True(expected[i].MarketCap == row.MarketCap)
-		suite.Require().True(expected[i].Timestamp == row.Timestamp)
+		suite.Require().True(expected[i].Timestamp.Equal(row.Timestamp))
 	}
 }

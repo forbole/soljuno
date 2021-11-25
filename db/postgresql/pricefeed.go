@@ -50,6 +50,13 @@ func (db *Database) SaveTokensPrices(prices []types.TokenPrice) error {
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
+
+	stmt += `
+ON CONFLICT (unit_name) DO UPDATE 
+	SET price = excluded.price,
+	    market_cap = excluded.market_cap,
+	    timestamp = excluded.timestamp
+WHERE token_price.timestamp <= excluded.timestamp`
 	_, err := db.Sqlx.Exec(stmt, param...)
 	if err != nil {
 		return fmt.Errorf("error while saving tokens prices: %s", err)

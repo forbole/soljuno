@@ -7,7 +7,7 @@ CREATE TABLE token_unit
 
 CREATE TABLE token_price
 (
-    unit_name   TEXT                        NOT NULL REFERENCES token_unit (token_name),
+    unit_name   TEXT                        NOT NULL REFERENCES token_unit (token_name) PRIMARY KEY,
     price       DECIMAL                     NOT NULL,
     market_cap  BIGINT                      NOT NULL,
     timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
