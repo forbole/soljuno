@@ -28,7 +28,7 @@ func (suite *DbTestSuite) TestGetTokenUnits() {
 	}
 }
 
-func (suite *DbTestSuite) TestSaveTokenPrice() {
+func (suite *DbTestSuite) TestSaveTokenPrices() {
 	suite.insertToken(types.NewTokenUnit("sol", "sol", "sol"))
 	suite.insertToken(types.NewTokenUnit("usdc", "usdc", "usdc"))
 
