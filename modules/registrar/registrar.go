@@ -9,6 +9,7 @@ import (
 	"github.com/forbole/soljuno/modules/bank"
 	"github.com/forbole/soljuno/modules/bpfloader"
 	"github.com/forbole/soljuno/modules/config"
+	"github.com/forbole/soljuno/modules/pricefeed"
 	"github.com/forbole/soljuno/modules/pruning"
 	"github.com/forbole/soljuno/modules/stake"
 	"github.com/forbole/soljuno/modules/system"
@@ -90,6 +91,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		vote.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Proxy),
 		config.NewModule(ctx.Database, ctx.Proxy),
 		bpfloader.NewModule(ctx.Database, ctx.Proxy),
+		pricefeed.NewModule(ctx.Database),
 	}
 }
 
