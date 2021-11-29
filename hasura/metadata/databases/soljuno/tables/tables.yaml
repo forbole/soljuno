@@ -14,3 +14,6 @@
 - "!include public_validator_config.yaml"
 - "!include public_program_account.yaml"
 - "!include public_program_data_account.yaml"
+- "!include public_token_unit.yaml"
+- "!include public_token_price.yaml"
+

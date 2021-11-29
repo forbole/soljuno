@@ -29,7 +29,7 @@ func (db *Database) GetTokenUnits() ([]types.TokenUnit, error) {
 }
 
 func (db *Database) SaveTokenUnit(unit types.TokenUnit) error {
-	stmt := `INSERT INTO token_unit (price_id, address, token_name) VALUES ($1, $2, $3)`
+	stmt := `INSERT INTO token_unit (price_id, address, unit_name) VALUES ($1, $2, $3)`
 	_, err := db.Sqlx.Exec(stmt, unit.ID, unit.Address, unit.Name)
 	return err
 }
