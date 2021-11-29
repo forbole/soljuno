@@ -15,13 +15,18 @@ func updateAccountBalance(ctx *Context, address string, info clienttypes.Account
 
 func updateToken(ctx *Context, address string, slot uint64, token accountParser.Token) error {
 	tokenDb := ctx.Database.(db.TokenDb)
-	return tokenDb.SaveToken(
+	err := tokenDb.SaveToken(
 		address,
 		slot,
 		token.Decimals,
 		token.MintAuthority.String(),
 		token.FreezeAuthority.String(),
 	)
+	if err != nil {
+		return err
+	}
+
+	return tokenDb.SaveTokenSupply(address, slot, token.Supply)
 }
 
 func updateTokenAccount(ctx *Context, address string, slot uint64, account accountParser.TokenAccount) error {
