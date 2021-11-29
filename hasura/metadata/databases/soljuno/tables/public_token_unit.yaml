@@ -1,0 +1,28 @@
+table:
+  name: token_unit
+  schema: public
+object_relationships:
+- name: token_price
+  using:
+     manual_configuration:
+      remote_table:
+        schema: public
+        name: token_price
+      column_mapping:
+        unit_name: unit_name
+- name: token
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: token
+      column_mapping:
+        address: address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - unit_name
+    - address
+    filter: {}
+  role: anonymous
