@@ -14,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/forbole/soljuno/solana/parser"
+	associatedTokenAccount "github.com/forbole/soljuno/solana/program/associated-token-account"
 	"github.com/forbole/soljuno/solana/program/bpfloader"
 	upgradableLoader "github.com/forbole/soljuno/solana/program/bpfloader/upgradeable"
 	"github.com/forbole/soljuno/solana/program/stake"
@@ -100,6 +101,7 @@ func StartParsing(ctx *Context) error {
 	parser.Register(token.ProgramID, token.Parser{})
 	parser.Register(bpfloader.ProgramID, bpfloader.Parser{})
 	parser.Register(upgradableLoader.ProgramID, upgradableLoader.Parser{})
+	parser.Register(associatedTokenAccount.ProgramID, associatedTokenAccount.Parser{})
 
 	workerCfg := types.Cfg.GetWorkerConfig()
 	// Create workers
