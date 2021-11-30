@@ -114,7 +114,12 @@ func (w Worker) handleBlock(block types.Block) {
 	w.handleBlockModules(block)
 
 	for _, tx := range block.Txs {
-		w.handleTx(tx)
+		tx := tx
+		if err := w.pool.Submit(func() {
+			w.handleTx(tx)
+		}); err != nil {
+			w.logger.Error("failed to add tx handler into pool", "slot", tx.Slot, "hash", tx.Hash, "err", err)
+		}
 	}
 }
 
@@ -140,24 +145,20 @@ func (w Worker) handleBlockModules(block types.Block) {
 
 // handleTx handles all the events in a transaction
 func (w Worker) handleTx(tx types.Tx) {
-	if err := w.pool.Submit(func() {
-		err := w.db.SaveTx(tx)
-		if err != nil {
-			w.logger.Error("failed to save tx", "slot", tx.Slot, "hash", tx.Hash, "err", err)
-			return
-		}
-		for _, module := range w.modules {
-			if transactionModule, ok := module.(modules.TransactionModule); ok {
-				err := transactionModule.HandleTx(tx)
-				if err != nil {
-					w.logger.TxError(module, tx, err)
-				}
+	err := w.db.SaveTx(tx)
+	if err != nil {
+		w.logger.Error("failed to save tx", "slot", tx.Slot, "hash", tx.Hash, "err", err)
+		return
+	}
+	for _, module := range w.modules {
+		if transactionModule, ok := module.(modules.TransactionModule); ok {
+			err := transactionModule.HandleTx(tx)
+			if err != nil {
+				w.logger.TxError(module, tx, err)
 			}
 		}
-		w.handleMessageModules(tx)
-	}); err != nil {
-		w.logger.Error("failed to add tx handler into pool", "slot", tx.Slot, "hash", tx.Hash, "err", err)
 	}
+	w.handleMessageModules(tx)
 }
 
 // handleMessageModules handles all the messages events in a transaction
