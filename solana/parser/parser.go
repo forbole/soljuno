@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/forbole/soljuno/solana/types"
 	"github.com/mr-tron/base58"
 )
@@ -33,9 +35,13 @@ func (p parser) Parse(accounts []string, programID string, base58Data string) ty
 	if !ok {
 		return types.NewParsedInstruction("unknown", nil)
 	}
-	bz, err := base58.Decode(base58Data)
-	if err != nil {
-		return types.NewParsedInstruction("unknown", nil)
+	if len(base58Data) != 0 {
+		bz, err := base58.Decode(base58Data)
+		if err != nil {
+			fmt.Println(err)
+			return types.NewParsedInstruction("unknown", nil)
+		}
+		return programParser.Parse(accounts, bz)
 	}
-	return programParser.Parse(accounts, bz)
+	return programParser.Parse(accounts, []byte{})
 }
