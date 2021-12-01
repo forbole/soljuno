@@ -1,6 +1,7 @@
 CREATE TABLE block
 (
     slot        BIGINT      PRIMARY KEY,
+    height      BIGINT      NOT NULL,
     hash        TEXT        NOT NULL UNIQUE,
     proposer    TEXT        DEFAULT '',
     timestamp   TIMESTAMP   WITHOUT TIME ZONE NOT NULL

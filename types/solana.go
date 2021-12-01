@@ -27,6 +27,7 @@ func NewValidator(votePubkey string, nodePubKey string) Validator {
 // Block contains the data of a single chain block
 type Block struct {
 	Slot      uint64
+	Height    uint64
 	Hash      string
 	Proposer  string
 	Rewards   []clienttypes.Reward
@@ -35,9 +36,10 @@ type Block struct {
 }
 
 // NewBlock allows to build a new Block instance
-func NewBlock(slot uint64, hash, proposer string, timestamp time.Time, txs []Tx) Block {
+func NewBlock(slot, height uint64, hash, proposer string, timestamp time.Time, txs []Tx) Block {
 	return Block{
 		Slot:      slot,
+		Height:    height,
 		Hash:      hash,
 		Proposer:  proposer,
 		Timestamp: timestamp,
@@ -108,6 +110,7 @@ func NewBlockFromResult(parserManager parser.ParserManager, slot uint64, b clien
 
 	return Block{
 		Slot:      slot,
+		Height:    b.BlockHeight,
 		Hash:      b.Blockhash,
 		Rewards:   rewards,
 		Proposer:  proposer,

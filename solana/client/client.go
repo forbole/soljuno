@@ -31,7 +31,7 @@ func NewClient(endpoint string) Client {
 
 func (c *client) GetBlock(slot uint64) (types.BlockResult, error) {
 	var block types.BlockResult
-	err := c.rpcClient.CallFor(&block, "getConfirmedBlock", slot)
+	err := c.rpcClient.CallFor(&block, "getBlock", slot)
 	if err != nil {
 		return block, err
 	}
