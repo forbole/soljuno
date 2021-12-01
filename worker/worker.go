@@ -109,17 +109,19 @@ func (w Worker) ExportBlock(block types.Block) error {
 	return nil
 }
 
+func (w Worker) DoAsync(fun func()) {
+	if err := w.pool.Submit(fun); err != nil {
+		w.logger.Error("failed to add task into pool", "err", err)
+	}
+}
+
 // handleBlock handles all the events in a block
 func (w Worker) handleBlock(block types.Block) {
 	w.handleBlockModules(block)
 
 	for _, tx := range block.Txs {
 		tx := tx
-		if err := w.pool.Submit(func() {
-			w.handleTx(tx)
-		}); err != nil {
-			w.logger.Error("failed to add tx handler into pool", "slot", tx.Slot, "hash", tx.Hash, "err", err)
-		}
+		w.DoAsync(func() { w.handleTx(tx) })
 	}
 }
 
@@ -158,18 +160,23 @@ func (w Worker) handleTx(tx types.Tx) {
 			}
 		}
 	}
-	w.handleMessageModules(tx)
+	w.handleMessages(tx)
 }
 
-// handleMessageModules handles all the messages events in a transaction
-func (w Worker) handleMessageModules(tx types.Tx) {
+// handleMessages handles all the messages events in a transaction
+func (w Worker) handleMessages(tx types.Tx) {
 	for _, msg := range tx.Messages {
-		for _, module := range w.modules {
-			if messageModule, ok := module.(modules.MessageModule); ok {
-				err := messageModule.HandleMsg(msg, tx)
-				if err != nil {
-					w.logger.MsgError(module, tx, msg, err)
-				}
+		msg := msg
+		w.handleMessage(tx, msg)
+	}
+}
+
+func (w Worker) handleMessage(tx types.Tx, msg types.Message) {
+	for _, module := range w.modules {
+		if messageModule, ok := module.(modules.MessageModule); ok {
+			err := messageModule.HandleMsg(msg, tx)
+			if err != nil {
+				w.logger.MsgError(module, tx, msg, err)
 			}
 		}
 	}
