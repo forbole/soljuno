@@ -27,7 +27,7 @@ import (
 type Context struct {
 	ParsingConfig types.Config
 	Database      db.Database
-	Parser        parser.Parser
+	ParserManager parser.ParserManager
 	Proxy         client.Proxy
 	Logger        logging.Logger
 }

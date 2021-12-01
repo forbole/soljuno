@@ -20,6 +20,7 @@ import (
 	"github.com/forbole/soljuno/solana/program/stake"
 	"github.com/forbole/soljuno/solana/program/system"
 	"github.com/forbole/soljuno/solana/program/token"
+	tokenswap "github.com/forbole/soljuno/solana/program/token-swap"
 	"github.com/forbole/soljuno/solana/program/vote"
 
 	"github.com/forbole/soljuno/types/logging"
@@ -102,6 +103,7 @@ func StartParsing(ctx *Context) error {
 	parser.Register(bpfloader.ProgramID, bpfloader.Parser{})
 	parser.Register(upgradableLoader.ProgramID, upgradableLoader.Parser{})
 	parser.Register(associatedTokenAccount.ProgramID, associatedTokenAccount.Parser{})
+	parser.Register(tokenswap.ProgramID, tokenswap.Parser{})
 
 	workerCfg := types.Cfg.GetWorkerConfig()
 	// Create workers
