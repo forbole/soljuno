@@ -32,6 +32,7 @@ CREATE TABLE message
 );
 CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 CREATE INDEX message_slot_index ON message (slot);
+CREATE INDEX message_program_index ON message (program);
 
 
 /**

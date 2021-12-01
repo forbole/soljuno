@@ -13,7 +13,7 @@ type Parser struct {
 func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 	decoder := bincode.NewDecoder()
 	var id InstructionID
-	decoder.Decode(data[:4], &id)
+	decoder.Decode(data[:1], &id)
 	switch id {
 	case Initialize:
 		return types.NewParsedInstruction(

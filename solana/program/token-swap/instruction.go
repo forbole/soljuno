@@ -1,6 +1,6 @@
 package tokenswap
 
-type InstructionID uint32
+type InstructionID uint8
 
 const (
 	// Initializes a new swap
