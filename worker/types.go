@@ -14,10 +14,10 @@ import (
 
 // Context represents the context that is shared among different workers
 type Context struct {
-	ClientProxy client.Proxy
-	Database    db.Database
-	Parser      parser.Parser
-	Logger      logging.Logger
+	ClientProxy   client.Proxy
+	Database      db.Database
+	ParserManager parser.ParserManager
+	Logger        logging.Logger
 
 	Pool      *ants.Pool
 	Queue     types.SlotQueue
@@ -29,7 +29,7 @@ type Context struct {
 func NewContext(
 	clientProxy client.Proxy,
 	db db.Database,
-	parser parser.Parser,
+	parser parser.ParserManager,
 	logger logging.Logger,
 	pool *ants.Pool,
 	queue types.SlotQueue,
@@ -37,10 +37,10 @@ func NewContext(
 	bankTasks types.BankTaskQueue,
 ) *Context {
 	return &Context{
-		ClientProxy: clientProxy,
-		Database:    db,
-		Parser:      parser,
-		Logger:      logger,
+		ClientProxy:   clientProxy,
+		Database:      db,
+		ParserManager: parser,
+		Logger:        logger,
 
 		Pool:      pool,
 		Queue:     queue,

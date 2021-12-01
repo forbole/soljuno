@@ -11,13 +11,13 @@ type ProgramParser interface {
 	Parse(accounts []string, data []byte) types.ParsedInstruction
 }
 
-func NewParser() Parser {
+func NewParser() ParserManager {
 	var p parser
 	p.programs = make(map[string]ProgramParser)
 	return &p
 }
 
-type Parser interface {
+type ParserManager interface {
 	Register(programID string, programParser ProgramParser)
 	Parse(accounts []string, programID string, base58Data string) types.ParsedInstruction
 }

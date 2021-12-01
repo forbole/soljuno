@@ -46,7 +46,7 @@ func NewBlock(slot uint64, hash, proposer string, timestamp time.Time, txs []Tx)
 }
 
 // NewBlockFromResult allows to build new Block instance from BlockResult
-func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockResult) Block {
+func NewBlockFromResult(parserManager parser.ParserManager, slot uint64, b clienttypes.BlockResult) Block {
 	proposer := ""
 	rewards := b.Rewards
 	for _, reward := range rewards {
@@ -75,7 +75,7 @@ func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockRe
 			innerIndex := 0
 			accounts = getAccounts(accountKeys, msg.Accounts)
 			programID := accountKeys[msg.ProgramIDIndex]
-			parsed := parser.Parse(accounts, programID, msg.Data)
+			parsed := parserManager.Parse(accounts, programID, msg.Data)
 			msgs = append(msgs, NewMessage(hash, slot, i, innerIndex, accountKeys[msg.ProgramIDIndex], accounts, msg.Data, parsed))
 			innerIndex++
 
@@ -83,7 +83,7 @@ func NewBlockFromResult(parser parser.Parser, slot uint64, b clienttypes.BlockRe
 				for _, innerMsg := range inner {
 					accounts = getAccounts(accountKeys, innerMsg.Accounts)
 					programID := accountKeys[innerMsg.ProgramIDIndex]
-					parsed := parser.Parse(accounts, programID, innerMsg.Data)
+					parsed := parserManager.Parse(accounts, programID, innerMsg.Data)
 					msgs = append(msgs, NewMessage(hash, slot, i, innerIndex, accountKeys[innerMsg.ProgramIDIndex], accounts, innerMsg.Data, parsed))
 					innerIndex++
 				}

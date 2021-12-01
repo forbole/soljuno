@@ -18,11 +18,11 @@ import (
 // Worker defines a job consumer that is responsible for getting and
 // aggregating block and associated data and exporting it to a database.
 type Worker struct {
-	queue  types.SlotQueue
-	cp     client.Proxy
-	db     db.Database
-	parser parser.Parser
-	logger logging.Logger
+	queue         types.SlotQueue
+	cp            client.Proxy
+	db            db.Database
+	parserManager parser.ParserManager
+	logger        logging.Logger
 
 	pool      *ants.Pool
 	index     int
@@ -33,15 +33,15 @@ type Worker struct {
 // NewWorker allows to create a new Worker implementation.
 func NewWorker(index int, ctx *Context) Worker {
 	return Worker{
-		index:     index,
-		cp:        ctx.ClientProxy,
-		queue:     ctx.Queue,
-		db:        ctx.Database,
-		parser:    ctx.Parser,
-		modules:   ctx.Modules,
-		logger:    ctx.Logger,
-		pool:      ctx.Pool,
-		bankTasks: ctx.BankTasks,
+		index:         index,
+		cp:            ctx.ClientProxy,
+		queue:         ctx.Queue,
+		db:            ctx.Database,
+		parserManager: ctx.ParserManager,
+		modules:       ctx.Modules,
+		logger:        ctx.Logger,
+		pool:          ctx.Pool,
+		bankTasks:     ctx.BankTasks,
 	}
 }
 
@@ -89,7 +89,7 @@ func (w Worker) process(slot uint64) error {
 	if err != nil {
 		return fmt.Errorf("failed to get block from rpc server: %s", err)
 	}
-	block := types.NewBlockFromResult(w.parser, slot, b)
+	block := types.NewBlockFromResult(w.parserManager, slot, b)
 
 	return w.ExportBlock(block)
 }
