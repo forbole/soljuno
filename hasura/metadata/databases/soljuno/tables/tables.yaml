@@ -16,4 +16,4 @@
 - "!include public_program_data_account.yaml"
 - "!include public_token_unit.yaml"
 - "!include public_token_price.yaml"
-
+- "!include public_average_slot_time_per_hour.yaml"

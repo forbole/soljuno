@@ -1,0 +1,10 @@
+table:
+  name: average_slot_time_per_hour
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - average_time
+    filter: {}
+  role: anonymous
