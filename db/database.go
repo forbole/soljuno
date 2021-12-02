@@ -2,7 +2,9 @@ package db
 
 import (
 	"database/sql"
+	"time"
 
+	dbtypes "github.com/forbole/soljuno/db/types"
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/types/logging"
@@ -31,6 +33,8 @@ type Database interface {
 	ConfigDb
 
 	PriceDb
+
+	ConsensusDb
 
 	// Close closes the connection to the database
 	Close()
@@ -212,6 +216,7 @@ type BpfLoaderDb interface {
 	BpfLoaderCheckerDb
 }
 
+// BpfLoaderCheckerDb represents a database that checks account statement of bpf loader properly
 type BpfLoaderCheckerDb interface {
 	// CheckBufferAccountLatest checks if the buffer account statement is latest
 	CheckBufferAccountLatest(address string, currentSlot uint64) bool
@@ -223,6 +228,7 @@ type BpfLoaderCheckerDb interface {
 	CheckProgramDataAccountLatest(address string, currentSlot uint64) bool
 }
 
+// PricesDb represents a database that supports pricefeed properly
 type PriceDb interface {
 	// GetTokenUnits returns the slice of all the names of the different tokens units
 	GetTokenUnits() ([]types.TokenUnit, error)
@@ -232,6 +238,18 @@ type PriceDb interface {
 
 	// SaveTokensPrices allows to store the token prices inside the database
 	SaveTokensPrices(prices []types.TokenPrice) error
+}
+
+// ConsensusDb represents a database that supports consesus properly
+type ConsensusDb interface {
+	// GetLastBlock allows to get the last block
+	GetLastBlock() (dbtypes.BlockRow, error)
+
+	// GetBlockHourAgo allows to get the latest block before a hour ago inside the database
+	GetBlockHourAgo(now time.Time) (dbtypes.BlockRow, error)
+
+	// SaveAverageSlotTimePerHour allows to store the average slot time inside the database
+	SaveAverageSlotTimePerHour(slot uint64, averageTime float64) error
 }
 
 // Context contains the data that might be used to build a Database instance
