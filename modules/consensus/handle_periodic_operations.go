@@ -29,9 +29,9 @@ func (m *Module) updateSlotTimeInHour() error {
 
 	hour, err := m.db.GetBlockHourAgo(block.Timestamp)
 	if err != nil {
-		return fmt.Errorf("error while getting block height an hour ago: %s", err)
+		return fmt.Errorf("error while getting block an hour ago: %s", err)
 	}
 	newBlockTime := block.Timestamp.Sub(hour.Timestamp).Seconds() / float64(block.Slot-hour.Slot)
 
-	return m.db.SaveAverageSlotTimePerHour(block.Height, newBlockTime)
+	return m.db.SaveAverageSlotTimePerHour(block.Slot, newBlockTime)
 }
