@@ -9,6 +9,7 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
+    - unit_name
     - price
     - market_cap
     - timestamp
