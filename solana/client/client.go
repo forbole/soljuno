@@ -14,6 +14,8 @@ type Client interface {
 	GetVoteAccounts() (types.VoteAccounts, error)
 	GetAccountInfo(string) (types.AccountInfo, error)
 	GetVoteAccountsWithSlot() (uint64, types.VoteAccounts, error)
+	GetLeaderSchedule(slot uint64) (types.LeaderSchedule, error)
+	GetSupplyInfo() (types.SupplyWithContext, error)
 }
 
 type client struct {
@@ -49,7 +51,7 @@ func (c *client) GetSlot() (uint64, error) {
 
 func (c *client) GetBlocks(start uint64, end uint64) ([]uint64, error) {
 	var slots []uint64
-	err := c.rpcClient.CallFor(&slots, "getConfirmedBlocks", start, end)
+	err := c.rpcClient.CallFor(&slots, "getBlocks", start, end)
 	if err != nil {
 		return slots, err
 	}
@@ -102,4 +104,22 @@ func (c *client) GetAccountInfo(address string) (types.AccountInfo, error) {
 		return accountInfo, err
 	}
 	return accountInfo, nil
+}
+
+func (c *client) GetLeaderSchedule(slot uint64) (types.LeaderSchedule, error) {
+	var schedule types.LeaderSchedule
+	err := c.rpcClient.CallFor(&schedule, "getLeaderSchedule", slot)
+	if err != nil {
+		return schedule, err
+	}
+	return schedule, nil
+}
+
+func (c *client) GetSupplyInfo() (types.SupplyWithContext, error) {
+	var supply types.SupplyWithContext
+	err := c.rpcClient.CallFor(&supply, "getSupply")
+	if err != nil {
+		return supply, err
+	}
+	return supply, nil
 }
