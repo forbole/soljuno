@@ -4,10 +4,20 @@ table:
 object_relationships:
 - name: stake_lockup
   using:
-    foreign_key_constraint_on: address
+   manual_configuration:
+      remote_table:
+        schema: public
+        name: stake_lockup
+      column_mapping:
+        address: address
 - name: stake_delegation
   using:
-    foreign_key_constraint_on: address
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: stake_delegation
+      column_mapping:
+        address: address
 select_permissions:
 - permission:
     allow_aggregations: true

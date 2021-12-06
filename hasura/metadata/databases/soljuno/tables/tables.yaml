@@ -17,3 +17,6 @@
 - "!include public_token_unit.yaml"
 - "!include public_token_price.yaml"
 - "!include public_average_slot_time_per_hour.yaml"
+- "!include public_stake_account.yaml"
+- "!include public_stake_delegation.yaml"
+- "!include public_stake_lockup.yaml"
