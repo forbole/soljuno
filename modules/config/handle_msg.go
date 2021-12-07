@@ -9,7 +9,6 @@ import (
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-
 	accountParser "github.com/forbole/soljuno/solana/account"
 	"github.com/forbole/soljuno/types"
 )

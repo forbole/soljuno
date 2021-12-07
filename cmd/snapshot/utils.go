@@ -1,9 +1,12 @@
 package snapshot
 
 import (
+	"encoding/json"
 	"strconv"
 
+	"github.com/forbole/soljuno/apis/keybase"
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	accountParser "github.com/forbole/soljuno/solana/account"
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 )
@@ -150,10 +153,21 @@ func updateProgramDataAccount(ctx *Context, address string, slot uint64, account
 
 func updateValidatorConfig(ctx *Context, address string, slot uint64, config accountParser.ValidatorConfig) error {
 	configDb := ctx.Database.(db.ConfigDb)
-	return configDb.SaveValidatorConfig(
-		address,
-		slot,
-		config.Keys[0].Pubkey.String(),
-		config.Info,
+	var parsedConfig dbtypes.ParsedValidatorConfig
+	err := json.Unmarshal([]byte(config.Info), &parsedConfig)
+	if err != nil {
+		return err
+	}
+
+	kbClient := keybase.NewClient()
+	avatarUrl, err := kbClient.GetAvatarURL(parsedConfig.KeybaseUsername)
+	if err != nil {
+		avatarUrl = ""
+	}
+
+	row := dbtypes.NewValidatorConfigRow(
+		address, slot, config.Keys[1].Pubkey.String(), parsedConfig, avatarUrl,
 	)
+
+	return configDb.SaveValidatorConfig(row)
 }
