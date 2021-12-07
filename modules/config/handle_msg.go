@@ -34,7 +34,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.ConfigDb, client client.Pro
 	}
 
 	var parsedConfig dbtypes.ParsedValidatorConfig
-	err = json.Unmarshal([]byte(configAccount.Info), parsedConfig)
+	err = json.Unmarshal([]byte(configAccount.Info), &parsedConfig)
 	if err != nil {
 		return err
 	}
