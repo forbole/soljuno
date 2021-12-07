@@ -7,10 +7,10 @@ type QueryStatus struct {
 	ErrDesc string `json:"desc"`
 }
 
-// IdentityQueryResponse represents the response to an identity query
-type IdentityQueryResponse struct {
-	Status  QueryStatus      `json:"status"`
-	Objects []AccountDetails `json:"them"`
+// UserNameQueryResponse represents the response to an identity query
+type UserNameQueryResponse struct {
+	Status QueryStatus    `json:"status"`
+	Object AccountDetails `json:"them"`
 }
 
 // AccountDetails contains the data of a single account details

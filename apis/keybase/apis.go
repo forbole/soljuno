@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 var _ Client = &client{}
@@ -16,13 +17,13 @@ func NewClient() Client {
 }
 
 // GetAvatarURL implements Client
-func (c *client) GetAvatarURL(identity string) (string, error) {
-	if len(identity) < 16 {
+func (c *client) GetAvatarURL(username string) (string, error) {
+	if strings.TrimSpace(username) == "" {
 		return "", nil
 	}
 
-	var response IdentityQueryResponse
-	endpoint := fmt.Sprintf("/user/lookup.json?key_suffix=%[1]s&fields=basics&fields=pictures", identity)
+	var response UserNameQueryResponse
+	endpoint := fmt.Sprintf("/user/lookup.json?username=%[1]s&fields=basics&fields=pictures", username)
 	err := queryKeyBase(endpoint, &response)
 	if err != nil {
 		return "", fmt.Errorf("error while querying keybase: %s", err)
@@ -33,13 +34,8 @@ func (c *client) GetAvatarURL(identity string) (string, error) {
 		return "", fmt.Errorf("response code not valid: %s", response.Status.ErrDesc)
 	}
 
-	// No images found
-	if len(response.Objects) == 0 {
-		return "", nil
-	}
-
 	// Either the pictures do not exist, or the primary one does not exist, or the URL is empty
-	data := response.Objects[0]
+	data := response.Object
 	if data.Pictures == nil || data.Pictures.Primary == nil || len(data.Pictures.Primary.URL) == 0 {
 		return "", nil
 	}
