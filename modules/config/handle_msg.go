@@ -2,10 +2,14 @@ package config
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 
+	"github.com/forbole/soljuno/apis/keybase"
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
+
 	accountParser "github.com/forbole/soljuno/solana/account"
 	"github.com/forbole/soljuno/types"
 )
@@ -29,7 +33,23 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.ConfigDb, client client.Pro
 		return fmt.Errorf("failed to parse config account")
 	}
 
-	err = db.SaveValidatorConfig(address, tx.Slot, configAccount.Keys[1].Pubkey.String(), configAccount.Info)
+	var parsedConfig dbtypes.ParsedValidatorConfig
+	err = json.Unmarshal([]byte(configAccount.Info), parsedConfig)
+	if err != nil {
+		return err
+	}
+
+	kbClient := keybase.NewClient()
+	avatarUrl, err := kbClient.GetAvatarURL(parsedConfig.KeybaseUsername)
+	if err != nil {
+		avatarUrl = ""
+	}
+
+	row := dbtypes.NewValidatorConfigRow(
+		address, tx.Slot, configAccount.Keys[1].Pubkey.String(), parsedConfig, avatarUrl,
+	)
+
+	err = db.SaveValidatorConfig(row)
 	if err != nil {
 		return err
 	}
