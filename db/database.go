@@ -62,7 +62,10 @@ type BasicDb interface {
 // ExceutorDb represents an abstract database that can excute a raw sql
 type ExceutorDb interface {
 	// Exec will run the given raw sql
-	Exec(string) (sql.Result, error)
+	Exec(sql string, args ...interface{}) (sql.Result, error)
+
+	// Query will run the given query sql
+	Query(sql string, args ...interface{}) (*sql.Rows, error)
 }
 
 // PruningDb represents a database that supports pruning properly
@@ -189,8 +192,8 @@ type VoteCheckerDb interface {
 
 // ConfigDb represents a database that supports config properly
 type ConfigDb interface {
-	// SaveConfigAccount allows to store the given config account data inside the database
-	SaveConfigAccount(address string, slot uint64, owner string, data string) error
+	// SaveValidatorConfig allows to store the given config account data inside the database
+	SaveValidatorConfig(row dbtypes.ValidatorConfigRow) error
 }
 
 // BpfLoaderDb represents a database that supports bpf loader properly

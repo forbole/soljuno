@@ -92,13 +92,13 @@ func (config *Config) GetLogger() logging.Logger {
 
 // Context contains the snapshot context
 type Context struct {
-	Database db.ExceutorDb
+	Database db.Database
 	Logger   logging.Logger
 }
 
 // NewContext builds a new Context instance
 func NewContext(
-	db db.ExceutorDb, logger logging.Logger,
+	db db.Database, logger logging.Logger,
 ) *Context {
 	return &Context{
 		Database: db,

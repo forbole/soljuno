@@ -11,5 +11,6 @@ select_permissions:
     - keybase_username
     - website
     - details
+    - avatar_url
     filter: {}
   role: anonymous
