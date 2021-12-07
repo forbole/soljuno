@@ -62,7 +62,10 @@ type BasicDb interface {
 // ExceutorDb represents an abstract database that can excute a raw sql
 type ExceutorDb interface {
 	// Exec will run the given raw sql
-	Exec(string) (sql.Result, error)
+	Exec(sql string, args ...interface{}) (sql.Result, error)
+
+	// Query will run the given query sql
+	Query(sql string, args ...interface{}) (*sql.Rows, error)
 }
 
 // PruningDb represents a database that supports pruning properly
