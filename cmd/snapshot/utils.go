@@ -150,7 +150,7 @@ func updateProgramDataAccount(ctx *Context, address string, slot uint64, account
 
 func updateValidatorConfig(ctx *Context, address string, slot uint64, config accountParser.ValidatorConfig) error {
 	configDb := ctx.Database.(db.ConfigDb)
-	return configDb.SaveConfigAccount(
+	return configDb.SaveValidatorConfig(
 		address,
 		slot,
 		config.Keys[0].Pubkey.String(),

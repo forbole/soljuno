@@ -74,7 +74,7 @@ func (suite *DbTestSuite) TestSaveConfigAccount() {
 					tc.data.Details,
 				},
 			)
-			err = suite.database.SaveConfigAccount(
+			err = suite.database.SaveValidatorConfig(
 				tc.data.Address,
 				tc.data.Slot,
 				tc.data.Owner,

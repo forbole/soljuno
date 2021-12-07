@@ -15,8 +15,8 @@ type parsedInfo struct {
 	Details         string `json:"details"`
 }
 
-// SaveConfigAccount implements the db.ConfigDb
-func (db *Database) SaveConfigAccount(address string, slot uint64, owner string, data string) error {
+// SaveValidatorConfig implements the db.ConfigDb
+func (db *Database) SaveValidatorConfig(address string, slot uint64, owner string, data string) error {
 	var parsed parsedInfo
 	err := json.Unmarshal([]byte(data), &parsed)
 	if err != nil {
