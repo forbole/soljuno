@@ -6,10 +6,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func MigrateDatabaseCmd(cmdCfg *Config) *cobra.Command {
+func MigrateCmd(cmdCfg *Config) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "migrate-db",
-		Short:   "Migrate databse",
+		Use:     "migrate",
+		Short:   "Migrate the databse to new schema",
 		Args:    cobra.ExactArgs(0),
 		PreRunE: ReadConfig(cmdCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -13,9 +13,9 @@ import (
 
 const FlagInitConfirmation = "yes"
 
-func InitDatabaseCmd(cmdCfg *Config) *cobra.Command {
+func InitCmd(cmdCfg *Config) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "init-db [schema-folder]",
+		Use:     "init [schema-folder]",
 		Short:   "Init the database by schemas in the given folder",
 		Args:    cobra.ExactArgs(1),
 		PreRunE: ReadConfig(cmdCfg),

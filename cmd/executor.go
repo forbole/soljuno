@@ -42,7 +42,7 @@ func BuildDefaultExecutor(config *Config) cli.Executor {
 		initcmd.InitCmd(config.GetInitConfig()),
 		parsecmd.ParseCmd(config.GetParseConfig()),
 		snapshotcmd.ImportSnapshotCmd(config.GetSnapshotConfig()),
-		dbcmd.InitDatabaseCmd(config.GetDbConfig()),
+		dbcmd.DbCmd(config.GetDbConfig()),
 	)
 
 	return PrepareRootCmd(config.GetName(), rootCmd)
