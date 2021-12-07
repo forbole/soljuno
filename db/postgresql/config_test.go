@@ -1,89 +1,109 @@
 package postgresql_test
 
-import "encoding/json"
+import (
+	dbtypes "github.com/forbole/soljuno/db/types"
+)
 
 func (suite *DbTestSuite) TestSaveConfigAccount() {
-	type ConfigAccountRow struct {
-		Address         string `db:"address"`
-		Slot            uint64 `db:"slot"`
-		Owner           string `db:"owner"`
-		Name            string `db:"name"`
-		KeybaseUsername string `db:"keybase_username"`
-		Website         string `db:"website"`
-		Details         string `db:"details"`
-	}
-
-	type parsedInfo struct {
-		Name            string `json:"name"`
-		KeybaseUsername string `json:"keybaseUsername"`
-		Website         string `json:"website"`
-		Details         string `json:"details"`
-	}
-
 	testCases := []struct {
 		name     string
-		data     ConfigAccountRow
-		expected ConfigAccountRow
+		data     dbtypes.ValidatorConfigRow
+		expected dbtypes.ValidatorConfigRow
 	}{
 		{
 			name: "initialize the data",
-			data: ConfigAccountRow{
-				"address", 1, "owner", "name", "", "website", "details",
-			},
-			expected: ConfigAccountRow{
-				"address", 1, "owner", "name", "", "website", "details",
-			},
+			data: dbtypes.NewValidatorConfigRow(
+				"address",
+				1,
+				"owner",
+				dbtypes.NewParsedValidatorConfig(
+					"name", "", "website", "details",
+				),
+				"",
+			),
+			expected: dbtypes.NewValidatorConfigRow(
+				"address",
+				1,
+				"owner",
+				dbtypes.NewParsedValidatorConfig(
+					"name", "", "website", "details",
+				),
+				"",
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: ConfigAccountRow{
-				"address", 0, "owner", "name", "", "website", "pre_details",
-			},
-			expected: ConfigAccountRow{
-				"address", 1, "owner", "name", "", "website", "details",
-			},
+			data: dbtypes.NewValidatorConfigRow(
+				"address",
+				0,
+				"owner",
+				dbtypes.NewParsedValidatorConfig(
+					"name", "", "website", "pre_details",
+				),
+				"",
+			),
+			expected: dbtypes.NewValidatorConfigRow(
+				"address",
+				1,
+				"owner",
+				dbtypes.NewParsedValidatorConfig(
+					"name", "", "website", "details",
+				),
+				"",
+			),
 		},
 		{
 			name: "update with same slot",
-			data: ConfigAccountRow{
-				"address", 1, "owner", "name", "", "website", "curr_details",
-			},
-			expected: ConfigAccountRow{
-				"address", 1, "owner", "name", "", "website", "curr_details",
-			},
+			data: dbtypes.NewValidatorConfigRow(
+				"address",
+				1,
+				"owner",
+				dbtypes.NewParsedValidatorConfig(
+					"name", "", "website", "curr_details",
+				),
+				"",
+			),
+			expected: dbtypes.NewValidatorConfigRow(
+				"address",
+				1,
+				"owner",
+				dbtypes.NewParsedValidatorConfig(
+					"name", "", "website", "curr_details",
+				),
+				"",
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: ConfigAccountRow{
-				"address", 2, "owner", "name", "", "website", "new_details",
-			},
-			expected: ConfigAccountRow{
-				"address", 2, "owner", "name", "", "website", "new_details",
-			},
+			data: dbtypes.NewValidatorConfigRow(
+				"address",
+				2,
+				"owner",
+				dbtypes.NewParsedValidatorConfig(
+					"name", "", "website", "new_details",
+				),
+				"",
+			),
+			expected: dbtypes.NewValidatorConfigRow(
+				"address",
+				2,
+				"owner",
+				dbtypes.NewParsedValidatorConfig(
+					"name", "", "website", "new_details",
+				),
+				"",
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			value, err := json.Marshal(
-				parsedInfo{
-					tc.data.Name,
-					tc.data.KeybaseUsername,
-					tc.data.Website,
-					tc.data.Details,
-				},
-			)
-			err = suite.database.SaveValidatorConfig(
-				tc.data.Address,
-				tc.data.Slot,
-				tc.data.Owner,
-				string(value),
-			)
+			err := suite.database.SaveValidatorConfig(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []ConfigAccountRow{}
+			rows := []dbtypes.ValidatorConfigRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_config")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)

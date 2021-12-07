@@ -190,7 +190,7 @@ type VoteCheckerDb interface {
 // ConfigDb represents a database that supports config properly
 type ConfigDb interface {
 	// SaveValidatorConfig allows to store the given config account data inside the database
-	SaveValidatorConfig(address string, slot uint64, owner string, data string) error
+	SaveValidatorConfig(row dbtypes.ValidatorConfigRow) error
 }
 
 // BpfLoaderDb represents a database that supports bpf loader properly
