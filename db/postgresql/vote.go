@@ -4,8 +4,8 @@ import "github.com/forbole/soljuno/db"
 
 var _ db.VoteDb = &Database{}
 
-// SaveVoteAccount implements the db.VoteDb
-func (db *Database) SaveVoteAccount(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error {
+// SaveValidator implements the db.VoteDb
+func (db *Database) SaveValidator(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error {
 	stmt := `
 INSERT INTO validator
     (address, slot, node, voter, withdrawer, commission)

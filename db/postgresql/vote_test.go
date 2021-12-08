@@ -1,6 +1,6 @@
 package postgresql_test
 
-func (suite *DbTestSuite) TestSaveVoteAccount() {
+func (suite *DbTestSuite) TestSaveValidator() {
 	type VoteAccountRow struct {
 		Address    string `db:"address"`
 		Slot       uint64 `db:"slot"`
@@ -56,7 +56,7 @@ func (suite *DbTestSuite) TestSaveVoteAccount() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveVoteAccount(
+			err := suite.database.SaveValidator(
 				tc.data.Address,
 				tc.data.Slot,
 				tc.data.Node,
