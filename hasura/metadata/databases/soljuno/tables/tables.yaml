@@ -9,7 +9,7 @@
 - "!include public_multisig.yaml"
 - "!include public_token_delegation.yaml"
 - "!include public_nonce_account.yaml"
-- "!include public_vote_account.yaml"
+- "!include public_validator.yaml"
 - "!include public_validator_status.yaml"
 - "!include public_validator_config.yaml"
 - "!include public_program_account.yaml"
