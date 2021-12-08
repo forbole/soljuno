@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/forbole/soljuno/apis/keybase"
 	"github.com/forbole/soljuno/db"
 	database "github.com/forbole/soljuno/db/postgresql"
 	"github.com/forbole/soljuno/types"
@@ -22,17 +21,8 @@ func TestDatabaseTestSuite(t *testing.T) {
 
 type MigrateTestSuite struct {
 	suite.Suite
-	database      *database.Database
-	keybaseClient keybase.Client
+	database *database.Database
 }
-
-type mockKeybaseClient struct{}
-
-func (m *mockKeybaseClient) GetAvatarURL(username string) (string, error) {
-	return username, nil
-}
-
-var _ keybase.Client = &mockKeybaseClient{}
 
 func (suite *MigrateTestSuite) SetupTest() {
 	dbCfg := types.NewDatabaseConfig(
@@ -78,7 +68,6 @@ func (suite *MigrateTestSuite) SetupTest() {
 
 	suite.database = solDb
 
-	suite.keybaseClient = &mockKeybaseClient{}
 }
 
 func (suite *MigrateTestSuite) TearDownSuite() {
