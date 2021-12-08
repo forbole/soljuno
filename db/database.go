@@ -172,8 +172,8 @@ type StakeCheckerDb interface {
 
 // VoteDb represents a database that supports vote properly
 type VoteDb interface {
-	// SaveVoteAccount allows to store the given vote account data inside the database
-	SaveVoteAccount(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
+	// SaveValidator allows to store the given vote account data inside the database
+	SaveValidator(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
 
 	// SaveValidatorStatus allows to store the given current validator status inside the database
 	SaveValidatorStatus(address string, slot uint64, activatedStake uint64, lastVote uint64, rootSlot uint64, active bool) error
@@ -186,8 +186,8 @@ type VoteDb interface {
 
 // VoteCheckerDb represents a database that checks account statement of vote properly
 type VoteCheckerDb interface {
-	// CheckVoteAccountLatest checks if the vote account statement is latest
-	CheckVoteAccountLatest(address string, currentSlot uint64) bool
+	// CheckValidatorLatest checks if the vote account statement is latest
+	CheckValidatorLatest(address string, currentSlot uint64) bool
 }
 
 // ConfigDb represents a database that supports config properly

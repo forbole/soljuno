@@ -10,7 +10,7 @@ import (
 
 // updateVoteAccount properly stores the statement of vote account inside the database
 func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client client.Proxy) error {
-	if !db.CheckVoteAccountLatest(address, currentSlot) {
+	if !db.CheckValidatorLatest(address, currentSlot) {
 		return nil
 	}
 	info, err := client.AccountInfo(address)
@@ -18,7 +18,7 @@ func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client 
 		return err
 	}
 	if info.Value == nil {
-		return db.SaveVoteAccount(address, info.Context.Slot, "", "", "", 0)
+		return db.SaveValidator(address, info.Context.Slot, "", "", "", 0)
 	}
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
 	if err != nil {
@@ -26,9 +26,9 @@ func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client 
 	}
 	voteAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.VoteAccount)
 	if !ok {
-		return db.SaveVoteAccount(address, info.Context.Slot, "", "", "", 0)
+		return db.SaveValidator(address, info.Context.Slot, "", "", "", 0)
 	}
-	return db.SaveVoteAccount(
+	return db.SaveValidator(
 		address,
 		info.Context.Slot,
 		voteAccount.Node.String(),

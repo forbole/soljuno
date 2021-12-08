@@ -1,4 +1,4 @@
-CREATE TABLE vote_account
+CREATE TABLE validator
 (
     address     TEXT    NOT NULL PRIMARY KEY,
     slot        BIGINT  NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE vote_account
     withdrawer  TEXT    NOT NULL,
     commission  INT     NOT NULL
 );
-CREATE INDEX vote_account_node_index ON vote_account (node);
+CREATE INDEX validator_node_index ON validator (node);
 
 CREATE TABLE validator_status
 (

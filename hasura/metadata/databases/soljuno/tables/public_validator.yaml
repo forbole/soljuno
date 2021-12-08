@@ -1,5 +1,5 @@
 table:
-  name: vote_account
+  name: validator
   schema: public
 object_relationships:
 - name: validator_config
