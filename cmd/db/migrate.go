@@ -1,7 +1,6 @@
 package db
 
 import (
-	"github.com/forbole/soljuno/apis/keybase"
 	"github.com/forbole/soljuno/db/migration"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +16,7 @@ func MigrateCmd(cmdCfg *Config) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return migration.Up(ctx.Database, keybase.NewClient())
+			return migration.Up(ctx.Database)
 		},
 	}
 	return cmd
