@@ -39,7 +39,7 @@ type Proxy interface {
 
 	// GetLeaderSchedule returns epoch leader schedule of the given slot in the current chain.
 	// An error is returned if the query fails
-	GetLeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error)
+	LeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error)
 }
 
 // proxy implements a wrapper around both a Tendermint RPC client and a
@@ -92,6 +92,10 @@ func (cp *proxy) InflationRate() (clienttypes.InflationRate, error) {
 	return cp.rpcClient.GetInflationRate()
 }
 
-func (cp *proxy) GetLeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error) {
+func (cp *proxy) LeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error) {
 	return cp.rpcClient.GetLeaderSchedule(slot)
+}
+
+func (cp *proxy) EpochInfo() (clienttypes.EpochInfo, error) {
+	return cp.rpcClient.GetEpochInfo()
 }

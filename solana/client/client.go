@@ -17,6 +17,7 @@ type Client interface {
 	GetLeaderSchedule(slot uint64) (types.LeaderSchedule, error)
 	GetSupplyInfo() (types.SupplyWithContext, error)
 	GetInflationRate() (types.InflationRate, error)
+	GetEpochInfo() (types.EpochInfo, error)
 }
 
 type client struct {
@@ -132,4 +133,13 @@ func (c *client) GetInflationRate() (types.InflationRate, error) {
 		return rate, err
 	}
 	return rate, nil
+}
+
+func (c *client) GetEpochInfo() (types.EpochInfo, error) {
+	var epochInfo types.EpochInfo
+	err := c.rpcClient.CallFor(&epochInfo, "getEpochInfo")
+	if err != nil {
+		return epochInfo, err
+	}
+	return epochInfo, nil
 }
