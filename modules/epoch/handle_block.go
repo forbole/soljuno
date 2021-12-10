@@ -7,8 +7,16 @@ func (m *Module) HandleBlock(block types.Block) error {
 	if err != nil {
 		return err
 	}
-	if info.Epoch == m.epoch {
-		return nil
-	}
+	m.updateEpoch(info.Epoch)
+
 	return nil
+}
+
+func (m *Module) updateEpoch(epoch uint64) {
+	m.mtx.Lock()
+	defer m.mtx.Unlock()
+	if m.epoch == epoch {
+		return
+	}
+	m.epoch = epoch
 }
