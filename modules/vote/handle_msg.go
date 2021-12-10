@@ -33,7 +33,7 @@ func handleMsgInitialize(msg types.Message, tx types.Tx, db db.VoteDb) error {
 		return fmt.Errorf("instruction does not match %s type: %s", "initialize", msg.Parsed.Type())
 
 	}
-	return db.SaveVoteAccount(instruction.VoteAccount, tx.Slot, instruction.Node, instruction.AuthorizedVoter, instruction.AuthorizedWithdrawer, instruction.Commission)
+	return db.SaveValidator(instruction.VoteAccount, tx.Slot, instruction.Node, instruction.AuthorizedVoter, instruction.AuthorizedWithdrawer, instruction.Commission)
 }
 
 // handleMsgAuthorize handles a MsgAuthorize

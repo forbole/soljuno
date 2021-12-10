@@ -8,6 +8,10 @@ import (
 
 var _ db.ExceutorDb = &Database{}
 
-func (db *Database) Exec(sql string) (sql.Result, error) {
-	return db.Sqlx.Exec(sql)
+func (db *Database) Exec(sql string, args ...interface{}) (sql.Result, error) {
+	return db.Sqlx.Exec(sql, args...)
+}
+
+func (db *Database) Query(sql string, args ...interface{}) (*sql.Rows, error) {
+	return db.Sqlx.Query(sql, args...)
 }

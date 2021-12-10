@@ -1,5 +1,5 @@
 table:
-  name: vote_account
+  name: validator
   schema: public
 object_relationships:
 - name: validator_config
@@ -9,7 +9,7 @@ object_relationships:
         schema: public
         name: validator_config
       column_mapping:
-        address: owner
+        node: owner
 array_relationships:
 - name: validator_statuses
   using:

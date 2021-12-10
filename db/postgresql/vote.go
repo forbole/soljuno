@@ -4,10 +4,10 @@ import "github.com/forbole/soljuno/db"
 
 var _ db.VoteDb = &Database{}
 
-// SaveVoteAccount implements the db.VoteDb
-func (db *Database) SaveVoteAccount(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error {
+// SaveValidator implements the db.VoteDb
+func (db *Database) SaveValidator(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error {
 	stmt := `
-INSERT INTO vote_account
+INSERT INTO validator
     (address, slot, node, voter, withdrawer, commission)
 VALUES ($1, $2, $3, $4, $5, $6)
 ON CONFLICT (address) DO UPDATE
@@ -16,7 +16,7 @@ ON CONFLICT (address) DO UPDATE
 	voter = excluded.voter,
 	withdrawer = excluded.withdrawer,
 	commission = excluded.commission
-WHERE vote_account.slot <= excluded.slot`
+WHERE validator.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
 		address,

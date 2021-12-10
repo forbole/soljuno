@@ -62,7 +62,10 @@ type BasicDb interface {
 // ExceutorDb represents an abstract database that can excute a raw sql
 type ExceutorDb interface {
 	// Exec will run the given raw sql
-	Exec(string) (sql.Result, error)
+	Exec(sql string, args ...interface{}) (sql.Result, error)
+
+	// Query will run the given query sql
+	Query(sql string, args ...interface{}) (*sql.Rows, error)
 }
 
 // PruningDb represents a database that supports pruning properly
@@ -169,8 +172,8 @@ type StakeCheckerDb interface {
 
 // VoteDb represents a database that supports vote properly
 type VoteDb interface {
-	// SaveVoteAccount allows to store the given vote account data inside the database
-	SaveVoteAccount(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
+	// SaveValidator allows to store the given vote account data inside the database
+	SaveValidator(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
 
 	// SaveValidatorStatus allows to store the given current validator status inside the database
 	SaveValidatorStatus(address string, slot uint64, activatedStake uint64, lastVote uint64, rootSlot uint64, active bool) error
@@ -183,14 +186,14 @@ type VoteDb interface {
 
 // VoteCheckerDb represents a database that checks account statement of vote properly
 type VoteCheckerDb interface {
-	// CheckVoteAccountLatest checks if the vote account statement is latest
-	CheckVoteAccountLatest(address string, currentSlot uint64) bool
+	// CheckValidatorLatest checks if the vote account statement is latest
+	CheckValidatorLatest(address string, currentSlot uint64) bool
 }
 
 // ConfigDb represents a database that supports config properly
 type ConfigDb interface {
-	// SaveConfigAccount allows to store the given config account data inside the database
-	SaveConfigAccount(address string, slot uint64, owner string, data string) error
+	// SaveValidatorConfig allows to store the given config account data inside the database
+	SaveValidatorConfig(row dbtypes.ValidatorConfigRow) error
 }
 
 // BpfLoaderDb represents a database that supports bpf loader properly
