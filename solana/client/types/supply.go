@@ -11,3 +11,13 @@ type SupplyValue struct {
 	NonCirculating         uint64   `json:"nonCirculating"`
 	NonCirculatingAccounts []string `json:"nonCirculatingAccounts"`
 }
+
+type SupplyConfig struct {
+	ExcludeNonCirculatingAccountsList bool `json:"excludeNonCirculatingAccountsList"`
+}
+
+func NewSupplyConfig(exclude bool) SupplyConfig {
+	return SupplyConfig{
+		ExcludeNonCirculatingAccountsList: exclude,
+	}
+}

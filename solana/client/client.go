@@ -16,6 +16,7 @@ type Client interface {
 	GetVoteAccountsWithSlot() (uint64, types.VoteAccounts, error)
 	GetLeaderSchedule(slot uint64) (types.LeaderSchedule, error)
 	GetSupplyInfo() (types.SupplyWithContext, error)
+	GetInflationRate() (types.InflationRate, error)
 }
 
 type client struct {
@@ -117,9 +118,18 @@ func (c *client) GetLeaderSchedule(slot uint64) (types.LeaderSchedule, error) {
 
 func (c *client) GetSupplyInfo() (types.SupplyWithContext, error) {
 	var supply types.SupplyWithContext
-	err := c.rpcClient.CallFor(&supply, "getSupply")
+	err := c.rpcClient.CallFor(&supply, "getSupply", types.NewSupplyConfig(false))
 	if err != nil {
 		return supply, err
 	}
 	return supply, nil
+}
+
+func (c *client) GetInflationRate() (types.InflationRate, error) {
+	var rate types.InflationRate
+	err := c.rpcClient.CallFor(&rate, "getInflationRate")
+	if err != nil {
+		return rate, err
+	}
+	return rate, nil
 }
