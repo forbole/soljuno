@@ -3,7 +3,11 @@ package epoch
 import "github.com/forbole/soljuno/types"
 
 func (m *Module) HandleBlock(block types.Block) error {
-	if block.Slot%432000 != 0 {
+	info, err := m.client.EpochInfo()
+	if err != nil {
+		return err
+	}
+	if info.Epoch == m.epoch {
 		return nil
 	}
 	return nil

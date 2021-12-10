@@ -40,6 +40,10 @@ type Proxy interface {
 	// GetLeaderSchedule returns epoch leader schedule of the given slot in the current chain.
 	// An error is returned if the query fails
 	LeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error)
+
+	// EpochInfo returns epoch info in the current chain.
+	// An error is returned if the query fails
+	EpochInfo() (clienttypes.EpochInfo, error)
 }
 
 // proxy implements a wrapper around both a Tendermint RPC client and a
