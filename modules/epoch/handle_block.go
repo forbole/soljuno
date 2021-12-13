@@ -1,6 +1,9 @@
 package epoch
 
-import "github.com/forbole/soljuno/types"
+import (
+	"github.com/forbole/soljuno/client"
+	"github.com/forbole/soljuno/types"
+)
 
 func (m *Module) HandleBlock(block types.Block) error {
 	info, err := m.client.EpochInfo()
@@ -11,7 +14,7 @@ func (m *Module) HandleBlock(block types.Block) error {
 		return nil
 	}
 
-	return HandleBlock(block)
+	return handleEpoch(block.Slot, m.client)
 }
 
 func (m *Module) updateEpoch(epoch uint64) bool {
@@ -24,6 +27,9 @@ func (m *Module) updateEpoch(epoch uint64) bool {
 	return true
 }
 
-func HandleBlock(block types.Block) error {
+func handleEpoch(slot uint64, client client.Proxy) error {
+	client.InflationRate()
+	client.EpochSchedule()
+	client.Supply()
 	return nil
 }

@@ -44,6 +44,10 @@ type Proxy interface {
 	// EpochInfo returns epoch info in the current chain.
 	// An error is returned if the query fails
 	EpochInfo() (clienttypes.EpochInfo, error)
+
+	// EpochSchedule returns epoch schedule in the current chain.
+	// An error is returned if the query fails
+	EpochSchedule() (clienttypes.EpochSchedule, error)
 }
 
 // proxy implements a wrapper around both a Tendermint RPC client and a
@@ -102,4 +106,8 @@ func (cp *proxy) LeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error)
 
 func (cp *proxy) EpochInfo() (clienttypes.EpochInfo, error) {
 	return cp.rpcClient.GetEpochInfo()
+}
+
+func (cp *proxy) EpochSchedule() (clienttypes.EpochSchedule, error) {
+	return cp.rpcClient.GetEpochSchedule()
 }
