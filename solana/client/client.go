@@ -18,6 +18,7 @@ type Client interface {
 	GetSupplyInfo() (types.SupplyWithContext, error)
 	GetInflationRate() (types.InflationRate, error)
 	GetEpochInfo() (types.EpochInfo, error)
+	GetEpochSchedule() (types.EpochSchedule, error)
 }
 
 type client struct {
@@ -36,37 +37,25 @@ func NewClient(endpoint string) Client {
 func (c *client) GetBlock(slot uint64) (types.BlockResult, error) {
 	var block types.BlockResult
 	err := c.rpcClient.CallFor(&block, "getBlock", slot)
-	if err != nil {
-		return block, err
-	}
-	return block, nil
+	return block, err
 }
 
 func (c *client) GetSlot() (uint64, error) {
 	var slot uint64
 	err := c.rpcClient.CallFor(&slot, "getSlot")
-	if err != nil {
-		return slot, err
-	}
-	return slot, nil
+	return slot, err
 }
 
 func (c *client) GetBlocks(start uint64, end uint64) ([]uint64, error) {
 	var slots []uint64
 	err := c.rpcClient.CallFor(&slots, "getBlocks", start, end)
-	if err != nil {
-		return slots, err
-	}
-	return slots, nil
+	return slots, err
 }
 
 func (c *client) GetVoteAccounts() (types.VoteAccounts, error) {
 	var voteAccounts types.VoteAccounts
 	err := c.rpcClient.CallFor(&voteAccounts, "getVoteAccounts")
-	if err != nil {
-		return voteAccounts, err
-	}
-	return voteAccounts, nil
+	return voteAccounts, err
 }
 
 func (c *client) GetVoteAccountsWithSlot() (uint64, types.VoteAccounts, error) {
@@ -92,38 +81,26 @@ func (c *client) GetVoteAccountsWithSlot() (uint64, types.VoteAccounts, error) {
 	if err := res.GetByID(0).GetObject(&slot); err != nil {
 		return slot, voteAccounts, err
 	}
-
-	if err := res.GetByID(1).GetObject(&voteAccounts); err != nil {
-		return slot, voteAccounts, err
-	}
-	return slot, voteAccounts, nil
+	err = res.GetByID(1).GetObject(&voteAccounts)
+	return slot, voteAccounts, err
 }
 
 func (c *client) GetAccountInfo(address string) (types.AccountInfo, error) {
 	var accountInfo types.AccountInfo
 	err := c.rpcClient.CallFor(&accountInfo, "getAccountInfo", address, types.NewAccountInfoOption("base64"))
-	if err != nil {
-		return accountInfo, err
-	}
-	return accountInfo, nil
+	return accountInfo, err
 }
 
 func (c *client) GetLeaderSchedule(slot uint64) (types.LeaderSchedule, error) {
 	var schedule types.LeaderSchedule
 	err := c.rpcClient.CallFor(&schedule, "getLeaderSchedule", slot)
-	if err != nil {
-		return schedule, err
-	}
-	return schedule, nil
+	return schedule, err
 }
 
 func (c *client) GetSupplyInfo() (types.SupplyWithContext, error) {
 	var supply types.SupplyWithContext
 	err := c.rpcClient.CallFor(&supply, "getSupply", types.NewSupplyConfig(false))
-	if err != nil {
-		return supply, err
-	}
-	return supply, nil
+	return supply, err
 }
 
 func (c *client) GetInflationRate() (types.InflationRate, error) {
@@ -138,8 +115,11 @@ func (c *client) GetInflationRate() (types.InflationRate, error) {
 func (c *client) GetEpochInfo() (types.EpochInfo, error) {
 	var epochInfo types.EpochInfo
 	err := c.rpcClient.CallFor(&epochInfo, "getEpochInfo")
-	if err != nil {
-		return epochInfo, err
-	}
-	return epochInfo, nil
+	return epochInfo, err
+}
+
+func (c *client) GetEpochSchedule() (types.EpochSchedule, error) {
+	var epochSchedule types.EpochSchedule
+	err := c.rpcClient.CallFor(&epochSchedule, "getEpochSchedule")
+	return epochSchedule, err
 }
