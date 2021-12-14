@@ -1,10 +1,11 @@
 package types
 
 type EpochScheduleParamRow struct {
+	OneRowID         bool   `db:"one_row_id"`
 	Epoch            uint64 `db:"epoch"`
-	SlotsPerEpoch    uint64 `db:"slotsPerEpoch"`
-	FirstNormalEpoch uint64 `db:"firstNormalEpoch"`
-	FirstNormalSlot  uint64 `db:"firstNormalSlot"`
+	SlotsPerEpoch    uint64 `db:"slots_per_epoch"`
+	FirstNormalEpoch uint64 `db:"first_normal_epoch"`
+	FirstNormalSlot  uint64 `db:"first_normal_slot"`
 	Warmup           bool   `db:"warmup"`
 }
 
@@ -16,6 +17,7 @@ func NewEpochScheduleParamRow(
 	warmup bool,
 ) EpochScheduleParamRow {
 	return EpochScheduleParamRow{
+		true,
 		epoch,
 		slotsPerEpoch,
 		firstNormalEpoch,
@@ -25,6 +27,7 @@ func NewEpochScheduleParamRow(
 }
 
 type InflationGovernorParamRow struct {
+	OneRowID           bool    `db:"one_row_id"`
 	Epoch              uint64  `db:"epoch"`
 	Initial            float64 `db:"initial"`
 	Terminal           float64 `db:"terminal"`
@@ -33,7 +36,7 @@ type InflationGovernorParamRow struct {
 	FoundationTerminal float64 `db:"foundation_terminal"`
 }
 
-func NewInflationGovernParamRow(
+func NewInflationGovernorParamRow(
 	epoch uint64,
 	initial float64,
 	terminal float64,
@@ -42,6 +45,7 @@ func NewInflationGovernParamRow(
 	foundationTerminal float64,
 ) InflationGovernorParamRow {
 	return InflationGovernorParamRow{
+		true,
 		epoch,
 		initial,
 		terminal,

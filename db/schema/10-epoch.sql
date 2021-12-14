@@ -1,4 +1,4 @@
-CREATE TABLE epoch (
+CREATE TABLE epoch_info (
     one_row_id      BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
     epoch           BIGINT NOT NULL,
     CHECK (one_row_id)

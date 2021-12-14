@@ -1,14 +1,19 @@
 package types
 
-type EpochRow struct {
-	Epoch uint64 `db:"epoch"`
+type EpochInfoRow struct {
+	OneRowID bool   `db:"one_row_id"`
+	Epoch    uint64 `db:"epoch"`
 }
 
-func NewEpochRow(epoch uint64) EpochRow {
-	return EpochRow{epoch}
+func NewEpochInfoRow(epoch uint64) EpochInfoRow {
+	return EpochInfoRow{
+		true,
+		epoch,
+	}
 }
 
 type SupplyInfoRow struct {
+	OneRowID       bool   `db:"one_row_id"`
 	Epoch          uint64 `db:"epoch"`
 	Total          uint64 `db:"total"`
 	Circulating    uint64 `db:"circulating"`
@@ -22,6 +27,7 @@ func NewSupplyInfoRow(
 	nonCirculating uint64,
 ) SupplyInfoRow {
 	return SupplyInfoRow{
+		true,
 		epoch,
 		total,
 		circulating,
@@ -30,6 +36,7 @@ func NewSupplyInfoRow(
 }
 
 type InflationRateRow struct {
+	OneRowID   bool    `db:"one_row_id"`
 	Epoch      uint64  `db:"epoch"`
 	Total      float64 `db:"total"`
 	Foundation float64 `db:"foundation"`
@@ -43,6 +50,7 @@ func NewInflationRateRow(
 	validator float64,
 ) InflationRateRow {
 	return InflationRateRow{
+		true,
 		epoch,
 		total,
 		foundation,
