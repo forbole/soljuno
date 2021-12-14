@@ -10,6 +10,7 @@ import (
 	"github.com/forbole/soljuno/modules/bpfloader"
 	"github.com/forbole/soljuno/modules/config"
 	"github.com/forbole/soljuno/modules/consensus"
+	"github.com/forbole/soljuno/modules/epoch"
 	"github.com/forbole/soljuno/modules/pricefeed"
 	"github.com/forbole/soljuno/modules/pruning"
 	"github.com/forbole/soljuno/modules/stake"
@@ -94,6 +95,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		bpfloader.NewModule(ctx.Database, ctx.Proxy),
 		pricefeed.NewModule(ctx.Database),
 		consensus.NewModule(ctx.Database),
+		epoch.NewModule(ctx.Database, ctx.Proxy),
 	}
 }
 
