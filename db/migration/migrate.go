@@ -20,7 +20,6 @@ func Up(db db.Database) error {
 		non_circulating NUMERIC(20,0)   NOT NULL,
 		CHECK (one_row_id)
 	);
-	
 	CREATE TABLE inflation_rate (
 		one_row_id  BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
 		epoch       BIGINT  NOT NULL,
@@ -29,7 +28,6 @@ func Up(db db.Database) error {
 		validator   FLOAT   NOT NULL,
 		CHECK (one_row_id)
 	);
-	
 	CREATE TABLE epoch_schedule_param (
 		one_row_id          BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
 		epoch               BIGINT  NOT NULL,
@@ -39,7 +37,6 @@ func Up(db db.Database) error {
 		warmup              BOOL    NOT NULL,
 		CHECK (one_row_id)
 	);
-	
 	CREATE TABLE inflation_governor_param (
 		one_row_id          BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
 		epoch               BIGINT  NOT NULL,
