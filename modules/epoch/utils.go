@@ -3,6 +3,7 @@ package epoch
 import (
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/db/types"
 	dbtypes "github.com/forbole/soljuno/db/types"
 )
 
@@ -37,7 +38,20 @@ func updateSupplyInfo(epoch uint64, db db.EpochDb, client client.Proxy) error {
 }
 
 func updateInflationGovernorParam(epoch uint64, db db.EpochDb, client client.Proxy) error {
-	return nil
+	governor, err := client.InflationGovernor()
+	if err != nil {
+		return err
+	}
+	return db.SaveInflationGovernorParam(
+		types.NewInflationGovernorParamRow(
+			epoch,
+			governor.Initial,
+			governor.Terminal,
+			governor.Taper,
+			governor.Foundation,
+			governor.FoundationTerminal,
+		),
+	)
 }
 
 func updateEpochScheduleParam(epoch uint64, db db.EpochDb, client client.Proxy) error {
