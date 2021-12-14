@@ -12,24 +12,24 @@ func (suite *DbTestSuite) TestSaveEpoch() {
 	}{
 		{
 			name:     "initialize the data",
-			data:     dbtypes.NewEpochInfoRow(2),
-			expected: dbtypes.NewEpochInfoRow(2),
+			data:     dbtypes.NewEpochInfoRow(2, 1),
+			expected: dbtypes.NewEpochInfoRow(2, 1),
 		},
 		{
 			name:     "update with lower epoch",
-			data:     dbtypes.NewEpochInfoRow(1),
-			expected: dbtypes.NewEpochInfoRow(2),
+			data:     dbtypes.NewEpochInfoRow(1, 1),
+			expected: dbtypes.NewEpochInfoRow(2, 1),
 		},
 		{
 			name:     "update with higher epoch",
-			data:     dbtypes.NewEpochInfoRow(3),
-			expected: dbtypes.NewEpochInfoRow(3),
+			data:     dbtypes.NewEpochInfoRow(3, 1),
+			expected: dbtypes.NewEpochInfoRow(3, 1),
 		},
 	}
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveEpoch(tc.data.Epoch)
+			err := suite.database.SaveEpoch(tc.data)
 			suite.Require().NoError(err)
 			var rows []dbtypes.EpochInfoRow
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM epoch_info")

@@ -7,14 +7,15 @@ import (
 
 var _ db.EpochDb = &Database{}
 
-func (db *Database) SaveEpoch(epoch uint64) error {
-	stmt := `INSERT INTO epoch_info (epoch) VALUES ($1)
+func (db *Database) SaveEpoch(info dbtypes.EpochInfoRow) error {
+	stmt := `INSERT INTO epoch_info (epoch, transaction_count) VALUES ($1, $2)
 ON CONFLICT (one_row_id) DO UPDATE
 	SET epoch = excluded.epoch
 WHERE epoch_info.epoch <= excluded.epoch`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		epoch,
+		info.Epoch,
+		info.TransactionCount,
 	)
 	return err
 }

@@ -1,14 +1,16 @@
 package types
 
 type EpochInfoRow struct {
-	OneRowID bool   `db:"one_row_id"`
-	Epoch    uint64 `db:"epoch"`
+	OneRowID         bool   `db:"one_row_id"`
+	Epoch            uint64 `db:"epoch"`
+	TransactionCount uint64 `db:"transaction_count"`
 }
 
-func NewEpochInfoRow(epoch uint64) EpochInfoRow {
+func NewEpochInfoRow(epoch uint64, count uint64) EpochInfoRow {
 	return EpochInfoRow{
 		true,
 		epoch,
+		count,
 	}
 }
 

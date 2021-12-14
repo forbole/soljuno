@@ -259,7 +259,7 @@ type ConsensusDb interface {
 
 type EpochDb interface {
 	// SaveEpoch
-	SaveEpoch(epoch uint64) error
+	SaveEpoch(dbtypes.EpochInfoRow) error
 
 	// SaveInflationRate allows to store the current inflation rate inside the database
 	SaveInflationRate(dbtypes.InflationRateRow) error
