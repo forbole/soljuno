@@ -4,7 +4,7 @@ CREATE TABLE epoch (
     CHECK (one_row_id)
 );
 
-CREATE TABLE epoch_supply (
+CREATE TABLE supply_info (
     one_row_id      BOOL            NOT NULL DEFAULT TRUE PRIMARY KEY,
     epoch           BIGINT          NOT NULL,
     total           NUMERIC(20,0)   NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE epoch_supply (
     CHECK (one_row_id)
 );
 
-CREATE TABLE epoch_inflation (
+CREATE TABLE inflation_rate (
     one_row_id  BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
     epoch       BIGINT  NOT NULL,
     total       FLOAT   NOT NULL,
@@ -33,12 +33,12 @@ CREATE TABLE epoch_schedule_param (
 );
 
 CREATE TABLE inflation_governor_param (
-    one_row_id      BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
-    epoch           BIGINT  NOT NULL,
-    initial         FLOAT   NOT NULL,
-    terminal        FLOAT   NOT NULL,
-    taper           FLOAT   NOT NULL,
-    foundation      FLOAT   NOT NULL,
-    foundation_term FLOAT   NOT NULL,
+    one_row_id          BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
+    epoch               BIGINT  NOT NULL,
+    initial             FLOAT   NOT NULL,
+    terminal            FLOAT   NOT NULL,
+    taper               FLOAT   NOT NULL,
+    foundation          FLOAT   NOT NULL,
+    foundation_terminal FLOAT   NOT NULL,
     CHECK (one_row_id)
 );
