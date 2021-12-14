@@ -1,0 +1,11 @@
+table:
+  name: epoch_info
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - epoch
+    - transaction_count
+    filter: {}
+  role: anonymous
