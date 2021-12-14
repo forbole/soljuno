@@ -100,7 +100,7 @@ func (c *client) GetLeaderSchedule(slot uint64) (types.LeaderSchedule, error) {
 
 func (c *client) GetSupplyInfo() (types.SupplyWithContext, error) {
 	var supply types.SupplyWithContext
-	err := c.rpcClient.CallFor(&supply, "getSupply", types.NewSupplyConfig(false))
+	err := c.rpcClient.CallFor(&supply, "getSupply", []interface{}{types.NewSupplyConfig(true)})
 	return supply, err
 }
 

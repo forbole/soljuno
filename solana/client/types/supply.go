@@ -13,7 +13,7 @@ type SupplyValue struct {
 }
 
 type SupplyConfig struct {
-	ExcludeNonCirculatingAccountsList bool `json:"excludeNonCirculatingAccountsList"`
+	ExcludeNonCirculatingAccountsList bool `json:"excludeNonCirculatingAccountsList,omitempty"`
 }
 
 func NewSupplyConfig(exclude bool) SupplyConfig {

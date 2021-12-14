@@ -4,6 +4,7 @@ import (
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
+	"github.com/rs/zerolog/log"
 )
 
 func (m *Module) HandleBlock(block types.Block) error {
@@ -14,8 +15,7 @@ func (m *Module) HandleBlock(block types.Block) error {
 	if !m.updateEpoch(info.Epoch) {
 		return nil
 	}
-
-	return handleEpoch(block.Slot, m.db, m.client)
+	return handleEpoch(m.epoch, m.db, m.client)
 }
 
 func (m *Module) updateEpoch(epoch uint64) bool {
@@ -29,10 +29,17 @@ func (m *Module) updateEpoch(epoch uint64) bool {
 }
 
 func handleEpoch(epoch uint64, db db.EpochDb, client client.Proxy) error {
-	err := updateSupplyInfo(epoch, db, client)
+	err := db.SaveEpoch(epoch)
 	if err != nil {
 		return err
 	}
+	// NOTE: updateSupplyInfo takes too much time so specificly use goroutine here.
+	go func() {
+		err = updateSupplyInfo(epoch, db, client)
+		if err != nil {
+			log.Error().Err(err).Send()
+		}
+	}()
 	err = updateInflationRate(epoch, db, client)
 	if err != nil {
 		return err
