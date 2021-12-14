@@ -48,6 +48,10 @@ type Proxy interface {
 	// EpochSchedule returns epoch schedule in the current chain.
 	// An error is returned if the query fails
 	EpochSchedule() (clienttypes.EpochSchedule, error)
+
+	// InflationGovernor return inflation governor in the current chain
+	// An error is returned if the query fails
+	InflationGovernor() (clienttypes.InflationGovernor, error)
 }
 
 // proxy implements a wrapper around both a Tendermint RPC client and a
@@ -110,4 +114,8 @@ func (cp *proxy) EpochInfo() (clienttypes.EpochInfo, error) {
 
 func (cp *proxy) EpochSchedule() (clienttypes.EpochSchedule, error) {
 	return cp.rpcClient.GetEpochSchedule()
+}
+
+func (cp *proxy) InflationGovernor() (clienttypes.InflationGovernor, error) {
+	return cp.rpcClient.GetInflationGovernor()
 }

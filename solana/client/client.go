@@ -19,6 +19,7 @@ type Client interface {
 	GetInflationRate() (types.InflationRate, error)
 	GetEpochInfo() (types.EpochInfo, error)
 	GetEpochSchedule() (types.EpochSchedule, error)
+	GetInflationGovernor() (types.InflationGovernor, error)
 }
 
 type client struct {
@@ -122,4 +123,10 @@ func (c *client) GetEpochSchedule() (types.EpochSchedule, error) {
 	var epochSchedule types.EpochSchedule
 	err := c.rpcClient.CallFor(&epochSchedule, "getEpochSchedule")
 	return epochSchedule, err
+}
+
+func (c *client) GetInflationGovernor() (types.InflationGovernor, error) {
+	var governor types.InflationGovernor
+	err := c.rpcClient.CallFor(&governor, "getInflationGovernor")
+	return governor, err
 }
