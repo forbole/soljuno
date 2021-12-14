@@ -28,6 +28,30 @@ type Proxy interface {
 	// Validators returns vote accounts of validators in the current chain.
 	// An error is returned if the query fails
 	ValidatorsWithSlot() (uint64, clienttypes.VoteAccounts, error)
+
+	// Supply returns supply info in the current chain.
+	// An error is returned if the query fails
+	Supply() (clienttypes.SupplyWithContext, error)
+
+	// InflationRate returns inflation rate in the current chain.
+	// An error is returned if the query fails
+	InflationRate() (clienttypes.InflationRate, error)
+
+	// GetLeaderSchedule returns epoch leader schedule of the given slot in the current chain.
+	// An error is returned if the query fails
+	LeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error)
+
+	// EpochInfo returns epoch info in the current chain.
+	// An error is returned if the query fails
+	EpochInfo() (clienttypes.EpochInfo, error)
+
+	// EpochSchedule returns epoch schedule in the current chain.
+	// An error is returned if the query fails
+	EpochSchedule() (clienttypes.EpochSchedule, error)
+
+	// InflationGovernor return inflation governor in the current chain
+	// An error is returned if the query fails
+	InflationGovernor() (clienttypes.InflationGovernor, error)
 }
 
 // proxy implements a wrapper around both a Tendermint RPC client and a
@@ -49,21 +73,11 @@ func NewClientProxy(cfg types.Config) (Proxy, error) {
 }
 
 func (cp *proxy) LatestSlot() (uint64, error) {
-	slot, err := cp.rpcClient.GetSlot()
-	if err != nil {
-		return 0, err
-	}
-
-	return slot, nil
+	return cp.rpcClient.GetSlot()
 }
 
 func (cp *proxy) Slots(start uint64, end uint64) ([]uint64, error) {
-	slots, err := cp.rpcClient.GetBlocks(start, end)
-	if err != nil {
-		return []uint64{}, err
-	}
-
-	return slots, nil
+	return cp.rpcClient.GetBlocks(start, end)
 }
 
 func (cp *proxy) Block(slot uint64) (clienttypes.BlockResult, error) {
@@ -71,25 +85,37 @@ func (cp *proxy) Block(slot uint64) (clienttypes.BlockResult, error) {
 }
 
 func (cp *proxy) Validators() (clienttypes.VoteAccounts, error) {
-	validators, err := cp.rpcClient.GetVoteAccounts()
-	if err != nil {
-		return clienttypes.VoteAccounts{}, err
-	}
-	return validators, nil
+	return cp.rpcClient.GetVoteAccounts()
 }
 
 func (cp *proxy) ValidatorsWithSlot() (uint64, clienttypes.VoteAccounts, error) {
-	slot, voteAccounts, err := cp.rpcClient.GetVoteAccountsWithSlot()
-	if err != nil {
-		return 0, clienttypes.VoteAccounts{}, err
-	}
-	return slot, voteAccounts, nil
+	return cp.rpcClient.GetVoteAccountsWithSlot()
 }
 
 func (cp *proxy) AccountInfo(address string) (clienttypes.AccountInfo, error) {
-	info, err := cp.rpcClient.GetAccountInfo(address)
-	if err != nil {
-		return clienttypes.AccountInfo{}, err
-	}
-	return info, nil
+	return cp.rpcClient.GetAccountInfo(address)
+}
+
+func (cp *proxy) Supply() (clienttypes.SupplyWithContext, error) {
+	return cp.rpcClient.GetSupplyInfo()
+}
+
+func (cp *proxy) InflationRate() (clienttypes.InflationRate, error) {
+	return cp.rpcClient.GetInflationRate()
+}
+
+func (cp *proxy) LeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error) {
+	return cp.rpcClient.GetLeaderSchedule(slot)
+}
+
+func (cp *proxy) EpochInfo() (clienttypes.EpochInfo, error) {
+	return cp.rpcClient.GetEpochInfo()
+}
+
+func (cp *proxy) EpochSchedule() (clienttypes.EpochSchedule, error) {
+	return cp.rpcClient.GetEpochSchedule()
+}
+
+func (cp *proxy) InflationGovernor() (clienttypes.InflationGovernor, error) {
+	return cp.rpcClient.GetInflationGovernor()
 }

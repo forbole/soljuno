@@ -1,9 +1,5 @@
 package types
 
-type Context struct {
-	Slot uint64 `json:"slot"`
-}
-
 type AccountInfoOption struct {
 	Encoding string `json:"encoding,omitempty"`
 }

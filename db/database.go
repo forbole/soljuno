@@ -36,6 +36,8 @@ type Database interface {
 
 	ConsensusDb
 
+	EpochDb
+
 	// Close closes the connection to the database
 	Close()
 }
@@ -253,6 +255,23 @@ type ConsensusDb interface {
 
 	// SaveAverageSlotTimePerHour allows to store the average slot time inside the database
 	SaveAverageSlotTimePerHour(slot uint64, averageTime float64) error
+}
+
+type EpochDb interface {
+	// SaveEpoch
+	SaveEpoch(dbtypes.EpochInfoRow) error
+
+	// SaveInflationRate allows to store the current inflation rate inside the database
+	SaveInflationRate(dbtypes.InflationRateRow) error
+
+	// SaveSupplyInfo allows to store the current supply info inside the database
+	SaveSupplyInfo(dbtypes.SupplyInfoRow) error
+
+	// SaveInflationGovernorParam allows to store the inflation governor parameters inside the database
+	SaveInflationGovernorParam(dbtypes.InflationGovernorParamRow) error
+
+	// SaveEpochScheduleParam allows to store the epoch schedule parameters inside the database
+	SaveEpochScheduleParam(dbtypes.EpochScheduleParamRow) error
 }
 
 // Context contains the data that might be used to build a Database instance
