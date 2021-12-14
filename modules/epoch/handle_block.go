@@ -2,6 +2,7 @@ package epoch
 
 import (
 	"github.com/forbole/soljuno/client"
+	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
 )
 
@@ -14,7 +15,7 @@ func (m *Module) HandleBlock(block types.Block) error {
 		return nil
 	}
 
-	return handleEpoch(block.Slot, m.client)
+	return handleEpoch(block.Slot, m.db, m.client)
 }
 
 func (m *Module) updateEpoch(epoch uint64) bool {
@@ -27,9 +28,18 @@ func (m *Module) updateEpoch(epoch uint64) bool {
 	return true
 }
 
-func handleEpoch(slot uint64, client client.Proxy) error {
-	client.InflationRate()
-	client.EpochSchedule()
-	client.Supply()
-	return nil
+func handleEpoch(epoch uint64, db db.EpochDb, client client.Proxy) error {
+	err := updateSupplyInfo(epoch, db, client)
+	if err != nil {
+		return err
+	}
+	err = updateInflationRate(epoch, db, client)
+	if err != nil {
+		return err
+	}
+	err = updateEpochScheduleParam(epoch, db, client)
+	if err != nil {
+		return err
+	}
+	return updateInflationGovernorParam(epoch, db, client)
 }
