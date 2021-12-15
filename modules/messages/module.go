@@ -17,7 +17,7 @@ type Module struct {
 func NewModule(db db.Database) *Module {
 	return &Module{
 		db:     db,
-		buffer: make(chan types.Message, 1000),
+		buffer: make(chan types.Message),
 	}
 }
 
