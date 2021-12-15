@@ -103,6 +103,34 @@ VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 	return err
 }
 
+// SaveTxs implements db.Database
+func (db *Database) SaveTxs(txs []types.Tx) error {
+	stmt := `
+INSERT INTO transaction (hash, slot, error, fee, logs) VALUES`
+
+	var params []interface{}
+	paramsNumber := 5
+	for i, tx := range txs {
+		bi := i * paramsNumber
+		stmt += fmt.Sprintf(
+			"($%d, $%d, $%d, $%d, $%d),",
+			bi+1, bi+2, bi+3, bi+4, bi+5,
+		)
+		params = append(
+			params,
+			tx.Hash,
+			tx.Slot,
+			tx.Successful(),
+			tx.Fee,
+			pq.Array(tx.Logs),
+		)
+	}
+	stmt += `
+ON CONFLICT DO NOTHING`
+	_, err := db.Sqlx.Exec(stmt, params...)
+	return err
+}
+
 // SaveMessage implements db.Database
 func (db *Database) SaveMessage(msg types.Message) error {
 	stmt := `
@@ -123,7 +151,46 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT DO NOTHING`
 		msg.Parsed.Type(),
 		msg.Parsed.JSON(),
 	)
+	return err
+}
 
+// SaveMessages implements db.Database
+func (db *Database) SaveMessages(msgs []types.Message) error {
+	if len(msgs) == 0 {
+		return nil
+	}
+	stmt := `INSERT INTO message
+	(transaction_hash, slot, index, inner_index, program, involved_accounts, raw_data, type, value) VALUES`
+
+	var params []interface{}
+	paramsNumber := 10
+	for i, msg := range msgs {
+		bi := i * paramsNumber
+		stmt += fmt.Sprintf(
+			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d ,$%d),",
+			bi+1, bi+2, bi+3, bi+4, bi+5, bi+6, bi+7, bi+8, bi+9, bi+10,
+		)
+		if msg.InvolvedAccounts == nil {
+			msg.InvolvedAccounts = []string{}
+		}
+		params = append(
+			params,
+			msg.TxHash,
+			msg.Slot,
+			msg.Index,
+			msg.InnerIndex,
+			msg.Program,
+			pq.Array(msg.InvolvedAccounts),
+			msg.RawData,
+			msg.Parsed.Type(),
+			msg.Parsed.JSON(),
+		)
+	}
+
+	stmt = stmt[:len(stmt)-1]
+	stmt += `
+ON CONFLICT DO NOTHING`
+	_, err := db.Sqlx.Exec(stmt, params...)
 	return err
 }
 
