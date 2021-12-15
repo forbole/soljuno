@@ -105,9 +105,10 @@ VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 
 // SaveTxs implements db.Database
 func (db *Database) SaveTxs(txs []types.Tx) error {
-	stmt := `
-INSERT INTO transaction (hash, slot, error, fee, logs) VALUES`
-
+	if len(txs) == 0 {
+		return nil
+	}
+	stmt := `INSERT INTO transaction (hash, slot, error, fee, logs) VALUES`
 	var params []interface{}
 	paramsNumber := 5
 	for i, tx := range txs {
@@ -125,8 +126,9 @@ INSERT INTO transaction (hash, slot, error, fee, logs) VALUES`
 			pq.Array(tx.Logs),
 		)
 	}
-	stmt += `
-ON CONFLICT DO NOTHING`
+
+	stmt = stmt[:len(stmt)-1]
+	stmt += `ON CONFLICT DO NOTHING`
 	_, err := db.Sqlx.Exec(stmt, params...)
 	return err
 }
@@ -188,8 +190,7 @@ func (db *Database) SaveMessages(msgs []types.Message) error {
 	}
 
 	stmt = stmt[:len(stmt)-1]
-	stmt += `
-ON CONFLICT DO NOTHING`
+	stmt += `ON CONFLICT DO NOTHING`
 	_, err := db.Sqlx.Exec(stmt, params...)
 	return err
 }
