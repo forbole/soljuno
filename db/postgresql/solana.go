@@ -165,12 +165,12 @@ func (db *Database) SaveMessages(msgs []types.Message) error {
 	(transaction_hash, slot, index, inner_index, program, involved_accounts, raw_data, type, value) VALUES`
 
 	var params []interface{}
-	paramsNumber := 10
+	paramsNumber := 9
 	for i, msg := range msgs {
 		bi := i * paramsNumber
 		stmt += fmt.Sprintf(
-			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d ,$%d),",
-			bi+1, bi+2, bi+3, bi+4, bi+5, bi+6, bi+7, bi+8, bi+9, bi+10,
+			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
+			bi+1, bi+2, bi+3, bi+4, bi+5, bi+6, bi+7, bi+8, bi+9,
 		)
 		if msg.InvolvedAccounts == nil {
 			msg.InvolvedAccounts = []string{}
