@@ -52,6 +52,10 @@ type BasicDb interface {
 	// An error is returned if the operation fails.
 	SaveBlock(block types.Block) error
 
+	// SaveTxs stores a batch of transactions.
+	// An error is returned if the operation fails.
+	SaveTxs(txs []types.Tx) error
+
 	// SaveTx will be called to save each transaction contained inside a block.
 	// An error is returned if the operation fails.
 	SaveTx(tx types.Tx) error
@@ -59,6 +63,10 @@ type BasicDb interface {
 	// SaveMessage stores a single message.
 	// An error is returned if the operation fails.
 	SaveMessage(msg types.Message) error
+
+	// SaveMessages stores a batch of messages.
+	// An error is returned if the operation fails.
+	SaveMessages(msg []types.Message) error
 }
 
 // ExceutorDb represents an abstract database that can excute a raw sql
