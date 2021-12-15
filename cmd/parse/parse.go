@@ -112,22 +112,13 @@ func StartParsing(ctx *Context) error {
 		return err
 	}
 
-	bankTasks := types.NewBankTaskQueue(25)
-	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parser, ctx.Logger, pool, exportQueue, ctx.Modules, bankTasks)
+	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parser, ctx.Logger, pool, exportQueue, ctx.Modules)
 	workers := make([]worker.Worker, cfg.GetWorkers())
 	for i := range workers {
 		workers[i] = worker.NewWorker(i, workerCtx)
 	}
 
 	waitGroup.Add(1)
-
-	// Hanle bank module tasks synchronously to prevent dead locks
-	go func() {
-		for {
-			task := <-bankTasks
-			task()
-		}
-	}()
 
 	// Run all the async operations
 	for _, module := range ctx.Modules {

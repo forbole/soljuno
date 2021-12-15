@@ -7,12 +7,14 @@ import (
 )
 
 type Module struct {
-	db db.Database
+	db    db.Database
+	tasks chan func()
 }
 
 func NewModule(db db.Database) *Module {
 	return &Module{
-		db: db,
+		db:    db,
+		tasks: make(chan func()),
 	}
 }
 
@@ -22,10 +24,12 @@ func (m *Module) Name() string {
 }
 
 // HandleBank implements modules.BankModule
-func (m *Module) HandleBank(block types.Block) error {
-	err := HandleBank(block, m.db)
-	if err != nil {
-		return err
+func (m *Module) HandleBlock(block types.Block) error {
+	m.tasks <- func() {
+		err := HandleBank(block, m.db)
+		if err != nil {
+			log.Error().Str("module", m.Name()).Uint64("slot", block.Slot).Err(err).Send()
+		}
 	}
 	log.Debug().Str("module", m.Name()).Uint64("slot", block.Slot).Msg("handled block")
 	return nil
