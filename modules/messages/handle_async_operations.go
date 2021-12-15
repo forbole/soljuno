@@ -11,24 +11,29 @@ import (
 func (m *Module) RunAsyncOperations() {
 	for {
 		m.consumeMsgs()
-		time.Sleep(5 * time.Second)
 	}
 }
 
 func (m *Module) consumeMsgs() {
-	for len(m.buffer) != 0 {
-		msgs := m.GetMsgs(1000)
-		err := m.db.SaveMessages(msgs)
-		if err != nil {
-			log.Error().Err(err).Send()
-		}
+	msgs := m.GetMsgs(1000)
+	err := m.db.SaveMessages(msgs)
+	if err != nil {
+		log.Error().Str("module", m.Name()).Uint64("slot", msgs[0].Slot).Err(err).Send()
+		log.Error().Err(err).Send()
 	}
 }
 
 func (m *Module) GetMsgs(num int) []types.Message {
 	var msgs []types.Message
-	for len(m.buffer) != 0 && len(msgs) < num {
-		msgs = append(msgs, <-m.buffer)
+	for {
+		select {
+		case msg := <-m.buffer:
+			msgs = append(msgs, msg)
+			if len(msgs) >= num {
+				return msgs
+			}
+		case <-time.After(100 * time.Millisecond):
+			return msgs
+		}
 	}
-	return msgs
 }
