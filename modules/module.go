@@ -79,11 +79,6 @@ type BlockModule interface {
 	HandleBlock(block types.Block) error
 }
 
-type BankModule interface {
-	// HandleBank allows to handle all the banke events inside a block
-	HandleBank(block types.Block) error
-}
-
 type TransactionModule interface {
 	// HandleTx handles a single transaction.
 	// For each message present inside the transaction, HandleMsg will be called as well.

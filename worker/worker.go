@@ -24,10 +24,9 @@ type Worker struct {
 	parserManager parser.ParserManager
 	logger        logging.Logger
 
-	pool      *ants.Pool
-	index     int
-	modules   []modules.Module
-	bankTasks types.BankTaskQueue
+	pool    *ants.Pool
+	index   int
+	modules []modules.Module
 }
 
 // NewWorker allows to create a new Worker implementation.
@@ -41,7 +40,6 @@ func NewWorker(index int, ctx *Context) Worker {
 		modules:       ctx.Modules,
 		logger:        ctx.Logger,
 		pool:          ctx.Pool,
-		bankTasks:     ctx.BankTasks,
 	}
 }
 
@@ -129,14 +127,6 @@ func (w Worker) handleBlock(block types.Block) {
 // handleBlockModules handles the block with modules
 func (w Worker) handleBlockModules(block types.Block) {
 	for _, module := range w.modules {
-		if bankModule, ok := module.(modules.BankModule); ok {
-			w.bankTasks <- func() {
-				err := bankModule.HandleBank(block)
-				if err != nil {
-					w.logger.BlockError(module, block, err)
-				}
-			}
-		}
 		if blockModule, ok := module.(modules.BlockModule); ok {
 			err := blockModule.HandleBlock(block)
 			if err != nil {
