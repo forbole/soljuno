@@ -16,10 +16,12 @@ func (m *Module) RunAsyncOperations() {
 
 func (m *Module) consumeMsgs() {
 	msgs := m.GetMsgs(1000)
-	err := m.db.SaveMessages(msgs)
-	if err != nil {
-		log.Error().Str("module", m.Name()).Uint64("slot", msgs[0].Slot).Err(err).Send()
-	}
+	go func() {
+		err := m.db.SaveMessages(msgs)
+		if err != nil {
+			log.Error().Str("module", m.Name()).Uint64("slot", msgs[0].Slot).Err(err).Send()
+		}
+	}()
 }
 
 func (m *Module) GetMsgs(num int) []types.Message {
