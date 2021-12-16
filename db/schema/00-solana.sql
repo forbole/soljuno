@@ -45,6 +45,7 @@ CREATE INDEX message_program_index ON message (program);
 CREATE FUNCTION messages_by_address(
     addresses TEXT[],
     types TEXT[],
+    programs TEXT[],
     "limit" BIGINT = 100,
     "offset" BIGINT = 0)
     RETURNS SETOF message AS
@@ -53,6 +54,7 @@ SELECT
     message.transaction_hash, message.slot, message.index, message.inner_index, message.program, message.involved_accounts, message.raw_data, message.type, message.value
 FROM message
 WHERE (cardinality(types) = 0 OR type = ANY (types))
+  AND (cardinality(programs) = 0 OR program = ANY (programs))
   AND addresses && involved_accounts
 ORDER BY slot DESC
 LIMIT "limit" OFFSET "offset"
