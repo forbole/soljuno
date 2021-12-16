@@ -36,6 +36,7 @@ CREATE TABLE message
 CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 CREATE INDEX message_slot_index ON message (slot);
 CREATE INDEX message_program_index ON message (program);
+CREATE INDEX message_accounts_index ON message USING GIN(involved_accounts);
 
 
 /**
@@ -55,7 +56,7 @@ SELECT
 FROM message
 WHERE (cardinality(types) = 0 OR type = ANY (types))
   AND (cardinality(programs) = 0 OR program = ANY (programs))
-  AND addresses && involved_accounts
+  AND addresses @> involved_accounts
 ORDER BY slot DESC
 LIMIT "limit" OFFSET "offset"
 $$ LANGUAGE sql STABLE;
