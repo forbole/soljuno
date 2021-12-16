@@ -1,8 +1,6 @@
 package pruning
 
 import (
-	"fmt"
-
 	"github.com/forbole/soljuno/types/logging"
 
 	"github.com/forbole/soljuno/db"
@@ -17,6 +15,7 @@ type Module struct {
 	cfg    types.PruningConfig
 	db     db.Database
 	logger logging.Logger
+	signal chan bool
 }
 
 // NewModule builds a new Module instance
@@ -25,6 +24,7 @@ func NewModule(cfg types.PruningConfig, db db.Database, logger logging.Logger) *
 		cfg:    cfg,
 		db:     db,
 		logger: logger,
+		signal: make(chan bool),
 	}
 }
 
@@ -40,18 +40,10 @@ func (m *Module) HandleBlock(block types.Block) error {
 		return nil
 	}
 
-	if block.Slot%uint64(m.cfg.GetInterval()) != 0 {
-		// Not an interval slot, so just skip
+	if block.Height%uint64(m.cfg.GetInterval()) != 0 {
+		// Not an interval height, so just skip
 		return nil
 	}
-	slot := block.Slot - uint64(m.cfg.GetKeepRecent())
-
-	// Prune the blocks before the given slot
-	m.logger.Debug("pruning", "module", "pruning", "slot", slot)
-	err := m.db.Prune(block.Slot - uint64(m.cfg.GetKeepRecent()))
-	if err != nil {
-		return fmt.Errorf("error while pruning slot %d: %s", slot, err.Error())
-	}
-
+	m.signal <- true
 	return nil
 }
