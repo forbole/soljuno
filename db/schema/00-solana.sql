@@ -56,7 +56,7 @@ SELECT
 FROM message
 WHERE (cardinality(types) = 0 OR type = ANY (types))
   AND (cardinality(programs) = 0 OR program = ANY (programs))
-  AND addresses @> involved_accounts
+  AND involved_accounts @> addresses
 ORDER BY slot DESC
 LIMIT "limit" OFFSET "offset"
 $$ LANGUAGE sql STABLE;
