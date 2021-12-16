@@ -185,8 +185,10 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 		if err != nil {
 			continue
 		}
-		enqueueMissingSlots(ctx, exportQueue, start, end)
-		start = end + 1
+		if end > start {
+			enqueueMissingSlots(ctx, exportQueue, start, end)
+			start = end + 1
+		}
 		time.Sleep(time.Second)
 	}
 }
