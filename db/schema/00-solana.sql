@@ -37,7 +37,8 @@ CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 CREATE INDEX message_slot_index ON message (slot);
 CREATE INDEX message_program_index ON message (program);
 CREATE INDEX message_accounts_index ON message USING GIN(involved_accounts);
-
+ALTER TABLE message ALTER COLUMN involved_accounts SET STATISTICS 1000;
+ANALYZE message;
 
 /**
  * This function is used to find all the utils that involve any of the given addresses and have
@@ -57,6 +58,6 @@ FROM message
 WHERE (cardinality(types) = 0 OR type = ANY (types))
   AND (cardinality(programs) = 0 OR program = ANY (programs))
   AND involved_accounts @> addresses
-ORDER BY slot DESC
-LIMIT "limit" OFFSET "offset"
+ORDER BY slot DESC,
+involved_accounts LIMIT "limit" OFFSET "offset"
 $$ LANGUAGE sql STABLE;
