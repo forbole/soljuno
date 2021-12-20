@@ -58,7 +58,7 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader) error {
 	}
 	wg := new(sync.WaitGroup)
 	for i := 0; ; i++ {
-		if ctx.Pool.Free() == 0 || i%ctx.Pool.Cap()+1 == 0 {
+		if ctx.Pool.Free() == 0 || i%1000 == 0 {
 			time.Sleep(time.Second)
 		}
 
