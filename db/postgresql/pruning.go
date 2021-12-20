@@ -11,5 +11,12 @@ func (db *Database) Prune(slot uint64) error {
 DELETE FROM message 
 WHERE slot <= $1
 `, slot)
+	if err != nil {
+		return err
+	}
+	_, err = db.Sqlx.Exec(`
+DELETE FROM transaction 
+WHERE slot <= $1
+`, slot)
 	return err
 }
