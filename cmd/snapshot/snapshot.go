@@ -16,8 +16,12 @@ import (
 	accountParser "github.com/forbole/soljuno/solana/account"
 )
 
+const (
+	FlagParallelize = "parallelize"
+)
+
 func ImportSnapshotCmd(cmdCfg *Config) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:     "import-snapshot [file]",
 		Short:   "Import a snapshot at specific slot",
 		PreRunE: ReadConfig(cmdCfg),
@@ -27,15 +31,18 @@ func ImportSnapshotCmd(cmdCfg *Config) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			parallelize, err := cmd.Flags().GetInt("parallelize")
 			if err != nil {
 				return err
 			}
-			return StartImportSnapshot(context, args[0])
+			return StartImportSnapshot(context, args[0], parallelize)
 		},
 	}
+	cmd.Flags().Int(FlagParallelize, 100, "the amount of accounts to process at a time")
+	return cmd
 }
 
-func StartImportSnapshot(ctx *Context, snapshotFile string) error {
+func StartImportSnapshot(ctx *Context, snapshotFile string, parallelize int) error {
 	path, err := filepath.Abs(snapshotFile)
 	if err != nil {
 		return err
@@ -47,18 +54,18 @@ func StartImportSnapshot(ctx *Context, snapshotFile string) error {
 	defer func() { _ = file.Close() }()
 	reader := bufio.NewReader(file)
 
-	return handleSnapshot(ctx, reader)
+	return handleSnapshot(ctx, reader, parallelize)
 }
 
 // handleSnapshot handles all accounts inside the snapshot file
-func handleSnapshot(ctx *Context, reader *bufio.Reader) error {
+func handleSnapshot(ctx *Context, reader *bufio.Reader, parallelize int) error {
 	_, _, err := reader.ReadLine()
 	if err != nil {
 		return err
 	}
 	wg := new(sync.WaitGroup)
 	for i := 0; ; i++ {
-		if ctx.Pool.Free() == 0 || i%1000 == 0 {
+		if ctx.Pool.Free() == 0 || (i+1)%parallelize == 0 {
 			time.Sleep(time.Second)
 		}
 
