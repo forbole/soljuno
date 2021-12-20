@@ -132,10 +132,10 @@ func handleAccount(ctx *Context, address string) error {
 	if info.Value == nil {
 		return nil
 	}
-	err = updateAccountBalance(ctx, address, info)
-	if err != nil {
-		return err
-	}
+	// err = updateAccountBalance(ctx, address, info)
+	// if err != nil {
+	// 	return err
+	// }
 
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
 	if err != nil {
