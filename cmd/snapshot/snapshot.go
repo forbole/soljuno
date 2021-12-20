@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 
 	accountParser "github.com/forbole/soljuno/solana/account"
 )
@@ -43,6 +44,8 @@ func ImportSnapshotCmd(cmdCfg *Config) *cobra.Command {
 }
 
 func StartImportSnapshot(ctx *Context, snapshotFile string, parallelize int) error {
+	go consumeBuffer(ctx, parallelize)
+
 	path, err := filepath.Abs(snapshotFile)
 	if err != nil {
 		return err
@@ -70,7 +73,7 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, parallelize int) error {
 		}
 
 		// Read account section from yaml
-		pubkey, _, err := readSection(reader)
+		pubkey, bz, err := readSection(reader)
 		// Break the loop when there is no new account
 		if err == io.EOF {
 			break
@@ -79,12 +82,19 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, parallelize int) error {
 			return err
 		}
 
+		var account Account
+		err = yaml.Unmarshal(bz.Bytes(), &account)
+		if err != nil {
+			return err
+		}
+		account.Pubkey = pubkey
+
 		wg.Add(1)
 		err = ctx.Pool.Submit(
 			func() {
 				defer wg.Done()
 				ctx.Logger.Info("Start handling account", "address", pubkey)
-				err = handleAccount(ctx, pubkey)
+				err = handleAccount(ctx, account)
 				if err != nil {
 					ctx.Logger.Error("failed to import account", "address", pubkey, "err", err)
 				}
@@ -118,7 +128,10 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 			l = []byte(`account:`)
 		}
 		l = []byte(strings.Replace(string(l), "- ", "", 1))
-		buf.Write(l)
+		_, err := buf.Write(l)
+		if err != nil {
+			return "", bytes.Buffer{}, err
+		}
 
 		_, err = buf.WriteString("\n")
 		if err != nil {
@@ -131,7 +144,9 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 	return pubkey, buf, nil
 }
 
-func handleAccount(ctx *Context, address string) error {
+func handleAccount(ctx *Context, account Account) error {
+	ctx.Buffer <- account
+	address := account.Pubkey
 	info, err := ctx.Proxy.AccountInfo(address)
 	if err != nil {
 		return err
@@ -139,17 +154,12 @@ func handleAccount(ctx *Context, address string) error {
 	if info.Value == nil {
 		return nil
 	}
-	// err = updateAccountBalance(ctx, address, info)
-	// if err != nil {
-	// 	return err
-	// }
-
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
 	if err != nil {
 		return err
 	}
-	account := accountParser.Parse(info.Value.Owner, bz)
-	switch account := account.(type) {
+
+	switch account := accountParser.Parse(info.Value.Owner, bz).(type) {
 	case accountParser.Token:
 		return updateToken(ctx, address, info.Context.Slot, account)
 

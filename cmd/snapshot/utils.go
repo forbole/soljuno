@@ -11,9 +11,9 @@ import (
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 )
 
-func updateAccountBalance(ctx *Context, address string, info clienttypes.AccountInfo) error {
+func updateAccountBalance(ctx *Context, slot uint64, addresses []string, balances []uint64) error {
 	bankDb := ctx.Database.(db.BankDb)
-	return bankDb.SaveAccountBalances(info.Context.Slot, []string{address}, []uint64{info.Value.Lamports})
+	return bankDb.SaveAccountBalances(slot, addresses, balances)
 }
 
 func updateToken(ctx *Context, address string, slot uint64, token accountParser.Token) error {
