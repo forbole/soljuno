@@ -97,6 +97,7 @@ type Context struct {
 	Database db.Database
 	Logger   logging.Logger
 	Pool     *ants.Pool
+	Buffer   chan Account
 }
 
 // NewContext builds a new Context instance
@@ -108,5 +109,6 @@ func NewContext(
 		Database: db,
 		Logger:   logger,
 		Pool:     pool,
+		Buffer:   make(chan Account),
 	}
 }

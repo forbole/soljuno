@@ -12,12 +12,17 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 
 	accountParser "github.com/forbole/soljuno/solana/account"
 )
 
+const (
+	FlagParallelize = "parallelize"
+)
+
 func ImportSnapshotCmd(cmdCfg *Config) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:     "import-snapshot [file]",
 		Short:   "Import a snapshot at specific slot",
 		PreRunE: ReadConfig(cmdCfg),
@@ -27,15 +32,20 @@ func ImportSnapshotCmd(cmdCfg *Config) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			parallelize, err := cmd.Flags().GetInt("parallelize")
 			if err != nil {
 				return err
 			}
-			return StartImportSnapshot(context, args[0])
+			return StartImportSnapshot(context, args[0], parallelize)
 		},
 	}
+	cmd.Flags().Int(FlagParallelize, 100, "the amount of accounts to process at a time")
+	return cmd
 }
 
-func StartImportSnapshot(ctx *Context, snapshotFile string) error {
+func StartImportSnapshot(ctx *Context, snapshotFile string, parallelize int) error {
+	go consumeBuffer(ctx, parallelize)
+
 	path, err := filepath.Abs(snapshotFile)
 	if err != nil {
 		return err
@@ -47,23 +57,23 @@ func StartImportSnapshot(ctx *Context, snapshotFile string) error {
 	defer func() { _ = file.Close() }()
 	reader := bufio.NewReader(file)
 
-	return handleSnapshot(ctx, reader)
+	return handleSnapshot(ctx, reader, parallelize)
 }
 
 // handleSnapshot handles all accounts inside the snapshot file
-func handleSnapshot(ctx *Context, reader *bufio.Reader) error {
+func handleSnapshot(ctx *Context, reader *bufio.Reader, parallelize int) error {
 	_, _, err := reader.ReadLine()
 	if err != nil {
 		return err
 	}
 	wg := new(sync.WaitGroup)
 	for i := 0; ; i++ {
-		if ctx.Pool.Free() == 0 || i%ctx.Pool.Cap()+1 == 0 {
+		if ctx.Pool.Free() == 0 || (i+1)%parallelize == 0 {
 			time.Sleep(time.Second)
 		}
 
 		// Read account section from yaml
-		pubkey, _, err := readSection(reader)
+		pubkey, bz, err := readSection(reader)
 		// Break the loop when there is no new account
 		if err == io.EOF {
 			break
@@ -72,12 +82,19 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader) error {
 			return err
 		}
 
+		var account Account
+		err = yaml.Unmarshal(bz.Bytes(), &account)
+		if err != nil {
+			return err
+		}
+		account.Pubkey = pubkey
+
 		wg.Add(1)
 		err = ctx.Pool.Submit(
 			func() {
 				defer wg.Done()
 				ctx.Logger.Info("Start handling account", "address", pubkey)
-				err = handleAccount(ctx, pubkey)
+				err = handleAccount(ctx, account)
 				if err != nil {
 					ctx.Logger.Error("failed to import account", "address", pubkey, "err", err)
 				}
@@ -111,7 +128,10 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 			l = []byte(`account:`)
 		}
 		l = []byte(strings.Replace(string(l), "- ", "", 1))
-		buf.Write(l)
+		_, err := buf.Write(l)
+		if err != nil {
+			return "", bytes.Buffer{}, err
+		}
 
 		_, err = buf.WriteString("\n")
 		if err != nil {
@@ -124,7 +144,9 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 	return pubkey, buf, nil
 }
 
-func handleAccount(ctx *Context, address string) error {
+func handleAccount(ctx *Context, account Account) error {
+	ctx.Buffer <- account
+	address := account.Pubkey
 	info, err := ctx.Proxy.AccountInfo(address)
 	if err != nil {
 		return err
@@ -132,17 +154,12 @@ func handleAccount(ctx *Context, address string) error {
 	if info.Value == nil {
 		return nil
 	}
-	err = updateAccountBalance(ctx, address, info)
-	if err != nil {
-		return err
-	}
-
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
 	if err != nil {
 		return err
 	}
-	account := accountParser.Parse(info.Value.Owner, bz)
-	switch account := account.(type) {
+
+	switch account := accountParser.Parse(info.Value.Owner, bz).(type) {
 	case accountParser.Token:
 		return updateToken(ctx, address, info.Context.Slot, account)
 

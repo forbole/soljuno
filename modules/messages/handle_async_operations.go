@@ -15,7 +15,7 @@ func (m *Module) RunAsyncOperations() {
 }
 
 func (m *Module) consumeMsgs() {
-	msgs := m.GetMsgs(1000)
+	msgs := m.getMsgs(1000)
 	go func() {
 		err := m.db.SaveMessages(msgs)
 		if err != nil {
@@ -24,7 +24,7 @@ func (m *Module) consumeMsgs() {
 	}()
 }
 
-func (m *Module) GetMsgs(num int) []types.Message {
+func (m *Module) getMsgs(num int) []types.Message {
 	var msgs []types.Message
 	for {
 		select {
