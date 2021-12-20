@@ -19,10 +19,10 @@ type AccountDetail struct {
 func (a Account) ToBalance() (string, uint64, error) {
 	balanceStr := a.Detail.Balance
 	balanceStr = strings.Replace(balanceStr, " SOL", "", 1)
-	balance, err := strconv.ParseUint(balanceStr, 10, 64)
+	balance, err := strconv.ParseFloat(balanceStr, 64)
 	return a.Pubkey, ToLamports(balance), err
 }
 
-func ToLamports(balance uint64) uint64 {
-	return balance * 1_000_000_000
+func ToLamports(balance float64) uint64 {
+	return uint64(balance * 1_000_000_000)
 }
