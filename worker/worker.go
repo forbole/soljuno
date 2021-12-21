@@ -102,7 +102,12 @@ func (w Worker) ExportBlock(block types.Block) error {
 		return fmt.Errorf("failed to persist block: %s", err)
 	}
 
-	err = w.db.SaveTxs(block.Txs)
+	w.DoAsync(func() {
+		err := w.db.SaveTxs(block.Txs)
+		if err != nil {
+			w.logger.Error("failed to store txs", "slot", block.Slot, "err", err)
+		}
+	})
 	// Handle block events
 	w.handleBlock(block)
 	return err
