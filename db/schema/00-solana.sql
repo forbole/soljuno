@@ -23,7 +23,7 @@ CREATE INDEX transaction_slot_index ON transaction (slot);
 
 CREATE TABLE message
 (
-    transaction_hash    TEXT    NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT    NOT NULL,
     slot                BIGINT  NOT NULL,
     index               INT     NOT NULL,
     inner_index         INT     NOT NULL,
