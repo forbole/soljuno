@@ -19,6 +19,7 @@ func NewModule(db db.Database, pool *ants.Pool) *Module {
 	return &Module{
 		db:     db,
 		buffer: make(chan types.Block),
+		pool:   pool,
 	}
 }
 
