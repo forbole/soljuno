@@ -102,14 +102,8 @@ func (w Worker) ExportBlock(block types.Block) error {
 		return fmt.Errorf("failed to persist block: %s", err)
 	}
 
-	w.DoAsync(func() {
-		err := w.db.SaveTxs(block.Txs)
-		if err != nil {
-			w.logger.Error("failed to store txs", "slot", block.Slot, "err", err)
-		}
-	})
 	// Handle block events
-	w.handleBlock(block)
+	w.DoAsync(func() { w.handleBlock(block) })
 	return err
 }
 
@@ -121,8 +115,11 @@ func (w Worker) DoAsync(fun func()) {
 
 // handleBlock handles all the events in a block
 func (w Worker) handleBlock(block types.Block) {
+	err := w.db.SaveTxs(block.Txs)
+	if err != nil {
+		w.logger.Error("failed to store txs", "slot", block.Slot, "err", err)
+	}
 	w.handleBlockModules(block)
-
 	for _, tx := range block.Txs {
 		tx := tx
 		w.DoAsync(func() { w.handleTx(tx) })
