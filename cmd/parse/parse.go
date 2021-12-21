@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/panjf2000/ants/v2"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/forbole/soljuno/solana/parser"
@@ -105,14 +104,7 @@ func StartParsing(ctx *Context) error {
 	parser.Register(associatedTokenAccount.ProgramID, associatedTokenAccount.Parser{})
 	parser.Register(tokenswap.ProgramID, tokenswap.Parser{})
 
-	workerCfg := types.Cfg.GetWorkerConfig()
-	// Create workers
-	pool, err := ants.NewPool(workerCfg.GetPoolSize())
-	if err != nil {
-		return err
-	}
-
-	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parser, ctx.Logger, pool, exportQueue, ctx.Modules)
+	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parser, ctx.Logger, ctx.Pool, exportQueue, ctx.Modules)
 	workers := make([]worker.Worker, cfg.GetWorkers())
 	for i := range workers {
 		workers[i] = worker.NewWorker(i, workerCtx)

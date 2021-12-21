@@ -2,6 +2,7 @@ package parse
 
 import (
 	"github.com/forbole/soljuno/types/logging"
+	"github.com/panjf2000/ants/v2"
 
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
@@ -88,17 +89,20 @@ type Context struct {
 	Database db.Database
 	Logger   logging.Logger
 	Modules  []modules.Module
+	Pool     *ants.Pool
 }
 
 // NewContext builds a new Context instance
 func NewContext(
 	proxy client.Proxy, db db.Database,
 	logger logging.Logger, modules []modules.Module,
+	pool *ants.Pool,
 ) *Context {
 	return &Context{
 		Proxy:    proxy,
 		Database: db,
 		Modules:  modules,
 		Logger:   logger,
+		Pool:     pool,
 	}
 }
