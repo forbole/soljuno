@@ -3,6 +3,7 @@ package registrar
 import (
 	"github.com/forbole/soljuno/solana/parser"
 	"github.com/forbole/soljuno/types/logging"
+	"github.com/panjf2000/ants/v2"
 
 	"github.com/forbole/soljuno/types"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/forbole/soljuno/modules/stake"
 	"github.com/forbole/soljuno/modules/system"
 	"github.com/forbole/soljuno/modules/token"
+	"github.com/forbole/soljuno/modules/txs"
 	"github.com/forbole/soljuno/modules/vote"
 
 	"github.com/forbole/soljuno/modules"
@@ -32,17 +34,19 @@ type Context struct {
 	ParserManager parser.ParserManager
 	Proxy         client.Proxy
 	Logger        logging.Logger
+	Pool          *ants.Pool
 }
 
 // NewContext allows to build a new Context instance
 func NewContext(
-	parsingConfig types.Config, database db.Database, proxy client.Proxy, logger logging.Logger,
+	parsingConfig types.Config, database db.Database, proxy client.Proxy, logger logging.Logger, pool *ants.Pool,
 ) Context {
 	return Context{
 		ParsingConfig: parsingConfig,
 		Database:      database,
 		Proxy:         proxy,
 		Logger:        logger,
+		Pool:          pool,
 	}
 }
 
@@ -85,7 +89,7 @@ func NewDefaultRegistrar() *DefaultRegistrar {
 func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	return modules.Modules{
 		pruning.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Logger),
-		messages.NewModule(ctx.Database),
+		messages.NewModule(ctx.Database, ctx.Pool),
 		bank.NewModule(ctx.Database),
 		system.NewModule(ctx.Database, ctx.Proxy),
 		stake.NewModule(ctx.Database, ctx.Proxy),
@@ -96,6 +100,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		pricefeed.NewModule(ctx.Database),
 		consensus.NewModule(ctx.Database),
 		epoch.NewModule(ctx.Database, ctx.Proxy),
+		txs.NewModule(ctx.Database, ctx.Pool),
 	}
 }
 

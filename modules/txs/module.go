@@ -1,4 +1,4 @@
-package messages
+package txs
 
 import (
 	"github.com/forbole/soljuno/db"
@@ -9,28 +9,27 @@ import (
 
 var _ modules.Module = &Module{}
 
-// Module represents the module allowing to store messages properly inside a dedicated table
 type Module struct {
 	db     db.Database
-	buffer chan types.Message
+	buffer chan types.Block
 	pool   *ants.Pool
 }
 
 func NewModule(db db.Database, pool *ants.Pool) *Module {
 	return &Module{
 		db:     db,
-		buffer: make(chan types.Message),
+		buffer: make(chan types.Block),
 		pool:   pool,
 	}
 }
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "messages"
+	return "txs"
 }
 
-// HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
-	m.buffer <- msg
+// HandleBlock implements modules.MessageModule
+func (m *Module) HandleBlock(block types.Block) error {
+	m.buffer <- block
 	return nil
 }

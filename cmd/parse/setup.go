@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/db"
+	"github.com/panjf2000/ants/v2"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -36,6 +37,11 @@ func GetParsingContext(parseConfig *Config) (*Context, error) {
 		return nil, fmt.Errorf("failed to start client: %s", err)
 	}
 
+	pool, err := ants.NewPool(cfg.GetWorkerConfig().GetPoolSize())
+	if err != nil {
+		return nil, err
+	}
+
 	// Setup the logging
 	err = parseConfig.GetLogger().SetLogFormat(cfg.GetLoggingConfig().GetLogFormat())
 	if err != nil {
@@ -48,7 +54,7 @@ func GetParsingContext(parseConfig *Config) (*Context, error) {
 	}
 
 	// Get the modules
-	context := modsregistrar.NewContext(cfg, database, cp, parseConfig.GetLogger())
+	context := modsregistrar.NewContext(cfg, database, cp, parseConfig.GetLogger(), pool)
 	mods := parseConfig.GetRegistrar().BuildModules(context)
 	registeredModules := modsregistrar.GetModules(mods, cfg.GetChainConfig().GetModules(), parseConfig.GetLogger())
 
@@ -62,5 +68,5 @@ func GetParsingContext(parseConfig *Config) (*Context, error) {
 		}
 	}
 
-	return NewContext(cp, database, parseConfig.GetLogger(), registeredModules), nil
+	return NewContext(cp, database, parseConfig.GetLogger(), registeredModules, pool), nil
 }
