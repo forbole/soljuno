@@ -21,7 +21,7 @@ func (suite *DbTestSuite) TestGetLastBlock() {
 	})
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewBlockRow(1, 1, "hash", "proposer", date)
+	expected := dbtypes.NewBlockRow(1, 1, "hash", "proposer", date, 0)
 
 	result, err := suite.database.GetLastBlock()
 	suite.Require().NoError(err)
