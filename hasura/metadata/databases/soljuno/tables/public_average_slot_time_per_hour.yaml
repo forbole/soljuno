@@ -5,6 +5,7 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
+    - slot
     - average_time
     filter: {}
   role: anonymous
