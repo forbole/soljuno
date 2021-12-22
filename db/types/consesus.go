@@ -9,15 +9,17 @@ type BlockRow struct {
 	Hash      string    `db:"hash"`
 	Proposer  string    `db:"proposer"`
 	Timestamp time.Time `db:"timestamp"`
+	NumTxs    int       `db:"num_txs"`
 }
 
-func NewBlockRow(slot uint64, height uint64, hash string, proposer string, timestamp time.Time) BlockRow {
+func NewBlockRow(slot uint64, height uint64, hash string, proposer string, timestamp time.Time, numTxs int) BlockRow {
 	return BlockRow{
 		Slot:      slot,
 		Height:    height,
 		Hash:      hash,
 		Proposer:  proposer,
 		Timestamp: timestamp,
+		NumTxs:    numTxs,
 	}
 }
 
