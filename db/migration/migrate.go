@@ -5,58 +5,13 @@ import (
 )
 
 func Up(db db.Database) error {
-	_, err := db.Exec(`CREATE TABLE epoch_info (
-		one_row_id          BOOL            NOT NULL DEFAULT TRUE PRIMARY KEY,
-		epoch               BIGINT          NOT NULL,
-		transaction_count   NUMERIC(20, 0)  NOT NULL,
-		CHECK (one_row_id)
-	);
-	
-	CREATE TABLE supply_info (
-		one_row_id      BOOL            NOT NULL DEFAULT TRUE PRIMARY KEY,
-		epoch           BIGINT          NOT NULL,
-		total           NUMERIC(20,0)   NOT NULL,
-		circulating     NUMERIC(20,0)   NOT NULL,
-		non_circulating NUMERIC(20,0)   NOT NULL,
-		CHECK (one_row_id)
-	);
-	CREATE TABLE inflation_rate (
-		one_row_id  BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
-		epoch       BIGINT  NOT NULL,
-		total       FLOAT   NOT NULL,
-		foundation  FLOAT   NOT NULL,
-		validator   FLOAT   NOT NULL,
-		CHECK (one_row_id)
-	);
-	CREATE TABLE epoch_schedule_param (
-		one_row_id          BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
-		epoch               BIGINT  NOT NULL,
-		slots_per_epoch     INT     NOT NULL,
-		first_normal_epoch  INT     NOT NULL,
-		first_normal_slot   INT     NOT NULL,
-		warmup              BOOL    NOT NULL,
-		CHECK (one_row_id)
-	);
-	CREATE TABLE inflation_governor_param (
-		one_row_id          BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
-		epoch               BIGINT  NOT NULL,
-		initial             FLOAT   NOT NULL,
-		terminal            FLOAT   NOT NULL,
-		taper               FLOAT   NOT NULL,
-		foundation          FLOAT   NOT NULL,
-		foundation_terminal FLOAT   NOT NULL,
-		CHECK (one_row_id)
-	);
+	_, err := db.Exec(`
+	ALTER TABLE block ADD COLUMN num_tx INT NOT NULL DEFAULT 0
 	`)
 	return err
 }
 
 func Down(db db.ExceutorDb) error {
-	_, err := db.Exec(`DROP TABLE epoch_info;
-	DROP TABLE supply_info;
-	DROP TABLE inflation_rate;
-	DROP TABLE epoch_schedule_param;
-	DROP TABLE inflation_governor_param;
-	`)
+	_, err := db.Exec(`ALTER TABLE block DROP COLUMN num_tx`)
 	return err
 }
