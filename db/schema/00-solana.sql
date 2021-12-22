@@ -4,7 +4,8 @@ CREATE TABLE block
     height      BIGINT      NOT NULL,
     hash        TEXT        NOT NULL UNIQUE,
     proposer    TEXT        DEFAULT '',
-    timestamp   TIMESTAMP   WITHOUT TIME ZONE NOT NULL
+    timestamp   TIMESTAMP   WITHOUT TIME ZONE NOT NULL,
+    num_tx      INT         NOT NULL DEFAULT 0
 );
 CREATE INDEX block_hash_index ON block (hash);
 CREATE INDEX block_proposer_index ON block (proposer);
