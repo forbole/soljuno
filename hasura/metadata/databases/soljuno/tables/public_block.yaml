@@ -18,6 +18,6 @@ select_permissions:
     - hash
     - proposer
     - timestamp
-    - num_tx
+    - num_txss
     filter: {}
   role: anonymous
