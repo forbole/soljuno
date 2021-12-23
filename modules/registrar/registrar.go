@@ -87,9 +87,15 @@ func NewDefaultRegistrar() *DefaultRegistrar {
 
 // BuildModules implements Registrar
 func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
+	pruningModule := pruning.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Logger)
+	msgsModule := messages.NewModule(ctx.Database, ctx.Pool)
+	txsModule := txs.NewModule(ctx.Database, ctx.Pool)
+	pruningModule.RegisterService(msgsModule, txsModule)
+
 	return modules.Modules{
-		pruning.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Logger),
-		messages.NewModule(ctx.Database, ctx.Pool),
+		pruningModule,
+		txsModule,
+		msgsModule,
 		bank.NewModule(ctx.Database),
 		system.NewModule(ctx.Database, ctx.Proxy),
 		stake.NewModule(ctx.Database, ctx.Proxy),
@@ -100,7 +106,6 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		pricefeed.NewModule(ctx.Database),
 		consensus.NewModule(ctx.Database),
 		epoch.NewModule(ctx.Database, ctx.Proxy),
-		txs.NewModule(ctx.Database, ctx.Pool),
 	}
 }
 

@@ -3,11 +3,13 @@ package txs
 import (
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/modules/pruning"
 	"github.com/forbole/soljuno/types"
 	"github.com/panjf2000/ants/v2"
 )
 
 var _ modules.Module = &Module{}
+var _ pruning.PruningService = &Module{}
 
 type Module struct {
 	db     db.Database
@@ -32,4 +34,10 @@ func (m *Module) Name() string {
 func (m *Module) HandleBlock(block types.Block) error {
 	m.buffer <- block
 	return nil
+}
+
+// Prune implements pruning.PruningService
+func (m *Module) Prune(slot uint64) error {
+	err := m.db.PruneTxsBySlot(slot)
+	return err
 }
