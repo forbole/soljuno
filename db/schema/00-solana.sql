@@ -47,3 +47,4 @@ CREATE TABLE message_by_address
 );
 CREATE INDEX message_by_address_address_index ON message_by_address (address);
 CREATE INDEX message_by_address_slot_index ON message_by_address (slot);
+CREATE INDEX message_by_transaction_hash_slot_index ON message_by_address (transaction_hash);
