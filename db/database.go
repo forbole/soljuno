@@ -54,14 +54,6 @@ type BasicDb interface {
 	// An error is returned if the operation fails.
 	SaveTxs(txs []types.Tx) error
 
-	// SaveTx will be called to save each transaction contained inside a block.
-	// An error is returned if the operation fails.
-	SaveTx(tx types.Tx) error
-
-	// SaveMessage stores a single message.
-	// An error is returned if the operation fails.
-	SaveMessage(msg types.Message) error
-
 	// SaveMessages stores a batch of messages.
 	// An error is returned if the operation fails.
 	SaveMessages(msg []types.Message) error
