@@ -13,7 +13,7 @@ func (suite *DbTestSuite) TestPrune() {
 	}
 	var rows []Row
 
-	msg := types.NewMessage("tx", 1, 0, 0, "program", nil, "", solanatypes.NewParsedInstruction("unknown", nil))
+	msg := types.NewMessage("tx", 1, 0, 0, "program", []string{"address1, address2"}, "", solanatypes.NewParsedInstruction("unknown", nil))
 	tx := types.NewTx("tx", 1, nil, 0, nil, []types.Message{msg}, nil, nil, nil)
 	err := suite.database.SaveBlock(types.NewBlock(1, 1, "block", "proposer", time.Now(), []types.Tx{tx}))
 	suite.Require().NoError(err)
@@ -37,6 +37,11 @@ func (suite *DbTestSuite) TestPrune() {
 	suite.Require().Len(rows, 1)
 	rows = []Row{}
 
+	err = suite.database.Sqlx.Select(&rows, "SELECT slot FROM message_by_address")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 2)
+	rows = []Row{}
+
 	// Prune before slot 1
 	err = suite.database.PruneTxsBySlot(1)
 	suite.Require().NoError(err)
@@ -48,6 +53,11 @@ func (suite *DbTestSuite) TestPrune() {
 
 	err = suite.database.PruneMsgsBySlot(1)
 	err = suite.database.Sqlx.Select(&rows, "SELECT slot FROM message")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
+	rows = []Row{}
+
+	err = suite.database.Sqlx.Select(&rows, "SELECT slot FROM message_by_address")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 0)
 	rows = []Row{}
