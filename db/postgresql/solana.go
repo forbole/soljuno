@@ -13,6 +13,8 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
+const MAX_PARAMS_LENGTH = 65535
+
 // Builder creates a database connection with the given database connection info
 // from config. It returns a database connection handle or an error if the
 // connection fails.
@@ -87,22 +89,6 @@ VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
 	return err
 }
 
-// SaveTx implements db.Database
-func (db *Database) SaveTx(tx types.Tx) error {
-	stmt := `
-INSERT INTO transaction (hash, slot, error, fee, logs)
-VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
-	_, err := db.Sqlx.Exec(
-		stmt,
-		tx.Hash,
-		tx.Slot,
-		tx.Successful(),
-		tx.Fee,
-		pq.Array(tx.Logs),
-	)
-	return err
-}
-
 // SaveTxs implements db.Database
 func (db *Database) SaveTxs(txs []types.Tx) error {
 	if len(txs) == 0 {
@@ -133,48 +119,22 @@ func (db *Database) SaveTxs(txs []types.Tx) error {
 	return err
 }
 
-// SaveMessage implements db.Database
-func (db *Database) SaveMessage(msg types.Message) error {
-	stmt := `
-INSERT INTO message(transaction_hash, slot, index, inner_index, program, involved_accounts, raw_data, type, value) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT DO NOTHING`
-	if msg.InvolvedAccounts == nil {
-		msg.InvolvedAccounts = []string{}
-	}
-	_, err := db.Sqlx.Exec(
-		stmt,
-		msg.TxHash,
-		msg.Slot,
-		msg.Index,
-		msg.InnerIndex,
-		msg.Program,
-		pq.Array(msg.InvolvedAccounts),
-		msg.RawData,
-		msg.Parsed.Type(),
-		msg.Parsed.JSON(),
-	)
-	return err
-}
-
 // SaveMessages implements db.Database
 func (db *Database) SaveMessages(msgs []types.Message) error {
 	if len(msgs) == 0 {
 		return nil
 	}
 	stmt := `INSERT INTO message
-	(transaction_hash, slot, index, inner_index, program, involved_accounts, raw_data, type, value) VALUES`
+	(transaction_hash, slot, index, inner_index, program, raw_data, type, value) VALUES`
 
 	var params []interface{}
-	paramsNumber := 9
+	paramsNumber := 8
 	for i, msg := range msgs {
 		bi := i * paramsNumber
 		stmt += fmt.Sprintf(
-			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
-			bi+1, bi+2, bi+3, bi+4, bi+5, bi+6, bi+7, bi+8, bi+9,
+			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
+			bi+1, bi+2, bi+3, bi+4, bi+5, bi+6, bi+7, bi+8,
 		)
-		if msg.InvolvedAccounts == nil {
-			msg.InvolvedAccounts = []string{}
-		}
 		params = append(
 			params,
 			msg.TxHash,
@@ -182,7 +142,6 @@ func (db *Database) SaveMessages(msgs []types.Message) error {
 			msg.Index,
 			msg.InnerIndex,
 			msg.Program,
-			pq.Array(msg.InvolvedAccounts),
 			msg.RawData,
 			msg.Parsed.Type(),
 			msg.Parsed.JSON(),
@@ -192,7 +151,64 @@ func (db *Database) SaveMessages(msgs []types.Message) error {
 	stmt = stmt[:len(stmt)-1]
 	stmt += `ON CONFLICT DO NOTHING`
 	_, err := db.Sqlx.Exec(stmt, params...)
-	return err
+	if err != nil {
+		return nil
+	}
+	return db.saveMsgAddressIndexes(msgs)
+}
+
+// saveMsgAddressIndexes implements db.Database
+func (db *Database) saveMsgAddressIndexes(msgs []types.Message) error {
+	if len(msgs) == 0 {
+		return nil
+	}
+	var params []interface{}
+	paramsNumber := 5
+	count := 0
+	insertStmt := `INSERT INTO message_by_address
+	(address, slot, transaction_hash, index, inner_index) VALUES`
+	paramsStmt := ""
+	conflictStmt := `ON CONFLICT DO NOTHING`
+
+	for _, msg := range msgs {
+		for _, account := range msg.InvolvedAccounts {
+			// Excute if the max params length will be reached
+			if len(params)+paramsNumber > MAX_PARAMS_LENGTH {
+				err := db.insertWithParams(
+					insertStmt,
+					paramsStmt[:len(paramsStmt)-1],
+					conflictStmt,
+					params,
+				)
+				if err != nil {
+					return err
+				}
+				count = 0
+			}
+
+			bi := count * paramsNumber
+			paramsStmt += getParamsStmt(bi, paramsNumber)
+			params = append(
+				params,
+				account,
+				msg.Slot,
+				msg.TxHash,
+				msg.Index,
+				msg.InnerIndex,
+			)
+			count++
+		}
+	}
+	if count == 0 {
+		return nil
+	}
+
+	return db.insertWithParams(
+		insertStmt,
+		paramsStmt[:len(paramsStmt)-1],
+		conflictStmt,
+		params,
+	)
 }
 
 // Close implements db.Database
