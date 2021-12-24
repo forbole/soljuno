@@ -10,6 +10,17 @@ object_relationships:
         name: transaction
       column_mapping:
         transaction_hash: hash
+array_relationships:
+- name: involved_accounts
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: message_by_address
+      column_mapping:
+        transaction_hash: transaction_hash
+        index: index
+        inner_index: inner_index
 select_permissions:
 - permission:
     allow_aggregations: true
