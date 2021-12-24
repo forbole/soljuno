@@ -26,6 +26,7 @@ select_permissions:
     allow_aggregations: true
     columns:
     - transaction_hash
+    - slot
     - index
     - inner_index
     - program
