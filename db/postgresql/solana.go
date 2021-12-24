@@ -183,6 +183,7 @@ func (db *Database) saveMsgAddressIndexes(msgs []types.Message) error {
 				if err != nil {
 					return err
 				}
+				count = 0
 			}
 
 			bi := count * paramsNumber

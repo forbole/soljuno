@@ -13,7 +13,7 @@ func (suite *DbTestSuite) TestPrune() {
 	}
 	var rows []Row
 
-	msg := types.NewMessage("tx", 1, 0, 0, "program", []string{"address1, address2"}, "", solanatypes.NewParsedInstruction("unknown", nil))
+	msg := types.NewMessage("tx", 1, 0, 0, "program", []string{"address1", "address2"}, "", solanatypes.NewParsedInstruction("unknown", nil))
 	tx := types.NewTx("tx", 1, nil, 0, nil, []types.Message{msg}, nil, nil, nil)
 	err := suite.database.SaveBlock(types.NewBlock(1, 1, "block", "proposer", time.Now(), []types.Tx{tx}))
 	suite.Require().NoError(err)
