@@ -18,5 +18,8 @@ select_permissions:
     columns:
     - address
     - slot
+    - transaction_hash
+    - index
+    - inner_index
     filter: {}
   role: anonymous
