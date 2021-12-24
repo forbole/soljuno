@@ -13,6 +13,8 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
+const MAX_PARAMS_LENGTH = 65535
+
 // Builder creates a database connection with the given database connection info
 // from config. It returns a database connection handle or an error if the
 // connection fails.
@@ -152,27 +154,39 @@ func (db *Database) SaveMessages(msgs []types.Message) error {
 	if err != nil {
 		return nil
 	}
-	return db.saveMsgAdressIndexes(msgs)
+	return db.saveMsgAddressIndexes(msgs)
 }
 
-// saveMsgAdressIndexes implements db.Database
-func (db *Database) saveMsgAdressIndexes(msgs []types.Message) error {
+// saveMsgAddressIndexes implements db.Database
+func (db *Database) saveMsgAddressIndexes(msgs []types.Message) error {
 	if len(msgs) == 0 {
 		return nil
 	}
-	stmt := `INSERT INTO message_by_address
-	(address, slot, transaction_hash, index, inner_index) VALUES`
-
 	var params []interface{}
 	paramsNumber := 5
 	count := 0
+	insertStmt := `INSERT INTO message_by_address
+	(address, slot, transaction_hash, index, inner_index) VALUES`
+	paramsStmt := ""
+	conflictStmt := `ON CONFLICT DO NOTHING`
+
 	for _, msg := range msgs {
 		for _, account := range msg.InvolvedAccounts {
+			// Excute if the max params length will be reached
+			if len(params)+paramsNumber > MAX_PARAMS_LENGTH {
+				err := db.insertWithParams(
+					insertStmt,
+					paramsStmt[:len(paramsStmt)-1],
+					conflictStmt,
+					params,
+				)
+				if err != nil {
+					return err
+				}
+			}
+
 			bi := count * paramsNumber
-			stmt += fmt.Sprintf(
-				"($%d, $%d, $%d, $%d, $%d),",
-				bi+1, bi+2, bi+3, bi+4, bi+5,
-			)
+			paramsStmt += getParamsStmt(bi, paramsNumber)
 			params = append(
 				params,
 				account,
@@ -188,10 +202,28 @@ func (db *Database) saveMsgAdressIndexes(msgs []types.Message) error {
 		return nil
 	}
 
-	stmt = stmt[:len(stmt)-1]
-	stmt += `ON CONFLICT DO NOTHING`
-	_, err := db.Sqlx.Exec(stmt, params...)
+	return db.insertWithParams(
+		insertStmt,
+		paramsStmt[:len(paramsStmt)-1],
+		conflictStmt,
+		params,
+	)
+}
+
+func (db *Database) insertWithParams(insertStmt string, paramsStmt string, conflictStmt string, params []interface{}) error {
+	insertStmt += paramsStmt
+	insertStmt += conflictStmt
+	_, err := db.Sqlx.Exec(insertStmt, params...)
 	return err
+}
+
+func getParamsStmt(start, number int) string {
+	stmt := "("
+	for i := 1; i <= number; i++ {
+		stmt += fmt.Sprintf("$%d,", start+i)
+	}
+	stmt = stmt[:len(stmt)-1]
+	return stmt + "),"
 }
 
 // Close implements db.Database
