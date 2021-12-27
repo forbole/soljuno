@@ -4,14 +4,14 @@ table:
 object_relationships:
 - name: token_unit
   using:
-    foreign_key_constraint_on: unit_name
+    foreign_key_constraint_on: id
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - unit_name
     - price
     - market_cap
+    - symbol
     - timestamp
     filter: {}
   role: anonymous
