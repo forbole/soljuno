@@ -1,13 +1,10 @@
 package tokenlist
 
-import "time"
-
 type TokenList struct {
-	Name      string    `json:"name"`
-	LogoURI   string    `json:"logoURI"`
-	Keywords  []string  `json:"keywords"`
-	Timestamp time.Time `json:"timestamp"`
-	Tokens    []Token   `json:"tokens"`
+	Name     string   `json:"name"`
+	LogoURI  string   `json:"logoURI"`
+	Keywords []string `json:"keywords"`
+	Tokens   []Token  `json:"tokens"`
 }
 
 type Token struct {

@@ -1,19 +1,22 @@
-package cmd
+package types
 
 import (
 	"fmt"
 	"os"
 
-	dbcmd "github.com/forbole/soljuno/cmd/db"
-	initcmd "github.com/forbole/soljuno/cmd/init"
-	parsecmd "github.com/forbole/soljuno/cmd/parse"
-	snapshotcmd "github.com/forbole/soljuno/cmd/snapshot"
+	"github.com/spf13/cobra"
 
+	dbcmd "github.com/forbole/soljuno/cmd/db"
+
+	initcmd "github.com/forbole/soljuno/cmd/init"
+
+	parsecmd "github.com/forbole/soljuno/cmd/parse"
+
+	snapshotcmd "github.com/forbole/soljuno/cmd/snapshot"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/db/builder"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/types/logging"
-	"github.com/spf13/cobra"
 )
 
 // Config represents the general configuration for the commands

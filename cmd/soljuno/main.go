@@ -3,16 +3,17 @@ package main
 import (
 	"os"
 
+	"github.com/forbole/soljuno/cmd"
 	"github.com/forbole/soljuno/cmd/parse"
 
 	"github.com/forbole/soljuno/modules/registrar"
 
-	"github.com/forbole/soljuno/cmd"
+	cmdtypes "github.com/forbole/soljuno/cmd/types"
 )
 
 func main() {
 	// ParsingConfig the runner
-	config := cmd.NewConfig("soljuno").
+	config := cmdtypes.NewConfig("soljuno").
 		WithParseConfig(parse.NewConfig().
 			WithRegistrar(registrar.NewDefaultRegistrar()),
 		)

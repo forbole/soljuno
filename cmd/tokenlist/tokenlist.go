@@ -8,15 +8,15 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/soljuno/cmd"
+	cmdtypes "github.com/forbole/soljuno/cmd/types"
 	dbtypes "github.com/forbole/soljuno/db/types"
 )
 
-func ImportTokenListCmd(cmdCfg *cmd.Config) *cobra.Command {
+func ImportTokenListCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "import-tokenlist [file]",
 		Short:   "Import a tokenlist to the token unit table",
-		PreRunE: cmd.ReadConfig(cmdCfg),
+		PreRunE: cmdtypes.ReadConfig(cmdCfg),
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			context, err := GetTokenListContext(cmdCfg)

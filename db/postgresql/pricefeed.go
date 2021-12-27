@@ -29,7 +29,6 @@ func (db *Database) SaveTokenUnits(units []dbtypes.TokenUnitRow) error {
 		vi := i * paramNumber
 		paramsStmt += getParamsStmt(vi, paramNumber)
 		params = append(params, unit.Address, unit.PriceID, unit.Name, unit.LogoURI, unit.Description, unit.Website)
-
 	}
 	return db.insertWithParams(insertStmt, paramsStmt[:len(paramsStmt)-1], conflictStmt, params)
 }
