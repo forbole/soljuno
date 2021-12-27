@@ -1,14 +1,11 @@
 package postgresql
 
 import (
-	"fmt"
-
 	dbtypes "github.com/forbole/soljuno/db/types"
 )
 
 func (db *Database) GetTokenUnits() ([]dbtypes.TokenUnitRow, error) {
 	query := `SELECT * FROM token_unit`
-
 	var units []dbtypes.TokenUnitRow
 	err := db.Sqlx.Select(&units, query)
 	if err != nil {
@@ -17,10 +14,24 @@ func (db *Database) GetTokenUnits() ([]dbtypes.TokenUnitRow, error) {
 	return units, nil
 }
 
-func (db *Database) SaveTokenUnit(unit dbtypes.TokenUnitRow) error {
-	stmt := `INSERT INTO token_unit (address, price_id, unit_name, logo_url) VALUES ($1, $2, $3, $4)`
-	_, err := db.Sqlx.Exec(stmt, unit.Address, unit.PriceID, unit.Name, unit.LogoURL)
-	return err
+func (db *Database) SaveTokenUnits(units []dbtypes.TokenUnitRow) error {
+	if len(units) == 0 {
+		return nil
+	}
+
+	insertStmt := `INSERT INTO token_unit (address, price_id, unit_name, logo_uri, description, website) VALUES`
+	paramsStmt := ""
+	conflictStmt := `ON CONFLICT (address) DO NOTHING`
+	var params []interface{}
+	paramNumber := 6
+
+	for i, unit := range units {
+		vi := i * paramNumber
+		paramsStmt += getParamsStmt(vi, paramNumber)
+		params = append(params, unit.Address, unit.PriceID, unit.Name, unit.LogoURI, unit.Description, unit.Website)
+
+	}
+	return db.insertWithParams(insertStmt, paramsStmt[:len(paramsStmt)-1], conflictStmt, params)
 }
 
 // SaveTokensPrices allows to save the given prices as the most updated ones
@@ -29,28 +40,22 @@ func (db *Database) SaveTokensPrices(prices []dbtypes.TokenPriceRow) error {
 		return nil
 	}
 
-	stmt := `INSERT INTO token_price (id, price, market_cap, symbol, timestamp) VALUES`
-	var param []interface{}
+	insertStmt := `INSERT INTO token_price (id, price, market_cap, symbol, timestamp) VALUES`
+	paramsStmt := ""
+	conflictStmt := `
+	ON CONFLICT (id) DO UPDATE 
+		SET price = excluded.price,
+			market_cap = excluded.market_cap,
+			timestamp = excluded.timestamp
+	WHERE token_price.timestamp <= excluded.timestamp`
+	var params []interface{}
 	paramNumber := 5
 
 	for i, ticker := range prices {
 		vi := i * paramNumber
-		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
-		param = append(param, ticker.ID, ticker.Price, ticker.MarketCap, ticker.Symbol, ticker.Timestamp)
+		paramsStmt += getParamsStmt(vi, paramNumber)
+		params = append(params, ticker.ID, ticker.Price, ticker.MarketCap, ticker.Symbol, ticker.Timestamp)
 	}
 
-	stmt = stmt[:len(stmt)-1] // Remove trailing ","
-
-	stmt += `
-ON CONFLICT (id) DO UPDATE 
-	SET price = excluded.price,
-	    market_cap = excluded.market_cap,
-	    timestamp = excluded.timestamp
-WHERE token_price.timestamp <= excluded.timestamp`
-	_, err := db.Sqlx.Exec(stmt, param...)
-	if err != nil {
-		return fmt.Errorf("error while saving tokens prices: %s", err)
-	}
-
-	return nil
+	return db.insertWithParams(insertStmt, paramsStmt[:len(paramsStmt)-1], conflictStmt, params)
 }

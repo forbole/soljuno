@@ -235,7 +235,7 @@ type PriceDb interface {
 	GetTokenUnits() ([]dbtypes.TokenUnitRow, error)
 
 	// SaveTokenUnit allows to save the given token unit details
-	SaveTokenUnit(unit dbtypes.TokenUnitRow) error
+	SaveTokenUnits(units []dbtypes.TokenUnitRow) error
 
 	// SaveTokensPrices allows to store the token prices inside the database
 	SaveTokensPrices(prices []dbtypes.TokenPriceRow) error

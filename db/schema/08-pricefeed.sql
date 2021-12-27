@@ -2,8 +2,10 @@ CREATE TABLE token_unit
 (
     address     TEXT    NOT NULL PRIMARY KEY,
     price_id    TEXT    NOT NULL UNIQUE,
-    unit_name   TEXT    NOT NULL,
-    logo_url    TEXT    NOT NULL DEFAULT ''
+    unit_name   TEXT    NOT NULL DEFAULT '',
+    logo_uri    TEXT    NOT NULL DEFAULT '',
+    description TEXT    NOT NULL DEFAULT '',
+    website     TEXT    NOT NULL DEFAULT ''
 );
 
 CREATE TABLE token_price

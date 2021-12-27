@@ -7,20 +7,20 @@ import (
 )
 
 func (suite *DbTestSuite) insertToken(unit dbtypes.TokenUnitRow) {
-	err := suite.database.SaveTokenUnit(unit)
+	err := suite.database.SaveTokenUnits([]dbtypes.TokenUnitRow{unit})
 	suite.Require().NoError(err)
 }
 
 func (suite *DbTestSuite) TestGetTokenUnits() {
-	suite.insertToken(dbtypes.NewTokenUnitRow("sol", "sol", "sol", "url"))
-	suite.insertToken(dbtypes.NewTokenUnitRow("usdc", "usdc", "usdc", "url"))
+	suite.insertToken(dbtypes.NewTokenUnitRow("sol", "sol", "sol", "url", "description", "website"))
+	suite.insertToken(dbtypes.NewTokenUnitRow("usdc", "usdc", "usdc", "url", "description", "website"))
 
 	units, err := suite.database.GetTokenUnits()
 	suite.Require().NoError(err)
 
 	var expected = []dbtypes.TokenUnitRow{
-		dbtypes.NewTokenUnitRow("sol", "sol", "sol", "url"),
-		dbtypes.NewTokenUnitRow("usdc", "usdc", "usdc", "url"),
+		dbtypes.NewTokenUnitRow("sol", "sol", "sol", "url", "description", "website"),
+		dbtypes.NewTokenUnitRow("usdc", "usdc", "usdc", "url", "description", "website"),
 	}
 	suite.Require().Len(units, len(expected))
 	for _, name := range expected {
@@ -29,8 +29,8 @@ func (suite *DbTestSuite) TestGetTokenUnits() {
 }
 
 func (suite *DbTestSuite) TestSaveTokenPrices() {
-	suite.insertToken(dbtypes.NewTokenUnitRow("sol", "sol", "sol", "url"))
-	suite.insertToken(dbtypes.NewTokenUnitRow("usdc", "usdc", "usdc", "url"))
+	suite.insertToken(dbtypes.NewTokenUnitRow("sol", "sol", "sol", "url", "description", "website"))
+	suite.insertToken(dbtypes.NewTokenUnitRow("usdc", "usdc", "usdc", "url", "description", "website"))
 
 	// Save data
 	tickers := []dbtypes.TokenPriceRow{
