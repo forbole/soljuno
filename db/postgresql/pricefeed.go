@@ -4,55 +4,45 @@ import (
 	"fmt"
 
 	dbtypes "github.com/forbole/soljuno/db/types"
-	"github.com/forbole/soljuno/types"
 )
 
-func (db *Database) GetTokenUnits() ([]types.TokenUnit, error) {
+func (db *Database) GetTokenUnits() ([]dbtypes.TokenUnitRow, error) {
 	query := `SELECT * FROM token_unit`
 
-	var dbUnits []dbtypes.TokenUnitRow
-	err := db.Sqlx.Select(&dbUnits, query)
+	var units []dbtypes.TokenUnitRow
+	err := db.Sqlx.Select(&units, query)
 	if err != nil {
 		return nil, err
 	}
-
-	var units = make([]types.TokenUnit, len(dbUnits))
-	for index, unit := range dbUnits {
-		units[index] = types.NewTokenUnit(
-			unit.PriceID,
-			unit.Address,
-			unit.TokenName,
-		)
-	}
-
 	return units, nil
 }
 
-func (db *Database) SaveTokenUnit(unit types.TokenUnit) error {
-	stmt := `INSERT INTO token_unit (price_id, address, unit_name) VALUES ($1, $2, $3)`
-	_, err := db.Sqlx.Exec(stmt, unit.ID, unit.Address, unit.Name)
+func (db *Database) SaveTokenUnit(unit dbtypes.TokenUnitRow) error {
+	stmt := `INSERT INTO token_unit (address, price_id, unit_name, logo_url) VALUES ($1, $2, $3, $4)`
+	_, err := db.Sqlx.Exec(stmt, unit.Address, unit.PriceID, unit.Name, unit.LogoURL)
 	return err
 }
 
 // SaveTokensPrices allows to save the given prices as the most updated ones
-func (db *Database) SaveTokensPrices(prices []types.TokenPrice) error {
+func (db *Database) SaveTokensPrices(prices []dbtypes.TokenPriceRow) error {
 	if len(prices) == 0 {
 		return nil
 	}
 
-	stmt := `INSERT INTO token_price (unit_name, price, market_cap, timestamp) VALUES`
+	stmt := `INSERT INTO token_price (id, price, market_cap, symbol, timestamp) VALUES`
 	var param []interface{}
+	paramNumber := 5
 
 	for i, ticker := range prices {
-		vi := i * 4
-		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
-		param = append(param, ticker.UnitName, ticker.Price, ticker.MarketCap, ticker.Timestamp)
+		vi := i * paramNumber
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
+		param = append(param, ticker.ID, ticker.Price, ticker.MarketCap, ticker.Symbol, ticker.Timestamp)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
 
 	stmt += `
-ON CONFLICT (unit_name) DO UPDATE 
+ON CONFLICT (id) DO UPDATE 
 	SET price = excluded.price,
 	    market_cap = excluded.market_cap,
 	    timestamp = excluded.timestamp

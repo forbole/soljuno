@@ -3,24 +3,24 @@ package postgresql_test
 import (
 	"time"
 
-	"github.com/forbole/soljuno/types"
+	dbtypes "github.com/forbole/soljuno/db/types"
 )
 
-func (suite *DbTestSuite) insertToken(unit types.TokenUnit) {
+func (suite *DbTestSuite) insertToken(unit dbtypes.TokenUnitRow) {
 	err := suite.database.SaveTokenUnit(unit)
 	suite.Require().NoError(err)
 }
 
 func (suite *DbTestSuite) TestGetTokenUnits() {
-	suite.insertToken(types.NewTokenUnit("sol", "sol", "sol"))
-	suite.insertToken(types.NewTokenUnit("usdc", "usdc", "usdc"))
+	suite.insertToken(dbtypes.NewTokenUnitRow("sol", "sol", "sol", "url"))
+	suite.insertToken(dbtypes.NewTokenUnitRow("usdc", "usdc", "usdc", "url"))
 
 	units, err := suite.database.GetTokenUnits()
 	suite.Require().NoError(err)
 
-	var expected = []types.TokenUnit{
-		types.NewTokenUnit("sol", "sol", "sol"),
-		types.NewTokenUnit("usdc", "usdc", "usdc"),
+	var expected = []dbtypes.TokenUnitRow{
+		dbtypes.NewTokenUnitRow("sol", "sol", "sol", "url"),
+		dbtypes.NewTokenUnitRow("usdc", "usdc", "usdc", "url"),
 	}
 	suite.Require().Len(units, len(expected))
 	for _, name := range expected {
@@ -29,28 +29,23 @@ func (suite *DbTestSuite) TestGetTokenUnits() {
 }
 
 func (suite *DbTestSuite) TestSaveTokenPrices() {
-	suite.insertToken(types.NewTokenUnit("sol", "sol", "sol"))
-	suite.insertToken(types.NewTokenUnit("usdc", "usdc", "usdc"))
-
-	type TokenPriceRow struct {
-		Name      string    `db:"unit_name"`
-		Price     float64   `db:"price"`
-		MarketCap int64     `db:"market_cap"`
-		Timestamp time.Time `db:"timestamp"`
-	}
+	suite.insertToken(dbtypes.NewTokenUnitRow("sol", "sol", "sol", "url"))
+	suite.insertToken(dbtypes.NewTokenUnitRow("usdc", "usdc", "usdc", "url"))
 
 	// Save data
-	tickers := []types.TokenPrice{
-		types.NewTokenPrice(
+	tickers := []dbtypes.TokenPriceRow{
+		dbtypes.NewTokenPriceRow(
 			"sol",
 			100.01,
 			10,
+			"sol",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 		),
-		types.NewTokenPrice(
+		dbtypes.NewTokenPriceRow(
 			"usdc",
 			200.01,
 			20,
+			"usdc",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 		),
 	}
@@ -58,42 +53,47 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected := []TokenPriceRow{
-		{
+	expected := []dbtypes.TokenPriceRow{
+		dbtypes.NewTokenPriceRow(
 			"sol",
 			100.01,
 			10,
+			"sol",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
-		},
-		{
+		),
+		dbtypes.NewTokenPriceRow(
 			"usdc",
 			200.01,
 			20,
+			"usdc",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
-		},
+		),
 	}
 
-	var rows []TokenPriceRow
+	var rows []dbtypes.TokenPriceRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price`)
 	suite.Require().NoError(err)
 	for i, row := range rows {
-		suite.Require().True(expected[i].Name == row.Name)
+		suite.Require().True(expected[i].ID == row.ID)
 		suite.Require().True(expected[i].Price == row.Price)
 		suite.Require().True(expected[i].Timestamp.Equal(row.Timestamp))
 	}
+	rows = nil
 
 	// Update data
-	tickers = []types.TokenPrice{
-		types.NewTokenPrice(
+	tickers = []dbtypes.TokenPriceRow{
+		dbtypes.NewTokenPriceRow(
 			"sol",
 			100.01,
 			10,
+			"sol",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 		),
-		types.NewTokenPrice(
+		dbtypes.NewTokenPriceRow(
 			"usdc",
 			1,
 			20,
+			"usdc",
 			time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC),
 		),
 	}
@@ -101,26 +101,27 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected = []TokenPriceRow{
-		{
+	expected = []dbtypes.TokenPriceRow{
+		dbtypes.NewTokenPriceRow(
 			"sol",
 			100.01,
 			10,
+			"sol",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
-		},
-		{
+		),
+		dbtypes.NewTokenPriceRow(
 			"usdc",
 			1,
 			20,
+			"usdc",
 			time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC),
-		},
+		),
 	}
 
-	rows = []TokenPriceRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price ORDER BY timestamp`)
 	suite.Require().NoError(err)
 	for i, row := range rows {
-		suite.Require().True(expected[i].Name == row.Name)
+		suite.Require().True(expected[i].ID == row.ID)
 		suite.Require().True(expected[i].Price == row.Price)
 		suite.Require().True(expected[i].MarketCap == row.MarketCap)
 		suite.Require().True(expected[i].Timestamp.Equal(row.Timestamp))
