@@ -94,15 +94,15 @@ func (db *Database) SaveTxs(txs []types.Tx) error {
 	if len(txs) == 0 {
 		return nil
 	}
-	stmt := `INSERT INTO transaction (hash, slot, error, fee, logs) VALUES`
+	insertStmt := `INSERT INTO transaction (hash, slot, error, fee, logs) VALUES`
+	paramsStmt := ""
+	conflictStmt := `ON CONFLICT DO NOTHING`
+
 	var params []interface{}
 	paramsNumber := 5
 	for i, tx := range txs {
 		bi := i * paramsNumber
-		stmt += fmt.Sprintf(
-			"($%d, $%d, $%d, $%d, $%d),",
-			bi+1, bi+2, bi+3, bi+4, bi+5,
-		)
+		paramsStmt += getParamsStmt(bi, paramsNumber)
 		params = append(
 			params,
 			tx.Hash,
@@ -112,11 +112,12 @@ func (db *Database) SaveTxs(txs []types.Tx) error {
 			pq.Array(tx.Logs),
 		)
 	}
-
-	stmt = stmt[:len(stmt)-1]
-	stmt += `ON CONFLICT DO NOTHING`
-	_, err := db.Sqlx.Exec(stmt, params...)
-	return err
+	return db.insertWithParams(
+		insertStmt,
+		paramsStmt[:len(paramsStmt)-1],
+		conflictStmt,
+		params,
+	)
 }
 
 // SaveMessages implements db.Database
@@ -124,17 +125,16 @@ func (db *Database) SaveMessages(msgs []types.Message) error {
 	if len(msgs) == 0 {
 		return nil
 	}
-	stmt := `INSERT INTO message
+	insertStmt := `INSERT INTO message
 	(transaction_hash, slot, index, inner_index, program, raw_data, type, value) VALUES`
+	paramsStmt := ""
+	conflictStmt := `ON CONFLICT DO NOTHING`
 
 	var params []interface{}
 	paramsNumber := 8
 	for i, msg := range msgs {
 		bi := i * paramsNumber
-		stmt += fmt.Sprintf(
-			"($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
-			bi+1, bi+2, bi+3, bi+4, bi+5, bi+6, bi+7, bi+8,
-		)
+		paramsStmt += getParamsStmt(bi, paramsNumber)
 		params = append(
 			params,
 			msg.TxHash,
@@ -147,10 +147,12 @@ func (db *Database) SaveMessages(msgs []types.Message) error {
 			msg.Parsed.JSON(),
 		)
 	}
-
-	stmt = stmt[:len(stmt)-1]
-	stmt += `ON CONFLICT DO NOTHING`
-	_, err := db.Sqlx.Exec(stmt, params...)
+	err := db.insertWithParams(
+		insertStmt,
+		paramsStmt[:len(paramsStmt)-1],
+		conflictStmt,
+		params,
+	)
 	if err != nil {
 		return nil
 	}
@@ -202,7 +204,6 @@ func (db *Database) saveMsgAddressIndexes(msgs []types.Message) error {
 	if count == 0 {
 		return nil
 	}
-
 	return db.insertWithParams(
 		insertStmt,
 		paramsStmt[:len(paramsStmt)-1],

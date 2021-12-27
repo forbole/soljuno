@@ -24,30 +24,28 @@ func (db *Database) saveUpToDateBalances(paramsNumber int, slot uint64, accounts
 		return nil
 	}
 
-	stmt := `INSERT INTO account_balance (address, slot, balance) VALUES`
+	insertStmt := `INSERT INTO account_balance (address, slot, balance) VALUES`
+	paramsStmt := ""
+	conflictStmt := `
+	ON CONFLICT (address) DO UPDATE
+		SET slot = excluded.slot,
+			balance = excluded.balance
+	WHERE account_balance.slot <= excluded.slot
+	`
 	var params []interface{}
 
 	for i, bal := range balances {
 		bi := i * paramsNumber
-		stmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
+		paramsStmt += getParamsStmt(bi, paramsNumber)
 		params = append(params, accounts[i], slot, bal)
 
 	}
-
-	stmt = stmt[:len(stmt)-1]
-
-	stmt += `
-ON CONFLICT (address) DO UPDATE
-    SET slot = excluded.slot,
-        balance = excluded.balance
-WHERE account_balance.slot <= excluded.slot
-`
-
-	_, err := db.Sqlx.Exec(stmt, params...)
-	if err != nil {
-		return err
-	}
-	return nil
+	return db.insertWithParams(
+		insertStmt,
+		paramsStmt[:len(paramsStmt)-1],
+		conflictStmt,
+		params,
+	)
 }
 
 func (db *Database) SaveAccountTokenBalances(slot uint64, accounts []string, balances []clienttypes.TransactionTokenBalance) error {
@@ -63,28 +61,27 @@ func (db *Database) saveUpToDateTokenBalances(paramsNumber int, slot uint64, acc
 		return nil
 	}
 
-	stmt := `INSERT INTO token_account_balance (address, slot, balance) VALUES`
-	var params []interface{}
-
-	for i, bal := range balances {
-		bi := i * paramsNumber
-		stmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
-		params = append(params, accounts[bal.AccountIndex], slot, bal.UiTokenAmount.Amount)
-
-	}
-
-	stmt = stmt[:len(stmt)-1]
-
-	stmt += `
+	insertStmt := `INSERT INTO token_account_balance (address, slot, balance) VALUES`
+	paramsStmt := ""
+	conflictStmt := `
 ON CONFLICT (address) DO UPDATE
     SET slot = excluded.slot,
         balance = excluded.balance
 WHERE token_account_balance.slot <= excluded.slot
-`
+	`
+	var params []interface{}
 
-	_, err := db.Sqlx.Exec(stmt, params...)
-	if err != nil {
-		return err
+	for i, bal := range balances {
+		bi := i * paramsNumber
+		paramsStmt += getParamsStmt(bi, paramsNumber)
+		params = append(params, accounts[bal.AccountIndex], slot, bal.UiTokenAmount.Amount)
+
 	}
-	return nil
+
+	return db.insertWithParams(
+		insertStmt,
+		paramsStmt[:len(paramsStmt)-1],
+		conflictStmt,
+		params,
+	)
 }
