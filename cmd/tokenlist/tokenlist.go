@@ -2,6 +2,7 @@ package tokenlist
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -34,6 +35,7 @@ func ImportTokenList(ctx *Context, file string) error {
 	if err != nil {
 		return err
 	}
+	ctx.Logger.Info(fmt.Sprintf("Importing %d tokens into database...", len(tokenList.Tokens)))
 	count := 0
 	var rows []dbtypes.TokenUnitRow
 	for _, token := range tokenList.Tokens {
@@ -42,6 +44,7 @@ func ImportTokenList(ctx *Context, file string) error {
 			if err != nil {
 				return err
 			}
+			rows = nil
 			count = 0
 		}
 		rows = append(rows, dbtypes.NewTokenUnitRow(
@@ -54,7 +57,7 @@ func ImportTokenList(ctx *Context, file string) error {
 		))
 		count++
 	}
-	return nil
+	return ctx.Database.SaveTokenUnits(rows)
 }
 
 func getTokenList(listFile string) (TokenList, error) {
