@@ -3,10 +3,11 @@ package pricefeed
 import (
 	"fmt"
 
-	"github.com/forbole/soljuno/modules/pricefeed/coingecko"
-	"github.com/forbole/soljuno/modules/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/soljuno/modules/pricefeed/coingecko"
+	"github.com/forbole/soljuno/modules/utils"
 )
 
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule
@@ -39,10 +40,10 @@ func (m *Module) updatePrice() error {
 	var ids []string
 	for _, unit := range units {
 		// Skip the token if the price id is empty
-		if unit.ID == "" {
+		if unit.PriceID == "" {
 			continue
 		}
-		ids = append(ids, unit.ID)
+		ids = append(ids, unit.PriceID)
 	}
 
 	if len(ids) == 0 {
