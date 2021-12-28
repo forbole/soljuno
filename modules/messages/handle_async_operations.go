@@ -15,7 +15,7 @@ func (m *Module) RunAsyncOperations() {
 }
 
 func (m *Module) consumeMsgs() {
-	msgs := m.getMsgs(1000)
+	msgs := m.getMsgs(10000)
 	_ = m.pool.Submit(func() {
 		err := m.db.SaveMessages(msgs)
 		if err != nil {
@@ -33,7 +33,7 @@ func (m *Module) getMsgs(num int) []types.Message {
 			if len(msgs) >= num {
 				return msgs
 			}
-		case <-time.After(100 * time.Millisecond):
+		case <-time.After(1000 * time.Millisecond):
 			return msgs
 		}
 	}
