@@ -175,7 +175,7 @@ func (db *Database) saveMsgAddressIndexes(msgs []types.Message) error {
 	for _, msg := range msgs {
 		for _, account := range msg.InvolvedAccounts {
 			// Excute if the max params length will be reached
-			if len(params)+paramsNumber > MAX_PARAMS_LENGTH {
+			if len(params)+paramsNumber >= MAX_PARAMS_LENGTH {
 				err := db.insertWithParams(
 					insertStmt,
 					paramsStmt[:len(paramsStmt)-1],
