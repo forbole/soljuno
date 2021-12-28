@@ -21,7 +21,12 @@ func (db *Database) SaveTokenUnits(units []dbtypes.TokenUnitRow) error {
 
 	insertStmt := `INSERT INTO token_unit (address, price_id, unit_name, logo_uri, description, website) VALUES`
 	paramsStmt := ""
-	conflictStmt := `ON CONFLICT (address) DO NOTHING`
+	conflictStmt := `ON CONFLICT (address) DO UPDATE
+		SET price_id = EXCLUDED.price_id,
+			unit_name = EXCLUDED.unit_name,
+			description = EXCLUDED.description,
+			website = EXCLUDED.website
+	`
 	var params []interface{}
 	paramNumber := 6
 

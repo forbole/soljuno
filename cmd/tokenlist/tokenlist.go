@@ -38,6 +38,10 @@ func ImportTokenList(ctx *Context, file string) error {
 	ctx.Logger.Info(fmt.Sprintf("Importing %d tokens into database...", len(tokenList.Tokens)))
 	count := 0
 	var rows []dbtypes.TokenUnitRow
+	// Add solana to the list
+	rows = append(rows, dbtypes.NewTokenUnitRow("", "solana", "Solana", "", tokenList.LogoURI, "https://solana.com"))
+
+	tokenMap := make(map[string]bool)
 	for _, token := range tokenList.Tokens {
 		if len(rows) >= 1000 {
 			err := ctx.Database.SaveTokenUnits(rows)
@@ -47,6 +51,11 @@ func ImportTokenList(ctx *Context, file string) error {
 			rows = nil
 			count = 0
 		}
+		// Skip if the token already attended
+		if exist := tokenMap[token.Address]; exist {
+			continue
+		}
+
 		rows = append(rows, dbtypes.NewTokenUnitRow(
 			token.Address,
 			token.Extensions.CoingeckoID,
@@ -55,6 +64,7 @@ func ImportTokenList(ctx *Context, file string) error {
 			token.Extensions.Description,
 			token.Extensions.Website,
 		))
+		tokenMap[token.Address] = true
 		count++
 	}
 	return ctx.Database.SaveTokenUnits(rows)
