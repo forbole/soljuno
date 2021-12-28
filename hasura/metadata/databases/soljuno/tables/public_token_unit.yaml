@@ -24,6 +24,8 @@ select_permissions:
     columns:
     - unit_name
     - address
-    - logo_url
+    - logo_uri
+    - description
+    - website
     filter: {}
   role: anonymous
