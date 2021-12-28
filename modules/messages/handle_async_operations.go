@@ -15,7 +15,7 @@ func (m *Module) RunAsyncOperations() {
 }
 
 func (m *Module) consumeMsgs() {
-	msgs := m.getMsgs(10000)
+	msgs := m.getMsgs(7500)
 	_ = m.pool.Submit(func() {
 		err := m.db.SaveMessages(msgs)
 		if err != nil {
