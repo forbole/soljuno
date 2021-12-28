@@ -50,6 +50,7 @@ func (db *Database) SaveTokensPrices(prices []dbtypes.TokenPriceRow) error {
 	ON CONFLICT (id) DO UPDATE 
 		SET price = excluded.price,
 			market_cap = excluded.market_cap,
+			symbol = excluded.symbol,
 			timestamp = excluded.timestamp
 	WHERE token_price.timestamp <= excluded.timestamp`
 	var params []interface{}

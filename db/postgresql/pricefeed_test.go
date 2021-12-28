@@ -76,6 +76,8 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 	for i, row := range rows {
 		suite.Require().True(expected[i].ID == row.ID)
 		suite.Require().True(expected[i].Price == row.Price)
+		suite.Require().True(expected[i].MarketCap == row.MarketCap)
+		suite.Require().True(expected[i].Symbol == row.Symbol)
 		suite.Require().True(expected[i].Timestamp.Equal(row.Timestamp))
 	}
 	rows = nil
@@ -124,6 +126,7 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 		suite.Require().True(expected[i].ID == row.ID)
 		suite.Require().True(expected[i].Price == row.Price)
 		suite.Require().True(expected[i].MarketCap == row.MarketCap)
+		suite.Require().True(expected[i].Symbol == row.Symbol)
 		suite.Require().True(expected[i].Timestamp.Equal(row.Timestamp))
 	}
 }
