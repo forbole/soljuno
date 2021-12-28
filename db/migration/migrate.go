@@ -6,7 +6,7 @@ import (
 
 func Up(db db.Database) error {
 	_, err := db.Exec(`
-	DROP TABLE token_unit;
+	DROP TABLE token_unit CASCADE;
 	DROP TABLE token_price;
 	CREATE TABLE token_unit
 	(
