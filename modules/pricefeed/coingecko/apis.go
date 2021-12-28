@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/forbole/soljuno/types"
+	dbtypes "github.com/forbole/soljuno/db/types"
 )
 
 // GetCoinsList allows to fetch from the remote APIs the list of all the supported tokens
@@ -18,7 +18,7 @@ func GetCoinsList() (coins Tokens, err error) {
 }
 
 // GetTokensPrices queries the remote APIs to get the token prices of all the tokens having the given ids
-func GetTokensPrices(ids []string) ([]types.TokenPrice, error) {
+func GetTokensPrices(ids []string) ([]dbtypes.TokenPriceRow, error) {
 	var prices []MarketTicker
 	query := fmt.Sprintf("/coins/markets?vs_currency=usd&ids=%s", strings.Join(ids, ","))
 	err := queryCoinGecko(query, &prices)
@@ -29,13 +29,14 @@ func GetTokensPrices(ids []string) ([]types.TokenPrice, error) {
 	return ConvertCoingeckoPrices(prices), nil
 }
 
-func ConvertCoingeckoPrices(prices []MarketTicker) []types.TokenPrice {
-	tokenPrices := make([]types.TokenPrice, len(prices))
+func ConvertCoingeckoPrices(prices []MarketTicker) []dbtypes.TokenPriceRow {
+	tokenPrices := make([]dbtypes.TokenPriceRow, len(prices))
 	for i, price := range prices {
-		tokenPrices[i] = types.NewTokenPrice(
-			price.Symbol,
+		tokenPrices[i] = dbtypes.NewTokenPriceRow(
+			price.ID,
 			price.CurrentPrice,
 			int64(math.Trunc(price.MarketCap)),
+			price.Symbol,
 			price.LastUpdated,
 		)
 	}

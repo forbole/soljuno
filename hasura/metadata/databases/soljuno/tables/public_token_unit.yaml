@@ -9,7 +9,7 @@ object_relationships:
         schema: public
         name: token_price
       column_mapping:
-        unit_name: unit_name
+        price_id: id
 - name: token
   using:
     manual_configuration:
@@ -24,5 +24,6 @@ select_permissions:
     columns:
     - unit_name
     - address
+    - logo_url
     filter: {}
   role: anonymous

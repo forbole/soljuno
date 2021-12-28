@@ -232,13 +232,13 @@ type BpfLoaderCheckerDb interface {
 // PricesDb represents a database that supports pricefeed properly
 type PriceDb interface {
 	// GetTokenUnits returns the slice of all the names of the different tokens units
-	GetTokenUnits() ([]types.TokenUnit, error)
+	GetTokenUnits() ([]dbtypes.TokenUnitRow, error)
 
 	// SaveTokenUnit allows to save the given token unit details
-	SaveTokenUnit(unit types.TokenUnit) error
+	SaveTokenUnits(units []dbtypes.TokenUnitRow) error
 
 	// SaveTokensPrices allows to store the token prices inside the database
-	SaveTokensPrices(prices []types.TokenPrice) error
+	SaveTokensPrices(prices []dbtypes.TokenPriceRow) error
 }
 
 // ConsensusDb represents a database that supports consesus properly
