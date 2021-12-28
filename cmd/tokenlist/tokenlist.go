@@ -35,14 +35,15 @@ func ImportTokenList(ctx *Context, file string) error {
 	if err != nil {
 		return err
 	}
-	ctx.Logger.Info(fmt.Sprintf("Importing %d tokens into database...", len(tokenList.Tokens)))
+	tokens := getMainnetTokens(tokenList)
+	ctx.Logger.Info(fmt.Sprintf("Importing %d tokens into database...", len(tokens)))
 	count := 0
 	var rows []dbtypes.TokenUnitRow
 	// Add solana to the list
 	rows = append(rows, dbtypes.NewTokenUnitRow("", "solana", "Solana", "", tokenList.LogoURI, "https://solana.com"))
 
 	tokenMap := make(map[string]bool)
-	for _, token := range tokenList.Tokens {
+	for _, token := range tokens {
 		if len(rows) >= 1000 {
 			err := ctx.Database.SaveTokenUnits(rows)
 			if err != nil {
@@ -51,11 +52,6 @@ func ImportTokenList(ctx *Context, file string) error {
 			rows = nil
 			count = 0
 		}
-		// Skip if the token already attended
-		if exist := tokenMap[token.Address]; exist {
-			continue
-		}
-
 		rows = append(rows, dbtypes.NewTokenUnitRow(
 			token.Address,
 			token.Extensions.CoingeckoID,
@@ -88,4 +84,14 @@ func getTokenList(listFile string) (TokenList, error) {
 	}
 	err = json.Unmarshal(bz, &tokenList)
 	return tokenList, err
+}
+
+func getMainnetTokens(list TokenList) []Token {
+	var newTokens []Token
+	for _, token := range list.Tokens {
+		if token.ChainID == 101 {
+			newTokens = append(newTokens, token)
+		}
+	}
+	return newTokens
 }
