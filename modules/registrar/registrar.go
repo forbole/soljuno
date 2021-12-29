@@ -16,6 +16,7 @@ import (
 	"github.com/forbole/soljuno/modules/pruning"
 	"github.com/forbole/soljuno/modules/stake"
 	"github.com/forbole/soljuno/modules/system"
+	"github.com/forbole/soljuno/modules/telemetry"
 	"github.com/forbole/soljuno/modules/token"
 	"github.com/forbole/soljuno/modules/txs"
 	"github.com/forbole/soljuno/modules/vote"
@@ -29,7 +30,7 @@ import (
 
 // Context represents the context of the modules registrar
 type Context struct {
-	ParsingConfig types.Config
+	Config        types.Config
 	Database      db.Database
 	ParserManager parser.ParserManager
 	Proxy         client.ClientProxy
@@ -39,14 +40,14 @@ type Context struct {
 
 // NewContext allows to build a new Context instance
 func NewContext(
-	parsingConfig types.Config, database db.Database, proxy client.ClientProxy, logger logging.Logger, pool *ants.Pool,
+	config types.Config, database db.Database, proxy client.ClientProxy, logger logging.Logger, pool *ants.Pool,
 ) Context {
 	return Context{
-		ParsingConfig: parsingConfig,
-		Database:      database,
-		Proxy:         proxy,
-		Logger:        logger,
-		Pool:          pool,
+		Config:   config,
+		Database: database,
+		Proxy:    proxy,
+		Logger:   logger,
+		Pool:     pool,
 	}
 }
 
@@ -87,12 +88,13 @@ func NewDefaultRegistrar() *DefaultRegistrar {
 
 // BuildModules implements Registrar
 func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
-	pruningModule := pruning.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Logger)
+	pruningModule := pruning.NewModule(ctx.Config.GetPruningConfig(), ctx.Database, ctx.Logger)
 	msgsModule := messages.NewModule(ctx.Database, ctx.Pool)
 	txsModule := txs.NewModule(ctx.Database, ctx.Pool)
 	pruningModule.RegisterService(msgsModule, txsModule)
 
 	return modules.Modules{
+		telemetry.NewModule(ctx.Config),
 		pruningModule,
 		txsModule,
 		msgsModule,
@@ -100,7 +102,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		system.NewModule(ctx.Database, ctx.Proxy),
 		stake.NewModule(ctx.Database, ctx.Proxy),
 		token.NewModule(ctx.Database, ctx.Proxy),
-		vote.NewModule(ctx.ParsingConfig.GetPruningConfig(), ctx.Database, ctx.Proxy),
+		vote.NewModule(ctx.Config.GetPruningConfig(), ctx.Database, ctx.Proxy),
 		config.NewModule(ctx.Database, ctx.Proxy),
 		bpfloader.NewModule(ctx.Database, ctx.Proxy),
 		pricefeed.NewModule(ctx.Database),

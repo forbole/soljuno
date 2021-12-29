@@ -482,33 +482,25 @@ func (p *pruningConfig) GetInterval() int64 {
 
 // TelemetryConfig contains the configuration of the telemetry strategy
 type TelemetryConfig interface {
-	IsEnabled() bool
 	GetPort() uint
 }
 
 var _ TelemetryConfig = &telemetryConfig{}
 
 type telemetryConfig struct {
-	Enabled bool `toml:"enabled"`
-	Port    uint `toml:"port"`
+	Port uint `toml:"port"`
 }
 
 // NewTelemetryConfig allows to build a new TelemetryConfig instance
 func NewTelemetryConfig(enabled bool, port uint) TelemetryConfig {
 	return &telemetryConfig{
-		Enabled: enabled,
-		Port:    port,
+		Port: port,
 	}
 }
 
 // DefaultTelemetryConfig returns the default TelemetryConfig instance
 func DefaultTelemetryConfig() TelemetryConfig {
-	return NewTelemetryConfig(false, 500)
-}
-
-// IsEnabled implements TelemetryConfig
-func (p *telemetryConfig) IsEnabled() bool {
-	return p.Enabled
+	return NewTelemetryConfig(false, 9487)
 }
 
 // GetPort implements TelemetryConfig
