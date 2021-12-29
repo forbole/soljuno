@@ -5,7 +5,6 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.42.9
 	github.com/go-co-op/gocron v1.9.0
-	github.com/go-redis/redis v6.15.5+incompatible // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.9.0

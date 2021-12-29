@@ -2,15 +2,11 @@ package parse
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
-
-	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/forbole/soljuno/solana/parser"
 	associatedTokenAccount "github.com/forbole/soljuno/solana/program/associated-token-account"
@@ -48,27 +44,8 @@ func ParseCmd(cmdCfg *Config) *cobra.Command {
 			if err != nil {
 				return err
 			}
-
-			go StartPrometheus()
-
 			return StartParsing(context)
 		},
-	}
-}
-
-// StartPrometheus allows to start a Telemetry server used to expose useful metrics
-func StartPrometheus() {
-	cfg := types.Cfg.GetTelemetryConfig()
-	if !cfg.IsEnabled() {
-		return
-	}
-
-	router := mux.NewRouter()
-	router.Handle("/metrics", promhttp.Handler())
-
-	err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.GetPort()), router)
-	if err != nil {
-		panic(err)
 	}
 }
 
