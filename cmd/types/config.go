@@ -7,10 +7,9 @@ import (
 	"github.com/spf13/cobra"
 
 	dbcmd "github.com/forbole/soljuno/cmd/db"
+	"github.com/forbole/soljuno/modules/registrar"
 
 	initcmd "github.com/forbole/soljuno/cmd/init"
-
-	parsecmd "github.com/forbole/soljuno/cmd/parse"
 
 	snapshotcmd "github.com/forbole/soljuno/cmd/snapshot"
 	"github.com/forbole/soljuno/db"
@@ -23,10 +22,10 @@ import (
 type Config struct {
 	name           string
 	initConfig     *initcmd.Config
-	parseConfig    *parsecmd.Config
 	snapshotConfig *snapshotcmd.Config
 	dbConfig       *dbcmd.Config
 
+	registrar    registrar.Registrar
 	configParser types.ConfigParser
 	buildDb      db.Builder
 	logger       logging.Logger
@@ -44,6 +43,20 @@ func (c *Config) GetName() string {
 	return c.name
 }
 
+// WithRegistrar sets the modules registrar to be used
+func (config *Config) WithRegistrar(r registrar.Registrar) *Config {
+	config.registrar = r
+	return config
+}
+
+// GetRegistrar returns the modules registrar to be used
+func (config *Config) GetRegistrar() registrar.Registrar {
+	if config.registrar == nil {
+		return &registrar.EmptyRegistrar{}
+	}
+	return config.registrar
+}
+
 // WithInitConfig sets cfg as the parse command configuration
 func (c *Config) WithInitConfig(cfg *initcmd.Config) *Config {
 	c.initConfig = cfg
@@ -56,20 +69,6 @@ func (c *Config) GetInitConfig() *initcmd.Config {
 		return initcmd.NewConfig()
 	}
 	return c.initConfig
-}
-
-// WithParseConfig sets cfg as the parse command configuration
-func (c *Config) WithParseConfig(cfg *parsecmd.Config) *Config {
-	c.parseConfig = cfg
-	return c
-}
-
-// GetParseConfig returns the currently set parse configuration
-func (c *Config) GetParseConfig() *parsecmd.Config {
-	if c.parseConfig == nil {
-		return parsecmd.NewConfig()
-	}
-	return c.parseConfig
 }
 
 // WithSnapshotConfig set cfg as the snapshot command configuration

@@ -16,7 +16,7 @@ import (
 
 // GetParsingContext setups all the things that should be later passed to StartParsing in order
 // to parse the chain data properly.
-func GetParsingContext(parseConfig *Config) (*Context, error) {
+func GetParsingContext(config Config) (*Context, error) {
 	// Get the global config
 	cfg := types.Cfg
 
@@ -25,8 +25,8 @@ func GetParsingContext(parseConfig *Config) (*Context, error) {
 	sdkConfig.Seal()
 
 	// Get the database
-	databaseCtx := db.NewContext(cfg.GetDatabaseConfig(), parseConfig.GetLogger())
-	database, err := parseConfig.GetDBBuilder()(databaseCtx)
+	databaseCtx := db.NewContext(cfg.GetDatabaseConfig(), config.GetLogger())
+	database, err := config.GetDBBuilder()(databaseCtx)
 	if err != nil {
 		return nil, err
 	}
@@ -43,20 +43,20 @@ func GetParsingContext(parseConfig *Config) (*Context, error) {
 	}
 
 	// Setup the logging
-	err = parseConfig.GetLogger().SetLogFormat(cfg.GetLoggingConfig().GetLogFormat())
+	err = config.GetLogger().SetLogFormat(cfg.GetLoggingConfig().GetLogFormat())
 	if err != nil {
 		return nil, fmt.Errorf("error while setting logging format: %s", err)
 	}
 
-	err = parseConfig.GetLogger().SetLogLevel(cfg.GetLoggingConfig().GetLogLevel())
+	err = config.GetLogger().SetLogLevel(cfg.GetLoggingConfig().GetLogLevel())
 	if err != nil {
 		return nil, fmt.Errorf("error while setting logging level: %s", err)
 	}
 
 	// Get the modules
-	context := modsregistrar.NewContext(cfg, database, cp, parseConfig.GetLogger(), pool)
-	mods := parseConfig.GetRegistrar().BuildModules(context)
-	registeredModules := modsregistrar.GetModules(mods, cfg.GetChainConfig().GetModules(), parseConfig.GetLogger())
+	context := modsregistrar.NewContext(cfg, database, cp, config.GetLogger(), pool)
+	mods := config.GetRegistrar().BuildModules(context)
+	registeredModules := modsregistrar.GetModules(mods, cfg.GetChainConfig().GetModules(), config.GetLogger())
 
 	// Run all the additional operations
 	for _, module := range registeredModules {
@@ -68,5 +68,5 @@ func GetParsingContext(parseConfig *Config) (*Context, error) {
 		}
 	}
 
-	return NewContext(cp, database, parseConfig.GetLogger(), registeredModules, pool), nil
+	return NewContext(cp, database, config.GetLogger(), registeredModules, pool), nil
 }
