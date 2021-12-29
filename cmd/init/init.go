@@ -39,8 +39,7 @@ const (
 	flagPruningKeepEvery  = "pruning-keep-every"
 	flagPruningInterval   = "pruning-interval"
 
-	flagTelemetryEnabled = "telemetry-enabled"
-	flagTelemetryPort    = "telemetry-port"
+	flagTelemetryPort = "telemetry-port"
 
 	flagPoolSize = "worker-pool-size"
 )
@@ -119,7 +118,6 @@ func InitCmd() *cobra.Command {
 	command.Flags().Int64(flagPruningInterval, defPruningConfig.GetInterval(), "Number of blocks every which to perform the pruning")
 
 	defTelemetryConfig := types.DefaultTelemetryConfig()
-	command.Flags().Bool(flagTelemetryEnabled, false, "Whether the telemetry server should be enabled or not")
 	command.Flags().Uint(flagTelemetryPort, defTelemetryConfig.GetPort(), "Port on which the telemetry server will listen")
 
 	defWorkerConfig := types.DefaultWorkerConfig()

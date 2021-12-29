@@ -51,7 +51,6 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 	pruningKeepRecent, _ := cmd.Flags().GetInt64(flagPruningKeepRecent)
 	pruningInterval, _ := cmd.Flags().GetInt64(flagPruningInterval)
 
-	telemetryEnabled, _ := cmd.Flags().GetBool(flagTelemetryEnabled)
 	telemetryPort, _ := cmd.Flags().GetUint(flagTelemetryPort)
 
 	workerPoolSize, _ := cmd.Flags().GetInt(flagPoolSize)
@@ -83,7 +82,6 @@ func DefaultConfigCreator(cmd *cobra.Command) types.Config {
 			pruningInterval,
 		),
 		types.NewTelemetryConfig(
-			telemetryEnabled,
 			telemetryPort,
 		),
 		types.NewWorkerConfig(
