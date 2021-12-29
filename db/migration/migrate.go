@@ -50,9 +50,8 @@ func Down(db db.ExceutorDb) error {
 		price       DECIMAL                     NOT NULL,
    		market_cap  BIGINT                      NOT NULL,
 		timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
-	)
+	);
 	CREATE INDEX token_price_timestamp_index ON token_price (timestamp);
-	
 	`)
 	return err
 }
