@@ -3,18 +3,18 @@ package system
 import (
 	"encoding/base64"
 
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/client"
 )
 
 // updateNonce properly stores the statement of nonce inside the database
-func updateNonce(address string, currentSlot uint64, db db.SystemDb, client client.Proxy) error {
+func updateNonce(address string, currentSlot uint64, db db.SystemDb, client client.ClientProxy) error {
 	if !db.CheckNonceAccountLatest(address, currentSlot) {
 		return nil
 	}
 
-	info, err := client.AccountInfo(address)
+	info, err := client.GetAccountInfo(address)
 	if err != nil {
 		return err
 	}

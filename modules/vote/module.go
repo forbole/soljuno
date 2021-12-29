@@ -1,8 +1,8 @@
 package vote
 
 import (
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/vote"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
@@ -11,10 +11,10 @@ import (
 type Module struct {
 	cfg    types.PruningConfig
 	db     db.Database
-	client client.Proxy
+	client client.ClientProxy
 }
 
-func NewModule(cfg types.PruningConfig, db db.Database, client client.Proxy) *Module {
+func NewModule(cfg types.PruningConfig, db db.Database, client client.ClientProxy) *Module {
 	return &Module{
 		cfg:    cfg,
 		db:     db,

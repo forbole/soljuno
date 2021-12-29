@@ -3,18 +3,18 @@ package stake
 import (
 	"encoding/base64"
 
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/client"
 )
 
 // updateStakeAccount properly stores the statement of stake account inside the database
-func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, client client.Proxy) error {
+func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, client client.ClientProxy) error {
 	if !db.CheckStakeAccountLatest(address, currentSlot) {
 		return nil
 	}
 
-	info, err := client.AccountInfo(address)
+	info, err := client.GetAccountInfo(address)
 	if err != nil {
 		return err
 	}

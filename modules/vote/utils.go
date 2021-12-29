@@ -3,17 +3,17 @@ package vote
 import (
 	"encoding/base64"
 
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/client"
 )
 
 // updateVoteAccount properly stores the statement of vote account inside the database
-func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client client.Proxy) error {
+func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client client.ClientProxy) error {
 	if !db.CheckValidatorLatest(address, currentSlot) {
 		return nil
 	}
-	info, err := client.AccountInfo(address)
+	info, err := client.GetAccountInfo(address)
 	if err != nil {
 		return err
 	}

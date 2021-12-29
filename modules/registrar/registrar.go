@@ -23,8 +23,8 @@ import (
 	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/modules/messages"
 
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/solana/client"
 )
 
 // Context represents the context of the modules registrar
@@ -32,14 +32,14 @@ type Context struct {
 	ParsingConfig types.Config
 	Database      db.Database
 	ParserManager parser.ParserManager
-	Proxy         client.Proxy
+	Proxy         client.ClientProxy
 	Logger        logging.Logger
 	Pool          *ants.Pool
 }
 
 // NewContext allows to build a new Context instance
 func NewContext(
-	parsingConfig types.Config, database db.Database, proxy client.Proxy, logger logging.Logger, pool *ants.Pool,
+	parsingConfig types.Config, database db.Database, proxy client.ClientProxy, logger logging.Logger, pool *ants.Pool,
 ) Context {
 	return Context{
 		ParsingConfig: parsingConfig,

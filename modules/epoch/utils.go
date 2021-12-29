@@ -1,14 +1,14 @@
 package epoch
 
 import (
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/db/types"
 	dbtypes "github.com/forbole/soljuno/db/types"
+	"github.com/forbole/soljuno/solana/client"
 )
 
-func updateInflationRate(epoch uint64, db db.EpochDb, client client.Proxy) error {
-	inflation, err := client.InflationRate()
+func updateInflationRate(epoch uint64, db db.EpochDb, client client.ClientProxy) error {
+	inflation, err := client.GetInflationRate()
 	if err != nil {
 		return err
 	}
@@ -22,8 +22,8 @@ func updateInflationRate(epoch uint64, db db.EpochDb, client client.Proxy) error
 	)
 }
 
-func updateSupplyInfo(epoch uint64, db db.EpochDb, client client.Proxy) error {
-	supply, err := client.Supply()
+func updateSupplyInfo(epoch uint64, db db.EpochDb, client client.ClientProxy) error {
+	supply, err := client.GetSupplyInfo()
 	if err != nil {
 		return err
 	}
@@ -37,8 +37,8 @@ func updateSupplyInfo(epoch uint64, db db.EpochDb, client client.Proxy) error {
 	)
 }
 
-func updateInflationGovernorParam(epoch uint64, db db.EpochDb, client client.Proxy) error {
-	governor, err := client.InflationGovernor()
+func updateInflationGovernorParam(epoch uint64, db db.EpochDb, client client.ClientProxy) error {
+	governor, err := client.GetInflationGovernor()
 	if err != nil {
 		return err
 	}
@@ -54,8 +54,8 @@ func updateInflationGovernorParam(epoch uint64, db db.EpochDb, client client.Pro
 	)
 }
 
-func updateEpochScheduleParam(epoch uint64, db db.EpochDb, client client.Proxy) error {
-	schedule, err := client.EpochSchedule()
+func updateEpochScheduleParam(epoch uint64, db db.EpochDb, client client.ClientProxy) error {
+	schedule, err := client.GetEpochSchedule()
 	if err != nil {
 		return err
 	}

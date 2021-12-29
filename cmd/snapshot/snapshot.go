@@ -147,7 +147,7 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 func handleAccount(ctx *Context, account Account) error {
 	ctx.Buffer <- account
 	address := account.Pubkey
-	info, err := ctx.Proxy.AccountInfo(address)
+	info, err := ctx.Proxy.GetAccountInfo(address)
 	if err != nil {
 		return err
 	}

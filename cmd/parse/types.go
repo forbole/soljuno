@@ -4,11 +4,11 @@ import (
 	"github.com/forbole/soljuno/types/logging"
 	"github.com/panjf2000/ants/v2"
 
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/db/builder"
 	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/modules/registrar"
+	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/types"
 )
 
@@ -85,7 +85,7 @@ func (config *Config) GetLogger() logging.Logger {
 
 // Context contains the parsing context
 type Context struct {
-	Proxy    client.Proxy
+	Proxy    client.ClientProxy
 	Database db.Database
 	Logger   logging.Logger
 	Modules  []modules.Module
@@ -94,7 +94,7 @@ type Context struct {
 
 // NewContext builds a new Context instance
 func NewContext(
-	proxy client.Proxy, db db.Database,
+	proxy client.ClientProxy, db db.Database,
 	logger logging.Logger, modules []modules.Module,
 	pool *ants.Pool,
 ) *Context {

@@ -4,18 +4,18 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/client"
 )
 
 // updateDelegation properly stores the statement of delegation inside the database
-func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
 	if !db.CheckTokenDelegateLatest(source, currentSlot) {
 		return nil
 	}
 
-	info, err := client.AccountInfo(source)
+	info, err := client.GetAccountInfo(source)
 	if err != nil {
 		return err
 	}
@@ -37,12 +37,12 @@ func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client c
 }
 
 // updateToken properly stores the authority of mint inside the database
-func updateToken(address string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+func updateToken(address string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
 	if !db.CheckTokenLatest(address, currentSlot) {
 		return nil
 	}
 
-	info, err := client.AccountInfo(address)
+	info, err := client.GetAccountInfo(address)
 	if err != nil {
 		return err
 	}
@@ -67,12 +67,12 @@ func updateToken(address string, currentSlot uint64, db db.TokenDb, client clien
 }
 
 // updateTokenAccount properly stores the account state inside database
-func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
 	if !db.CheckTokenAccountLatest(address, currentSlot) {
 		return nil
 	}
 
-	info, err := client.AccountInfo(address)
+	info, err := client.GetAccountInfo(address)
 	if err != nil {
 		return err
 	}
@@ -94,12 +94,12 @@ func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, clien
 }
 
 // updateTokenSupply properly stores the supply of the given mint inside the database
-func updateTokenSupply(address string, currentSlot uint64, db db.TokenDb, client client.Proxy) error {
+func updateTokenSupply(address string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
 	if !db.CheckTokenSupplyLatest(address, currentSlot) {
 		return nil
 	}
 
-	info, err := client.AccountInfo(address)
+	info, err := client.GetAccountInfo(address)
 	if err != nil {
 		return err
 	}
