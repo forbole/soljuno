@@ -9,6 +9,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.9.0
+	github.com/mkevac/debugcharts v0.0.0-20191222103121-ae1c48aa8615
 	github.com/mr-tron/base58 v1.2.0
 	github.com/panjf2000/ants/v2 v2.4.6
 	github.com/pelletier/go-toml v1.8.1
