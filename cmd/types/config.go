@@ -6,12 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	dbcmd "github.com/forbole/soljuno/cmd/db"
 	"github.com/forbole/soljuno/modules/registrar"
 
-	initcmd "github.com/forbole/soljuno/cmd/init"
-
-	snapshotcmd "github.com/forbole/soljuno/cmd/snapshot"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/db/builder"
 	"github.com/forbole/soljuno/types"
@@ -20,11 +16,7 @@ import (
 
 // Config represents the general configuration for the commands
 type Config struct {
-	name           string
-	initConfig     *initcmd.Config
-	snapshotConfig *snapshotcmd.Config
-	dbConfig       *dbcmd.Config
-
+	name         string
 	registrar    registrar.Registrar
 	configParser types.ConfigParser
 	buildDb      db.Builder
@@ -55,46 +47,6 @@ func (config *Config) GetRegistrar() registrar.Registrar {
 		return &registrar.EmptyRegistrar{}
 	}
 	return config.registrar
-}
-
-// WithInitConfig sets cfg as the parse command configuration
-func (c *Config) WithInitConfig(cfg *initcmd.Config) *Config {
-	c.initConfig = cfg
-	return c
-}
-
-// GetInitConfig returns the currently set parse configuration
-func (c *Config) GetInitConfig() *initcmd.Config {
-	if c.initConfig == nil {
-		return initcmd.NewConfig()
-	}
-	return c.initConfig
-}
-
-// WithSnapshotConfig set cfg as the snapshot command configuration
-func (c *Config) WithSnapshotConfig(cfg *snapshotcmd.Config) *Config {
-	c.snapshotConfig = cfg
-	return c
-}
-
-// GetSnapshotConfig returns the currently set snapshot configuration
-func (c *Config) GetSnapshotConfig() *snapshotcmd.Config {
-	if c.snapshotConfig == nil {
-		return snapshotcmd.NewConfig()
-	}
-	return c.snapshotConfig
-}
-
-func (c *Config) WithDbConfig(cfg *dbcmd.Config) *Config {
-	c.dbConfig = cfg
-	return c
-}
-
-func (c *Config) GetDbConfig() *dbcmd.Config {
-	if c.dbConfig == nil {
-		return dbcmd.NewConfig()
-	}
-	return c.dbConfig
 }
 
 // WithConfigParser sets the configuration parser to be used

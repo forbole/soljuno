@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
+	cmdtypes "github.com/forbole/soljuno/cmd/types"
 	accountParser "github.com/forbole/soljuno/solana/account"
 )
 
@@ -21,11 +22,11 @@ const (
 	FlagParallelize = "parallelize"
 )
 
-func ImportSnapshotCmd(cmdCfg *Config) *cobra.Command {
+func ImportSnapshotCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "import-snapshot [file]",
 		Short:   "Import a snapshot at specific slot",
-		PreRunE: ReadConfig(cmdCfg),
+		PreRunE: cmdtypes.ReadConfig(cmdCfg),
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			context, err := GetSnapshotContext(cmdCfg)

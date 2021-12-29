@@ -41,10 +41,10 @@ func BuildDefaultExecutor(config *cmdtypes.Config) cli.Executor {
 
 	rootCmd.AddCommand(
 		VersionCmd(),
-		initcmd.InitCmd(config.GetInitConfig()),
+		initcmd.InitCmd(),
 		parsecmd.ParseCmd(config),
-		snapshotcmd.ImportSnapshotCmd(config.GetSnapshotConfig()),
-		dbcmd.DbCmd(config.GetDbConfig()),
+		snapshotcmd.ImportSnapshotCmd(config),
+		dbcmd.DbCmd(config),
 		tokenlistcmd.ImportTokenListCmd(config),
 	)
 

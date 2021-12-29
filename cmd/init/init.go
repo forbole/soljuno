@@ -46,7 +46,8 @@ const (
 )
 
 // InitCmd returns the command that should be run in order to properly initialize BDJuno
-func InitCmd(cfg *Config) *cobra.Command {
+func InitCmd() *cobra.Command {
+	cfg := NewConfig()
 	command := &cobra.Command{
 		Use:   "init",
 		Short: "Initializes the configuration files",
