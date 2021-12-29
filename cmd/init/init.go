@@ -39,14 +39,14 @@ const (
 	flagPruningKeepEvery  = "pruning-keep-every"
 	flagPruningInterval   = "pruning-interval"
 
-	flagTelemetryEnabled = "telemetry-enabled"
-	flagTelemetryPort    = "telemetry-port"
+	flagTelemetryPort = "telemetry-port"
 
 	flagPoolSize = "worker-pool-size"
 )
 
 // InitCmd returns the command that should be run in order to properly initialize BDJuno
-func InitCmd(cfg *Config) *cobra.Command {
+func InitCmd() *cobra.Command {
+	cfg := NewConfig()
 	command := &cobra.Command{
 		Use:   "init",
 		Short: "Initializes the configuration files",
@@ -118,7 +118,6 @@ func InitCmd(cfg *Config) *cobra.Command {
 	command.Flags().Int64(flagPruningInterval, defPruningConfig.GetInterval(), "Number of blocks every which to perform the pruning")
 
 	defTelemetryConfig := types.DefaultTelemetryConfig()
-	command.Flags().Bool(flagTelemetryEnabled, false, "Whether the telemetry server should be enabled or not")
 	command.Flags().Uint(flagTelemetryPort, defTelemetryConfig.GetPort(), "Port on which the telemetry server will listen")
 
 	defWorkerConfig := types.DefaultWorkerConfig()

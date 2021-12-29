@@ -11,12 +11,12 @@ import (
 
 // GetSnapshotContext setups all the things that should be later passed to ImportSnapshot in order
 // to import the chain data from the given snapshot properly.
-func GetSnapshotContext(snapshotConfig *Config) (*Context, error) {
+func GetSnapshotContext(config Config) (*Context, error) {
 	// Get the global config
 	cfg := types.Cfg
 
-	databaseCtx := db.NewContext(cfg.GetDatabaseConfig(), snapshotConfig.GetLogger())
-	database, err := snapshotConfig.GetDBBuilder()(databaseCtx)
+	databaseCtx := db.NewContext(cfg.GetDatabaseConfig(), config.GetLogger())
+	database, err := config.GetDBBuilder()(databaseCtx)
 	if err != nil {
 		return nil, err
 	}
@@ -28,12 +28,12 @@ func GetSnapshotContext(snapshotConfig *Config) (*Context, error) {
 	}
 
 	// Setup the logging
-	err = snapshotConfig.GetLogger().SetLogFormat(cfg.GetLoggingConfig().GetLogFormat())
+	err = config.GetLogger().SetLogFormat(cfg.GetLoggingConfig().GetLogFormat())
 	if err != nil {
 		return nil, fmt.Errorf("error while setting logging format: %s", err)
 	}
 
-	err = snapshotConfig.GetLogger().SetLogLevel(cfg.GetLoggingConfig().GetLogLevel())
+	err = config.GetLogger().SetLogLevel(cfg.GetLoggingConfig().GetLogLevel())
 	if err != nil {
 		return nil, fmt.Errorf("error while setting logging level: %s", err)
 	}
@@ -42,5 +42,5 @@ func GetSnapshotContext(snapshotConfig *Config) (*Context, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewContext(cp, database, snapshotConfig.GetLogger(), pool), nil
+	return NewContext(cp, database, config.GetLogger(), pool), nil
 }

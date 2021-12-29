@@ -4,8 +4,6 @@ import (
 	"os"
 
 	"github.com/forbole/soljuno/cmd"
-	"github.com/forbole/soljuno/cmd/parse"
-
 	"github.com/forbole/soljuno/modules/registrar"
 
 	cmdtypes "github.com/forbole/soljuno/cmd/types"
@@ -13,10 +11,7 @@ import (
 
 func main() {
 	// ParsingConfig the runner
-	config := cmdtypes.NewConfig("soljuno").
-		WithParseConfig(parse.NewConfig().
-			WithRegistrar(registrar.NewDefaultRegistrar()),
-		)
+	config := cmdtypes.NewConfig("soljuno").WithRegistrar(registrar.NewDefaultRegistrar())
 
 	// Run the commands and panic on any error
 	exec := cmd.BuildDefaultExecutor(config)

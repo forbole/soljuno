@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	cmdtypes "github.com/forbole/soljuno/cmd/types"
 	"github.com/forbole/soljuno/solana/parser"
 	associatedTokenAccount "github.com/forbole/soljuno/solana/program/associated-token-account"
 	"github.com/forbole/soljuno/solana/program/bpfloader"
@@ -34,11 +35,11 @@ var (
 )
 
 // ParseCmd returns the command that should be run when we want to start parsing a chain state.
-func ParseCmd(cmdCfg *Config) *cobra.Command {
+func ParseCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     "parse",
 		Short:   "Start parsing the blockchain data",
-		PreRunE: ReadConfig(cmdCfg),
+		PreRunE: cmdtypes.ReadConfig(cmdCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			context, err := GetParsingContext(cmdCfg)
 			if err != nil {

@@ -492,7 +492,7 @@ type telemetryConfig struct {
 }
 
 // NewTelemetryConfig allows to build a new TelemetryConfig instance
-func NewTelemetryConfig(enabled bool, port uint) TelemetryConfig {
+func NewTelemetryConfig(port uint) TelemetryConfig {
 	return &telemetryConfig{
 		Port: port,
 	}
@@ -500,7 +500,7 @@ func NewTelemetryConfig(enabled bool, port uint) TelemetryConfig {
 
 // DefaultTelemetryConfig returns the default TelemetryConfig instance
 func DefaultTelemetryConfig() TelemetryConfig {
-	return NewTelemetryConfig(false, 9487)
+	return NewTelemetryConfig(9487)
 }
 
 // GetPort implements TelemetryConfig

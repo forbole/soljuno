@@ -7,18 +7,19 @@ import (
 	"regexp"
 	"strings"
 
+	cmdtypes "github.com/forbole/soljuno/cmd/types"
 	"github.com/forbole/soljuno/db"
 	"github.com/spf13/cobra"
 )
 
 const FlagInitConfirmation = "yes"
 
-func InitCmd(cmdCfg *Config) *cobra.Command {
+func InitCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "init [schema-folder]",
 		Short:   "Init the database by schemas in the given folder",
 		Args:    cobra.ExactArgs(1),
-		PreRunE: ReadConfig(cmdCfg),
+		PreRunE: cmdtypes.ReadConfig(cmdCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			confirm, _ := cmd.Flags().GetBool(FlagInitConfirmation)
 			if !confirm {

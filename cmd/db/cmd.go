@@ -1,8 +1,11 @@
 package db
 
-import "github.com/spf13/cobra"
+import (
+	cmdtypes "github.com/forbole/soljuno/cmd/types"
+	"github.com/spf13/cobra"
+)
 
-func DbCmd(cmdCfg *Config) *cobra.Command {
+func DbCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        "db",
 		Short:                      "Database subcommands",
