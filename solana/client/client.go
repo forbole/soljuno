@@ -9,17 +9,48 @@ import (
 )
 
 type ClientProxy interface {
+	// GetLatestSlot returns the latest slot on the active chain. An error
+	// is returned if the query fails.
 	GetLatestSlot() (uint64, error)
+
+	// GetBlock queries for a block by slot. An error is returned if the query fails.
 	GetBlock(uint64) (clienttypes.BlockResult, error)
+
+	// GetBlocks returns the slot of confirmed blocks between the given start and end on the active chain.
+	// An error is returned if the query fails.
 	GetBlocks(uint64, uint64) ([]uint64, error)
 	GetVoteAccounts() (clienttypes.VoteAccounts, error)
+
+	// GetAccountInfo returns the information of the given account in the current chain.
+	// An error is returned if the query fails
 	GetAccountInfo(string) (clienttypes.AccountInfo, error)
+
+	// GetVoteAccountsWithSlot returns vote accounts of validators in the current chain.
+	// An error is returned if the query fails
 	GetVoteAccountsWithSlot() (uint64, clienttypes.VoteAccounts, error)
+
+	// GetLeaderSchedule returns epoch leader schedule of the given slot in the current chain.
+	// An error is returned if the query fails
 	GetLeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error)
+
+	// GetSupplyInfo returns supply info in the current chain.
+	// An error is returned if the query fails
 	GetSupplyInfo() (clienttypes.SupplyWithContext, error)
+
+	// GetInflationRate returns inflation rate in the current chain.
+	// An error is returned if the query fails
 	GetInflationRate() (clienttypes.InflationRate, error)
+
+	// GetEpochInfo returns epoch info in the current chain.
+	// An error is returned if the query fails
 	GetEpochInfo() (clienttypes.EpochInfo, error)
+
+	// GetEpochSchedule returns epoch schedule in the current chain.
+	// An error is returned if the query fails
 	GetEpochSchedule() (clienttypes.EpochSchedule, error)
+
+	// GetInflationGovernor return inflation governor in the current chain
+	// An error is returned if the query fails
 	GetInflationGovernor() (clienttypes.InflationGovernor, error)
 }
 
