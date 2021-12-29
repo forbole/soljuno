@@ -3,14 +3,14 @@ package vote
 import (
 	"fmt"
 
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/vote"
 	"github.com/forbole/soljuno/types"
 )
 
 // HandleMsg allows to handle different messages types for the vote module
-func HandleMsg(msg types.Message, tx types.Tx, db db.VoteDb, client client.Proxy) error {
+func HandleMsg(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	switch msg.Parsed.Type() {
 	case "initialize":
 		return handleMsgInitialize(msg, tx, db)
@@ -37,7 +37,7 @@ func handleMsgInitialize(msg types.Message, tx types.Tx, db db.VoteDb) error {
 }
 
 // handleMsgAuthorize handles a MsgAuthorize
-func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.VoteDb, client client.Proxy) error {
+func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(vote.ParsedAuthorize)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorize", msg.Parsed.Type())
@@ -47,7 +47,7 @@ func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.VoteDb, client cli
 }
 
 // handleMsgWithdraw handles a MsgWithdraw
-func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.VoteDb, client client.Proxy) error {
+func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(vote.ParsedWithdraw)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "withdraw", msg.Parsed.Type())
@@ -57,7 +57,7 @@ func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.VoteDb, client clie
 }
 
 // handleMsgUpdateValidatorIdentity handles a MsgUpdateValidatorIdentity
-func handleMsgUpdateValidatorIdentity(msg types.Message, tx types.Tx, db db.VoteDb, client client.Proxy) error {
+func handleMsgUpdateValidatorIdentity(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(vote.ParsedUpdateValidatorIdentity)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "updateValidatorIdentity", msg.Parsed.Type())
@@ -67,7 +67,7 @@ func handleMsgUpdateValidatorIdentity(msg types.Message, tx types.Tx, db db.Vote
 }
 
 // handleMsgUpdateCommission handles a MsgUpdateCommission
-func handleMsgUpdateCommission(msg types.Message, tx types.Tx, db db.VoteDb, client client.Proxy) error {
+func handleMsgUpdateCommission(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(vote.ParsedUpdateCommission)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "updateCommission", msg.Parsed.Type())
@@ -77,7 +77,7 @@ func handleMsgUpdateCommission(msg types.Message, tx types.Tx, db db.VoteDb, cli
 }
 
 // handleMsgAuthorizeChecked handles a MsgAuthorizeChecked
-func handleMsgAuthorizeChecked(msg types.Message, tx types.Tx, db db.VoteDb, client client.Proxy) error {
+func handleMsgAuthorizeChecked(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(vote.ParsedAuthorizeChecked)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeChecked", msg.Parsed.Type())

@@ -6,20 +6,20 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/apis/keybase"
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
 	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/types"
 )
 
 // HandleMsg allows to handle different messages types for the config module
-func HandleMsg(msg types.Message, tx types.Tx, db db.ConfigDb, client client.Proxy) error {
+func HandleMsg(msg types.Message, tx types.Tx, db db.ConfigDb, client client.ClientProxy) error {
 	if len(msg.InvolvedAccounts) != 2 {
 		return nil
 	}
 	address := msg.InvolvedAccounts[0]
-	info, err := client.AccountInfo(address)
+	info, err := client.GetAccountInfo(address)
 	if err != nil {
 		return err
 	}

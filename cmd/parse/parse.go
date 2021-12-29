@@ -129,7 +129,7 @@ func StartParsing(ctx *Context) error {
 	// Listen for and trap any OS signal to gracefully shutdown and exit
 	trapSignal(ctx)
 
-	latestSlot, err := ctx.Proxy.LatestSlot()
+	latestSlot, err := ctx.Proxy.GetLatestSlot()
 	if err != nil {
 		panic(fmt.Errorf("failed to get last block from RPC client: %s", err))
 	}
@@ -156,7 +156,7 @@ func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64
 		if next > end {
 			next = end
 		}
-		slots, err := ctx.Proxy.Slots(i, next)
+		slots, err := ctx.Proxy.GetBlocks(i, next)
 		if err != nil {
 			continue
 		}
@@ -173,7 +173,7 @@ func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64
 // blocks are incoming.
 func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint64) {
 	for {
-		end, err := ctx.Proxy.LatestSlot()
+		end, err := ctx.Proxy.GetLatestSlot()
 		if err != nil {
 			continue
 		}

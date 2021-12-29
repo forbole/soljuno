@@ -23,7 +23,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 // updateValidatorsStatus insert current validators status
 func (m *Module) updateValidatorsStatus() error {
-	slot, voteAccounts, err := m.client.ValidatorsWithSlot()
+	slot, voteAccounts, err := m.client.GetVoteAccountsWithSlot()
 	if err != nil {
 		return nil
 	}

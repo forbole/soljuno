@@ -3,14 +3,14 @@ package stake
 import (
 	"fmt"
 
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/stake"
 	"github.com/forbole/soljuno/types"
 )
 
 // HandleMsg allows to handle different messages types for the stake module
-func HandleMsg(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func HandleMsg(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	switch msg.Parsed.Type() {
 	case "initialize":
 		return handleMsgInitialize(msg, tx, db)
@@ -57,7 +57,7 @@ func handleMsgInitialize(msg types.Message, tx types.Tx, db db.StakeDb) error {
 }
 
 // handleMsgAuthorize handles a MsgAuthorize
-func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedAuthorize)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorize", msg.Parsed.Type())
@@ -67,7 +67,7 @@ func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.StakeDb, client cl
 }
 
 // handleMsgDelegate handles a MsgDelegate
-func handleMsgDelegate(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgDelegate(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedDelegateStake)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "delegate", msg.Parsed.Type())
@@ -77,7 +77,7 @@ func handleMsgDelegate(msg types.Message, tx types.Tx, db db.StakeDb, client cli
 }
 
 // handleMsgSplit handles a MsgSplit
-func handleMsgSplit(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgSplit(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedSplit)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "split", msg.Parsed.Type())
@@ -91,7 +91,7 @@ func handleMsgSplit(msg types.Message, tx types.Tx, db db.StakeDb, client client
 }
 
 // handleMsgWithdraw handles a MsgWithdraw
-func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedWithdraw)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "withdraw", msg.Parsed.Type())
@@ -101,7 +101,7 @@ func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.StakeDb, client cli
 }
 
 // handleMsgDeactivate handles a MsgDeactivate
-func handleMsgDeactivate(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgDeactivate(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedDeactivate)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "deactivate", msg.Parsed.Type())
@@ -111,7 +111,7 @@ func handleMsgDeactivate(msg types.Message, tx types.Tx, db db.StakeDb, client c
 }
 
 // handleMsgSetLockup handles a MsgSetLockup
-func handleMsgSetLockup(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgSetLockup(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedSetLockup)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "setLockup", msg.Parsed.Type())
@@ -121,7 +121,7 @@ func handleMsgSetLockup(msg types.Message, tx types.Tx, db db.StakeDb, client cl
 }
 
 // handleMsgMerge handles a MsgMerge
-func handleMsgMerge(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgMerge(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedMerge)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "merge", msg.Parsed.Type())
@@ -135,7 +135,7 @@ func handleMsgMerge(msg types.Message, tx types.Tx, db db.StakeDb, client client
 }
 
 // handleMsgAuthorizeWithSeed handles a MsgAuthorizeWithSeed
-func handleMsgAuthorizeWithSeed(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgAuthorizeWithSeed(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedAuthorizeWithSeed)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeWithSeed", msg.Parsed.Type())
@@ -145,7 +145,7 @@ func handleMsgAuthorizeWithSeed(msg types.Message, tx types.Tx, db db.StakeDb, c
 }
 
 // handleMsgInitializeChecked handles a MsgInitializeChecked
-func handleMsgInitializeChecked(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgInitializeChecked(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedInitializeChecked)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeChecked", msg.Parsed.Type())
@@ -155,7 +155,7 @@ func handleMsgInitializeChecked(msg types.Message, tx types.Tx, db db.StakeDb, c
 }
 
 // handleMsgAuthorizeChecked handles a MsgAuthorizeChecked
-func handleMsgAuthorizeChecked(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgAuthorizeChecked(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedAuthorizeChecked)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeChecked", msg.Parsed.Type())
@@ -165,7 +165,7 @@ func handleMsgAuthorizeChecked(msg types.Message, tx types.Tx, db db.StakeDb, cl
 }
 
 // handleMsgAuthorizeCheckedWithSeed handles a MsgAuthorizeCheckedWithSeed
-func handleMsgAuthorizeCheckedWithSeed(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgAuthorizeCheckedWithSeed(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedAuthorizeCheckedWithSeed)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeCheckedWithSeed", msg.Parsed.Type())
@@ -175,7 +175,7 @@ func handleMsgAuthorizeCheckedWithSeed(msg types.Message, tx types.Tx, db db.Sta
 }
 
 // handleMsgSetLockupChecked handles a MsgSetLockupChecked
-func handleMsgSetLockupChecked(msg types.Message, tx types.Tx, db db.StakeDb, client client.Proxy) error {
+func handleMsgSetLockupChecked(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	instruction, ok := msg.Parsed.Data().(stake.ParsedSetLockupChecked)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "setLockupChecked", msg.Parsed.Type())

@@ -6,15 +6,15 @@ import (
 	"github.com/forbole/soljuno/solana/parser"
 	"github.com/forbole/soljuno/types/logging"
 
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/types"
 )
 
 // Context represents the context that is shared among different workers
 type Context struct {
-	ClientProxy   client.Proxy
+	ClientProxy   client.ClientProxy
 	Database      db.Database
 	ParserManager parser.ParserManager
 	Logger        logging.Logger
@@ -26,7 +26,7 @@ type Context struct {
 
 // NewContext allows to build a new Worker Context instance
 func NewContext(
-	clientProxy client.Proxy,
+	clientProxy client.ClientProxy,
 	db db.Database,
 	parser parser.ParserManager,
 	logger logging.Logger,

@@ -1,8 +1,8 @@
 package system
 
 import (
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/system"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
@@ -10,10 +10,10 @@ import (
 
 type Module struct {
 	db     db.Database
-	client client.Proxy
+	client client.ClientProxy
 }
 
-func NewModule(db db.Database, client client.Proxy) *Module {
+func NewModule(db db.Database, client client.ClientProxy) *Module {
 	return &Module{
 		db:     db,
 		client: client,
