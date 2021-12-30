@@ -1,0 +1,12 @@
+type Query {
+    getEpochInfo: EpochInfo
+}
+
+type EpochInfo {
+    absoluteSlot: String!
+    blockHeight: String!
+    epoch: String!
+    slotIndex: String!
+    slotsInEpoch: String!
+    transactionCount: String!
+}

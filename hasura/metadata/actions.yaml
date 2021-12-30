@@ -1,6 +1,14 @@
-actions: []
+actions:
+- name: getEpochInfo
+  definition:
+    kind: synchronous
+    handler: http://host.docker.internal:3000/api/epoch_info
+    headers:
+    - value: application/json
+      name: Content-Type
 custom_types:
   enums: []
   input_objects: []
-  objects: []
+  objects:
+  - name: EpochInfo
   scalars: []

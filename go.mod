@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.9
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-co-op/gocron v1.9.0
 	github.com/gorilla/mux v1.8.0
 	github.com/jmoiron/sqlx v1.3.4
@@ -23,6 +24,8 @@ require (
 	github.com/ybbus/jsonrpc/v2 v2.1.6
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
+	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
