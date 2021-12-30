@@ -2,7 +2,7 @@ actions:
 - name: getEpochInfo
   definition:
     kind: synchronous
-    handler: http://host.docker.internal:3000/api/epoch_info
+    handler: http://localhost:3000/api/epoch_info
     headers:
     - value: application/json
       name: Content-Type
