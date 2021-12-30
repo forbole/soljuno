@@ -11,7 +11,7 @@ import (
 
 func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 	r.Group("/api").
-		GET("/epoch_info", func(c *gin.Context) {
+		POST("/epoch_info", func(c *gin.Context) {
 			epochInfo, err := proxy.GetEpochInfo()
 			if err != nil {
 				c.JSON(http.StatusBadRequest, types.NewError(err))
