@@ -1,6 +1,7 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/forbole/soljuno/solana/client/types"
@@ -19,6 +20,7 @@ type ClientProxy interface {
 	// GetBlocks returns the slot of confirmed blocks between the given start and end on the active chain.
 	// An error is returned if the query fails.
 	GetBlocks(uint64, uint64) ([]uint64, error)
+
 	GetVoteAccounts() (clienttypes.VoteAccounts, error)
 
 	// GetAccountInfo returns the information of the given account in the current chain.
@@ -132,6 +134,9 @@ func (c *Client) GetLeaderSchedule(slot uint64) (types.LeaderSchedule, error) {
 
 func (c *Client) GetSupplyInfo() (types.SupplyWithContext, error) {
 	var supply types.SupplyWithContext
+	bz, _ := json.Marshal(types.NewSupplyConfig(true))
+	req := jsonrpc.NewRequest("getSupply", []interface{}{string(bz)})
+	fmt.Println(jsonrpc.Params(req.Params))
 	err := c.rpcClient.CallFor(&supply, "getSupply", []interface{}{types.NewSupplyConfig(true)})
 	return supply, err
 }

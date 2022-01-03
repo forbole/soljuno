@@ -23,6 +23,7 @@ select_permissions:
     allow_aggregations: true
     columns:
     - unit_name
+    - price_id
     - address
     - logo_uri
     - description
