@@ -1,7 +1,6 @@
 package client
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/forbole/soljuno/solana/client/types"
@@ -134,9 +133,6 @@ func (c *Client) GetLeaderSchedule(slot uint64) (types.LeaderSchedule, error) {
 
 func (c *Client) GetSupplyInfo() (types.SupplyWithContext, error) {
 	var supply types.SupplyWithContext
-	bz, _ := json.Marshal(types.NewSupplyConfig(true))
-	req := jsonrpc.NewRequest("getSupply", []interface{}{string(bz)})
-	fmt.Println(jsonrpc.Params(req.Params))
 	err := c.rpcClient.CallFor(&supply, "getSupply", []interface{}{types.NewSupplyConfig(true)})
 	return supply, err
 }
