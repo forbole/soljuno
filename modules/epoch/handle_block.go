@@ -2,7 +2,6 @@ package epoch
 
 import (
 	"github.com/forbole/soljuno/db"
-	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
@@ -15,10 +14,6 @@ func (m *Module) HandleBlock(block types.Block) error {
 	}
 	if !m.updateEpoch(info.Epoch) {
 		return nil
-	}
-	err = m.db.SaveEpoch(dbtypes.NewEpochInfoRow(m.epoch, info.TransactionCount))
-	if err != nil {
-		return err
 	}
 	return handleEpoch(m.epoch, m.db, m.client)
 }
@@ -41,13 +36,5 @@ func handleEpoch(epoch uint64, db db.EpochDb, client client.ClientProxy) error {
 			log.Error().Err(err).Send()
 		}
 	}()
-	err := updateInflationRate(epoch, db, client)
-	if err != nil {
-		return err
-	}
-	err = updateEpochScheduleParam(epoch, db, client)
-	if err != nil {
-		return err
-	}
-	return updateInflationGovernorParam(epoch, db, client)
+	return nil
 }

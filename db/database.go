@@ -254,20 +254,8 @@ type ConsensusDb interface {
 }
 
 type EpochDb interface {
-	// SaveEpoch
-	SaveEpoch(dbtypes.EpochInfoRow) error
-
-	// SaveInflationRate allows to store the current inflation rate inside the database
-	SaveInflationRate(dbtypes.InflationRateRow) error
-
 	// SaveSupplyInfo allows to store the current supply info inside the database
 	SaveSupplyInfo(dbtypes.SupplyInfoRow) error
-
-	// SaveInflationGovernorParam allows to store the inflation governor parameters inside the database
-	SaveInflationGovernorParam(dbtypes.InflationGovernorParamRow) error
-
-	// SaveEpochScheduleParam allows to store the epoch schedule parameters inside the database
-	SaveEpochScheduleParam(dbtypes.EpochScheduleParamRow) error
 }
 
 // Context contains the data that might be used to build a Database instance
