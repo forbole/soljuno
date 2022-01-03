@@ -1,5 +1,5 @@
 actions:
-- name: epoch_info
+- name: epochInfo
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/epoch_info
@@ -9,7 +9,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: epoch_schedule_param
+- name: epochScheduleParam
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/epoch_schedule
@@ -19,7 +19,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: inflation_rate
+- name: inflationRate
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/inflation_rate
@@ -28,7 +28,8 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-- name: inflation_governor_param
+
+- name: inflationGovernorParam
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/inflation_governor
