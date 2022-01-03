@@ -126,12 +126,12 @@ func (db *Database) SaveMessages(msgs []types.Message) error {
 		return nil
 	}
 	insertStmt := `INSERT INTO message
-	(transaction_hash, slot, index, inner_index, program, raw_data, type, value) VALUES`
+	(transaction_hash, slot, index, inner_index, program, type) VALUES`
 	paramsStmt := ""
 	conflictStmt := `ON CONFLICT DO NOTHING`
 
 	var params []interface{}
-	paramsNumber := 8
+	paramsNumber := 6
 	for i, msg := range msgs {
 		bi := i * paramsNumber
 		paramsStmt += getParamsStmt(bi, paramsNumber)
@@ -142,9 +142,7 @@ func (db *Database) SaveMessages(msgs []types.Message) error {
 			msg.Index,
 			msg.InnerIndex,
 			msg.Program,
-			msg.RawData,
 			msg.Parsed.Type(),
-			msg.Parsed.JSON(),
 		)
 	}
 	err := db.insertWithParams(
