@@ -17,7 +17,7 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 				c.JSON(http.StatusBadRequest, types.NewError(err))
 				return
 			}
-			c.JSON(http.StatusOK, types.NewEpochInfo(epochInfo))
+			c.JSON(http.StatusOK, epochInfo)
 		})
 
 }

@@ -21,7 +21,6 @@
 - "!include public_stake_account.yaml"
 - "!include public_stake_delegation.yaml"
 - "!include public_stake_lockup.yaml"
-- "!include public_epoch_info.yaml"
 - "!include public_inflation_rate.yaml"
 - "!include public_supply_info.yaml"
 - "!include public_epoch_schedule_param.yaml"
