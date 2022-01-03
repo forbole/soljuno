@@ -1,8 +1,8 @@
 type Query {
     epoch_info: EpochInfo
-    epoch_schedule: EpochSchedule
+    epoch_schedule_param: EpochSchedule
     inflation_rate: InflationRate
-    inflation_governor: InflationGovernor
+    inflation_governor_param: InflationGovernor
 }
 
 type EpochInfo {

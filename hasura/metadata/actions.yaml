@@ -9,7 +9,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: epoch_schedule
+- name: epoch_schedule_param
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/epoch_schedule
@@ -28,7 +28,7 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
-- name: inflation_governor
+- name: inflation_governor_param
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/inflation_governor
