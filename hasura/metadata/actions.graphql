@@ -31,7 +31,6 @@ type InflationRate {
 }
 
 type InflationGovernor {
-    epoch: bigint!
     initial: Float!
     terminal: Float!
     taper: Float!
