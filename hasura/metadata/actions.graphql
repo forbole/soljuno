@@ -19,6 +19,7 @@ type EpochSchedule {
     slotsPerEpoch: Int!
     firstNormalEpoch: Int!
     firstNormalSlot: Int!
+    leaderScheduleSlotOffset: Int!
     warmup: Boolean!
 }
 
@@ -35,5 +36,5 @@ type InflationGovernor {
     terminal: Float!
     taper: Float!
     foundation: Float!
-    foundationTerminal: Float!
+    foundation_term: Float!
 }
