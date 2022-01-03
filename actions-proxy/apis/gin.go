@@ -29,7 +29,7 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 		c.JSON(http.StatusOK, schedule)
 	})
 
-	group.POST("/inflation", func(c *gin.Context) {
+	group.POST("/inflation_rate", func(c *gin.Context) {
 		inflation, err := proxy.GetInflationRate()
 		if err != nil {
 			c.JSON(http.StatusBadRequest, types.NewError(err))
@@ -47,5 +47,4 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 		c.JSON(http.StatusOK, governor)
 	})
 
-	group.POST("/")
 }

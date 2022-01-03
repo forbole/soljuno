@@ -1,5 +1,8 @@
 type Query {
     epoch_info: EpochInfo
+    epoch_schedule: EpochSchedule
+    inflation_rate: InflationRate
+    inflation_governor: InflationGovernor
 }
 
 type EpochInfo {
@@ -9,4 +12,28 @@ type EpochInfo {
     slotIndex: bigint!
     slotsInEpoch: bigint!
     transactionCount: bigint!
+}
+
+type EpochSchedule {
+    epoch: bigint!
+    slotsPerEpoch: Int!
+    firstNormalEpoch: Int!
+    firstNormalSlot: Int!
+    warmup: Boolean!
+}
+
+type InflationRate {
+    epoch: bigint!
+    total: Float!
+    foundation: Float!
+    validator: Float!
+}
+
+type InflationGovernor {
+    epoch: bigint!
+    initial: Float!
+    terminal: Float!
+    taper: Float!
+    foundation: Float!
+    foundationTerminal: Float!
 }

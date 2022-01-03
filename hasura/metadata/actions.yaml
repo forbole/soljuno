@@ -6,9 +6,44 @@ actions:
     headers:
     - value: application/json
       name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: epoch_schedule
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/api/epoch_schedule
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: inflation_rate
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/api/inflation_rate
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+- name: inflation_governor
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/api/inflation_governor
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
 custom_types:
   enums: []
   input_objects: []
   objects:
   - name: EpochInfo
+  - name: EpochSchedule
+  - name: InflationRate
+  - name: InflationGovernor
   scalars: []
