@@ -19,5 +19,8 @@ func StartProxyServer(proxy client.ClientProxy, port int) {
 	if port == 0 {
 		port = 3000
 	}
-	r.Run(fmt.Sprintf(":%d", port))
+	err := r.Run(fmt.Sprintf(":%d", port))
+	if err != nil {
+		panic(err)
+	}
 }
