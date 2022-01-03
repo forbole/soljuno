@@ -1,8 +1,8 @@
 type Query {
-    epoch_info: EpochInfo
-    epoch_schedule_param: EpochSchedule
-    inflation_rate: InflationRate
-    inflation_governor_param: InflationGovernor
+    epochInfo: EpochInfo!
+    epochScheduleParam: EpochSchedule!
+    inflationRate: InflationRate!
+    inflationGovernorParam: InflationGovernor!
 }
 
 type EpochInfo {
@@ -34,5 +34,5 @@ type InflationGovernor {
     terminal: Float!
     taper: Float!
     foundation: Float!
-    foundation_term: Float!
+    foundationTerm: Float!
 }

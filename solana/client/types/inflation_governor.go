@@ -5,5 +5,5 @@ type InflationGovernor struct {
 	Terminal           float64 `json:"terminal"`
 	Taper              float64 `json:"taper"`
 	Foundation         float64 `json:"foundation"`
-	FoundationTerminal float64 `json:"foundation_term"`
+	FoundationTerminal float64 `json:"foundationTerm"`
 }
