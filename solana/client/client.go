@@ -185,6 +185,6 @@ func (c *Client) GetSignaturesForAddress(
 
 func (c *Client) GetTransaction(hash string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error) {
 	var tx clienttypes.EncodedConfirmedTransactionWithStatusMeta
-	err := c.rpcClient.CallFor(&tx, "getTransaction", []interface{}{hash})
+	err := c.rpcClient.CallFor(&tx, "getTransaction", hash, "json")
 	return tx, err
 }

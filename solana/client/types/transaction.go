@@ -1,9 +1,10 @@
 package types
 
 type EncodedConfirmedTransactionWithStatusMeta struct {
-	Slot        uint64                           `json:"slot"`
-	BlockTime   uint64                           `json:"blockTime"`
-	Transaction EncodedTransactionWithStatusMeta `json:"transaction"`
+	Slot        uint64                  `json:"slot"`
+	BlockTime   uint64                  `json:"blockTime"`
+	Transaction UiTransaction           `json:"transaction"`
+	Meta        UiTransactionStatusMeta `json:"meta"`
 }
 
 type GetSignaturesForAddressConfig struct {

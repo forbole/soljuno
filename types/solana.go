@@ -26,13 +26,13 @@ func NewValidator(votePubkey string, nodePubKey string) Validator {
 
 // Block contains the data of a single chain block
 type Block struct {
-	Slot      uint64
-	Height    uint64
-	Hash      string
-	Proposer  string
-	Rewards   []clienttypes.Reward
-	Timestamp time.Time
-	Txs       []Tx
+	Slot      uint64               `json:"slot"`
+	Height    uint64               `json:"height"`
+	Hash      string               `json:"hash"`
+	Proposer  string               `json:"proposer"`
+	Rewards   []clienttypes.Reward `json:"rewards"`
+	Timestamp time.Time            `json:"timestamp"`
+	Txs       []Tx                 `json:"txs"`
 }
 
 // NewBlock allows to build a new Block instance
@@ -91,16 +91,16 @@ func getAccounts(accountKeys []string, ids []uint8) []string {
 
 // Tx represents an already existing blockchain transaction
 type Tx struct {
-	Hash     string
-	Slot     uint64
-	Error    interface{}
-	Fee      uint64
-	Logs     []string
-	Messages []Message
+	Hash     string      `json:"hash"`
+	Slot     uint64      `json:"slot"`
+	Error    interface{} `json:"error"`
+	Fee      uint64      `json:"fee"`
+	Logs     []string    `json:"logs"`
+	Messages []Message   `json:"messages"`
 
-	Accounts          []string
-	PostBalances      []uint64
-	PostTokenBalances []clienttypes.TransactionTokenBalance
+	Accounts          []string                              `json:"accounts"`
+	PostBalances      []uint64                              `json:"postBalances"`
+	PostTokenBalances []clienttypes.TransactionTokenBalance `json:"postTokenBalances"`
 }
 
 // NewTx allows to build a new Tx instance
@@ -182,14 +182,14 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 // -------------------------------------------------------------------------------------------------------------------
 
 type Message struct {
-	TxHash           string
-	Slot             uint64
-	Index            int
-	InnerIndex       int
-	Program          string
-	InvolvedAccounts []string
-	RawData          string
-	Parsed           types.ParsedInstruction
+	TxHash           string                  `json:"txHash"`
+	Slot             uint64                  `json:"slot"`
+	Index            int                     `json:"index"`
+	InnerIndex       int                     `json:"innerIndex"`
+	Program          string                  `json:"program"`
+	InvolvedAccounts []string                `json:"involvedAccounts"`
+	RawData          string                  `json:"rawData"`
+	Parsed           types.ParsedInstruction `json:"parsed"`
 }
 
 func NewMessage(
