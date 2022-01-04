@@ -71,3 +71,14 @@ func (cp *proxy) GetEpochSchedule() (clienttypes.EpochSchedule, error) {
 func (cp *proxy) GetInflationGovernor() (clienttypes.InflationGovernor, error) {
 	return cp.rpcClient.GetInflationGovernor()
 }
+
+func (cp *proxy) GetSignaturesForAddress(
+	address string,
+	config clienttypes.GetSignaturesForAddressConfig,
+) ([]clienttypes.ConfirmedTransactionStatusWithSignature, error) {
+	return cp.rpcClient.GetSignaturesForAddress(address, config)
+}
+
+func (cp *proxy) GetTransaction(hash string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error) {
+	return cp.rpcClient.GetTransaction(hash)
+}
