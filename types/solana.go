@@ -4,7 +4,7 @@ import (
 	"time"
 
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
-	"github.com/forbole/soljuno/solana/parser"
+	"github.com/forbole/soljuno/solana/parser/manager"
 	"github.com/forbole/soljuno/solana/types"
 )
 
@@ -48,7 +48,7 @@ func NewBlock(slot, height uint64, hash, proposer string, timestamp time.Time, t
 }
 
 // NewBlockFromResult allows to build new Block instance from BlockResult
-func NewBlockFromResult(parserManager parser.ParserManager, slot uint64, b clienttypes.BlockResult) Block {
+func NewBlockFromResult(parserManager manager.ParserManager, slot uint64, b clienttypes.BlockResult) Block {
 	proposer := ""
 	rewards := b.Rewards
 	for _, reward := range rewards {
@@ -60,51 +60,9 @@ func NewBlockFromResult(parserManager parser.ParserManager, slot uint64, b clien
 
 	var txs []Tx
 	for _, txResult := range b.Transactions {
-		hash := txResult.Transaction.Signatures[0]
-
-		var msgs []Message
-		rawMsg := txResult.Transaction.Message
-		accountKeys := rawMsg.AccountKeys
-
-		// Put innerstructions to map in order to create msg after the main instruction
-		var innerInstructionMap = make(map[uint8][]clienttypes.UiCompiledInstruction)
-		for _, inner := range txResult.Meta.InnerInstructions {
-			innerInstructionMap[inner.Index] = append(innerInstructionMap[inner.Index], inner.Instructions...)
-		}
-
-		for i, msg := range rawMsg.Instructions {
-			var accounts []string
-			innerIndex := 0
-			accounts = getAccounts(accountKeys, msg.Accounts)
-			programID := accountKeys[msg.ProgramIDIndex]
-			parsed := parserManager.Parse(accounts, programID, msg.Data)
-			msgs = append(msgs, NewMessage(hash, slot, i, innerIndex, accountKeys[msg.ProgramIDIndex], accounts, msg.Data, parsed))
-			innerIndex++
-
-			if inner, ok := innerInstructionMap[uint8(i)]; ok {
-				for _, innerMsg := range inner {
-					accounts = getAccounts(accountKeys, innerMsg.Accounts)
-					programID := accountKeys[innerMsg.ProgramIDIndex]
-					parsed := parserManager.Parse(accounts, programID, innerMsg.Data)
-					msgs = append(msgs, NewMessage(hash, slot, i, innerIndex, accountKeys[innerMsg.ProgramIDIndex], accounts, innerMsg.Data, parsed))
-					innerIndex++
-				}
-			}
-		}
-
 		txs = append(
 			txs,
-			NewTx(
-				hash,
-				slot,
-				txResult.Meta.Err,
-				txResult.Meta.Fee,
-				txResult.Meta.LogMessages,
-				msgs,
-				txResult.Transaction.Message.AccountKeys,
-				txResult.Meta.PostBalances,
-				txResult.Meta.PreTokenBalances,
-			),
+			NewTxFromTxResult(parserManager, slot, txResult),
 		)
 	}
 
@@ -174,6 +132,51 @@ func NewTx(
 // Successful tells whether this tx is successful or not
 func (tx Tx) Successful() bool {
 	return tx.Error == nil
+}
+
+func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResult clienttypes.EncodedTransactionWithStatusMeta) Tx {
+	hash := txResult.Transaction.Signatures[0]
+
+	var msgs []Message
+	rawMsg := txResult.Transaction.Message
+	accountKeys := rawMsg.AccountKeys
+
+	// Put innerstructions to map in order to create msg after the main instruction
+	var innerInstructionMap = make(map[uint8][]clienttypes.UiCompiledInstruction)
+	for _, inner := range txResult.Meta.InnerInstructions {
+		innerInstructionMap[inner.Index] = append(innerInstructionMap[inner.Index], inner.Instructions...)
+	}
+
+	for i, msg := range rawMsg.Instructions {
+		var accounts []string
+		innerIndex := 0
+		accounts = getAccounts(accountKeys, msg.Accounts)
+		programID := accountKeys[msg.ProgramIDIndex]
+		parsed := parserManager.Parse(accounts, programID, msg.Data)
+		msgs = append(msgs, NewMessage(hash, slot, i, innerIndex, accountKeys[msg.ProgramIDIndex], accounts, msg.Data, parsed))
+		innerIndex++
+
+		if inner, ok := innerInstructionMap[uint8(i)]; ok {
+			for _, innerMsg := range inner {
+				accounts = getAccounts(accountKeys, innerMsg.Accounts)
+				programID := accountKeys[innerMsg.ProgramIDIndex]
+				parsed := parserManager.Parse(accounts, programID, innerMsg.Data)
+				msgs = append(msgs, NewMessage(hash, slot, i, innerIndex, accountKeys[innerMsg.ProgramIDIndex], accounts, innerMsg.Data, parsed))
+				innerIndex++
+			}
+		}
+	}
+	return NewTx(
+		hash,
+		slot,
+		txResult.Meta.Err,
+		txResult.Meta.Fee,
+		txResult.Meta.LogMessages,
+		msgs,
+		txResult.Transaction.Message.AccountKeys,
+		txResult.Meta.PostBalances,
+		txResult.Meta.PreTokenBalances,
+	)
 }
 
 // -------------------------------------------------------------------------------------------------------------------

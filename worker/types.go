@@ -3,12 +3,12 @@ package worker
 import (
 	"github.com/panjf2000/ants/v2"
 
-	"github.com/forbole/soljuno/solana/parser"
 	"github.com/forbole/soljuno/types/logging"
 
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/solana/client"
+	"github.com/forbole/soljuno/solana/parser/manager"
 	"github.com/forbole/soljuno/types"
 )
 
@@ -16,7 +16,7 @@ import (
 type Context struct {
 	ClientProxy   client.ClientProxy
 	Database      db.Database
-	ParserManager parser.ParserManager
+	ParserManager manager.ParserManager
 	Logger        logging.Logger
 
 	Pool    *ants.Pool
@@ -28,7 +28,7 @@ type Context struct {
 func NewContext(
 	clientProxy client.ClientProxy,
 	db db.Database,
-	parser parser.ParserManager,
+	parser manager.ParserManager,
 	logger logging.Logger,
 	pool *ants.Pool,
 	queue types.SlotQueue,

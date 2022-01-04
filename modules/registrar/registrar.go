@@ -1,7 +1,7 @@
 package registrar
 
 import (
-	"github.com/forbole/soljuno/solana/parser"
+	"github.com/forbole/soljuno/solana/parser/manager"
 	"github.com/forbole/soljuno/types/logging"
 	"github.com/panjf2000/ants/v2"
 
@@ -32,7 +32,7 @@ import (
 type Context struct {
 	Config        types.Config
 	Database      db.Database
-	ParserManager parser.ParserManager
+	ParserManager manager.ParserManager
 	Proxy         client.ClientProxy
 	Logger        logging.Logger
 	Pool          *ants.Pool
