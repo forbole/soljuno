@@ -6,7 +6,7 @@ import (
 
 func Up(db db.Database) error {
 	_, err := db.Exec(`
-	DROP validator_status;
+	DROP TABLE validator_status;
 	CREATE TABLE validator_status
 	(
 		address         TEXT    NOT NULL PRIMARY KEY,
@@ -22,7 +22,7 @@ func Up(db db.Database) error {
 
 func Down(db db.ExceutorDb) error {
 	_, err := db.Exec(`
-	DROP validator_status;
+	DROP TABLE validator_status;
 	CREATE TABLE validator_status
 	(
 		address         TEXT    NOT NULL,
