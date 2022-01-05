@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"reflect"
 
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	jsonrpc "github.com/ybbus/jsonrpc/v2"
@@ -186,5 +187,12 @@ func (c *Client) GetSignaturesForAddress(
 func (c *Client) GetTransaction(hash string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error) {
 	var tx clienttypes.EncodedConfirmedTransactionWithStatusMeta
 	err := c.rpcClient.CallFor(&tx, "getTransaction", hash, "json")
+	if isEmpty(tx) {
+		return tx, fmt.Errorf("target doesn't exist on the chain")
+	}
 	return tx, err
+}
+
+func isEmpty(obj interface{}) bool {
+	return reflect.ValueOf(obj).IsZero()
 }
