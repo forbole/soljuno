@@ -10,14 +10,14 @@ object_relationships:
         name: validator_config
       column_mapping:
         node: owner
-  - name: validator_status
-    using:
-      manual_configuration:
-        remote_table:
-          schema: public
-          name: validator_status
-        column_mapping:
-          address: address
+- name: validator_status
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: validator_status
+      column_mapping:
+        address: address
 select_permissions:
 - permission:
     allow_aggregations: true
