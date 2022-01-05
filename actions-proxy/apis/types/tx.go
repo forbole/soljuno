@@ -19,14 +19,15 @@ type ParsedData struct {
 }
 
 func NewTxResponse(tx types.Tx) TxResponse {
-	var txResponse TxResponse
-	txResponse.Hash = tx.Hash
-	txResponse.Slot = tx.Slot
-	txResponse.Error = !tx.Successful()
-	txResponse.Fee = tx.Fee
-	txResponse.Accounts = tx.Accounts
+	var res TxResponse
+	res.Hash = tx.Hash
+	res.Slot = tx.Slot
+	res.Error = !tx.Successful()
+	res.Fee = tx.Fee
+	res.Logs = tx.Logs
+	res.Accounts = tx.Accounts
 	for _, msg := range tx.Messages {
-		txResponse.Messages = append(txResponse.Messages, MsgResponse{
+		res.Messages = append(res.Messages, MsgResponse{
 			msg.Index,
 			msg.InnerIndex,
 			msg.Program,
@@ -38,7 +39,7 @@ func NewTxResponse(tx types.Tx) TxResponse {
 			},
 		})
 	}
-	return txResponse
+	return res
 }
 
 type TxResponse struct {

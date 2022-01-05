@@ -51,8 +51,8 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 		c.JSON(http.StatusOK, governor)
 	})
 
-	group.POST("/tx_metas", func(c *gin.Context) {
-		var playload types.TxMetaPayload
+	group.POST("/tx_meta", func(c *gin.Context) {
+		var playload types.TxByAddressPayload
 		if err := c.BindJSON(&playload); err != nil {
 			c.JSON(http.StatusBadRequest, err)
 			return
@@ -60,27 +60,27 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 		metas, err := proxy.GetSignaturesForAddress(
 			playload.Input.Address,
 			clienttypes.GetSignaturesForAddressConfig{
-				Limit:  playload.Input.Limit,
-				Before: playload.Input.Before,
-				Until:  playload.Input.Until,
+				Limit:  playload.Input.Config.Limit,
+				Before: playload.Input.Config.Before,
+				Until:  playload.Input.Config.Until,
 			},
 		)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, types.NewError(err))
 			return
 		}
-		c.JSON(http.StatusOK, metas)
+		c.JSON(http.StatusOK, types.NewTxMetasResponse(metas))
 	})
 
 	group.POST("/tx", func(c *gin.Context) {
 		var playload types.TxPayload
 		if err := c.BindJSON(&playload); err != nil {
-			c.JSON(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, types.NewError(err))
 			return
 		}
 		encodedTx, err := proxy.GetTransaction(playload.Input.Hash)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, types.NewError(err))
 			return
 		}
 		tx := solanatypes.NewTxFromTxResult(
