@@ -6,51 +6,34 @@ import (
 
 func Up(db db.Database) error {
 	_, err := db.Exec(`
-	DROP TABLE epoch_info;
-	DROP TABLE inflation_rate;
-	DROP TABLE epoch_schedule_param;
-	DROP TABLE inflation_governor_param;
+	DROP TABLE validator_status;
+	CREATE TABLE validator_status
+	(
+		address         TEXT    NOT NULL PRIMARY KEY,
+		slot            BIGINT  NOT NULL,
+		activated_stake BIGINT  NOT NULL,
+		last_vote       BIGINT  NOT NULL,
+		root_slot       BIGINT  NOT NULL,
+		active          BOOLEAN NOT NULL
+	);
 	`)
 	return err
 }
 
 func Down(db db.ExceutorDb) error {
 	_, err := db.Exec(`
-	CREATE TABLE epoch_info (
-		one_row_id          BOOL            NOT NULL DEFAULT TRUE PRIMARY KEY,
-		epoch               BIGINT          NOT NULL,
-		transaction_count   NUMERIC(20, 0)  NOT NULL,
-		CHECK (one_row_id)
+	DROP TABLE validator_status;
+	CREATE TABLE validator_status
+	(
+		address         TEXT    NOT NULL,
+		slot            BIGINT  NOT NULL,
+		activated_stake BIGINT  NOT NULL,
+		last_vote       BIGINT  NOT NULL,
+		root_slot       BIGINT  NOT NULL,
+		active          BOOLEAN NOT NULL,
+		PRIMARY KEY (address, slot)
 	);
-	
-	CREATE TABLE inflation_rate (
-		one_row_id  BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
-		epoch       BIGINT  NOT NULL,
-		total       FLOAT   NOT NULL,
-		foundation  FLOAT   NOT NULL,
-		validator   FLOAT   NOT NULL,
-		CHECK (one_row_id)
-	);
-	
-	CREATE TABLE epoch_schedule_param (
-		one_row_id          BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
-		epoch               BIGINT  NOT NULL,
-		slots_per_epoch     INT     NOT NULL,
-		first_normal_epoch  INT     NOT NULL,
-		first_normal_slot   INT     NOT NULL,
-		warmup              BOOL    NOT NULL,
-		CHECK (one_row_id)
-	);
-	
-	CREATE TABLE inflation_governor_param (
-		one_row_id          BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
-		epoch               BIGINT  NOT NULL,
-		initial             FLOAT   NOT NULL,
-		terminal            FLOAT   NOT NULL,
-		taper               FLOAT   NOT NULL,
-		foundation          FLOAT   NOT NULL,
-		foundation_terminal FLOAT   NOT NULL,
-		CHECK (one_row_id)
-	);`)
+	CREATE INDEX vote_account_voter_index ON validator_status (address);
+	CREATE INDEX vote_account_slot_index ON validator_status (slot);`)
 	return err
 }
