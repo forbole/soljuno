@@ -10,8 +10,7 @@ object_relationships:
         name: validator_config
       column_mapping:
         node: owner
-array_relationships:
-- name: validator_statuses
+- name: validator_status
   using:
     manual_configuration:
       remote_table:

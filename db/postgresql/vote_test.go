@@ -101,12 +101,21 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 			},
 		},
 		{
+			name: "insert with lower slot",
+			data: ValidatorStatusRow{
+				"address", 0, 1000, 0, 0, true,
+			},
+			expected: []ValidatorStatusRow{
+				{"address", 1, 100, 0, 0, true},
+			},
+		},
+		{
 			name: "insert with same slot",
 			data: ValidatorStatusRow{
 				"address", 1, 1000, 0, 0, true,
 			},
 			expected: []ValidatorStatusRow{
-				{"address", 1, 100, 0, 0, true},
+				{"address", 1, 1000, 0, 0, true},
 			},
 		},
 		{
@@ -115,7 +124,6 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 				"address", 2, 2000, 0, 0, true,
 			},
 			expected: []ValidatorStatusRow{
-				{"address", 1, 100, 0, 0, true},
 				{"address", 2, 2000, 0, 0, true},
 			},
 		},
@@ -142,33 +150,4 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 			suite.Require().Equal(tc.expected, rows)
 		})
 	}
-}
-
-func (suite *DbTestSuite) TestPruneValidatorStatus() {
-	type ValidatorStatusRow struct {
-		Address        string `db:"address"`
-		Slot           uint64 `db:"slot"`
-		ActivatedStake uint64 `db:"activated_stake"`
-		LastVote       uint64 `db:"last_vote"`
-		RootSlot       uint64 `db:"root_slot"`
-		Active         bool   `db:"active"`
-	}
-	err := suite.database.SaveValidatorStatus(
-		"address", 1, 100, 0, 0, true,
-	)
-	suite.Require().NoError(err)
-
-	err = suite.database.SaveValidatorStatus(
-		"address", 11, 100, 0, 0, true,
-	)
-	suite.Require().NoError(err)
-
-	err = suite.database.PruneValidatorStatus(10)
-	suite.Require().NoError(err)
-
-	// Verify the data
-	rows := []ValidatorStatusRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_status")
-	suite.Require().NoError(err)
-	suite.Require().Len(rows, 1)
 }

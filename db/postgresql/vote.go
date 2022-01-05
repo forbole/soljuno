@@ -35,7 +35,14 @@ func (db *Database) SaveValidatorStatus(address string, slot uint64, activatedSt
 INSERT INTO validator_status
 	(address, slot, activated_stake, last_vote, root_slot, active)
 VALUES ($1, $2, $3, $4, $5, $6)
-ON CONFLICT (address, slot) DO NOTHING`
+ON CONFLICT (address) DO UPDATE 
+	SET slot = EXCLUDED.slot,
+	    activated_stake = EXCLUDED.activated_stake,
+		last_vote = EXCLUDED.last_vote,
+		root_slot = EXCLUDED.root_slot,
+		active = EXCLUDED.active
+	WHERE validator_status.slot <= EXCLUDED.slot
+		`
 	_, err := db.Sqlx.Exec(
 		stmt,
 		address,
@@ -45,11 +52,5 @@ ON CONFLICT (address, slot) DO NOTHING`
 		rootSlot,
 		active,
 	)
-	return err
-}
-
-// PruneValidatorStatus implements the db.VoteDb
-func (db *Database) PruneValidatorStatus(slot uint64) error {
-	_, err := db.Sqlx.Exec(`DELETE FROM validator_status WHERE slot <= $1`, slot)
 	return err
 }

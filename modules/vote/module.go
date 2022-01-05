@@ -27,11 +27,6 @@ func (m *Module) Name() string {
 	return "vote"
 }
 
-// HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(block types.Block) error {
-	return HandleBLock(m, block)
-}
-
 // HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
 	if !tx.Successful() {
