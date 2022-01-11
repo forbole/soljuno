@@ -56,7 +56,7 @@ func NewTxResponse(tx types.Tx) TxResponse {
 			msg.RawData,
 			ParsedData{
 				msg.Parsed.Type,
-				msg.Parsed.Data,
+				msg.Parsed.Value,
 			},
 		}
 	}

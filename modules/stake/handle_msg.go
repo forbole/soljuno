@@ -44,7 +44,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.StakeDb, client client.Clie
 
 // handleMsgInitialize handles a MsgInitialize
 func handleMsgInitialize(msg types.Message, tx types.Tx, db db.StakeDb) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedInitialize)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedInitialize)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "initialize", msg.Parsed.Type)
 
@@ -58,7 +58,7 @@ func handleMsgInitialize(msg types.Message, tx types.Tx, db db.StakeDb) error {
 
 // handleMsgAuthorize handles a MsgAuthorize
 func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedAuthorize)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedAuthorize)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorize", msg.Parsed.Type)
 
@@ -68,7 +68,7 @@ func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.StakeDb, client cl
 
 // handleMsgDelegate handles a MsgDelegate
 func handleMsgDelegate(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedDelegateStake)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedDelegateStake)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "delegate", msg.Parsed.Type)
 
@@ -78,7 +78,7 @@ func handleMsgDelegate(msg types.Message, tx types.Tx, db db.StakeDb, client cli
 
 // handleMsgSplit handles a MsgSplit
 func handleMsgSplit(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedSplit)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedSplit)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "split", msg.Parsed.Type)
 
@@ -92,7 +92,7 @@ func handleMsgSplit(msg types.Message, tx types.Tx, db db.StakeDb, client client
 
 // handleMsgWithdraw handles a MsgWithdraw
 func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedWithdraw)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedWithdraw)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "withdraw", msg.Parsed.Type)
 
@@ -102,7 +102,7 @@ func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.StakeDb, client cli
 
 // handleMsgDeactivate handles a MsgDeactivate
 func handleMsgDeactivate(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedDeactivate)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedDeactivate)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "deactivate", msg.Parsed.Type)
 
@@ -112,7 +112,7 @@ func handleMsgDeactivate(msg types.Message, tx types.Tx, db db.StakeDb, client c
 
 // handleMsgSetLockup handles a MsgSetLockup
 func handleMsgSetLockup(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedSetLockup)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedSetLockup)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "setLockup", msg.Parsed.Type)
 
@@ -122,7 +122,7 @@ func handleMsgSetLockup(msg types.Message, tx types.Tx, db db.StakeDb, client cl
 
 // handleMsgMerge handles a MsgMerge
 func handleMsgMerge(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedMerge)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedMerge)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "merge", msg.Parsed.Type)
 
@@ -136,7 +136,7 @@ func handleMsgMerge(msg types.Message, tx types.Tx, db db.StakeDb, client client
 
 // handleMsgAuthorizeWithSeed handles a MsgAuthorizeWithSeed
 func handleMsgAuthorizeWithSeed(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedAuthorizeWithSeed)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedAuthorizeWithSeed)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeWithSeed", msg.Parsed.Type)
 
@@ -146,7 +146,7 @@ func handleMsgAuthorizeWithSeed(msg types.Message, tx types.Tx, db db.StakeDb, c
 
 // handleMsgInitializeChecked handles a MsgInitializeChecked
 func handleMsgInitializeChecked(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedInitializeChecked)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedInitializeChecked)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeChecked", msg.Parsed.Type)
 
@@ -156,7 +156,7 @@ func handleMsgInitializeChecked(msg types.Message, tx types.Tx, db db.StakeDb, c
 
 // handleMsgAuthorizeChecked handles a MsgAuthorizeChecked
 func handleMsgAuthorizeChecked(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedAuthorizeChecked)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedAuthorizeChecked)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeChecked", msg.Parsed.Type)
 
@@ -166,7 +166,7 @@ func handleMsgAuthorizeChecked(msg types.Message, tx types.Tx, db db.StakeDb, cl
 
 // handleMsgAuthorizeCheckedWithSeed handles a MsgAuthorizeCheckedWithSeed
 func handleMsgAuthorizeCheckedWithSeed(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedAuthorizeCheckedWithSeed)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedAuthorizeCheckedWithSeed)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeCheckedWithSeed", msg.Parsed.Type)
 
@@ -176,7 +176,7 @@ func handleMsgAuthorizeCheckedWithSeed(msg types.Message, tx types.Tx, db db.Sta
 
 // handleMsgSetLockupChecked handles a MsgSetLockupChecked
 func handleMsgSetLockupChecked(msg types.Message, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(stake.ParsedSetLockupChecked)
+	instruction, ok := msg.Parsed.Value.(stake.ParsedSetLockupChecked)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "setLockupChecked", msg.Parsed.Type)
 

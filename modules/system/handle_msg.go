@@ -26,7 +26,7 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.SystemDb, client client.Cli
 
 // handleMsgAdvanceNonce handles a MsgAdvaceNonce
 func handleMsgAdvanceNonce(msg types.Message, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(system.ParsedAdvanceNonceAccount)
+	instruction, ok := msg.Parsed.Value.(system.ParsedAdvanceNonceAccount)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "advanceNonce", msg.Parsed.Type)
 
@@ -36,7 +36,7 @@ func handleMsgAdvanceNonce(msg types.Message, tx types.Tx, db db.SystemDb, clien
 
 // handleMsgAuthorizeNonce handles a MsgWithdrawFromNonce
 func handleMsgWithdrawFromNonce(msg types.Message, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(system.ParsedWithdrawNonceAccount)
+	instruction, ok := msg.Parsed.Value.(system.ParsedWithdrawNonceAccount)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "withdrawNonce", msg.Parsed.Type)
 
@@ -46,7 +46,7 @@ func handleMsgWithdrawFromNonce(msg types.Message, tx types.Tx, db db.SystemDb, 
 
 // handleMsgAuthorizeNonce handles a MsgInitializeNonce
 func handleMsgInitializeNonce(msg types.Message, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(system.ParsedInitializeNonceAccount)
+	instruction, ok := msg.Parsed.Value.(system.ParsedInitializeNonceAccount)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeNonce", msg.Parsed.Type)
 
@@ -56,7 +56,7 @@ func handleMsgInitializeNonce(msg types.Message, tx types.Tx, db db.SystemDb, cl
 
 // handleMsgAuthorizeNonce handles a MsgAuthorizeNonce
 func handleMsgAuthorizeNonce(msg types.Message, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data.(system.ParsedAuthorizeNonceAccount)
+	instruction, ok := msg.Parsed.Value.(system.ParsedAuthorizeNonceAccount)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeNonce", msg.Parsed.Type)
 
