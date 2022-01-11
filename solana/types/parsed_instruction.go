@@ -1,13 +1,13 @@
 package types
 
-func NewParsedInstruction(typ string, data interface{}) ParsedInstruction {
+func NewParsedInstruction(typ string, value interface{}) ParsedInstruction {
 	return ParsedInstruction{
-		Type: typ,
-		Data: data,
+		Type:  typ,
+		Value: value,
 	}
 }
 
 type ParsedInstruction struct {
-	Type string      `json:"type"`
-	Data interface{} `json:"data"`
+	Type  string      `json:"type"`
+	Value interface{} `json:"value"`
 }
