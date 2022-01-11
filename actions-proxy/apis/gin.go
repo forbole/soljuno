@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -92,5 +93,29 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 			},
 		)
 		c.JSON(http.StatusOK, types.NewTxResponse(tx))
+	})
+
+	group.POST("/account_info", func(c *gin.Context) {
+		var playload types.AccountInfoPayload
+		if err := c.BindJSON(&playload); err != nil {
+			c.JSON(http.StatusBadRequest, types.NewError(err))
+			return
+		}
+		addr := playload.Input.Address
+		info, err := proxy.GetAccountInfo(addr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, types.NewError(err))
+			return
+		}
+		if info.Value == nil {
+			c.JSON(http.StatusBadRequest, types.NewError(fmt.Errorf("%s does not exist", addr)))
+			return
+		}
+		res, err := types.NewAccountInfoResponse(info)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, types.NewError(err))
+			return
+		}
+		c.JSON(http.StatusOK, res)
 	})
 }
