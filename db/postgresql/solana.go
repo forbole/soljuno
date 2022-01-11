@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 
 	"github.com/forbole/soljuno/types/logging"
@@ -94,15 +95,19 @@ func (db *Database) SaveTxs(txs []types.Tx) error {
 	if len(txs) == 0 {
 		return nil
 	}
-	insertStmt := `INSERT INTO transaction (hash, slot, error, fee, logs) VALUES`
+	insertStmt := `INSERT INTO transaction (hash, slot, error, fee, logs, messages) VALUES`
 	paramsStmt := ""
 	conflictStmt := `ON CONFLICT DO NOTHING`
 
 	var params []interface{}
-	paramsNumber := 5
+	paramsNumber := 6
 	for i, tx := range txs {
 		bi := i * paramsNumber
 		paramsStmt += getParamsStmt(bi, paramsNumber)
+		msgs, err := json.Marshal(types.NewSanitizedMessages(tx.Messages))
+		if err != nil {
+			return err
+		}
 		params = append(
 			params,
 			tx.Hash,
@@ -110,6 +115,7 @@ func (db *Database) SaveTxs(txs []types.Tx) error {
 			tx.Successful(),
 			tx.Fee,
 			pq.Array(tx.Logs),
+			msgs,
 		)
 	}
 	return db.insertWithParams(
@@ -142,7 +148,7 @@ func (db *Database) SaveMessages(msgs []types.Message) error {
 			msg.Index,
 			msg.InnerIndex,
 			msg.Program,
-			msg.Parsed.Type(),
+			msg.Parsed.Type,
 		)
 	}
 	err := db.insertWithParams(

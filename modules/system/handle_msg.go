@@ -11,7 +11,7 @@ import (
 
 // HandleMsg allows to handle different messages types for the system module
 func HandleMsg(msg types.Message, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
-	switch msg.Parsed.Type() {
+	switch msg.Parsed.Type {
 	case "advanceNonce":
 		return handleMsgAdvanceNonce(msg, tx, db, client)
 	case "withdrawFromNonce":
@@ -26,9 +26,9 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.SystemDb, client client.Cli
 
 // handleMsgAdvanceNonce handles a MsgAdvaceNonce
 func handleMsgAdvanceNonce(msg types.Message, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data().(system.ParsedAdvanceNonceAccount)
+	instruction, ok := msg.Parsed.Data.(system.ParsedAdvanceNonceAccount)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "advanceNonce", msg.Parsed.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "advanceNonce", msg.Parsed.Type)
 
 	}
 	return updateNonce(instruction.NonceAccount, tx.Slot, db, client)
@@ -36,9 +36,9 @@ func handleMsgAdvanceNonce(msg types.Message, tx types.Tx, db db.SystemDb, clien
 
 // handleMsgAuthorizeNonce handles a MsgWithdrawFromNonce
 func handleMsgWithdrawFromNonce(msg types.Message, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data().(system.ParsedWithdrawNonceAccount)
+	instruction, ok := msg.Parsed.Data.(system.ParsedWithdrawNonceAccount)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "withdrawNonce", msg.Parsed.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "withdrawNonce", msg.Parsed.Type)
 
 	}
 	return updateNonce(instruction.NonceAccount, tx.Slot, db, client)
@@ -46,9 +46,9 @@ func handleMsgWithdrawFromNonce(msg types.Message, tx types.Tx, db db.SystemDb, 
 
 // handleMsgAuthorizeNonce handles a MsgInitializeNonce
 func handleMsgInitializeNonce(msg types.Message, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data().(system.ParsedInitializeNonceAccount)
+	instruction, ok := msg.Parsed.Data.(system.ParsedInitializeNonceAccount)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "initializeNonce", msg.Parsed.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "initializeNonce", msg.Parsed.Type)
 
 	}
 	return updateNonce(instruction.NonceAccount, tx.Slot, db, client)
@@ -56,9 +56,9 @@ func handleMsgInitializeNonce(msg types.Message, tx types.Tx, db db.SystemDb, cl
 
 // handleMsgAuthorizeNonce handles a MsgAuthorizeNonce
 func handleMsgAuthorizeNonce(msg types.Message, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data().(system.ParsedAuthorizeNonceAccount)
+	instruction, ok := msg.Parsed.Data.(system.ParsedAuthorizeNonceAccount)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "authorizeNonce", msg.Parsed.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "authorizeNonce", msg.Parsed.Type)
 
 	}
 	return updateNonce(instruction.NonceAccount, tx.Slot, db, client)

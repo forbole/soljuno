@@ -213,3 +213,27 @@ func NewMessage(
 		Parsed:           parsed,
 	}
 }
+
+type SanitizedMessage struct {
+	Index            int                     `json:"index"`
+	InnerIndex       int                     `json:"inner_index"`
+	Program          string                  `json:"program"`
+	InvolvedAccounts []string                `json:"invovled_accounts"`
+	RawData          string                  `json:"raw_data"`
+	Parsed           types.ParsedInstruction `json:"parsed"`
+}
+
+func NewSanitizedMessages(msgs []Message) []SanitizedMessage {
+	sanitizedMsgs := make([]SanitizedMessage, len(msgs))
+	for i, msg := range msgs {
+		sanitizedMsgs[i] = SanitizedMessage{
+			Index:            msg.Index,
+			InnerIndex:       msg.InnerIndex,
+			Program:          msg.Program,
+			InvolvedAccounts: msg.InvolvedAccounts,
+			RawData:          msg.RawData,
+			Parsed:           msg.Parsed,
+		}
+	}
+	return sanitizedMsgs
+}

@@ -5,7 +5,7 @@ CREATE TABLE block
     hash        TEXT        NOT NULL UNIQUE,
     proposer    TEXT        DEFAULT '',
     timestamp   TIMESTAMP   WITHOUT TIME ZONE NOT NULL,
-    num_txs      INT         NOT NULL DEFAULT 0
+    num_txs     INT         NOT NULL DEFAULT 0
 );
 CREATE INDEX block_hash_index ON block (hash);
 CREATE INDEX block_proposer_index ON block (proposer);
@@ -18,7 +18,8 @@ CREATE TABLE transaction
     slot       BIGINT   NOT NULL REFERENCES block (slot),
     error      BOOLEAN  NOT NULL,
     fee        INT      NOT NULL,
-    logs       TEXT[]
+    logs       TEXT[],
+    messages   JSONB    NOT NULL DEFAULT '{}'
 );
 CREATE INDEX transaction_slot_index ON transaction (slot);
 

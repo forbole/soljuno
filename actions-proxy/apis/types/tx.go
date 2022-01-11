@@ -34,8 +34,8 @@ func NewTxResponse(tx types.Tx) TxResponse {
 			msg.InvolvedAccounts,
 			msg.RawData,
 			ParsedData{
-				msg.Parsed.Type(),
-				msg.Parsed.Data(),
+				msg.Parsed.Type,
+				msg.Parsed.Data,
 			},
 		})
 	}
