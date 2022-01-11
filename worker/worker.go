@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/soljuno/solana/parser"
 	"github.com/forbole/soljuno/types/logging"
 	"github.com/panjf2000/ants/v2"
 
@@ -12,6 +11,7 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/solana/client"
+	"github.com/forbole/soljuno/solana/parser/manager"
 	"github.com/forbole/soljuno/types"
 )
 
@@ -21,7 +21,7 @@ type Worker struct {
 	queue         types.SlotQueue
 	cp            client.ClientProxy
 	db            db.Database
-	parserManager parser.ParserManager
+	parserManager manager.ParserManager
 	logger        logging.Logger
 
 	pool    *ants.Pool

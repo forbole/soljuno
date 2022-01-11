@@ -1,10 +1,9 @@
 package client
 
 import (
-	"encoding/json"
 	"fmt"
+	"reflect"
 
-	"github.com/forbole/soljuno/solana/client/types"
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	jsonrpc "github.com/ybbus/jsonrpc/v2"
 )
@@ -54,6 +53,17 @@ type ClientProxy interface {
 	// GetInflationGovernor return inflation governor in the current chain
 	// An error is returned if the query fails
 	GetInflationGovernor() (clienttypes.InflationGovernor, error)
+
+	// GetSignaturesForAddress returns the metadata of transactions with the given address and config
+	// An error is returned if the query fails
+	GetSignaturesForAddress(
+		address string,
+		config clienttypes.GetSignaturesForAddressConfig,
+	) ([]clienttypes.ConfirmedTransactionStatusWithSignature, error)
+
+	// GetTransaction returns the transaction of the given hash
+	// An error is returned if the query fails
+	GetTransaction(hash string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error)
 }
 
 type Client struct {
@@ -69,8 +79,8 @@ func NewClientProxy(endpoint string) ClientProxy {
 	}
 }
 
-func (c *Client) GetBlock(slot uint64) (types.BlockResult, error) {
-	var block types.BlockResult
+func (c *Client) GetBlock(slot uint64) (clienttypes.BlockResult, error) {
+	var block clienttypes.BlockResult
 	err := c.rpcClient.CallFor(&block, "getBlock", slot)
 	return block, err
 }
@@ -87,15 +97,15 @@ func (c *Client) GetBlocks(start uint64, end uint64) ([]uint64, error) {
 	return slots, err
 }
 
-func (c *Client) GetVoteAccounts() (types.VoteAccounts, error) {
-	var voteAccounts types.VoteAccounts
+func (c *Client) GetVoteAccounts() (clienttypes.VoteAccounts, error) {
+	var voteAccounts clienttypes.VoteAccounts
 	err := c.rpcClient.CallFor(&voteAccounts, "getVoteAccounts")
 	return voteAccounts, err
 }
 
-func (c *Client) GetVoteAccountsWithSlot() (uint64, types.VoteAccounts, error) {
+func (c *Client) GetVoteAccountsWithSlot() (uint64, clienttypes.VoteAccounts, error) {
 	var slot uint64
-	var voteAccounts types.VoteAccounts
+	var voteAccounts clienttypes.VoteAccounts
 
 	slotReq := jsonrpc.NewRequest("getSlot")
 	voteAccountsReq := jsonrpc.NewRequest("getVoteAccounts")
@@ -120,29 +130,26 @@ func (c *Client) GetVoteAccountsWithSlot() (uint64, types.VoteAccounts, error) {
 	return slot, voteAccounts, err
 }
 
-func (c *Client) GetAccountInfo(address string) (types.AccountInfo, error) {
-	var accountInfo types.AccountInfo
-	err := c.rpcClient.CallFor(&accountInfo, "getAccountInfo", address, types.NewAccountInfoOption("base64"))
+func (c *Client) GetAccountInfo(address string) (clienttypes.AccountInfo, error) {
+	var accountInfo clienttypes.AccountInfo
+	err := c.rpcClient.CallFor(&accountInfo, "getAccountInfo", address, clienttypes.NewAccountInfoOption("base64"))
 	return accountInfo, err
 }
 
-func (c *Client) GetLeaderSchedule(slot uint64) (types.LeaderSchedule, error) {
-	var schedule types.LeaderSchedule
+func (c *Client) GetLeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error) {
+	var schedule clienttypes.LeaderSchedule
 	err := c.rpcClient.CallFor(&schedule, "getLeaderSchedule", slot)
 	return schedule, err
 }
 
-func (c *Client) GetSupplyInfo() (types.SupplyWithContext, error) {
-	var supply types.SupplyWithContext
-	bz, _ := json.Marshal(types.NewSupplyConfig(true))
-	req := jsonrpc.NewRequest("getSupply", []interface{}{string(bz)})
-	fmt.Println(jsonrpc.Params(req.Params))
-	err := c.rpcClient.CallFor(&supply, "getSupply", []interface{}{types.NewSupplyConfig(true)})
+func (c *Client) GetSupplyInfo() (clienttypes.SupplyWithContext, error) {
+	var supply clienttypes.SupplyWithContext
+	err := c.rpcClient.CallFor(&supply, "getSupply", []interface{}{clienttypes.NewSupplyConfig(true)})
 	return supply, err
 }
 
-func (c *Client) GetInflationRate() (types.InflationRate, error) {
-	var rate types.InflationRate
+func (c *Client) GetInflationRate() (clienttypes.InflationRate, error) {
+	var rate clienttypes.InflationRate
 	err := c.rpcClient.CallFor(&rate, "getInflationRate")
 	if err != nil {
 		return rate, err
@@ -150,20 +157,42 @@ func (c *Client) GetInflationRate() (types.InflationRate, error) {
 	return rate, nil
 }
 
-func (c *Client) GetEpochInfo() (types.EpochInfo, error) {
-	var epochInfo types.EpochInfo
+func (c *Client) GetEpochInfo() (clienttypes.EpochInfo, error) {
+	var epochInfo clienttypes.EpochInfo
 	err := c.rpcClient.CallFor(&epochInfo, "getEpochInfo")
 	return epochInfo, err
 }
 
-func (c *Client) GetEpochSchedule() (types.EpochSchedule, error) {
-	var epochSchedule types.EpochSchedule
+func (c *Client) GetEpochSchedule() (clienttypes.EpochSchedule, error) {
+	var epochSchedule clienttypes.EpochSchedule
 	err := c.rpcClient.CallFor(&epochSchedule, "getEpochSchedule")
 	return epochSchedule, err
 }
 
-func (c *Client) GetInflationGovernor() (types.InflationGovernor, error) {
-	var governor types.InflationGovernor
+func (c *Client) GetInflationGovernor() (clienttypes.InflationGovernor, error) {
+	var governor clienttypes.InflationGovernor
 	err := c.rpcClient.CallFor(&governor, "getInflationGovernor")
 	return governor, err
+}
+
+func (c *Client) GetSignaturesForAddress(
+	address string,
+	config clienttypes.GetSignaturesForAddressConfig,
+) ([]clienttypes.ConfirmedTransactionStatusWithSignature, error) {
+	var sig []clienttypes.ConfirmedTransactionStatusWithSignature
+	err := c.rpcClient.CallFor(&sig, "getSignaturesForAddress", address, config)
+	return sig, err
+}
+
+func (c *Client) GetTransaction(hash string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error) {
+	var tx clienttypes.EncodedConfirmedTransactionWithStatusMeta
+	err := c.rpcClient.CallFor(&tx, "getTransaction", hash, "json")
+	if isEmpty(tx) {
+		return tx, fmt.Errorf("target doesn't exist on the chain")
+	}
+	return tx, err
+}
+
+func isEmpty(obj interface{}) bool {
+	return reflect.ValueOf(obj).IsZero()
 }

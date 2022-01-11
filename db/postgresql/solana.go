@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 
 	"github.com/forbole/soljuno/types/logging"
@@ -94,15 +95,19 @@ func (db *Database) SaveTxs(txs []types.Tx) error {
 	if len(txs) == 0 {
 		return nil
 	}
-	insertStmt := `INSERT INTO transaction (hash, slot, error, fee, logs) VALUES`
+	insertStmt := `INSERT INTO transaction (hash, slot, error, fee, logs, messages) VALUES`
 	paramsStmt := ""
 	conflictStmt := `ON CONFLICT DO NOTHING`
 
 	var params []interface{}
-	paramsNumber := 5
+	paramsNumber := 6
 	for i, tx := range txs {
 		bi := i * paramsNumber
 		paramsStmt += getParamsStmt(bi, paramsNumber)
+		msgs, err := json.Marshal(types.NewSanitizedMessages(tx.Messages))
+		if err != nil {
+			return err
+		}
 		params = append(
 			params,
 			tx.Hash,
@@ -110,101 +115,8 @@ func (db *Database) SaveTxs(txs []types.Tx) error {
 			tx.Successful(),
 			tx.Fee,
 			pq.Array(tx.Logs),
+			msgs,
 		)
-	}
-	return db.insertWithParams(
-		insertStmt,
-		paramsStmt[:len(paramsStmt)-1],
-		conflictStmt,
-		params,
-	)
-}
-
-// SaveMessages implements db.Database
-func (db *Database) SaveMessages(msgs []types.Message) error {
-	if len(msgs) == 0 {
-		return nil
-	}
-	insertStmt := `INSERT INTO message
-	(transaction_hash, slot, index, inner_index, program, raw_data, type, value) VALUES`
-	paramsStmt := ""
-	conflictStmt := `ON CONFLICT DO NOTHING`
-
-	var params []interface{}
-	paramsNumber := 8
-	for i, msg := range msgs {
-		bi := i * paramsNumber
-		paramsStmt += getParamsStmt(bi, paramsNumber)
-		params = append(
-			params,
-			msg.TxHash,
-			msg.Slot,
-			msg.Index,
-			msg.InnerIndex,
-			msg.Program,
-			msg.RawData,
-			msg.Parsed.Type(),
-			msg.Parsed.JSON(),
-		)
-	}
-	err := db.insertWithParams(
-		insertStmt,
-		paramsStmt[:len(paramsStmt)-1],
-		conflictStmt,
-		params,
-	)
-	if err != nil {
-		return nil
-	}
-	return db.saveMsgAddressIndexes(msgs)
-}
-
-// saveMsgAddressIndexes implements db.Database
-func (db *Database) saveMsgAddressIndexes(msgs []types.Message) error {
-	if len(msgs) == 0 {
-		return nil
-	}
-	var params []interface{}
-	paramsNumber := 5
-	count := 0
-	insertStmt := `INSERT INTO message_by_address
-	(address, slot, transaction_hash, index, inner_index) VALUES`
-	paramsStmt := ""
-	conflictStmt := `ON CONFLICT DO NOTHING`
-
-	for _, msg := range msgs {
-		for _, account := range msg.InvolvedAccounts {
-			// Excute if the max params length will be reached
-			if len(params)+paramsNumber >= MAX_PARAMS_LENGTH {
-				err := db.insertWithParams(
-					insertStmt,
-					paramsStmt[:len(paramsStmt)-1],
-					conflictStmt,
-					params,
-				)
-				if err != nil {
-					return err
-				}
-				count = 0
-				paramsStmt = ""
-				params = params[:0]
-			}
-
-			bi := count * paramsNumber
-			paramsStmt += getParamsStmt(bi, paramsNumber)
-			params = append(
-				params,
-				account,
-				msg.Slot,
-				msg.TxHash,
-				msg.Index,
-				msg.InnerIndex,
-			)
-			count++
-		}
-	}
-	if count == 0 {
-		return nil
 	}
 	return db.insertWithParams(
 		insertStmt,

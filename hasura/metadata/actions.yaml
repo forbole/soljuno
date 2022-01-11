@@ -39,6 +39,26 @@ actions:
   permissions:
   - role: anonymous
 
+- name: tx
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/api/tx
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: tx_by_address
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/api/tx_meta
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
 custom_types:
   enums: []
   input_objects: []
@@ -47,4 +67,16 @@ custom_types:
   - name: EpochSchedule
   - name: InflationRate
   - name: InflationGovernor
-  scalars: []
+  - name: Tx
+  - name: TxMeta
+    relationships:
+    - remote_table:
+        schema: public
+        name: transaction
+      source: soljuno
+      name: transaction
+      type: object
+      field_mapping:
+        hash: hash
+  scalars:
+  - name: Message

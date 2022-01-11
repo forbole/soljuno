@@ -3,6 +3,8 @@ type Query {
     epochScheduleParam: EpochSchedule!
     inflationRate: InflationRate!
     inflationGovernorParam: InflationGovernor!
+    tx(hash: String!): Tx!
+    tx_by_address(address: String!, config: TxByAddressConfig): [TxMeta!]!
 }
 
 type EpochInfo {
@@ -35,4 +37,30 @@ type InflationGovernor {
     taper: Float!
     foundation: Float!
     foundationTerm: Float!
+}
+
+scalar Message
+
+type Tx {
+    hash: String!
+    slot: bigint!
+    error: Boolean!
+    fee: bigint!
+    logs: [String!]!
+    accounts: [String!]!
+    messages: [Message!]!
+}
+
+type TxMeta {
+    slot: bigint!
+    block_time: bigint!
+    hash: String!
+    error: Boolean!
+    memo: String!
+}
+
+input TxByAddressConfig {
+    limit: Int
+    before: String
+    until: String
 }

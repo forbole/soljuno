@@ -1,7 +1,5 @@
 - "!include public_block.yaml"
 - "!include public_transaction.yaml"
-- "!include public_message.yaml"
-- "!include public_message_by_address.yaml"
 - "!include public_account_balance.yaml"
 - "!include public_token_account_balance.yaml"
 - "!include public_token.yaml"

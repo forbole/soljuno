@@ -11,7 +11,7 @@ import (
 
 // HandleMsg allows to handle different messages types for the vote module
 func HandleMsg(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
-	switch msg.Parsed.Type() {
+	switch msg.Parsed.Type {
 	case "initialize":
 		return handleMsgInitialize(msg, tx, db)
 	case "authorize":
@@ -28,9 +28,9 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.VoteDb, client client.Clien
 
 // handleMsgInitialize handles a MsgInitialize
 func handleMsgInitialize(msg types.Message, tx types.Tx, db db.VoteDb) error {
-	instruction, ok := msg.Parsed.Data().(vote.ParsedInitializeAccount)
+	instruction, ok := msg.Parsed.Value.(vote.ParsedInitializeAccount)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "initialize", msg.Parsed.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "initialize", msg.Parsed.Type)
 
 	}
 	return db.SaveValidator(instruction.VoteAccount, tx.Slot, instruction.Node, instruction.AuthorizedVoter, instruction.AuthorizedWithdrawer, instruction.Commission)
@@ -38,9 +38,9 @@ func handleMsgInitialize(msg types.Message, tx types.Tx, db db.VoteDb) error {
 
 // handleMsgAuthorize handles a MsgAuthorize
 func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data().(vote.ParsedAuthorize)
+	instruction, ok := msg.Parsed.Value.(vote.ParsedAuthorize)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "authorize", msg.Parsed.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "authorize", msg.Parsed.Type)
 
 	}
 	return updateVoteAccount(instruction.VoteAccount, tx.Slot, db, client)
@@ -48,9 +48,9 @@ func handleMsgAuthorize(msg types.Message, tx types.Tx, db db.VoteDb, client cli
 
 // handleMsgWithdraw handles a MsgWithdraw
 func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data().(vote.ParsedWithdraw)
+	instruction, ok := msg.Parsed.Value.(vote.ParsedWithdraw)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "withdraw", msg.Parsed.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "withdraw", msg.Parsed.Type)
 
 	}
 	return updateVoteAccount(instruction.VoteAccount, tx.Slot, db, client)
@@ -58,9 +58,9 @@ func handleMsgWithdraw(msg types.Message, tx types.Tx, db db.VoteDb, client clie
 
 // handleMsgUpdateValidatorIdentity handles a MsgUpdateValidatorIdentity
 func handleMsgUpdateValidatorIdentity(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data().(vote.ParsedUpdateValidatorIdentity)
+	instruction, ok := msg.Parsed.Value.(vote.ParsedUpdateValidatorIdentity)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "updateValidatorIdentity", msg.Parsed.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "updateValidatorIdentity", msg.Parsed.Type)
 
 	}
 	return updateVoteAccount(instruction.VoteAccount, tx.Slot, db, client)
@@ -68,9 +68,9 @@ func handleMsgUpdateValidatorIdentity(msg types.Message, tx types.Tx, db db.Vote
 
 // handleMsgUpdateCommission handles a MsgUpdateCommission
 func handleMsgUpdateCommission(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data().(vote.ParsedUpdateCommission)
+	instruction, ok := msg.Parsed.Value.(vote.ParsedUpdateCommission)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "updateCommission", msg.Parsed.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "updateCommission", msg.Parsed.Type)
 
 	}
 	return updateVoteAccount(instruction.VoteAccount, tx.Slot, db, client)
@@ -78,9 +78,9 @@ func handleMsgUpdateCommission(msg types.Message, tx types.Tx, db db.VoteDb, cli
 
 // handleMsgAuthorizeChecked handles a MsgAuthorizeChecked
 func handleMsgAuthorizeChecked(msg types.Message, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Data().(vote.ParsedAuthorizeChecked)
+	instruction, ok := msg.Parsed.Value.(vote.ParsedAuthorizeChecked)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "authorizeChecked", msg.Parsed.Type())
+		return fmt.Errorf("instruction does not match %s type: %s", "authorizeChecked", msg.Parsed.Type)
 
 	}
 	return updateVoteAccount(instruction.VoteAccount, tx.Slot, db, client)

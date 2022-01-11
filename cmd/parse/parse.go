@@ -9,21 +9,13 @@ import (
 	"time"
 
 	cmdtypes "github.com/forbole/soljuno/cmd/types"
-	"github.com/forbole/soljuno/solana/parser"
-	associatedTokenAccount "github.com/forbole/soljuno/solana/program/associated-token-account"
-	"github.com/forbole/soljuno/solana/program/bpfloader"
-	upgradableLoader "github.com/forbole/soljuno/solana/program/bpfloader/upgradeable"
-	"github.com/forbole/soljuno/solana/program/stake"
-	"github.com/forbole/soljuno/solana/program/system"
-	"github.com/forbole/soljuno/solana/program/token"
-	tokenswap "github.com/forbole/soljuno/solana/program/token-swap"
-	"github.com/forbole/soljuno/solana/program/vote"
 
 	"github.com/forbole/soljuno/types/logging"
 
 	"github.com/go-co-op/gocron"
 
 	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/solana/parser/manager"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/worker"
 
@@ -71,18 +63,10 @@ func StartParsing(ctx *Context) error {
 	// Create a queue that will collect, aggregate, and export blocks and metadata
 	exportQueue := types.NewQueue(25)
 
-	// Create and register solana message parser
-	parser := parser.NewParser()
-	parser.Register(vote.ProgramID, vote.Parser{})
-	parser.Register(stake.ProgramID, stake.Parser{})
-	parser.Register(system.ProgramID, system.Parser{})
-	parser.Register(token.ProgramID, token.Parser{})
-	parser.Register(bpfloader.ProgramID, bpfloader.Parser{})
-	parser.Register(upgradableLoader.ProgramID, upgradableLoader.Parser{})
-	parser.Register(associatedTokenAccount.ProgramID, associatedTokenAccount.Parser{})
-	parser.Register(tokenswap.ProgramID, tokenswap.Parser{})
+	// Create and register solana message parserManager
+	parserManager := manager.NewDefaultManager()
 
-	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parser, ctx.Logger, ctx.Pool, exportQueue, ctx.Modules)
+	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parserManager, ctx.Logger, ctx.Pool, exportQueue, ctx.Modules)
 	workers := make([]worker.Worker, cfg.GetWorkers())
 	for i := range workers {
 		workers[i] = worker.NewWorker(i, workerCtx)
