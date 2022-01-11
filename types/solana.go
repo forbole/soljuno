@@ -218,7 +218,7 @@ type SanitizedMessage struct {
 	Index            int                     `json:"index"`
 	InnerIndex       int                     `json:"inner_index"`
 	Program          string                  `json:"program"`
-	InvolvedAccounts []string                `json:"invovled_accounts"`
+	InvolvedAccounts []string                `json:"involved_accounts"`
 	RawData          string                  `json:"raw_data"`
 	Parsed           types.ParsedInstruction `json:"parsed"`
 }
