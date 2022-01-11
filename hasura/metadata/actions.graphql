@@ -4,7 +4,7 @@ type Query {
     inflationRate: InflationRate!
     inflationGovernorParam: InflationGovernor!
     tx(hash: String!): Tx!
-    txByAddress(address: String!, config: TxByAddressConfig): [TxMeta!]!
+    tx_by_address(address: String!, config: TxByAddressConfig): [TxMeta!]!
 }
 
 type EpochInfo {
@@ -53,7 +53,7 @@ type Tx {
 
 type TxMeta {
     slot: bigint!
-    blockTime: bigint!
+    block_time: bigint!
     hash: String!
     error: Boolean!
     memo: String!
