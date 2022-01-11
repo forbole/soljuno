@@ -19,8 +19,6 @@ func (suite *DbTestSuite) TestPrune() {
 	suite.Require().NoError(err)
 	err = suite.database.SaveTxs([]types.Tx{tx})
 	suite.Require().NoError(err)
-	err = suite.database.SaveMessages([]types.Message{msg})
-	suite.Require().NoError(err)
 
 	// Prune nothing
 	err = suite.database.PruneTxsBySlot(0)
@@ -29,17 +27,6 @@ func (suite *DbTestSuite) TestPrune() {
 	err = suite.database.Sqlx.Select(&rows, "SELECT slot FROM transaction")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
-	rows = []Row{}
-
-	err = suite.database.PruneMsgsBySlot(0)
-	err = suite.database.Sqlx.Select(&rows, "SELECT slot FROM message")
-	suite.Require().NoError(err)
-	suite.Require().Len(rows, 1)
-	rows = []Row{}
-
-	err = suite.database.Sqlx.Select(&rows, "SELECT slot FROM message_by_address")
-	suite.Require().NoError(err)
-	suite.Require().Len(rows, 2)
 	rows = []Row{}
 
 	// Prune before slot 1
@@ -51,14 +38,4 @@ func (suite *DbTestSuite) TestPrune() {
 	suite.Require().Len(rows, 0)
 	rows = []Row{}
 
-	err = suite.database.PruneMsgsBySlot(1)
-	err = suite.database.Sqlx.Select(&rows, "SELECT slot FROM message")
-	suite.Require().NoError(err)
-	suite.Require().Len(rows, 0)
-	rows = []Row{}
-
-	err = suite.database.Sqlx.Select(&rows, "SELECT slot FROM message_by_address")
-	suite.Require().NoError(err)
-	suite.Require().Len(rows, 0)
-	rows = []Row{}
 }

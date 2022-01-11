@@ -22,7 +22,6 @@ import (
 	"github.com/forbole/soljuno/modules/vote"
 
 	"github.com/forbole/soljuno/modules"
-	"github.com/forbole/soljuno/modules/messages"
 
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/solana/client"
@@ -89,15 +88,13 @@ func NewDefaultRegistrar() *DefaultRegistrar {
 // BuildModules implements Registrar
 func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	pruningModule := pruning.NewModule(ctx.Config.GetPruningConfig(), ctx.Database, ctx.Logger)
-	msgsModule := messages.NewModule(ctx.Database, ctx.Pool)
 	txsModule := txs.NewModule(ctx.Database, ctx.Pool)
-	pruningModule.RegisterService(msgsModule, txsModule)
+	pruningModule.RegisterService(txsModule)
 
 	return modules.Modules{
 		telemetry.NewModule(ctx.Config),
 		pruningModule,
 		txsModule,
-		msgsModule,
 		bank.NewModule(ctx.Database),
 		system.NewModule(ctx.Database, ctx.Proxy),
 		stake.NewModule(ctx.Database, ctx.Proxy),

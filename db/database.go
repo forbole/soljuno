@@ -54,13 +54,7 @@ type BasicDb interface {
 	// An error is returned if the operation fails.
 	SaveTxs(txs []types.Tx) error
 
-	// SaveMessages stores a batch of messages.
-	// An error is returned if the operation fails.
-	SaveMessages(msg []types.Message) error
-
 	PruneTxsBySlot(slot uint64) error
-
-	PruneMsgsBySlot(slot uint64) error
 }
 
 // ExceutorDb represents an abstract database that can excute a raw sql
