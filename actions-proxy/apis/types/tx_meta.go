@@ -23,21 +23,19 @@ type TxMetaRespoonse struct {
 	Slot      uint64 `json:"slot"`
 	Error     bool   `json:"error"`
 	Memo      string `json:"memo"`
-	BlockTime uint64 `json:"blockTime"`
+	BlockTime uint64 `json:"block_time"`
 }
 
 func NewTxMetasResponse(metas []clienttypes.ConfirmedTransactionStatusWithSignature) []TxMetaRespoonse {
-	var res []TxMetaRespoonse
-	for _, meta := range metas {
-		res = append(
-			res,
-			TxMetaRespoonse{
-				Hash:      meta.Signature,
-				Slot:      meta.Slot,
-				Error:     meta.Err != nil,
-				Memo:      meta.Memo,
-				BlockTime: meta.BlockTime,
-			})
+	res := make([]TxMetaRespoonse, len(metas))
+	for i, meta := range metas {
+		res[i] = TxMetaRespoonse{
+			Hash:      meta.Signature,
+			Slot:      meta.Slot,
+			Error:     meta.Err != nil,
+			Memo:      meta.Memo,
+			BlockTime: meta.BlockTime,
+		}
 	}
 	return res
 }
