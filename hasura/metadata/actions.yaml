@@ -49,7 +49,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: tx_by_address
+- name: txs_by_address
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/tx_meta
@@ -79,16 +79,6 @@ custom_types:
   - name: InflationGovernor
   - name: Tx
   - name: TxMeta
-    relationships:
-    - remote_table:
-        schema: public
-        name: transaction
-      source: soljuno
-      name: transaction
-      type: object
-      field_mapping:
-        hash: hash
-  - name: AccountInfo
   scalars:
   - name: Message
   - name: ParsedAccount

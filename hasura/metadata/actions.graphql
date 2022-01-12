@@ -4,8 +4,7 @@ type Query {
     inflationRate: InflationRate!
     inflationGovernorParam: InflationGovernor!
     tx(hash: String!): Tx!
-    tx_by_address(address: String!, config: TxByAddressConfig): [TxMeta!]!
-    account_info(address: String!): AccountInfo!
+    txs_by_address(address: String!, config: TxByAddressConfig): [TxMeta!]!
 }
 
 # ----------------------------------------------------------------
