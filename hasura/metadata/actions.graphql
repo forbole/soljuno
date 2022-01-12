@@ -5,7 +5,10 @@ type Query {
     inflationGovernorParam: InflationGovernor!
     tx(hash: String!): Tx!
     tx_by_address(address: String!, config: TxByAddressConfig): [TxMeta!]!
+    account_info(address: String!): AccountInfo!
 }
+
+# ----------------------------------------------------------------
 
 type EpochInfo {
     absoluteSlot: bigint!
@@ -39,6 +42,8 @@ type InflationGovernor {
     foundationTerm: Float!
 }
 
+# ----------------------------------------------------------------
+
 scalar Message
 
 type Tx {
@@ -63,4 +68,17 @@ input TxByAddressConfig {
     limit: Int
     before: String
     until: String
+}
+
+# ----------------------------------------------------------------
+
+scalar ParsedAccount
+
+type AccountInfo {
+    data: [String!]!
+    executable: Boolean!
+    lamports: bigint!
+    program_owner: String!
+    rent_epoch: Int!
+    parsed: ParsedAccount
 }
