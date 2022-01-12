@@ -5,6 +5,7 @@ type Query {
     inflationGovernorParam: InflationGovernor!
     tx(hash: String!): Tx!
     txs_by_address(address: String!, config: TxByAddressConfig): [TxMeta!]!
+    account_info(address: String!): AccountInfo!
 }
 
 # ----------------------------------------------------------------
@@ -80,4 +81,5 @@ type AccountInfo {
     program_owner: String!
     rent_epoch: Int!
     parsed: ParsedAccount
+
 }
