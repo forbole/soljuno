@@ -59,6 +59,16 @@ actions:
   permissions:
   - role: anonymous
 
+- name: account_info
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/api/account_info
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
 custom_types:
   enums: []
   input_objects: []
@@ -78,5 +88,7 @@ custom_types:
       type: object
       field_mapping:
         hash: hash
+  - name: AccountInfo
   scalars:
   - name: Message
+  - name: ParsedAccount
