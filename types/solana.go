@@ -79,10 +79,10 @@ func NewBlockFromResult(parserManager manager.ParserManager, slot uint64, b clie
 
 // Get account pubkeys from ids
 func getAccounts(accountKeys []string, ids []uint8) []string {
-	var accounts []string
+	accounts := make([]string, len(ids))
 	// Get account pubkey from id
-	for _, id := range ids {
-		accounts = append(accounts, accountKeys[id])
+	for i, id := range ids {
+		accounts[i] = accountKeys[id]
 	}
 	return accounts
 }

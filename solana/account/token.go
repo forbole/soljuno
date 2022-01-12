@@ -104,10 +104,10 @@ type Multisig struct {
 	Signers      Signers
 }
 
-func (s Signers) Strings() []string {
-	var pkStr []string
-	for _, p := range s {
-		pkStr = append(pkStr, p.String())
+func (m Multisig) StringSigners() []string {
+	pkStr := make([]string, m.N)
+	for i := 0; i < int(m.N); i++ {
+		pkStr[i] = m.Signers[i].String()
 	}
 	return pkStr
 }
