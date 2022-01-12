@@ -29,7 +29,7 @@ CREATE TABLE multisig
     address TEXT    NOT NULL PRIMARY KEY,
     slot    BIGINT  NOT NULL,
     signers TEXT[]  NOT NULL,
-    m       INT     NOT NULL
+    minimum INT     NOT NULL
 );
 
 CREATE TABLE token_delegation

@@ -182,7 +182,7 @@ func (suite *DbTestSuite) TestSaveMultisig() {
 		Address string         `db:"address"`
 		Slot    uint64         `db:"slot"`
 		Signers pq.StringArray `db:"signers"`
-		M       uint8          `db:"m"`
+		Minimum uint8          `db:"minimum"`
 	}
 
 	testCases := []struct {
@@ -235,7 +235,7 @@ func (suite *DbTestSuite) TestSaveMultisig() {
 				tc.data.Address,
 				tc.data.Slot,
 				tc.data.Signers,
-				tc.data.M,
+				tc.data.Minimum,
 			)
 			suite.Require().NoError(err)
 

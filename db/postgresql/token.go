@@ -67,22 +67,22 @@ func (db *Database) DeleteTokenAccount(address string) error {
 }
 
 // SaveMultisig implements the db.TokenDb
-func (db *Database) SaveMultisig(address string, slot uint64, singers []string, m uint8) error {
+func (db *Database) SaveMultisig(address string, slot uint64, singers []string, minimum uint8) error {
 	stmt := `
 INSERT INTO multisig
-	(address, slot, signers, m)
+	(address, slot, signers, minimum)
 VALUES ($1, $2, $3, $4)
 ON CONFLICT (address) DO UPDATE
 	SET slot = excluded.slot,
 	signers = excluded.signers,
-	m = excluded.m
+	minimum = excluded.minimum
 WHERE multisig.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
 		address,
 		slot,
 		pq.Array(singers),
-		m,
+		minimum,
 	)
 	return err
 }
