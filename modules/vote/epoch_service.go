@@ -32,6 +32,7 @@ func (m *Module) updateValidatorSkipRates(epoch uint64) error {
 	for validator, schedule := range schedules {
 		skipRate := CalculateSkipRate(int(endSlot%solanatypes.SlotsInEpoch), produced, schedule)
 		skipRateRows[count] = dbtypes.NewValidatorSkipRateRow(validator, epoch, skipRate)
+		count++
 	}
 
 	return m.db.SaveValidatorSkipRates(skipRateRows)
