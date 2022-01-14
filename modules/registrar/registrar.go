@@ -91,20 +91,25 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	txsModule := txs.NewModule(ctx.Database, ctx.Pool)
 	pruningModule.RegisterService(txsModule)
 
+	epochModule := epoch.NewModule(ctx.Database, ctx.Proxy)
+	voteModule := vote.NewModule(ctx.Database, ctx.Proxy)
+	epochModule.RegisterService(voteModule)
+
 	return modules.Modules{
 		telemetry.NewModule(ctx.Config),
-		pruningModule,
-		txsModule,
 		bank.NewModule(ctx.Database),
 		system.NewModule(ctx.Database, ctx.Proxy),
 		stake.NewModule(ctx.Database, ctx.Proxy),
 		token.NewModule(ctx.Database, ctx.Proxy),
-		vote.NewModule(ctx.Config.GetPruningConfig(), ctx.Database, ctx.Proxy),
 		config.NewModule(ctx.Database, ctx.Proxy),
 		bpfloader.NewModule(ctx.Database, ctx.Proxy),
 		pricefeed.NewModule(ctx.Database),
 		consensus.NewModule(ctx.Database),
-		epoch.NewModule(ctx.Database, ctx.Proxy),
+
+		pruningModule,
+		txsModule,
+		epochModule,
+		voteModule,
 	}
 }
 

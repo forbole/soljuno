@@ -9,14 +9,12 @@ import (
 )
 
 type Module struct {
-	cfg    types.PruningConfig
 	db     db.Database
 	client client.ClientProxy
 }
 
-func NewModule(cfg types.PruningConfig, db db.Database, client client.ClientProxy) *Module {
+func NewModule(db db.Database, client client.ClientProxy) *Module {
 	return &Module{
-		cfg:    cfg,
 		db:     db,
 		client: client,
 	}

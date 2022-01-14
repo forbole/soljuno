@@ -1,7 +1,9 @@
 package epoch
 
-func (m *Module) RegisterService(service EpochService) {
-	m.services = append(m.services, service)
+func (m *Module) RegisterService(services ...EpochService) {
+	for _, s := range services {
+		m.services = append(m.services, s)
+	}
 }
 
 func (m *Module) RunServices() error {
