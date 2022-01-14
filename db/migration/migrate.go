@@ -6,14 +6,19 @@ import (
 
 func Up(db db.Database) error {
 	_, err := db.Exec(`
-	ALTER TABLE multisig RENAME COLUMN m TO minimum; 
+	CREATE TABLE validator_skip_rate
+	(
+		address      TEXT     NOT NULL PRIMARY KEY,
+		epoch        BIGINT   NOT NULL,
+		skip_rate    FLOAT    NOT NULL
+	);
 	`)
 	return err
 }
 
 func Down(db db.ExceutorDb) error {
 	_, err := db.Exec(`
-	ALTER TABLE multisig RENAME COLUMN minimum TO m;
+	DROP TABLE validator_skip_rate;
 	`)
 	return err
 }

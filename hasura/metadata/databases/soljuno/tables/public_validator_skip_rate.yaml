@@ -1,0 +1,12 @@
+table:
+  name: validator_skip_rate
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - epoch
+    - skip_rate
+    filter: {}
+  role: anonymous

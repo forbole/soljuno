@@ -3,7 +3,6 @@ package postgresql
 import (
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	solanatypes "github.com/forbole/soljuno/solana/types"
 )
 
 var _ db.EpochDb = &Database{}
@@ -26,19 +25,4 @@ ON CONFLICT (one_row_id) DO UPDATE
 		supply.NonCirculating,
 	)
 	return err
-}
-
-func (db *Database) GetEpochBlocks(epoch uint64) ([]uint64, error) {
-	start := epoch * solanatypes.SlotsInEpoch
-	end := (epoch+1)*solanatypes.SlotsInEpoch - 1
-	var blocks []dbtypes.BlockRow
-	err := db.Sqlx.Select(&blocks, `SELECT slot FROM block WHERE slot >= $1 AND slot <= $2`, start, end)
-	if err != nil {
-		return nil, err
-	}
-	res := make([]uint64, len(blocks))
-	for i, block := range blocks {
-		res[i] = block.Slot
-	}
-	return res, nil
 }
