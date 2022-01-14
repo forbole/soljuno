@@ -18,3 +18,10 @@ CREATE TABLE validator_status
     root_slot       BIGINT  NOT NULL,
     active          BOOLEAN NOT NULL
 );
+
+CREATE TABLE validator_skip_rate
+(
+    address      TEXT     NOT NULL PRIMARY KEY,
+    epoch        BIGINT   NOT NULL,
+    skip_rate    FLOAT    NOT NULL
+);

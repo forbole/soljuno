@@ -33,12 +33,10 @@ func (db *Database) saveUpToDateBalances(paramsNumber int, slot uint64, accounts
 	WHERE account_balance.slot <= excluded.slot
 	`
 	var params []interface{}
-
 	for i, bal := range balances {
 		bi := i * paramsNumber
 		paramsStmt += getParamsStmt(bi, paramsNumber)
 		params = append(params, accounts[i], slot, bal)
-
 	}
 	return db.insertWithParams(
 		insertStmt,

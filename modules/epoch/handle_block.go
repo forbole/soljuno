@@ -1,8 +1,6 @@
 package epoch
 
 import (
-	"github.com/forbole/soljuno/db"
-	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
 )
@@ -15,7 +13,7 @@ func (m *Module) HandleBlock(block types.Block) error {
 	if !m.updateEpoch(info.Epoch) {
 		return nil
 	}
-	return handleEpoch(m.epoch, m.db, m.client)
+	return m.handleEpoch()
 }
 
 func (m *Module) updateEpoch(epoch uint64) bool {
@@ -28,13 +26,13 @@ func (m *Module) updateEpoch(epoch uint64) bool {
 	return true
 }
 
-func handleEpoch(epoch uint64, db db.EpochDb, client client.ClientProxy) error {
+func (m *Module) handleEpoch() error {
 	// NOTE: updateSupplyInfo takes too much time so specificly use goroutine here.
 	go func() {
-		err := updateSupplyInfo(epoch, db, client)
+		err := updateSupplyInfo(m.epoch, m.db, m.client)
 		if err != nil {
 			log.Error().Err(err).Send()
 		}
 	}()
-	return nil
+	return m.RunServices()
 }

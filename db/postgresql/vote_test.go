@@ -1,5 +1,7 @@
 package postgresql_test
 
+import dbtypes "github.com/forbole/soljuno/db/types"
+
 func (suite *DbTestSuite) TestSaveValidator() {
 	type VoteAccountRow struct {
 		Address    string `db:"address"`
@@ -145,6 +147,53 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 			// Verify the data
 			rows := []ValidatorStatusRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_status")
+			suite.Require().NoError(err)
+			suite.Require().Len(rows, len(tc.expected))
+			suite.Require().Equal(tc.expected, rows)
+		})
+	}
+}
+
+func (suite *DbTestSuite) TestSaveValidatorSkipRates() {
+
+	testCases := []struct {
+		name     string
+		data     dbtypes.ValidatorSkipRateRow
+		expected []dbtypes.ValidatorSkipRateRow
+	}{
+		{
+			name:     "initialize the data",
+			data:     dbtypes.NewValidatorSkipRateRow("address", 1, 0.1),
+			expected: []dbtypes.ValidatorSkipRateRow{dbtypes.NewValidatorSkipRateRow("address", 1, 0.1)},
+		},
+		{
+			name:     "insert with lower epoch",
+			data:     dbtypes.NewValidatorSkipRateRow("address", 0, 0.1),
+			expected: []dbtypes.ValidatorSkipRateRow{dbtypes.NewValidatorSkipRateRow("address", 1, 0.1)},
+		},
+		{
+			name:     "insert with same epoch",
+			data:     dbtypes.NewValidatorSkipRateRow("address", 1, 0.2),
+			expected: []dbtypes.ValidatorSkipRateRow{dbtypes.NewValidatorSkipRateRow("address", 1, 0.2)},
+		},
+		{
+			name:     "insert with higher epoch",
+			data:     dbtypes.NewValidatorSkipRateRow("address", 2, 0.3),
+			expected: []dbtypes.ValidatorSkipRateRow{dbtypes.NewValidatorSkipRateRow("address", 2, 0.3)},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			err := suite.database.SaveValidatorSkipRates(
+				[]dbtypes.ValidatorSkipRateRow{tc.data},
+			)
+			suite.Require().NoError(err)
+
+			// Verify the data
+			rows := []dbtypes.ValidatorSkipRateRow{}
+			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_skip_rate")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, len(tc.expected))
 			suite.Require().Equal(tc.expected, rows)

@@ -8,10 +8,11 @@ import (
 )
 
 type Module struct {
-	db     db.Database
-	client client.ClientProxy
-	epoch  uint64
-	mtx    sync.Mutex
+	db       db.Database
+	client   client.ClientProxy
+	epoch    uint64
+	mtx      sync.Mutex
+	services []EpochService
 }
 
 func NewModule(db db.Database, client client.ClientProxy) *Module {
