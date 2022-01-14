@@ -170,6 +170,13 @@ type VoteDb interface {
 	// SaveValidatorStatus allows to store the given current validator status inside the database
 	SaveValidatorStatus(address string, slot uint64, activatedStake uint64, lastVote uint64, rootSlot uint64, active bool) error
 
+	// GetEpochProducedBlocks allows to get the slots in a epoch inside the database
+	// It is for calculating validator skip rates
+	GetEpochProducedBlocks(epoch uint64) ([]uint64, error)
+
+	// SaveValidatorSkipRates allows to store the given epoch of the validator skiprate inside the database
+	SaveValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error
+
 	VoteCheckerDb
 }
 
