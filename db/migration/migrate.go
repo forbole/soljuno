@@ -6,19 +6,14 @@ import (
 
 func Up(db db.Database) error {
 	_, err := db.Exec(`
-	CREATE TABLE validator_skip_rate
-	(
-		address      TEXT     NOT NULL PRIMARY KEY,
-		epoch        BIGINT   NOT NULL,
-		skip_rate    FLOAT    NOT NULL
-	);
+	ALTER TABLE token_delegation ALTER COLUMN amount TYPE NUMERIC(20,0);
 	`)
 	return err
 }
 
 func Down(db db.ExceutorDb) error {
 	_, err := db.Exec(`
-	DROP TABLE validator_skip_rate;
+	ALTER TABLE token_delegation ALTER COLUMN amount TYPE BIGINT;
 	`)
 	return err
 }

@@ -37,5 +37,5 @@ CREATE TABLE token_delegation
     source_address      TEXT    NOT NULL PRIMARY KEY,
     delegate_address    TEXT    NOT NULL,
     slot                BIGINT  NOT NULL,
-    amount              BIGINT  NOT NULL
+    amount              NUMERIC(20,0)  NOT NULL
 );
