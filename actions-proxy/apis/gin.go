@@ -22,7 +22,7 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 			c.JSON(http.StatusBadRequest, types.NewError(err))
 			return
 		}
-		c.JSON(http.StatusOK, info)
+		c.JSON(http.StatusOK, types.NewEpochInfoResponse(info))
 	})
 
 	group.POST("/epoch_schedule", func(c *gin.Context) {
@@ -31,7 +31,7 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 			c.JSON(http.StatusBadRequest, types.NewError(err))
 			return
 		}
-		c.JSON(http.StatusOK, schedule)
+		c.JSON(http.StatusOK, types.NewEpochScheduleResponse(schedule))
 	})
 
 	group.POST("/inflation_rate", func(c *gin.Context) {
@@ -40,7 +40,7 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 			c.JSON(http.StatusBadRequest, types.NewError(err))
 			return
 		}
-		c.JSON(http.StatusOK, inflation)
+		c.JSON(http.StatusOK, types.InflationRateResponse(inflation))
 	})
 
 	group.POST("/inflation_governor", func(c *gin.Context) {
@@ -49,7 +49,7 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 			c.JSON(http.StatusBadRequest, types.NewError(err))
 			return
 		}
-		c.JSON(http.StatusOK, governor)
+		c.JSON(http.StatusOK, types.InflationGovernorResponse(governor))
 	})
 
 	group.POST("/tx_meta", func(c *gin.Context) {

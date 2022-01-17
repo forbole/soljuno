@@ -1,8 +1,8 @@
 type Query {
-    epochInfo: EpochInfo!
-    epochScheduleParam: EpochSchedule!
-    inflationRate: InflationRate!
-    inflationGovernorParam: InflationGovernor!
+    epoch_info: EpochInfo!
+    epoch_schedule_param: EpochSchedule!
+    inflation_rate: InflationRate!
+    inflation_governor_param: InflationGovernor!
     tx(hash: String!): Tx!
     txs_by_address(address: String!, config: TxByAddressConfig): [TxMeta!]!
     account_info(address: String!): AccountInfo!
@@ -11,19 +11,19 @@ type Query {
 # ----------------------------------------------------------------
 
 type EpochInfo {
-    absoluteSlot: bigint!
-    blockHeight: bigint!
+    absolute_slot: bigint!
+    block_height: bigint!
     epoch: bigint!
-    slotIndex: bigint!
-    slotsInEpoch: bigint!
-    transactionCount: bigint!
+    slot_index: bigint!
+    slots_in_epoch: bigint!
+    transaction_count: bigint!
 }
 
 type EpochSchedule {
-    slotsPerEpoch: Int!
-    firstNormalEpoch: Int!
-    firstNormalSlot: Int!
-    leaderScheduleSlotOffset: Int!
+    slots_per_epoch: Int!
+    first_normal_epoch: Int!
+    first_normal_slot: Int!
+    leader_schedule_slot_offset: Int!
     warmup: Boolean!
 }
 
@@ -39,7 +39,7 @@ type InflationGovernor {
     terminal: Float!
     taper: Float!
     foundation: Float!
-    foundationTerm: Float!
+    foundation_term: Float!
 }
 
 # ----------------------------------------------------------------
