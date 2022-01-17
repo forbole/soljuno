@@ -8,17 +8,17 @@ type TxByAddressPayload struct {
 }
 
 type TxByAddressArgs struct {
-	Address string            `json:"address"`
-	Config  TxByAddressConfig `json:"config"`
+	Address string             `json:"address"`
+	Config  TxsByAddressConfig `json:"config"`
 }
 
-type TxByAddressConfig struct {
+type TxsByAddressConfig struct {
 	Limit  int    `json:"limit"`
 	Before string `json:"before"`
 	Until  string `json:"until"`
 }
 
-type TxMetaRespoonse struct {
+type TxMetaResponse struct {
 	Hash      string `json:"hash"`
 	Slot      uint64 `json:"slot"`
 	Error     bool   `json:"error"`
@@ -26,10 +26,10 @@ type TxMetaRespoonse struct {
 	BlockTime uint64 `json:"block_time"`
 }
 
-func NewTxMetasResponse(metas []clienttypes.ConfirmedTransactionStatusWithSignature) []TxMetaRespoonse {
-	res := make([]TxMetaRespoonse, len(metas))
+func NewTxMetasResponse(metas []clienttypes.ConfirmedTransactionStatusWithSignature) []TxMetaResponse {
+	res := make([]TxMetaResponse, len(metas))
 	for i, meta := range metas {
-		res[i] = TxMetaRespoonse{
+		res[i] = TxMetaResponse{
 			Hash:      meta.Signature,
 			Slot:      meta.Slot,
 			Error:     meta.Err != nil,

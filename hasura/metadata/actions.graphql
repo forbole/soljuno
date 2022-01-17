@@ -4,7 +4,7 @@ type Query {
     inflation_rate: InflationRate!
     inflation_governor_param: InflationGovernor!
     tx(hash: String!): Tx!
-    txs_by_address(address: String!, config: TxByAddressConfig): [TxMeta!]!
+    txs_by_address(address: String!, config: TxsByAddressConfig): [TxMeta!]!
     account_info(address: String!): AccountInfo!
 }
 
@@ -64,7 +64,7 @@ type TxMeta {
     memo: String!
 }
 
-input TxByAddressConfig {
+input TxsByAddressConfig {
     limit: Int
     before: String
     until: String
