@@ -102,7 +102,7 @@ WHERE token_delegation.slot <= excluded.slot`
 		source,
 		delegate,
 		slot,
-		amount,
+		strconv.FormatUint(amount, 10),
 	)
 	return err
 }
