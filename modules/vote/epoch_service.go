@@ -42,7 +42,9 @@ func (m *Module) updateValidatorSkipRates(epoch uint64) error {
 // CalculateSkipRate returns the skip rate of the validator from the given produced map and the validator schedule
 func CalculateSkipRate(end int, produced map[int]bool, schedule []int) float64 {
 	var missingCount float64 = 0
+	var shouldProducedCount float64 = 0
 	for _, slotInEpoch := range schedule {
+		shouldProducedCount++
 		if slotInEpoch > end {
 			break
 		}
@@ -50,5 +52,5 @@ func CalculateSkipRate(end int, produced map[int]bool, schedule []int) float64 {
 			missingCount++
 		}
 	}
-	return missingCount / float64(end+1)
+	return missingCount / shouldProducedCount
 }
