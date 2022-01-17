@@ -39,7 +39,7 @@ type InflationGovernor {
     terminal: Float!
     taper: Float!
     foundation: Float!
-    foundation_term: Float!
+    foundation_terminal: Float!
 }
 
 # ----------------------------------------------------------------
