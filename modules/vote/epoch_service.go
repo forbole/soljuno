@@ -1,6 +1,8 @@
 package vote
 
 import (
+	"fmt"
+
 	dbtypes "github.com/forbole/soljuno/db/types"
 	solanatypes "github.com/forbole/soljuno/solana/types"
 )
@@ -14,6 +16,9 @@ func (m *Module) updateValidatorSkipRates(epoch uint64) error {
 	slots, err := m.db.GetEpochProducedBlocks(epoch)
 	if err != nil {
 		return err
+	}
+	if len(slots) == 0 {
+		return fmt.Errorf("%d epoch blocks does not exist", epoch)
 	}
 
 	endSlot := slots[len(slots)-1]
