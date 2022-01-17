@@ -29,8 +29,9 @@ func (m *Module) updateValidatorSkipRates(epoch uint64) error {
 
 	skipRateRows := make([]dbtypes.ValidatorSkipRateRow, len(schedules))
 	count := 0
+	end := int(endSlot % solanatypes.SlotsInEpoch)
 	for validator, schedule := range schedules {
-		skipRate := CalculateSkipRate(int(endSlot%solanatypes.SlotsInEpoch), produced, schedule)
+		skipRate := CalculateSkipRate(end, produced, schedule)
 		skipRateRows[count] = dbtypes.NewValidatorSkipRateRow(validator, epoch, skipRate)
 		count++
 	}
@@ -40,7 +41,7 @@ func (m *Module) updateValidatorSkipRates(epoch uint64) error {
 
 // CalculateSkipRate returns the skip rate of the validator from the given produced map and the validator schedule
 func CalculateSkipRate(end int, produced map[int]bool, schedule []int) float64 {
-	producedCount := 0
+	var producedCount float64 = 0
 	for _, slotInEpoch := range schedule {
 		if slotInEpoch > end {
 			break
@@ -49,5 +50,5 @@ func CalculateSkipRate(end int, produced map[int]bool, schedule []int) float64 {
 			producedCount++
 		}
 	}
-	return 1 - float64(producedCount/(end+1))
+	return 1 - (producedCount / float64(end+1))
 }
