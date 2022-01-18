@@ -6,14 +6,23 @@ import (
 
 func Up(db db.Database) error {
 	_, err := db.Exec(`
-	ALTER TABLE token_delegation ALTER COLUMN amount TYPE NUMERIC(20,0);
+	CREATE TABLE token_price_history
+	(
+		id          TEXT                        NOT NULL,
+		price       DECIMAL                     NOT NULL,
+		market_cap  BIGINT                      NOT NULL,
+		symbol      TEXT                        NOT NULL,
+		timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
+	);
+	CREATE INDEX token_price_id_index ON token_price (id);
+	CREATE INDEX token_price_timestamp_index ON token_price (timestamp);
 	`)
 	return err
 }
 
 func Down(db db.ExceutorDb) error {
 	_, err := db.Exec(`
-	ALTER TABLE token_delegation ALTER COLUMN amount TYPE BIGINT;
+	DROP TABLE token_price_history;
 	`)
 	return err
 }
