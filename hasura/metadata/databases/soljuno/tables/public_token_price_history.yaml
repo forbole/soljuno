@@ -1,0 +1,23 @@
+table:
+  name: token_price
+  schema: public
+object_relationships:
+- name: token_unit
+  using:
+     manual_configuration:
+      remote_table:
+        schema: public
+        name: token_unit
+      column_mapping:
+        id: price_id
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - price
+    - market_cap
+    - symbol
+    - timestamp
+    filter: {}
+  role: anonymous

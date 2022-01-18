@@ -18,6 +18,15 @@ object_relationships:
         name: token
       column_mapping:
         address: address
+array_relationships:
+  - name: token_price_history
+  using:
+     manual_configuration:
+      remote_table:
+        schema: public
+        name: token_price_history
+      column_mapping:
+        price_id: id
 select_permissions:
 - permission:
     allow_aggregations: true
