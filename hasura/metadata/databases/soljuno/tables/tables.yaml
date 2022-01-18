@@ -21,3 +21,5 @@
 - "!include public_stake_lockup.yaml"
 - "!include public_supply_info.yaml"
 - "!include public_validator_skip_rate.yaml"
+- "!include public_token_price_history.yaml"
+

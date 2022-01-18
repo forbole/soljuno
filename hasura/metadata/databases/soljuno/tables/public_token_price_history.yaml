@@ -1,5 +1,5 @@
 table:
-  name: token_price
+  name: token_price_history
   schema: public
 object_relationships:
 - name: token_unit

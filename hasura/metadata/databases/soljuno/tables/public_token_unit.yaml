@@ -19,7 +19,7 @@ object_relationships:
       column_mapping:
         address: address
 array_relationships:
-  - name: token_price_history
+- name: token_price_history
   using:
      manual_configuration:
       remote_table:
