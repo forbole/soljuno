@@ -12,6 +12,7 @@ import (
 	"github.com/forbole/soljuno/modules/config"
 	"github.com/forbole/soljuno/modules/consensus"
 	"github.com/forbole/soljuno/modules/epoch"
+	"github.com/forbole/soljuno/modules/history"
 	"github.com/forbole/soljuno/modules/pricefeed"
 	"github.com/forbole/soljuno/modules/pruning"
 	"github.com/forbole/soljuno/modules/stake"
@@ -95,6 +96,10 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	voteModule := vote.NewModule(ctx.Database, ctx.Proxy)
 	epochModule.RegisterService(voteModule)
 
+	historyModule := history.NewModule()
+	pricefeedModule := pricefeed.NewModule(ctx.Database)
+	historyModule.RegisterService(pricefeedModule)
+
 	return modules.Modules{
 		telemetry.NewModule(ctx.Config),
 		bank.NewModule(ctx.Database),
@@ -103,13 +108,13 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		token.NewModule(ctx.Database, ctx.Proxy),
 		config.NewModule(ctx.Database, ctx.Proxy),
 		bpfloader.NewModule(ctx.Database, ctx.Proxy),
-		pricefeed.NewModule(ctx.Database),
 		consensus.NewModule(ctx.Database),
-
+		pricefeedModule,
 		pruningModule,
 		txsModule,
 		epochModule,
 		voteModule,
+		historyModule,
 	}
 }
 

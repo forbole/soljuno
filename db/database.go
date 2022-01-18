@@ -236,7 +236,10 @@ type PriceDb interface {
 	SaveTokenUnits(units []dbtypes.TokenUnitRow) error
 
 	// SaveTokensPrices allows to store the token prices inside the database
-	SaveTokensPrices(prices []dbtypes.TokenPriceRow) error
+	SaveTokenPrices(prices []dbtypes.TokenPriceRow) error
+
+	// SaveHistoryTokensPrices allows to store the token prices history inside the database
+	SaveHistoryTokenPrices(prices []dbtypes.TokenPriceRow) error
 }
 
 // ConsensusDb represents a database that supports consesus properly
