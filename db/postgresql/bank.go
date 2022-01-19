@@ -78,10 +78,28 @@ func (db *Database) SaveAccountHistoryBalances(timestamp time.Time, accounts []s
 	paramsStmt := ""
 	conflictStmt := ""
 	var params []interface{}
+
+	count := 0
 	for i, bal := range balances {
-		bi := i * paramsNumber
+		// Excute if the max params length will be reached
+		if len(params)+paramsNumber >= MAX_PARAMS_LENGTH {
+			err := db.insertWithParams(
+				insertStmt,
+				paramsStmt[:len(paramsStmt)-1],
+				conflictStmt,
+				params,
+			)
+			if err != nil {
+				return err
+			}
+			count = 0
+			paramsStmt = ""
+			params = params[:0]
+		}
+		bi := count * paramsNumber
 		paramsStmt += getParamsStmt(bi, paramsNumber)
 		params = append(params, accounts[i], timestamp, bal)
+		count++
 	}
 	return db.insertWithParams(
 		insertStmt,
@@ -101,10 +119,27 @@ func (db *Database) SaveAccountHistoryTokenBalances(timestamp time.Time, account
 	conflictStmt := ""
 	var params []interface{}
 
+	count := 0
 	for i, bal := range balances {
-		bi := i * paramsNumber
+		// Excute if the max params length will be reached
+		if len(params)+paramsNumber >= MAX_PARAMS_LENGTH {
+			err := db.insertWithParams(
+				insertStmt,
+				paramsStmt[:len(paramsStmt)-1],
+				conflictStmt,
+				params,
+			)
+			if err != nil {
+				return err
+			}
+			count = 0
+			paramsStmt = ""
+			params = params[:0]
+		}
+		bi := count * paramsNumber
 		paramsStmt += getParamsStmt(bi, paramsNumber)
-		params = append(params, accounts[bal.AccountIndex], timestamp, bal.UiTokenAmount.Amount)
+		params = append(params, accounts[i], timestamp, bal)
+		count++
 	}
 
 	return db.insertWithParams(
