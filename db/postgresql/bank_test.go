@@ -1,6 +1,10 @@
 package postgresql_test
 
-import "github.com/forbole/soljuno/solana/client/types"
+import (
+	"time"
+
+	"github.com/forbole/soljuno/solana/client/types"
+)
 
 func (suite *DbTestSuite) TestSaveAccountBalances() {
 	type BalanceRow struct {
@@ -174,6 +178,152 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
 			suite.Require().Equal(tc.expected, rows[0])
+		})
+	}
+}
+
+func (suite *DbTestSuite) TestSaveAccountHistoryBalances() {
+	type BalanceRow struct {
+		Address   string    `db:"address"`
+		Timestamp time.Time `db:"timestamp"`
+		Balance   uint64    `db:"balance"`
+	}
+
+	testCases := []struct {
+		name      string
+		timestamp time.Time
+		accounts  []string
+		balances  []uint64
+		expected  []BalanceRow
+	}{
+		{
+			name:      "initialize the data",
+			timestamp: time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC),
+			accounts:  []string{"address"},
+			balances:  []uint64{1},
+			expected: []BalanceRow{
+				{
+					"address", time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC), 1,
+				},
+			},
+		},
+		{
+			name:      "insert another data",
+			timestamp: time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC),
+			accounts:  []string{"address"},
+			balances:  []uint64{100},
+			expected: []BalanceRow{
+				{
+					"address", time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC), 1,
+				},
+				{
+					"address", time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC), 100,
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			err := suite.database.SaveAccountHistoryBalances(
+				tc.timestamp,
+				tc.accounts,
+				tc.balances,
+			)
+			suite.Require().NoError(err)
+
+			// Verify the data
+			rows := []BalanceRow{}
+			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM account_balance_history ORDER BY timestamp")
+			suite.Require().NoError(err)
+			suite.Require().Len(rows, len(tc.expected))
+			for i, row := range rows {
+				suite.Require().True(tc.expected[i].Address == row.Address)
+				suite.Require().True(tc.expected[i].Timestamp.Equal(row.Timestamp))
+				suite.Require().True(tc.expected[i].Balance == row.Balance)
+			}
+		})
+	}
+}
+
+func (suite *DbTestSuite) TestSaveAccountHistoryTokenBalances() {
+	type BalanceRow struct {
+		Address   string    `db:"address"`
+		Timestamp time.Time `db:"timestamp"`
+		Balance   uint64    `db:"balance"`
+	}
+
+	testCases := []struct {
+		name      string
+		timestamp time.Time
+		accounts  []string
+		balances  []types.TransactionTokenBalance
+		expected  []BalanceRow
+	}{
+		{
+			name:      "initialize the data",
+			timestamp: time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC),
+			accounts:  []string{"address"},
+			balances: []types.TransactionTokenBalance{
+				{
+					AccountIndex: 0,
+					Mint:         "mint",
+					UiTokenAmount: types.UiTokenAmount{
+						Amount: "1",
+					},
+				},
+			},
+			expected: []BalanceRow{
+				{
+					"address", time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC), 1,
+				},
+			},
+		},
+		{
+			name:      "insert another data",
+			timestamp: time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC),
+			accounts:  []string{"address"},
+			balances: []types.TransactionTokenBalance{
+				{
+					AccountIndex: 0,
+					Mint:         "mint",
+					UiTokenAmount: types.UiTokenAmount{
+						Amount: "10",
+					},
+				},
+			},
+			expected: []BalanceRow{
+				{
+					"address", time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC), 1,
+				},
+				{
+					"address", time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC), 10,
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			err := suite.database.SaveAccountHistoryTokenBalances(
+				tc.timestamp,
+				tc.accounts,
+				tc.balances,
+			)
+			suite.Require().NoError(err)
+
+			// Verify the data
+			rows := []BalanceRow{}
+			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_account_balance_history ORDER BY timestamp")
+			suite.Require().NoError(err)
+			suite.Require().Len(rows, len(tc.expected))
+			for i, row := range rows {
+				suite.Require().True(tc.expected[i].Address == row.Address)
+				suite.Require().True(tc.expected[i].Timestamp.Equal(row.Timestamp))
+				suite.Require().True(tc.expected[i].Balance == row.Balance)
+			}
 		})
 	}
 }

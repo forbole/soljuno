@@ -73,6 +73,12 @@ type BankDb interface {
 
 	// SaveAccountBalances allows to store the given token balance data inside the database
 	SaveAccountTokenBalances(slot uint64, accounts []string, balances []clienttypes.TransactionTokenBalance) error
+
+	// SaveAccountHistoryBalances allows to store the given native balance data inside the database
+	SaveAccountHistoryBalances(time time.Time, accounts []string, balances []uint64) error
+
+	// SaveAccountHistoryTokenBalances allows to store the given token balance data inside the database
+	SaveAccountHistoryTokenBalances(time time.Time, accounts []string, balances []clienttypes.TransactionTokenBalance) error
 }
 
 // TokenDb represents a database that supports token properly
