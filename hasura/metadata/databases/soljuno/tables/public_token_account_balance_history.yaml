@@ -1,5 +1,5 @@
 table:
-  name: token_account_balance
+  name: token_account_balance_history
   schema: public
 select_permissions:
 - permission:
