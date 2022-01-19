@@ -10,10 +10,10 @@ var _ history.HistroyService = &Module{}
 
 func (m *Module) ExecHistory() error {
 	m.mtx.Lock()
-	balanceEntries := m.balanceEntries
-	tokenBalanceEntries := m.tokenBalanceEntries
-	m.balanceEntries = nil
-	m.tokenBalanceEntries = nil
+	balanceEntries := m.historyBalancesEntries
+	tokenBalanceEntries := m.historyTokenBalancesEntries
+	m.historyBalancesEntries = nil
+	m.historyTokenBalancesEntries = nil
 	m.mtx.Unlock()
 
 	errChan := make(chan error)
