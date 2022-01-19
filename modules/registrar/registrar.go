@@ -98,11 +98,12 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 
 	historyModule := history.NewModule()
 	pricefeedModule := pricefeed.NewModule(ctx.Database)
-	historyModule.RegisterService(pricefeedModule)
+	bankModule := bank.NewModule(ctx.Database)
+	historyModule.RegisterService(pricefeedModule, bankModule)
 
 	return modules.Modules{
 		telemetry.NewModule(ctx.Config),
-		bank.NewModule(ctx.Database),
+		bankModule,
 		system.NewModule(ctx.Database, ctx.Proxy),
 		stake.NewModule(ctx.Database, ctx.Proxy),
 		token.NewModule(ctx.Database, ctx.Proxy),
