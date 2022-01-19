@@ -2,7 +2,7 @@ table:
   name: token_account
   schema: public
 object_relationships:
-- name: token_by_account
+- name: token_info
   using:
     manual_configuration:
       remote_table:
