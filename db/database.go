@@ -5,7 +5,6 @@ import (
 	"time"
 
 	dbtypes "github.com/forbole/soljuno/db/types"
-	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/types/logging"
 )
@@ -72,7 +71,13 @@ type BankDb interface {
 	SaveAccountBalances(slot uint64, accounts []string, balances []uint64) error
 
 	// SaveAccountBalances allows to store the given token balance data inside the database
-	SaveAccountTokenBalances(slot uint64, accounts []string, balances []clienttypes.TransactionTokenBalance) error
+	SaveAccountTokenBalances(slot uint64, accounts []string, balances []uint64) error
+
+	// SaveAccountHistoryBalances allows to store the given native balance data inside the database
+	SaveAccountHistoryBalances(time time.Time, accounts []string, balances []uint64) error
+
+	// SaveAccountHistoryTokenBalances allows to store the given token balance data inside the database
+	SaveAccountHistoryTokenBalances(time time.Time, accounts []string, balances []uint64) error
 }
 
 // TokenDb represents a database that supports token properly
@@ -236,7 +241,10 @@ type PriceDb interface {
 	SaveTokenUnits(units []dbtypes.TokenUnitRow) error
 
 	// SaveTokensPrices allows to store the token prices inside the database
-	SaveTokensPrices(prices []dbtypes.TokenPriceRow) error
+	SaveTokenPrices(prices []dbtypes.TokenPriceRow) error
+
+	// SaveHistoryTokensPrices allows to store the token prices history inside the database
+	SaveHistoryTokenPrices(prices []dbtypes.TokenPriceRow) error
 }
 
 // ConsensusDb represents a database that supports consesus properly

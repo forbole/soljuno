@@ -39,7 +39,7 @@ func (db *Database) SaveTokenUnits(units []dbtypes.TokenUnitRow) error {
 }
 
 // SaveTokensPrices allows to save the given prices as the most updated ones
-func (db *Database) SaveTokensPrices(prices []dbtypes.TokenPriceRow) error {
+func (db *Database) SaveTokenPrices(prices []dbtypes.TokenPriceRow) error {
 	if len(prices) == 0 {
 		return nil
 	}
@@ -53,6 +53,28 @@ func (db *Database) SaveTokensPrices(prices []dbtypes.TokenPriceRow) error {
 			symbol = excluded.symbol,
 			timestamp = excluded.timestamp
 	WHERE token_price.timestamp <= excluded.timestamp`
+	var params []interface{}
+	paramNumber := 5
+
+	for i, ticker := range prices {
+		vi := i * paramNumber
+		paramsStmt += getParamsStmt(vi, paramNumber)
+		params = append(params, ticker.ID, ticker.Price, ticker.MarketCap, ticker.Symbol, ticker.Timestamp)
+	}
+
+	return db.insertWithParams(insertStmt, paramsStmt[:len(paramsStmt)-1], conflictStmt, params)
+}
+
+// SaveTokensPrices implements db.PriceDb
+func (db *Database) SaveHistoryTokenPrices(prices []dbtypes.TokenPriceRow) error {
+	if len(prices) == 0 {
+		return nil
+	}
+
+	insertStmt := `INSERT INTO token_price_history (id, price, market_cap, symbol, timestamp) VALUES`
+	paramsStmt := ""
+	conflictStmt := ""
+
 	var params []interface{}
 	paramNumber := 5
 

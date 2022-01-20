@@ -13,7 +13,11 @@ type Module struct {
 	tasks               chan func()
 	balanceEntries      []AccountBalanceEntry
 	tokenBalanceEntries []TokenAccountBalanceEntry
-	mtx                 sync.Mutex
+
+	historyBalancesEntries      []AccountBalanceEntry
+	historyTokenBalancesEntries []TokenAccountBalanceEntry
+
+	mtx sync.Mutex
 }
 
 func NewModule(db db.Database) *Module {
@@ -32,8 +36,14 @@ func (m *Module) Name() string {
 func (m *Module) HandleBlock(block types.Block) error {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
+
+	balanceEntries := GetAccountBalaceEntries(block)
 	m.balanceEntries = MergeAccountBalanceEntries(m.balanceEntries, GetAccountBalaceEntries(block))
-	m.tokenBalanceEntries = MergeTokenAccountBalanceEntries(m.tokenBalanceEntries, GetTokenAccountBalaceEntries(block))
+	m.historyBalancesEntries = MergeAccountBalanceEntries(m.historyBalancesEntries, balanceEntries)
+
+	tokenBalanceEntries := GetTokenAccountBalaceEntries(block)
+	m.tokenBalanceEntries = MergeTokenAccountBalanceEntries(m.tokenBalanceEntries, tokenBalanceEntries)
+	m.historyTokenBalancesEntries = MergeTokenAccountBalanceEntries(m.historyTokenBalancesEntries, tokenBalanceEntries)
 	log.Debug().Str("module", m.Name()).Uint64("slot", block.Slot).Msg("handled block")
 	return nil
 }

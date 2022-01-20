@@ -17,5 +17,15 @@ CREATE TABLE token_price
     symbol      TEXT                        NOT NULL,
     timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
-CREATE INDEX token_price_timestamp_index ON token_price (timestamp);
+
+CREATE TABLE token_price_history
+(
+    id          TEXT                        NOT NULL,
+    price       DECIMAL                     NOT NULL,
+    market_cap  BIGINT                      NOT NULL,
+    symbol      TEXT                        NOT NULL,
+    timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+CREATE INDEX token_price_history_id_index ON token_price (id);
+CREATE INDEX token_price_history_timestamp_index ON token_price (timestamp);
 

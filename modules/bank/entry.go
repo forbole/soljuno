@@ -1,6 +1,10 @@
 package bank
 
-import clienttypes "github.com/forbole/soljuno/solana/client/types"
+import (
+	"strconv"
+
+	clienttypes "github.com/forbole/soljuno/solana/client/types"
+)
 
 type AccountBalanceEntry struct {
 	Slot    uint64
@@ -33,6 +37,7 @@ func MergeAccountBalanceEntries(oldEntries, newEntries []AccountBalanceEntry) []
 	for _, entry := range newEntries {
 		if i, exist := accountMap[entry.Address]; exist {
 			if entry.Slot >= oldEntries[i].Slot {
+				oldEntries[i].Slot = entry.Slot
 				oldEntries[i].Balance = entry.Balance
 			}
 			continue
@@ -62,10 +67,10 @@ func EntriesToBalances(entries []AccountBalanceEntry) (uint64, []string, []uint6
 type TokenAccountBalanceEntry struct {
 	Slot    uint64
 	Address string
-	Balance clienttypes.TransactionTokenBalance
+	Balance uint64
 }
 
-func NewTokenAccountBalanceEntry(slot uint64, address string, balance clienttypes.TransactionTokenBalance) TokenAccountBalanceEntry {
+func NewTokenAccountBalanceEntry(slot uint64, address string, balance uint64) TokenAccountBalanceEntry {
 	return TokenAccountBalanceEntry{
 		slot,
 		address,
@@ -76,7 +81,8 @@ func NewTokenAccountBalanceEntry(slot uint64, address string, balance clienttype
 func NewTokenAccountBalanceEntries(slot uint64, addresses []string, balances []clienttypes.TransactionTokenBalance) []TokenAccountBalanceEntry {
 	var entries []TokenAccountBalanceEntry
 	for i, address := range addresses {
-		entries = append(entries, NewTokenAccountBalanceEntry(slot, address, balances[i]))
+		bal, _ := strconv.ParseUint(balances[i].UiTokenAmount.Amount, 10, 64)
+		entries = append(entries, NewTokenAccountBalanceEntry(slot, address, bal))
 	}
 	return entries
 }
@@ -90,22 +96,21 @@ func MergeTokenAccountBalanceEntries(oldEntries, newEntries []TokenAccountBalanc
 	for _, entry := range newEntries {
 		if i, exist := accountMap[entry.Address]; exist {
 			if entry.Slot >= oldEntries[i].Slot {
+				oldEntries[i].Slot = entry.Slot
 				oldEntries[i].Balance = entry.Balance
-				oldEntries[i].Balance.AccountIndex = uint(i)
 			}
 			continue
 		}
 		accountMap[entry.Address] = len(oldEntries)
-		entry.Balance.AccountIndex = uint(len(oldEntries))
 		oldEntries = append(oldEntries, entry)
 	}
 	return oldEntries
 }
 
-func EntriesToTokenBalances(entries []TokenAccountBalanceEntry) (uint64, []string, []clienttypes.TransactionTokenBalance) {
+func EntriesToTokenBalances(entries []TokenAccountBalanceEntry) (uint64, []string, []uint64) {
 	var slot uint64
 	var accounts []string
-	var balances []clienttypes.TransactionTokenBalance
+	var balances []uint64
 	for _, entry := range entries {
 		accounts = append(accounts, entry.Address)
 		balances = append(balances, entry.Balance)

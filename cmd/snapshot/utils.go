@@ -2,13 +2,11 @@ package snapshot
 
 import (
 	"encoding/json"
-	"strconv"
 
 	"github.com/forbole/soljuno/apis/keybase"
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
 	accountParser "github.com/forbole/soljuno/solana/account"
-	clienttypes "github.com/forbole/soljuno/solana/client/types"
 )
 
 func updateAccountBalance(ctx *Context, slot uint64, addresses []string, balances []uint64) error {
@@ -48,15 +46,7 @@ func updateTokenAccount(ctx *Context, address string, slot uint64, account accou
 	return bankDb.SaveAccountTokenBalances(
 		slot,
 		[]string{address},
-		[]clienttypes.TransactionTokenBalance{
-			{
-				AccountIndex: 0,
-				Mint:         account.Mint.String(),
-				UiTokenAmount: clienttypes.UiTokenAmount{
-					Amount: strconv.FormatUint(account.Amount, 10),
-				},
-			},
-		},
+		[]uint64{account.Amount},
 	)
 }
 

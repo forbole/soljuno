@@ -1,0 +1,12 @@
+table:
+  name: account_balance_history
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - balance
+    - timestamp
+    filter: {}
+  role: anonymous

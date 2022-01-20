@@ -6,6 +6,7 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
+	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/modules/pricefeed/coingecko"
 	"github.com/forbole/soljuno/modules/utils"
 )
@@ -24,17 +25,11 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-// updatePrice fetch total amount of coins in the system from RPC and store it into database
-func (m *Module) updatePrice() error {
-	log.Debug().
-		Str("module", "pricefeed").
-		Str("operation", "pricefeed").
-		Msg("getting token price and market cap")
-
-	// Get the list of token units
+// getTokenPrices gets the token prices in the database from coingecko
+func (m *Module) getTokenPrices() ([]dbtypes.TokenPriceRow, error) {
 	units, err := m.db.GetTokenUnits()
 	if err != nil {
-		return fmt.Errorf("error while getting token units: %s", err)
+		return nil, fmt.Errorf("error while getting token units: %s", err)
 	}
 	// Find the id of the coins
 	var ids []string
@@ -47,18 +42,32 @@ func (m *Module) updatePrice() error {
 	}
 
 	if len(ids) == 0 {
-		log.Debug().Str("module", "pricefeed").Msg("no traded tokens found")
-		return nil
+		return nil, fmt.Errorf("no traded tokens found")
 	}
 
 	// Get the tokens prices
 	prices, err := coingecko.GetTokensPrices(ids)
 	if err != nil {
-		return fmt.Errorf("error while getting tokens prices: %s", err)
+		return nil, fmt.Errorf("error while getting tokens prices: %s", err)
+	}
+
+	return prices, err
+}
+
+// updatePrice fetch total amount of coins in the system from RPC and store it into database
+func (m *Module) updatePrice() error {
+	log.Debug().
+		Str("module", "pricefeed").
+		Str("operation", "pricefeed").
+		Msg("getting token price and market cap")
+
+	prices, err := m.getTokenPrices()
+	if err != nil {
+		return err
 	}
 
 	// Save the token prices
-	err = m.db.SaveTokensPrices(prices)
+	err = m.db.SaveTokenPrices(prices)
 	if err != nil {
 		return fmt.Errorf("error while saving token prices: %s", err)
 	}
