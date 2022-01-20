@@ -96,6 +96,7 @@ func MergeTokenAccountBalanceEntries(oldEntries, newEntries []TokenAccountBalanc
 	for _, entry := range newEntries {
 		if i, exist := accountMap[entry.Address]; exist {
 			if entry.Slot >= oldEntries[i].Slot {
+				oldEntries[i].Slot = entry.Slot
 				oldEntries[i].Balance = entry.Balance
 			}
 			continue
