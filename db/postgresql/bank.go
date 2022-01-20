@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/forbole/soljuno/db"
-	clienttypes "github.com/forbole/soljuno/solana/client/types"
 )
 
 // type check to ensure interface is properly implemented
@@ -37,7 +36,7 @@ func (db *Database) SaveAccountBalances(slot uint64, accounts []string, balances
 	)
 }
 
-func (db *Database) SaveAccountTokenBalances(slot uint64, accounts []string, balances []clienttypes.TransactionTokenBalance) error {
+func (db *Database) SaveAccountTokenBalances(slot uint64, accounts []string, balances []uint64) error {
 	if len(balances) == 0 {
 		return nil
 	}
@@ -55,7 +54,7 @@ WHERE token_account_balance.slot <= excluded.slot
 	for i, bal := range balances {
 		bi := i * paramsNumber
 		paramsStmt += getParamsStmt(bi, paramsNumber)
-		params = append(params, accounts[bal.AccountIndex], slot, bal.UiTokenAmount.Amount)
+		params = append(params, accounts[i], slot, bal)
 
 	}
 
@@ -109,7 +108,7 @@ func (db *Database) SaveAccountHistoryBalances(timestamp time.Time, accounts []s
 	)
 }
 
-func (db *Database) SaveAccountHistoryTokenBalances(timestamp time.Time, accounts []string, balances []clienttypes.TransactionTokenBalance) error {
+func (db *Database) SaveAccountHistoryTokenBalances(timestamp time.Time, accounts []string, balances []uint64) error {
 	if len(balances) == 0 {
 		return nil
 	}

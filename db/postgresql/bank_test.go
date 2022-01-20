@@ -2,8 +2,6 @@ package postgresql_test
 
 import (
 	"time"
-
-	"github.com/forbole/soljuno/solana/client/types"
 )
 
 func (suite *DbTestSuite) TestSaveAccountBalances() {
@@ -89,22 +87,14 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 		name     string
 		slot     uint64
 		accounts []string
-		balances []types.TransactionTokenBalance
+		balances []uint64
 		expected BalanceRow
 	}{
 		{
 			name:     "initialize the data",
 			slot:     1,
 			accounts: []string{"address"},
-			balances: []types.TransactionTokenBalance{
-				{
-					AccountIndex: 0,
-					Mint:         "mint",
-					UiTokenAmount: types.UiTokenAmount{
-						Amount: "1",
-					},
-				},
-			},
+			balances: []uint64{1},
 			expected: BalanceRow{
 				"address", 1, 1,
 			},
@@ -113,15 +103,7 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 			name:     "update with lower slot",
 			slot:     0,
 			accounts: []string{"address"},
-			balances: []types.TransactionTokenBalance{
-				{
-					AccountIndex: 0,
-					Mint:         "mint",
-					UiTokenAmount: types.UiTokenAmount{
-						Amount: "10",
-					},
-				},
-			},
+			balances: []uint64{10},
 			expected: BalanceRow{
 				"address", 1, 1,
 			},
@@ -130,15 +112,7 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 			name:     "update with same slot",
 			slot:     1,
 			accounts: []string{"address"},
-			balances: []types.TransactionTokenBalance{
-				{
-					AccountIndex: 0,
-					Mint:         "mint",
-					UiTokenAmount: types.UiTokenAmount{
-						Amount: "100",
-					},
-				},
-			},
+			balances: []uint64{100},
 			expected: BalanceRow{
 				"address", 1, 100,
 			},
@@ -147,15 +121,7 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 			name:     "update with higher slot",
 			slot:     2,
 			accounts: []string{"address"},
-			balances: []types.TransactionTokenBalance{
-				{
-					AccountIndex: 0,
-					Mint:         "mint",
-					UiTokenAmount: types.UiTokenAmount{
-						Amount: "1000",
-					},
-				},
-			},
+			balances: []uint64{1000},
 			expected: BalanceRow{
 				"address", 2, 1000,
 			},
@@ -258,22 +224,14 @@ func (suite *DbTestSuite) TestSaveAccountHistoryTokenBalances() {
 		name      string
 		timestamp time.Time
 		accounts  []string
-		balances  []types.TransactionTokenBalance
+		balances  []uint64
 		expected  []BalanceRow
 	}{
 		{
 			name:      "initialize the data",
 			timestamp: time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC),
 			accounts:  []string{"address"},
-			balances: []types.TransactionTokenBalance{
-				{
-					AccountIndex: 0,
-					Mint:         "mint",
-					UiTokenAmount: types.UiTokenAmount{
-						Amount: "1",
-					},
-				},
-			},
+			balances:  []uint64{1},
 			expected: []BalanceRow{
 				{
 					"address", time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC), 1,
@@ -284,15 +242,7 @@ func (suite *DbTestSuite) TestSaveAccountHistoryTokenBalances() {
 			name:      "insert another data",
 			timestamp: time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC),
 			accounts:  []string{"address"},
-			balances: []types.TransactionTokenBalance{
-				{
-					AccountIndex: 0,
-					Mint:         "mint",
-					UiTokenAmount: types.UiTokenAmount{
-						Amount: "10",
-					},
-				},
-			},
+			balances:  []uint64{10},
 			expected: []BalanceRow{
 				{
 					"address", time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC), 1,
