@@ -58,12 +58,9 @@ func NewBlockFromResult(parserManager manager.ParserManager, slot uint64, b clie
 		}
 	}
 
-	var txs []Tx
-	for _, txResult := range b.Transactions {
-		txs = append(
-			txs,
-			NewTxFromTxResult(parserManager, slot, txResult),
-		)
+	txs := make([]Tx, len(b.Transactions))
+	for i, txResult := range b.Transactions {
+		txs[i] = NewTxFromTxResult(parserManager, slot, txResult)
 	}
 
 	return Block{
@@ -136,8 +133,6 @@ func (tx Tx) Successful() bool {
 
 func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResult clienttypes.EncodedTransactionWithStatusMeta) Tx {
 	hash := txResult.Transaction.Signatures[0]
-
-	var msgs []Message
 	rawMsg := txResult.Transaction.Message
 	accountKeys := rawMsg.AccountKeys
 
@@ -147,6 +142,7 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 		innerInstructionMap[inner.Index] = append(innerInstructionMap[inner.Index], inner.Instructions...)
 	}
 
+	msgs := make([]Message, 0, len(txResult.Transaction.Message.Instructions)+len(txResult.Meta.InnerInstructions))
 	for i, msg := range rawMsg.Instructions {
 		var accounts []string
 		innerIndex := 0
