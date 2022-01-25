@@ -2,13 +2,10 @@ package postgresql
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 
 	"github.com/forbole/soljuno/types/logging"
 	"github.com/jmoiron/sqlx"
-
-	"github.com/lib/pq"
 
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
@@ -88,42 +85,6 @@ VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
 		stmt, block.Slot, block.Height, block.Hash, proposer, block.Timestamp, len(block.Txs),
 	)
 	return err
-}
-
-// SaveTxs implements db.Database
-func (db *Database) SaveTxs(txs []types.Tx) error {
-	if len(txs) == 0 {
-		return nil
-	}
-	insertStmt := `INSERT INTO transaction (hash, slot, error, fee, logs, messages) VALUES`
-	paramsStmt := ""
-	conflictStmt := `ON CONFLICT DO NOTHING`
-
-	var params []interface{}
-	paramsNumber := 6
-	for i, tx := range txs {
-		bi := i * paramsNumber
-		paramsStmt += getParamsStmt(bi, paramsNumber)
-		msgs, err := json.Marshal(types.NewSanitizedMessages(tx.Messages))
-		if err != nil {
-			return err
-		}
-		params = append(
-			params,
-			tx.Hash,
-			tx.Slot,
-			tx.Successful(),
-			tx.Fee,
-			pq.Array(tx.Logs),
-			msgs,
-		)
-	}
-	return db.insertWithParams(
-		insertStmt,
-		paramsStmt[:len(paramsStmt)-1],
-		conflictStmt,
-		params,
-	)
 }
 
 // Close implements db.Database

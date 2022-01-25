@@ -12,12 +12,12 @@ var _ modules.Module = &Module{}
 var _ pruning.PruningService = &Module{}
 
 type Module struct {
-	db     db.Database
+	db     db.TxDb
 	buffer chan types.Block
 	pool   *ants.Pool
 }
 
-func NewModule(db db.Database, pool *ants.Pool) *Module {
+func NewModule(db db.TxDb, pool *ants.Pool) *Module {
 	return &Module{
 		db:     db,
 		buffer: make(chan types.Block),
@@ -32,12 +32,28 @@ func (m *Module) Name() string {
 
 // HandleBlock implements modules.MessageModule
 func (m *Module) HandleBlock(block types.Block) error {
+	err := m.db.CreateTxPartition(int(block.Slot / 1000))
+	if err != nil {
+		return err
+	}
 	m.buffer <- block
 	return nil
 }
 
 // Prune implements pruning.PruningService
 func (m *Module) Prune(slot uint64) error {
-	err := m.db.PruneTxsBySlot(slot)
-	return err
+	for {
+		partitionName, err := m.db.GetOldestTxPartitionNameBeforeSlot(slot)
+		if err != nil {
+			return err
+		}
+		if partitionName == "" {
+			return nil
+		}
+
+		err = m.db.DropTxPartition(partitionName)
+		if err != nil {
+			return err
+		}
+	}
 }

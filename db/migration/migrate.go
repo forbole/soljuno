@@ -4,33 +4,40 @@ import (
 	"github.com/forbole/soljuno/db"
 )
 
-func Up(db db.Database) error {
+func Up(db db.ExcecutorDb) error {
 	_, err := db.Exec(`
-	CREATE TABLE account_balance_history
+	DROP TABLE transaction;
+	CREATE TABLE transaction
 	(
-		address     TEXT                        NOT NULL,
-		timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-		balance     BIGINT                      NOT NULL
-	);
-	CREATE INDEX account_balance_history_address ON account_balance_history(address);
-	CREATE INDEX account_balance_history_timestamp ON account_balance_history(timestamp);
-	
-	CREATE TABLE token_account_balance_history
-	(
-		address     TEXT                        NOT NULL,
-		timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-		balance     NUMERIC(20,0)               NOT NULL
-	);
-	CREATE INDEX token_account_balance_history_address ON token_account_balance_history(address);
-	CREATE INDEX token_account_balance_history_timestamp ON token_account_balance_history(timestamp);
+		hash            TEXT    NOT NULL,
+		slot            BIGINT  NOT NULL,
+		error           BOOLEAN NOT NULL,
+		fee             INT     NOT NULL,
+		logs            TEXT[],
+		messages        JSON    NOT NULL DEFAULT '{}',
+		partition_id    INT     NOT NULL,
+		CHECK (slot / 1000 = partition_id)
+	) PARTITION BY LIST(partition_id);
+	ALTER TABLE transaction ADD UNIQUE (hash, partition_id);
+	CREATE INDEX transaction_hash_index ON transaction (hash);
+	CREATE INDEX transaction_slot_index ON transaction (slot);
 	`)
 	return err
 }
 
-func Down(db db.ExceutorDb) error {
+func Down(db db.ExcecutorDb) error {
 	_, err := db.Exec(`
-	DROP TABLE account_balance_history;
-	DROP TABLE token_account_balance_history;
+	DROP TABLE transaction;
+	CREATE TABLE transaction
+	(
+		hash       TEXT     NOT NULL PRIMARY KEY,
+		slot       BIGINT   NOT NULL REFERENCES block (slot),
+		error      BOOLEAN  NOT NULL,
+		fee        INT      NOT NULL,
+		logs       TEXT[],
+		messages   JSONB    NOT NULL DEFAULT '{}'
+	);
+	CREATE INDEX transaction_slot_index ON transaction (slot);
 	`)
 	return err
 }
