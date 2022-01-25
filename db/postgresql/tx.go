@@ -69,7 +69,7 @@ func (db *Database) DropTxPartition(name string) error {
 // GetOldestTxPartitionNameBySlot implements db.Database
 func (db *Database) GetOldestTxPartitionNameBeforeSlot(slot uint64) (string, error) {
 	stmt := `
-	SELECT tableoid::pg_catalog.regclassFROM transaction WHERE slot <= $1 ORDER BY slot ASC LIMIT 1;
+	SELECT tableoid::pg_catalog.regclass FROM transaction WHERE slot <= $1 ORDER BY slot ASC LIMIT 1;
 	`
 	var partitionName string
 	err := db.Sqlx.QueryRow(stmt, slot).Scan(&partitionName)
