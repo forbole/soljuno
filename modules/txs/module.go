@@ -12,12 +12,12 @@ var _ modules.Module = &Module{}
 var _ pruning.PruningService = &Module{}
 
 type Module struct {
-	db     db.Database
+	db     db.TxDb
 	buffer chan types.Block
 	pool   *ants.Pool
 }
 
-func NewModule(db db.Database, pool *ants.Pool) *Module {
+func NewModule(db db.TxDb, pool *ants.Pool) *Module {
 	return &Module{
 		db:     db,
 		buffer: make(chan types.Block),
