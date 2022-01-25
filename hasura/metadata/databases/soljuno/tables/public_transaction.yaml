@@ -4,7 +4,12 @@ table:
 object_relationships:
 - name: block
   using:
-    foreign_key_constraint_on: slot
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: block
+      column_mapping:
+        slot: slot
 select_permissions:
 - permission:
     allow_aggregations: true
