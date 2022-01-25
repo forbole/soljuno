@@ -76,7 +76,7 @@ func (w Worker) process(slot uint64) error {
 	defer func() {
 		r := recover()
 		if r != nil {
-			err = fmt.Errorf("panic when slot: %v", slot)
+			panic(fmt.Errorf("panic on slot %v with error: %v", slot, r))
 		}
 	}()
 	exists, err := w.db.HasBlock(slot)
