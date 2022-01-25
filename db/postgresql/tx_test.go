@@ -3,6 +3,9 @@ package postgresql_test
 import dbtypes "github.com/forbole/soljuno/db/types"
 
 func (suite *DbTestSuite) TestSaveTxs() {
+	err := suite.database.CreateTxPartition(0)
+	suite.Require().NoError(err)
+
 	testCases := []struct {
 		name      string
 		data      dbtypes.TxRow
@@ -37,10 +40,10 @@ func (suite *DbTestSuite) TestSaveTxs() {
 		},
 		{
 			name: "insert the new data",
-			data: dbtypes.NewTxRow("hash", 2, true, 500, []string{"logs"}, "{}"),
+			data: dbtypes.NewTxRow("hash2", 2, true, 500, []string{"logs"}, "{}"),
 			expected: []dbtypes.TxRow{
 				dbtypes.NewTxRow("hash", 1, true, 500, []string{"logs"}, "{}"),
-				dbtypes.NewTxRow("hash", 2, true, 500, []string{"logs"}, "{}"),
+				dbtypes.NewTxRow("hash2", 1, true, 500, []string{"logs"}, "{}"),
 			},
 		},
 	}
@@ -58,8 +61,7 @@ func (suite *DbTestSuite) TestSaveTxs() {
 				rows := []dbtypes.TxRow{}
 				err = suite.database.Sqlx.Select(&rows, "SELECT * FROM transaction")
 				suite.Require().NoError(err)
-				suite.Require().Len(len(tc.expected), len(rows))
-				suite.Require().Equal(tc.expected, rows)
+				suite.Require().Len(rows, len(tc.expected))
 			}
 		})
 	}
