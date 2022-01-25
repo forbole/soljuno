@@ -43,7 +43,7 @@ func InitCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
 	return cmd
 }
 
-func InitDatabase(db db.ExceutorDb, schemaDir string) error {
+func InitDatabase(db db.ExcecutorDb, schemaDir string) error {
 	_, err := db.Exec(`DROP SCHEMA public CASCADE;`)
 	if err != nil {
 		return err

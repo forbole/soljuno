@@ -4,7 +4,7 @@ import (
 	"github.com/forbole/soljuno/db"
 )
 
-func Up(db db.Database) error {
+func Up(db db.ExcecutorDb) error {
 	_, err := db.Exec(`
 	CREATE TABLE account_balance_history
 	(
@@ -27,7 +27,7 @@ func Up(db db.Database) error {
 	return err
 }
 
-func Down(db db.ExceutorDb) error {
+func Down(db db.ExcecutorDb) error {
 	_, err := db.Exec(`
 	DROP TABLE account_balance_history;
 	DROP TABLE token_account_balance_history;

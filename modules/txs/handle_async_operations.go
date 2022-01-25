@@ -1,6 +1,7 @@
 package txs
 
 import (
+	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/rs/zerolog/log"
 )
 
@@ -9,7 +10,12 @@ func (m *Module) RunAsyncOperations() {
 	for {
 		block := <-m.buffer
 		_ = m.pool.Submit(func() {
-			err := m.db.SaveTxs(block.Txs)
+			txRows, err := dbtypes.NewTxRowsFromTxs(block.Txs)
+			if err != nil {
+				log.Error().Str("module", m.Name()).Uint64("slot", block.Slot).Err(err).Send()
+			}
+
+			err = m.db.SaveTxs(txRows)
 			if err != nil {
 				log.Error().Str("module", m.Name()).Uint64("slot", block.Slot).Err(err).Send()
 			}

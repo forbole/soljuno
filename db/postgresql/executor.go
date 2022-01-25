@@ -6,7 +6,7 @@ import (
 	"github.com/forbole/soljuno/db"
 )
 
-var _ db.ExceutorDb = &Database{}
+var _ db.ExcecutorDb = &Database{}
 
 func (db *Database) Exec(sql string, args ...interface{}) (sql.Result, error) {
 	return db.Sqlx.Exec(sql, args...)

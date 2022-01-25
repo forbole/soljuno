@@ -72,6 +72,13 @@ func (w Worker) Start() {
 // slot and associated metadata and export it to a database. It returns an
 // error if any export process fails.
 func (w Worker) process(slot uint64) error {
+	var err error
+	defer func() {
+		r := recover()
+		if r != nil {
+			err = fmt.Errorf("panic when slot: %v", slot)
+		}
+	}()
 	exists, err := w.db.HasBlock(slot)
 	if err != nil {
 		return fmt.Errorf("error while searching for block: %s", err)
@@ -89,7 +96,8 @@ func (w Worker) process(slot uint64) error {
 	}
 	block := types.NewBlockFromResult(w.parserManager, slot, b)
 
-	return w.ExportBlock(block)
+	err = w.ExportBlock(block)
+	return err
 }
 
 // ExportBlock accepts a finalized block and a corresponding set of transactions
@@ -158,6 +166,7 @@ func (w Worker) handleMessages(tx types.Tx) {
 func (w Worker) handleMessage(tx types.Tx, msg types.Message) {
 	for _, module := range w.modules {
 		if messageModule, ok := module.(modules.MessageModule); ok {
+
 			err := messageModule.HandleMsg(msg, tx)
 			if err != nil {
 				w.logger.MsgError(module, tx, msg, err)

@@ -13,7 +13,9 @@ import (
 type Database interface {
 	BasicDb
 
-	ExceutorDb
+	TxDb
+
+	ExcecutorDb
 
 	BankDb
 
@@ -48,16 +50,25 @@ type BasicDb interface {
 	// and the transactions contained inside that block.
 	// An error is returned if the operation fails.
 	SaveBlock(block types.Block) error
-
-	// SaveTxs stores a batch of transactions.
-	// An error is returned if the operation fails.
-	SaveTxs(txs []types.Tx) error
-
-	PruneTxsBySlot(slot uint64) error
 }
 
-// ExceutorDb represents an abstract database that can excute a raw sql
-type ExceutorDb interface {
+type TxDb interface {
+	// SaveTxs stores a batch of transactions.
+	// An error is returned if the operation fails.
+	SaveTxs(txs []dbtypes.TxRow) error
+
+	// CreateTxPartition allows to create a new transaction table partition with the given partition id
+	CreateTxPartition(ID int) error
+
+	// DropTxPartition allows to drop a table partition with the given table name
+	DropTxPartition(name string) error
+
+	// GetOldestTxPartitionNameBySlot allows to get the oldest partition before the slot
+	GetOldestTxPartitionNameBeforeSlot(slot uint64) (string, error)
+}
+
+// ExcecutorDb represents an abstract database that can excute a raw sql
+type ExcecutorDb interface {
 	// Exec will run the given raw sql
 	Exec(sql string, args ...interface{}) (sql.Result, error)
 
