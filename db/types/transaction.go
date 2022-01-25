@@ -7,14 +7,13 @@ import (
 )
 
 type TxRow struct {
-	Hash     string      `db:"hash"`
-	Slot     uint64      `db:"slot"`
-	Error    bool        `db:"error"`
-	Fee      uint64      `db:"fee"`
-	Logs     []string    `db:"logs"`
-	Messages interface{} `db:"messages"`
-
-	PartitionID int `db:"partition_id"`
+	Hash        string      `db:"hash"`
+	Slot        uint64      `db:"slot"`
+	Error       bool        `db:"error"`
+	Fee         uint64      `db:"fee"`
+	Logs        interface{} `db:"logs"`
+	Messages    interface{} `db:"messages"`
+	PartitionID int         `db:"partition_id"`
 }
 
 func NewTxRow(hash string, slot uint64, isErr bool, fee uint64, logs []string, messages interface{}) TxRow {
