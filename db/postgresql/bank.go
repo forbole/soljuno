@@ -138,7 +138,7 @@ func (db *Database) SaveAccountHistoryTokenBalances(timestamp time.Time, account
 		}
 		bi := count * paramsNumber
 		paramsStmt += getParamsStmt(bi, paramsNumber)
-		params = append(params, accounts[i], timestamp, bal)
+		params = append(params, accounts[i], timestamp, strconv.FormatUint(bal, 10))
 		count++
 	}
 
