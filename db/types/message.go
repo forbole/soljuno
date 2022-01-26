@@ -15,19 +15,35 @@ type MsgRow struct {
 	PartitionId      int         `db:"partition_id"`
 }
 
+func NewMsgRow(
+	txHash string, slot uint64, index int, innerIndex int, program string, involvedAccounts []string, rawData string, typ string, value interface{},
+) MsgRow {
+	return MsgRow{
+		TxHash:           txHash,
+		Slot:             slot,
+		Index:            index,
+		InnerIndex:       innerIndex,
+		Program:          program,
+		InvolvedAccounts: involvedAccounts,
+		RawData:          rawData,
+		Type:             typ,
+		Value:            value,
+		PartitionId:      int(slot / 1000),
+	}
+}
+
 func NewMsgRowFromMessage(
 	msg types.Message,
 ) MsgRow {
-	return MsgRow{
-		TxHash:           msg.TxHash,
-		Slot:             msg.Slot,
-		Index:            msg.Index,
-		InnerIndex:       msg.InnerIndex,
-		Program:          msg.Program,
-		InvolvedAccounts: msg.InvolvedAccounts,
-		RawData:          msg.RawData,
-		Type:             msg.Parsed.Type,
-		Value:            msg.Parsed.GetValueJSON(),
-		PartitionId:      int(msg.Slot / 1000),
-	}
+	return NewMsgRow(
+		msg.TxHash,
+		msg.Slot,
+		msg.Index,
+		msg.InnerIndex,
+		msg.Program,
+		msg.InvolvedAccounts,
+		msg.RawData,
+		msg.Parsed.Type,
+		msg.Parsed.GetValueJSON(),
+	)
 }
