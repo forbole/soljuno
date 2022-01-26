@@ -1,6 +1,8 @@
 package txs
 
 import (
+	"sync"
+
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/modules/pruning"
@@ -15,6 +17,8 @@ type Module struct {
 	db     db.TxDb
 	buffer chan types.Block
 	pool   *ants.Pool
+
+	mtx *sync.Mutex
 }
 
 func NewModule(db db.TxDb, pool *ants.Pool) *Module {
@@ -32,12 +36,23 @@ func (m *Module) Name() string {
 
 // HandleBlock implements modules.MessageModule
 func (m *Module) HandleBlock(block types.Block) error {
-	err := m.db.CreateTxPartition(int(block.Slot / 1000))
+	err := m.createPartition(block.Slot)
 	if err != nil {
 		return err
 	}
 	m.buffer <- block
 	return nil
+}
+
+// createPartition creates a new partition for the txs module
+func (m *Module) createPartition(slot uint64) error {
+	m.mtx.Lock()
+	defer m.mtx.Unlock()
+	err := m.db.CreateTxPartition(int(slot / 1000))
+	if err != nil {
+		return err
+	}
+	return err
 }
 
 // Prune implements pruning.PruningService
