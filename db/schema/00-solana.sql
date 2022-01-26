@@ -26,3 +26,24 @@ CREATE TABLE transaction
 ALTER TABLE transaction ADD UNIQUE (hash, partition_id);
 CREATE INDEX transaction_hash_index ON transaction (hash);
 CREATE INDEX transaction_slot_index ON transaction (slot);
+
+
+CREATE TABLE message
+(
+    transaction_hash    TEXT    NOT NULL,
+    slot                BIGINT  NOT NULL,
+    index               INT     NOT NULL,
+    inner_index         INT     NOT NULL,
+    program             TEXT    NOT NULL,      
+    involved_accounts   TEXT[]  NOT NULL DEFAULT array[]::TEXT[],
+    raw_data            TEXT    NOT NULL,
+    type                TEXT    NOT NULL DEFAULT 'unknown',
+    value               JSON    NOT NULL DEFAULT '{}',
+    partition_id        INT     NOT NULL,
+    CHECK (slot / 1000 = partition_id)
+);
+ALTER TABLE message ADD UNIQUE (transaction_hash, index, inner_index, partition_id);
+CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
+CREATE INDEX message_slot_index ON message (slot);
+CREATE INDEX message_program_index ON message (program);
+CREATE INDEX message_accounts_index ON message USING GIN(involved_accounts);

@@ -13,7 +13,7 @@ type TxRow struct {
 	Fee         uint64      `db:"fee"`
 	Logs        interface{} `db:"logs"`
 	Messages    interface{} `db:"messages"`
-	PartitionID int         `db:"partition_id"`
+	PartitionId int         `db:"partition_id"`
 }
 
 func NewTxRow(hash string, slot uint64, isErr bool, fee uint64, logs []string, messages interface{}) TxRow {
@@ -24,7 +24,7 @@ func NewTxRow(hash string, slot uint64, isErr bool, fee uint64, logs []string, m
 		Fee:         fee,
 		Logs:        logs,
 		Messages:    messages,
-		PartitionID: int(slot / 1000),
+		PartitionId: int(slot / 1000),
 	}
 }
 

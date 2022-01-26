@@ -15,6 +15,8 @@ type Database interface {
 
 	TxDb
 
+	MasDb
+
 	ExcecutorDb
 
 	BankDb
@@ -65,6 +67,12 @@ type TxDb interface {
 
 	// GetOldestTxPartitionNameBySlot allows to get the oldest partition before the slot
 	GetOldestTxPartitionNameBeforeSlot(slot uint64) (string, error)
+}
+
+type MasDb interface {
+	// SaveMessages stores a batch of messages.
+	// An error is returned if the operation fails.
+	SaveMessages(msg []dbtypes.MsgRow) error
 }
 
 // ExcecutorDb represents an abstract database that can excute a raw sql
