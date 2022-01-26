@@ -18,7 +18,7 @@ type Module struct {
 	buffer chan types.Block
 	pool   *ants.Pool
 
-	mtx *sync.Mutex
+	mtx sync.Mutex
 }
 
 func NewModule(db db.TxDb, pool *ants.Pool) *Module {
@@ -52,7 +52,7 @@ func (m *Module) createPartition(slot uint64) error {
 	if err != nil {
 		return err
 	}
-	return err
+	return nil
 }
 
 // Prune implements pruning.PruningService
