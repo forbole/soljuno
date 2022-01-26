@@ -21,9 +21,9 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 		m.tokenBalanceEntries = nil
 		m.mtx.Unlock()
 
-		utils.WatchMethod(func() error { return m.updateBalances(balances, tokenBalances) })
+		utils.WatchMethod(m, func() error { return m.updateBalances(balances, tokenBalances) })
 	}); err != nil {
-		return fmt.Errorf("error while setting up vote periodic operation: %s", err)
+		return fmt.Errorf("error while setting up bank periodic operation: %s", err)
 	}
 	return nil
 }

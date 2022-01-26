@@ -10,7 +10,7 @@ import (
 
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(1).Hour().Do(func() {
-		utils.WatchMethod(m.updateSlotTimeInHour)
+		utils.WatchMethod(m, m.updateSlotTimeInHour)
 	}); err != nil {
 		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
 	}
