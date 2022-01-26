@@ -36,12 +36,12 @@ func (m *Module) Name() string {
 	return "messages"
 }
 
+func (m *Module) HandleBlock(block types.Block) error {
+	return m.createPartition(block.Slot)
+}
+
 // HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
-	err := m.createPartition(msg.Slot)
-	if err != nil {
-		return err
-	}
 	m.buffer <- dbtypes.NewMsgRowFromMessage(msg)
 	return nil
 }
