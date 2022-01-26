@@ -57,18 +57,5 @@ func (m *Module) createPartition(slot uint64) error {
 
 // Prune implements pruning.PruningService
 func (m *Module) Prune(slot uint64) error {
-	for {
-		partitionName, err := m.db.GetOldestTxPartitionNameBeforeSlot(slot)
-		if err != nil {
-			return err
-		}
-		if partitionName == "" {
-			return nil
-		}
-
-		err = m.db.DropTxPartition(partitionName)
-		if err != nil {
-			return err
-		}
-	}
+	return m.db.PruneTxsBeforeSlot(slot)
 }

@@ -55,7 +55,7 @@ func (db *Database) CreateMsgPartition(id int) error {
 // PruneMsgsBeforeSlot implements db.MsgDb
 func (db *Database) PruneMsgsBeforeSlot(slot uint64) error {
 	for {
-		name, err := db.getOldestMsgPartitionNameBeforeSlot(slot)
+		name, err := db.getOldestMsgPartitionBeforeSlot(slot)
 		if err != nil {
 			return err
 		}
@@ -70,8 +70,8 @@ func (db *Database) PruneMsgsBeforeSlot(slot uint64) error {
 	}
 }
 
-// GetOldestTxPartitionNameBySlot implements db.Database
-func (db *Database) getOldestMsgPartitionNameBeforeSlot(slot uint64) (string, error) {
+// getOldestMsgPartitionBeforeSlot allows to get the oldest msg partition
+func (db *Database) getOldestMsgPartitionBeforeSlot(slot uint64) (string, error) {
 	stmt := `
 	SELECT tableoid::pg_catalog.regclass FROM message WHERE slot <= $1 ORDER BY slot ASC LIMIT 1;
 	`

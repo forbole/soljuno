@@ -2,7 +2,6 @@ package postgresql
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
@@ -46,28 +45,30 @@ func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 }
 
 // CreateTxPartition implements db.Database
-func (db *Database) CreateTxPartition(ID int) error {
-	stmt := fmt.Sprintf(
-		"CREATE TABLE IF NOT EXISTS transaction_%d PARTITION OF transaction FOR VALUES IN (%d)",
-		ID,
-		ID,
-	)
-	_, err := db.Exec(stmt)
-	return err
+func (db *Database) CreateTxPartition(Id int) error {
+	return db.createPartition("transaction", Id)
 }
 
-// DropTxPartition implements db.Database
-func (db *Database) DropTxPartition(name string) error {
-	stmt := fmt.Sprintf(
-		"DROP TABLE IF EXISTS %v",
-		name,
-	)
-	_, err := db.Exec(stmt)
-	return err
+// PruneMsgsBeforeSlot implements db.MsgDb
+func (db *Database) PruneTxsBeforeSlot(slot uint64) error {
+	for {
+		name, err := db.getOldestTxPartitionBeforeSlot(slot)
+		if err != nil {
+			return err
+		}
+		if name == "" {
+			return nil
+		}
+
+		err = db.dropPartition(name)
+		if err != nil {
+			return err
+		}
+	}
 }
 
-// GetOldestTxPartitionNameBySlot implements db.Database
-func (db *Database) GetOldestTxPartitionNameBeforeSlot(slot uint64) (string, error) {
+// getOldestTxPartitionBeforeSlot allows to get the oldest tx partition
+func (db *Database) getOldestTxPartitionBeforeSlot(slot uint64) (string, error) {
 	stmt := `
 	SELECT tableoid::pg_catalog.regclass FROM transaction WHERE slot <= $1 ORDER BY slot ASC LIMIT 1;
 	`
