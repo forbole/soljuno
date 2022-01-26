@@ -36,7 +36,10 @@ func (m *Module) Name() string {
 
 // HandleBlock implements modules.MessageModule
 func (m *Module) HandleBlock(block types.Block) error {
-	m.createPartition(block.Slot)
+	err := m.createPartition(block.Slot)
+	if err != nil {
+		return err
+	}
 	m.buffer <- block
 	return nil
 }
