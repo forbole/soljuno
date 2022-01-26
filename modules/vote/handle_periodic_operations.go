@@ -13,7 +13,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "vote").Msg("setting up periodic tasks")
 
 	if _, err := scheduler.Every(1).Minute().Do(func() {
-		utils.WatchMethod(m.updateValidatorsStatus)
+		utils.WatchMethod(m, m.updateValidatorsStatus)
 	}); err != nil {
 		return fmt.Errorf("error while setting up vote periodic operation: %s", err)
 	}

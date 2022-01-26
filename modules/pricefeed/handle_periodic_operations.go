@@ -17,7 +17,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 	// Fetch prices of tokens in 30 seconds each
 	if _, err := scheduler.Every(30).Second().Do(func() {
-		utils.WatchMethod(m.updatePrice)
+		utils.WatchMethod(m, m.updatePrice)
 	}); err != nil {
 		return fmt.Errorf("error while setting up pricefeed period operations: %s", err)
 	}

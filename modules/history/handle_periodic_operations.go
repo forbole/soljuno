@@ -15,7 +15,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 	// Fetch prices of tokens in 15 minutes each
 	if _, err := scheduler.Every(15).Minute().Do(func() {
-		utils.WatchMethod(m.RunServices)
+		utils.WatchMethod(m, m.RunServices)
 	}); err != nil {
 		return fmt.Errorf("error while setting up history period operations: %s", err)
 	}
