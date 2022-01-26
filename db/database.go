@@ -62,11 +62,8 @@ type TxDb interface {
 	// CreateTxPartition allows to create a new transaction table partition with the given partition id
 	CreateTxPartition(ID int) error
 
-	// DropTxPartition allows to drop a table partition with the given table name
-	DropTxPartition(name string) error
-
-	// GetOldestTxPartitionNameBySlot allows to get the oldest partition before the slot
-	GetOldestTxPartitionNameBeforeSlot(slot uint64) (string, error)
+	// PruneTxsBeforeSlot allows to prune the txs before the given slot
+	PruneTxsBeforeSlot(slot uint64) error
 }
 
 type MsgDb interface {
