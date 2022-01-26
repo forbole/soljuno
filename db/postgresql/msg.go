@@ -1,11 +1,16 @@
 package postgresql
 
 import (
+	"database/sql"
+
+	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/lib/pq"
 )
 
-// SaveMessages implements db.Database
+var _ db.MsgDb = &Database{}
+
+// SaveMessages implements db.MsgDb
 func (db *Database) SaveMessages(msgs []dbtypes.MsgRow) error {
 	if len(msgs) == 0 {
 		return nil
@@ -40,4 +45,40 @@ func (db *Database) SaveMessages(msgs []dbtypes.MsgRow) error {
 		conflictStmt,
 		params,
 	)
+}
+
+// CreateMsgPartition implements db.MsgDb
+func (db *Database) CreateMsgPartition(id int) error {
+	return db.createPartition("message", id)
+}
+
+// PruneMsgsBeforeSlot implements db.MsgDb
+func (db *Database) PruneMsgsBeforeSlot(slot uint64) error {
+	for {
+		name, err := db.getOldestMsgPartitionNameBeforeSlot(slot)
+		if err != nil {
+			return err
+		}
+		if name == "" {
+			return nil
+		}
+
+		err = db.dropPartition(name)
+		if err != nil {
+			return err
+		}
+	}
+}
+
+// GetOldestTxPartitionNameBySlot implements db.Database
+func (db *Database) getOldestMsgPartitionNameBeforeSlot(slot uint64) (string, error) {
+	stmt := `
+	SELECT tableoid::pg_catalog.regclass FROM message WHERE slot <= $1 ORDER BY slot ASC LIMIT 1;
+	`
+	var partitionName string
+	err := db.Sqlx.QueryRow(stmt, slot).Scan(&partitionName)
+	if err != nil && err != sql.ErrNoRows {
+		return "", err
+	}
+	return partitionName, nil
 }

@@ -41,7 +41,7 @@ CREATE TABLE message
     value               JSON    NOT NULL DEFAULT '{}',
     partition_id        INT     NOT NULL,
     CHECK (slot / 1000 = partition_id)
-);
+) PARTITION BY LIST(partition_id);
 ALTER TABLE message ADD UNIQUE (transaction_hash, index, inner_index, partition_id);
 CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 CREATE INDEX message_slot_index ON message (slot);

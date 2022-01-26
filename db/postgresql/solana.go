@@ -87,6 +87,29 @@ VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
 	return err
 }
 
+// createPartition allows to create a partition with the id for the given table name
+func (db *Database) createPartition(table string, id int) error {
+	stmt := fmt.Sprintf(
+		"CREATE TABLE IF NOT EXISTS %v_%d PARTITION OF %v FOR VALUES IN (%d)",
+		table,
+		id,
+		table,
+		id,
+	)
+	_, err := db.Exec(stmt)
+	return err
+}
+
+// dropPartition allows to drop a partition with the given partition name
+func (db *Database) dropPartition(name string) error {
+	stmt := fmt.Sprintf(
+		"DROP TABLE IF EXISTS %v",
+		name,
+	)
+	_, err := db.Exec(stmt)
+	return err
+}
+
 // Close implements db.Database
 func (db *Database) Close() {
 	err := db.Sqlx.Close()

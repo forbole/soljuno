@@ -15,7 +15,7 @@ type Database interface {
 
 	TxDb
 
-	MasDb
+	MsgDb
 
 	ExcecutorDb
 
@@ -69,10 +69,16 @@ type TxDb interface {
 	GetOldestTxPartitionNameBeforeSlot(slot uint64) (string, error)
 }
 
-type MasDb interface {
+type MsgDb interface {
 	// SaveMessages stores a batch of messages.
 	// An error is returned if the operation fails.
 	SaveMessages(msg []dbtypes.MsgRow) error
+
+	// CreateMsgPartition allows to create a message partition
+	CreateMsgPartition(Id int) error
+
+	// PruneMsgsBeforeSlot allows to prune the msgs before the given slot
+	PruneMsgsBeforeSlot(slot uint64) error
 }
 
 // ExcecutorDb represents an abstract database that can excute a raw sql
