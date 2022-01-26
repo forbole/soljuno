@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/forbole/soljuno/db"
@@ -54,7 +55,7 @@ WHERE token_account_balance.slot <= excluded.slot
 	for i, bal := range balances {
 		bi := i * paramsNumber
 		paramsStmt += getParamsStmt(bi, paramsNumber)
-		params = append(params, accounts[i], slot, bal)
+		params = append(params, accounts[i], slot, strconv.FormatUint(bal, 10))
 
 	}
 
@@ -97,7 +98,7 @@ func (db *Database) SaveAccountHistoryBalances(timestamp time.Time, accounts []s
 		}
 		bi := count * paramsNumber
 		paramsStmt += getParamsStmt(bi, paramsNumber)
-		params = append(params, accounts[i], timestamp, bal)
+		params = append(params, accounts[i], timestamp, strconv.FormatUint(bal, 10))
 		count++
 	}
 	return db.insertWithParams(
