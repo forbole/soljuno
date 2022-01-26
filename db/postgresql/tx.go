@@ -34,7 +34,7 @@ func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 			tx.Fee,
 			pq.Array(tx.Logs),
 			tx.Messages,
-			tx.PartitionID,
+			tx.PartitionId,
 		)
 	}
 	return db.insertWithParams(

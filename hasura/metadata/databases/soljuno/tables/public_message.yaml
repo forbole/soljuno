@@ -1,0 +1,27 @@
+table:
+  name: message
+  schema: public
+object_relationships:
+- name: transaction
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: transaction
+      column_mapping:
+        transaction_hash: hash
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - transaction_hash
+    - index
+    - inner_index
+    - program
+    - type
+    - raw_data
+    - value
+    - involved_accounts
+    - partition_id
+    filter: {}
+  role: anonymous

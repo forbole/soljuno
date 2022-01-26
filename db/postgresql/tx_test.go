@@ -28,7 +28,7 @@ func (suite *DbTestSuite) TestSaveTxs() {
 				Fee:         500,
 				Logs:        []string{"logs"},
 				Messages:    "{}",
-				PartitionID: 100},
+				PartitionId: 100},
 			shouldErr: true,
 		},
 		{
