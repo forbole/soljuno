@@ -20,7 +20,6 @@ func (db *Database) SaveTokenUnits(units []dbtypes.TokenUnitRow) error {
 	}
 
 	insertStmt := `INSERT INTO token_unit (address, price_id, unit_name, logo_uri, description, website) VALUES`
-	paramsStmt := ""
 	conflictStmt := `ON CONFLICT (address) DO UPDATE
 		SET price_id = EXCLUDED.price_id,
 			unit_name = EXCLUDED.unit_name,
@@ -28,14 +27,17 @@ func (db *Database) SaveTokenUnits(units []dbtypes.TokenUnitRow) error {
 			website = EXCLUDED.website
 	`
 	var params []interface{}
-	paramNumber := 6
-
-	for i, unit := range units {
-		vi := i * paramNumber
-		paramsStmt += getParamsStmt(vi, paramNumber)
+	paramsNumber := 6
+	params = make([]interface{}, 0, paramsNumber*len(units))
+	for _, unit := range units {
 		params = append(params, unit.Address, unit.PriceID, unit.Name, unit.LogoURI, unit.Description, unit.Website)
 	}
-	return db.insertWithParams(insertStmt, paramsStmt[:len(paramsStmt)-1], conflictStmt, params)
+	return db.InsertBatch(
+		insertStmt,
+		conflictStmt,
+		params,
+		paramsNumber,
+	)
 }
 
 // SaveTokensPrices allows to save the given prices as the most updated ones
@@ -45,7 +47,6 @@ func (db *Database) SaveTokenPrices(prices []dbtypes.TokenPriceRow) error {
 	}
 
 	insertStmt := `INSERT INTO token_price (id, price, market_cap, symbol, timestamp) VALUES`
-	paramsStmt := ""
 	conflictStmt := `
 	ON CONFLICT (id) DO UPDATE 
 		SET price = excluded.price,
@@ -54,15 +55,19 @@ func (db *Database) SaveTokenPrices(prices []dbtypes.TokenPriceRow) error {
 			timestamp = excluded.timestamp
 	WHERE token_price.timestamp <= excluded.timestamp`
 	var params []interface{}
-	paramNumber := 5
+	paramsNumber := 5
+	params = make([]interface{}, 0, paramsNumber*len(prices))
 
-	for i, ticker := range prices {
-		vi := i * paramNumber
-		paramsStmt += getParamsStmt(vi, paramNumber)
+	for _, ticker := range prices {
 		params = append(params, ticker.ID, ticker.Price, ticker.MarketCap, ticker.Symbol, ticker.Timestamp)
 	}
 
-	return db.insertWithParams(insertStmt, paramsStmt[:len(paramsStmt)-1], conflictStmt, params)
+	return db.InsertBatch(
+		insertStmt,
+		conflictStmt,
+		params,
+		paramsNumber,
+	)
 }
 
 // SaveTokensPrices implements db.PriceDb
@@ -72,17 +77,19 @@ func (db *Database) SaveHistoryTokenPrices(prices []dbtypes.TokenPriceRow) error
 	}
 
 	insertStmt := `INSERT INTO token_price_history (id, price, market_cap, symbol, timestamp) VALUES`
-	paramsStmt := ""
 	conflictStmt := ""
-
 	var params []interface{}
-	paramNumber := 5
+	paramsNumber := 5
+	params = make([]interface{}, 0, paramsNumber*len(prices))
 
-	for i, ticker := range prices {
-		vi := i * paramNumber
-		paramsStmt += getParamsStmt(vi, paramNumber)
+	for _, ticker := range prices {
 		params = append(params, ticker.ID, ticker.Price, ticker.MarketCap, ticker.Symbol, ticker.Timestamp)
 	}
 
-	return db.insertWithParams(insertStmt, paramsStmt[:len(paramsStmt)-1], conflictStmt, params)
+	return db.InsertBatch(
+		insertStmt,
+		conflictStmt,
+		params,
+		paramsNumber,
+	)
 }

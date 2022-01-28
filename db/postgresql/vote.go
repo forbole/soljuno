@@ -78,24 +78,22 @@ func (db *Database) GetEpochProducedBlocks(epoch uint64) ([]uint64, error) {
 // SaveValidatorSkipRates implements the db.VoteDb
 func (db *Database) SaveValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error {
 	insertStmt := `INSERT INTO validator_skip_rate (address, epoch, skip_rate) VALUES`
-	paramsStmt := ""
 	conflictStmt := `
 	ON CONFLICT (address) DO UPDATE
 		SET epoch = excluded.epoch,
 			skip_rate = excluded.skip_rate
 	WHERE validator_skip_rate.epoch <= excluded.epoch
 	`
-	paramsNumber := 3
 	var params []interface{}
-	for i, row := range skipRates {
-		bi := i * paramsNumber
-		paramsStmt += getParamsStmt(bi, paramsNumber)
+	paramsNumber := 3
+	params = make([]interface{}, 0, paramsNumber*len(skipRates))
+	for _, row := range skipRates {
 		params = append(params, row.Address, row.Epoch, row.SkipRate)
 	}
-	return db.insertWithParams(
+	return db.InsertBatch(
 		insertStmt,
-		paramsStmt[:len(paramsStmt)-1],
 		conflictStmt,
 		params,
+		paramsNumber,
 	)
 }

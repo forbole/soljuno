@@ -17,14 +17,12 @@ func (db *Database) SaveMessages(msgs []dbtypes.MsgRow) error {
 	}
 	insertStmt := `INSERT INTO message
 	(transaction_hash, slot, index, inner_index, involved_accounts, program, raw_data, type, value, partition_id) VALUES`
-	paramsStmt := ""
 	conflictStmt := `ON CONFLICT DO NOTHING`
 
 	var params []interface{}
 	paramsNumber := 10
-	for i, msg := range msgs {
-		bi := i * paramsNumber
-		paramsStmt += getParamsStmt(bi, paramsNumber)
+	params = make([]interface{}, 0, paramsNumber*len(msgs))
+	for _, msg := range msgs {
 		params = append(
 			params,
 			msg.TxHash,
@@ -39,11 +37,11 @@ func (db *Database) SaveMessages(msgs []dbtypes.MsgRow) error {
 			msg.PartitionId,
 		)
 	}
-	return db.insertWithParams(
+	return db.InsertBatch(
 		insertStmt,
-		paramsStmt[:len(paramsStmt)-1],
 		conflictStmt,
 		params,
+		paramsNumber,
 	)
 }
 
