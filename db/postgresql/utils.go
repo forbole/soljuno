@@ -9,7 +9,7 @@ func (db *Database) InsertBatch(insertStmt string, conflictStmt string, params [
 
 	for i := 0; i < sliceNumber; i++ {
 		paramsStmt := ""
-		for j := 0; j < MAX_PARAMS_LENGTH-paramsNumber; j += paramsNumber {
+		for j := 0; j < maxParamsAmount; j += paramsNumber {
 			paramsStmt += getParamsStmt(j, paramsNumber)
 		}
 		err := db.insertWithParams(insertStmt, paramsStmt, conflictStmt, params[start:start+maxParamsAmount])
