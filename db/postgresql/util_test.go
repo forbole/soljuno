@@ -3,36 +3,37 @@ package postgresql_test
 import "github.com/forbole/soljuno/db/postgresql"
 
 func (suite *DbTestSuite) TestInsertBatch() {
-	_, err := suite.database.Exec("CREATE TABLE test (id INT);")
+	_, err := suite.database.Exec("CREATE TABLE test (id INT, num INT);")
 	suite.Require().NoError(err)
 
 	type testRow struct {
-		ID int `db:"id"`
+		ID  int `db:"id"`
+		Num int `db:"num"`
 	}
 
 	testCases := []struct {
 		name        string
-		data        []int
+		dataLen     int
 		expectedLen int
 	}{
 		{
 			name:        "insert empty data",
-			data:        make([]int, 0),
+			dataLen:     0,
 			expectedLen: 0,
 		},
 		{
 			name:        "insert 1 data",
-			data:        make([]int, 1),
+			dataLen:     1,
 			expectedLen: 1,
 		},
 		{
 			name:        "insert max length data",
-			data:        make([]int, postgresql.MAX_PARAMS_LENGTH),
+			dataLen:     postgresql.MAX_PARAMS_LENGTH,
 			expectedLen: postgresql.MAX_PARAMS_LENGTH,
 		},
 		{
 			name:        "insert over max length data",
-			data:        make([]int, postgresql.MAX_PARAMS_LENGTH+1),
+			dataLen:     postgresql.MAX_PARAMS_LENGTH + 1,
 			expectedLen: postgresql.MAX_PARAMS_LENGTH + 1,
 		},
 	}
@@ -43,15 +44,18 @@ func (suite *DbTestSuite) TestInsertBatch() {
 			_, err = suite.database.Exec("DELETE FROM test;")
 			suite.Require().NoError(err)
 
-			insertData := make([]interface{}, len(tc.data))
-			for i, v := range tc.data {
-				insertData[i] = v
+			insertData := make([]interface{}, 2*tc.dataLen)
+			for i := 0; i < tc.dataLen; i++ {
+				bi := 2 * i
+				insertData[bi] = 0
+				insertData[bi+1] = 0
 			}
 
-			err := suite.database.InsertBatch("INSERT INTO test VALUES", "", insertData, 1)
+			err := suite.database.InsertBatch("INSERT INTO test VALUES", "", insertData, 2)
 			suite.Require().NoError(err)
 			var rows []testRow
-			err = suite.database.Sqlx.Select(&rows, "SELECT id FROM test")
+			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM test")
+			suite.Require().NoError(err)
 			suite.Require().Len(rows, tc.expectedLen)
 		})
 	}

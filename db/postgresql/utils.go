@@ -5,24 +5,23 @@ import "fmt"
 func (db *Database) InsertBatch(insertStmt string, conflictStmt string, params []interface{}, paramsNumber int) error {
 	sliceNumber := len(params) / MAX_PARAMS_LENGTH
 	start := 0
-	// if slice is larger than MAX_PARAMS_LENGTH
-	for i := 0; i < sliceNumber; i += sliceNumber {
+	maxParamsAmount := MAX_PARAMS_LENGTH / paramsNumber * paramsNumber
+
+	for i := 0; i < sliceNumber; i++ {
 		paramsStmt := ""
-		for j := 0; j < MAX_PARAMS_LENGTH; j += paramsNumber {
+		for j := 0; j < MAX_PARAMS_LENGTH-paramsNumber; j += paramsNumber {
 			paramsStmt += getParamsStmt(j, paramsNumber)
 		}
-
-		end := (i + 1) * MAX_PARAMS_LENGTH / paramsNumber * paramsNumber
-		err := db.insertWithParams(insertStmt, paramsStmt, conflictStmt, params[start:end])
+		err := db.insertWithParams(insertStmt, paramsStmt, conflictStmt, params[start:start+maxParamsAmount])
 		if err != nil {
 			return err
 		}
-		start = end
+		start += maxParamsAmount
 	}
 
 	// store the rest of params
 	paramsStmt := ""
-	for curr := 0; curr < len(params)%MAX_PARAMS_LENGTH; curr += paramsNumber {
+	for curr := 0; curr < len(params)-start; curr += paramsNumber {
 		paramsStmt += getParamsStmt(curr, paramsNumber)
 	}
 	return db.insertWithParams(insertStmt, paramsStmt, conflictStmt, params[start:])

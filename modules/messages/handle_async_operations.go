@@ -15,7 +15,7 @@ func (m *Module) RunAsyncOperations() {
 }
 
 func (m *Module) consumeMsgs() {
-	msgs := m.getMsgRows(6000)
+	msgs := m.getMsgRows()
 	_ = m.pool.Submit(func() {
 		err := m.db.SaveMessages(msgs)
 		if err != nil {
@@ -24,16 +24,13 @@ func (m *Module) consumeMsgs() {
 	})
 }
 
-func (m *Module) getMsgRows(num int) []dbtypes.MsgRow {
+func (m *Module) getMsgRows() []dbtypes.MsgRow {
 	var msgs []dbtypes.MsgRow
 	for {
 		select {
 		case msg := <-m.buffer:
 			msgs = append(msgs, msg)
-			if len(msgs) >= num {
-				return msgs
-			}
-		case <-time.After(1000 * time.Millisecond):
+		case <-time.After(1 * time.Second):
 			return msgs
 		}
 	}
