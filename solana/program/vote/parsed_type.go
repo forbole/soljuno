@@ -74,10 +74,9 @@ func NewParsedVote(
 //____________________________________________________________________________
 
 type ParsedWithdraw struct {
-	VoteAccount       string `json:"voteAccount"`
-	Destination       string `json:"destination"`
-	WithdrawAuthority string `json:"withdrawAuthority"`
-	Lamports          uint64 `json:"lamports"`
+	VoteAccount string `json:"voteAccount"`
+	Destination string `json:"destination"`
+	Lamports    uint64 `json:"lamports"`
 }
 
 func NewParsedWithdraw(
@@ -85,10 +84,9 @@ func NewParsedWithdraw(
 	instruction WithdrawInstruction,
 ) ParsedWithdraw {
 	return ParsedWithdraw{
-		VoteAccount:       accounts[0],
-		Destination:       accounts[1],
-		WithdrawAuthority: accounts[2],
-		Lamports:          instruction.Amount,
+		VoteAccount: accounts[0],
+		Destination: accounts[1],
+		Lamports:    instruction.Amount,
 	}
 }
 
