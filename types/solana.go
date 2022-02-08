@@ -49,15 +49,6 @@ func NewBlock(slot, height uint64, hash, proposer string, timestamp time.Time, t
 
 // NewBlockFromResult allows to build new Block instance from BlockResult
 func NewBlockFromResult(parserManager manager.ParserManager, slot uint64, b clienttypes.BlockResult) Block {
-	proposer := ""
-	rewards := b.Rewards
-	for _, reward := range rewards {
-		if reward.RewardType == clienttypes.RewardFee {
-			proposer = reward.Pubkey
-			break
-		}
-	}
-
 	txs := make([]Tx, len(b.Transactions))
 	for i, txResult := range b.Transactions {
 		txs[i] = NewTxFromTxResult(parserManager, slot, txResult)
@@ -67,8 +58,8 @@ func NewBlockFromResult(parserManager manager.ParserManager, slot uint64, b clie
 		Slot:      slot,
 		Height:    b.BlockHeight,
 		Hash:      b.Blockhash,
-		Rewards:   rewards,
-		Proposer:  proposer,
+		Rewards:   b.Rewards,
+		Proposer:  "",
 		Timestamp: time.Unix(int64(b.BlockTime), 0),
 		Txs:       txs,
 	}

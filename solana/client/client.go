@@ -2,7 +2,6 @@ package client
 
 import (
 	"fmt"
-	"reflect"
 
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	jsonrpc "github.com/ybbus/jsonrpc/v2"
@@ -64,6 +63,10 @@ type ClientProxy interface {
 	// GetTransaction returns the transaction of the given hash
 	// An error is returned if the query fails
 	GetTransaction(hash string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error)
+
+	// GetSlotLeaders returns the leader of given slot
+	// An error is returned if the query fails
+	GetSlotLeaders(slot uint64, limit uint64) ([]string, error)
 }
 
 type Client struct {
@@ -193,6 +196,8 @@ func (c *Client) GetTransaction(hash string) (clienttypes.EncodedConfirmedTransa
 	return tx, err
 }
 
-func isEmpty(obj interface{}) bool {
-	return reflect.ValueOf(obj).IsZero()
+func (c *Client) GetSlotLeaders(slot uint64, limit uint64) ([]string, error) {
+	var leaders []string
+	err := c.rpcClient.CallFor(&leaders, "getSlotLeaders", slot, limit)
+	return leaders, err
 }

@@ -82,3 +82,7 @@ func (cp *proxy) GetSignaturesForAddress(
 func (cp *proxy) GetTransaction(hash string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error) {
 	return cp.rpcClient.GetTransaction(hash)
 }
+
+func (cp *proxy) GetSlotLeaders(slot uint64, limit uint64) ([]string, error) {
+	return cp.rpcClient.GetSlotLeaders(slot, limit)
+}
