@@ -56,7 +56,7 @@ func (w Worker) Start() {
 			w.queue <- i
 		}
 		logging.WorkerSlot.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(i))
-		w.logger.Info("processd block time", "slot", i, "seconds", time.Since(start).Seconds())
+		w.logger.Info("processed block time", "slot", i, "seconds", time.Since(start).Seconds())
 		wait := make(chan bool)
 		go func() {
 			for w.pool.Free() == 0 {
@@ -95,6 +95,13 @@ func (w Worker) process(slot uint64) error {
 		return fmt.Errorf("failed to get block from rpc server: %s", err)
 	}
 	block := types.NewBlockFromResult(w.parserManager, slot, b)
+
+	// set block proposer
+	proposers, err := w.cp.GetSlotLeaders(slot, 1)
+	if err != nil {
+		return err
+	}
+	block.Proposer = proposers[0]
 
 	err = w.ExportBlock(block)
 	return err
