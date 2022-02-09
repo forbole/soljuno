@@ -19,18 +19,23 @@ func (m *Module) consumeMsgs() {
 	_ = m.pool.Submit(func() {
 		err := m.db.SaveMessages(msgs)
 		if err != nil {
-			log.Error().Str("module", m.Name()).Uint64("slot", msgs[0].Slot).Err(err).Send()
+			log.Error().Str("module", m.Name()).Err(err).Send()
+			log.Info().Str("module", m.Name()).Msg("re-enqueueing failed messages")
+			for _, msg := range msgs {
+				m.buffer <- msg
+			}
 		}
 	})
 }
 
 func (m *Module) getMsgRows() []dbtypes.MsgRow {
 	var msgs []dbtypes.MsgRow
+	timeout := time.After(5 * time.Second)
 	for {
 		select {
 		case msg := <-m.buffer:
 			msgs = append(msgs, msg)
-		case <-time.After(1 * time.Second):
+		case <-timeout:
 			return msgs
 		}
 	}
