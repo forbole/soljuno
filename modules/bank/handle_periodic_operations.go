@@ -12,15 +12,13 @@ import (
 // RegisterPeriodicOperations implements modules.Module
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", m.Name()).Msg("setting up periodic tasks")
-
 	if _, err := scheduler.Every(10).Second().Do(func() {
 		m.mtx.Lock()
+		defer m.mtx.Unlock()
 		balances := m.balanceEntries
 		tokenBalances := m.tokenBalanceEntries
 		m.balanceEntries = nil
 		m.tokenBalanceEntries = nil
-		m.mtx.Unlock()
-
 		utils.WatchMethod(m, func() error { return m.updateBalances(balances, tokenBalances) })
 	}); err != nil {
 		return fmt.Errorf("error while setting up bank periodic operation: %s", err)
@@ -32,7 +30,6 @@ func (m *Module) updateBalances(balances []AccountBalanceEntry, tokenBalances []
 	errChan := make(chan error)
 	go func() {
 		errChan <- m.db.SaveAccountBalances(EntriesToBalances(balances))
-
 	}()
 	go func() {
 		errChan <- m.db.SaveAccountTokenBalances(EntriesToTokenBalances(tokenBalances))
