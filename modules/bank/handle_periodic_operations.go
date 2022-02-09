@@ -30,7 +30,6 @@ func (m *Module) updateBalances(balances []AccountBalanceEntry, tokenBalances []
 	errChan := make(chan error)
 	go func() {
 		errChan <- m.db.SaveAccountBalances(EntriesToBalances(balances))
-
 	}()
 	go func() {
 		errChan <- m.db.SaveAccountTokenBalances(EntriesToTokenBalances(tokenBalances))
