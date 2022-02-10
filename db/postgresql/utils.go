@@ -3,9 +3,9 @@ package postgresql
 import "fmt"
 
 func (db *Database) InsertBatch(insertStmt string, conflictStmt string, params []interface{}, paramsNumber int) error {
-	sliceNumber := len(params) / MAX_PARAMS_LENGTH
 	start := 0
 	maxParamsAmount := MAX_PARAMS_LENGTH / paramsNumber * paramsNumber
+	sliceNumber := len(params) / maxParamsAmount
 
 	for i := 0; i < sliceNumber; i++ {
 		paramsStmt := ""
