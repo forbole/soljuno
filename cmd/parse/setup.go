@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/db"
-	"github.com/panjf2000/ants/v2"
+	"github.com/forbole/soljuno/types/pool"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -37,7 +37,7 @@ func GetParsingContext(config Config) (*Context, error) {
 		return nil, fmt.Errorf("failed to start client: %s", err)
 	}
 
-	pool, err := ants.NewPool(cfg.GetWorkerConfig().GetPoolSize())
+	pool, err := pool.NewDefaultPool(cfg.GetWorkerConfig().GetPoolSize())
 	if err != nil {
 		return nil, err
 	}

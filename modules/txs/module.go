@@ -7,7 +7,7 @@ import (
 	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/modules/pruning"
 	"github.com/forbole/soljuno/types"
-	"github.com/panjf2000/ants/v2"
+	"github.com/forbole/soljuno/types/pool"
 )
 
 var _ modules.Module = &Module{}
@@ -16,12 +16,12 @@ var _ pruning.PruningService = &Module{}
 type Module struct {
 	db     db.TxDb
 	buffer chan types.Block
-	pool   *ants.Pool
+	pool   pool.Pool
 
 	mtx sync.Mutex
 }
 
-func NewModule(db db.TxDb, pool *ants.Pool) *Module {
+func NewModule(db db.TxDb, pool pool.Pool) *Module {
 	return &Module{
 		db:     db,
 		buffer: make(chan types.Block),

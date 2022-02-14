@@ -3,7 +3,7 @@ package registrar
 import (
 	"github.com/forbole/soljuno/solana/parser/manager"
 	"github.com/forbole/soljuno/types/logging"
-	"github.com/panjf2000/ants/v2"
+	"github.com/forbole/soljuno/types/pool"
 
 	"github.com/forbole/soljuno/types"
 
@@ -36,12 +36,12 @@ type Context struct {
 	ParserManager manager.ParserManager
 	Proxy         client.ClientProxy
 	Logger        logging.Logger
-	Pool          *ants.Pool
+	Pool          pool.Pool
 }
 
 // NewContext allows to build a new Context instance
 func NewContext(
-	config types.Config, database db.Database, proxy client.ClientProxy, logger logging.Logger, pool *ants.Pool,
+	config types.Config, database db.Database, proxy client.ClientProxy, logger logging.Logger, pool pool.Pool,
 ) Context {
 	return Context{
 		Config:   config,
