@@ -16,13 +16,22 @@ func (m *Module) RunAsyncOperations() {
 
 func (m *Module) consumeMsgs() {
 	msgs := m.getMsgRows()
-	err := <-m.pool.DoAsync(func() error { return m.db.SaveMessages(msgs) })
+	err := <-m.pool.DoAsync(func() error {
+		err := m.db.SaveMessages(msgs)
+
+		// re-enqueueing failed messages in the same goroutine
+		if err != nil {
+			log.Error().Str("module", m.Name()).Err(err).Send()
+			for _, msg := range msgs {
+				m.buffer <- msg
+			}
+			log.Info().Str("module", m.Name()).Msg("re-enqueueing failed messages")
+		}
+		return nil
+	})
+
 	if err != nil {
 		log.Error().Str("module", m.Name()).Err(err).Send()
-		log.Info().Str("module", m.Name()).Msg("re-enqueueing failed messages")
-		for _, msg := range msgs {
-			m.buffer <- msg
-		}
 	}
 }
 
