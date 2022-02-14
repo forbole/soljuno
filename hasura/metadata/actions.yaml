@@ -1,5 +1,5 @@
 actions:
-- name: epoch_info
+- name: actions_epoch_info
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/epoch_info
@@ -9,7 +9,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: epoch_schedule_param
+- name: actions_epoch_schedule
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/epoch_schedule
@@ -19,7 +19,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: inflation_rate
+- name: actions_inflation_rate
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/inflation_rate
@@ -29,7 +29,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: inflation_governor_param
+- name: actions_inflation_governor
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/inflation_governor
@@ -39,7 +39,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: tx
+- name: actions_tx
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/tx
@@ -49,7 +49,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: txs_by_address
+- name: actions_txs_by_address
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/tx_meta
@@ -59,7 +59,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: account_info
+- name: actions_account_info
   definition:
     kind: synchronous
     handler: http://localhost:3000/api/account_info
