@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/forbole/soljuno/types/logging"
-	"github.com/panjf2000/ants/v2"
+	"github.com/forbole/soljuno/types/pool"
 
 	"github.com/forbole/soljuno/modules"
 
@@ -24,7 +24,7 @@ type Worker struct {
 	parserManager manager.ParserManager
 	logger        logging.Logger
 
-	pool    *ants.Pool
+	pool    pool.Pool
 	index   int
 	modules []modules.Module
 }
@@ -59,7 +59,7 @@ func (w Worker) Start() {
 		w.logger.Debug("processed block time", "slot", i, "seconds", time.Since(start).Seconds())
 		wait := make(chan bool)
 		go func() {
-			for w.pool.Free() == 0 {
+			for !w.pool.IsFree() {
 				time.Sleep(time.Second)
 			}
 			wait <- true
@@ -116,68 +116,76 @@ func (w Worker) ExportBlock(block types.Block) error {
 	if err != nil {
 		return fmt.Errorf("failed to persist block: %s", err)
 	}
-
-	// Handle block events
-	w.DoAsync(func() { w.handleBlock(block) })
-	return nil
-}
-
-func (w Worker) DoAsync(fun func()) {
-	if err := w.pool.Submit(fun); err != nil {
-		w.logger.Error("failed to add task into pool", "err", err)
-	}
+	return w.handleBlock(block)
 }
 
 // handleBlock handles all the events in a block
-func (w Worker) handleBlock(block types.Block) {
-	w.handleBlockModules(block)
-	for _, tx := range block.Txs {
-		tx := tx
-		w.DoAsync(func() { w.handleTx(tx) })
+func (w Worker) handleBlock(block types.Block) error {
+	if err := w.handleBlockModules(block); err != nil {
+		return err
 	}
+
+	// handle txs asynchronously
+	errChs := make([]chan error, len(block.Txs))
+	for i, tx := range block.Txs {
+		tx := tx
+		errChs[i] = w.pool.DoAsync(func() error { return w.handleTx(tx) })
+	}
+
+	// check errors
+	for _, errCh := range errChs {
+		err := <-errCh
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // handleBlockModules handles the block with modules
-func (w Worker) handleBlockModules(block types.Block) {
+func (w Worker) handleBlockModules(block types.Block) error {
 	for _, module := range w.modules {
 		if blockModule, ok := module.(modules.BlockModule); ok {
 			err := blockModule.HandleBlock(block)
-			if err != nil {
-				w.logger.BlockError(module, block, err)
-			}
+			return err
 		}
 	}
+	return nil
 }
 
 // handleTx handles all the events in a transaction
-func (w Worker) handleTx(tx types.Tx) {
+func (w Worker) handleTx(tx types.Tx) error {
 	for _, module := range w.modules {
 		if transactionModule, ok := module.(modules.TransactionModule); ok {
 			err := transactionModule.HandleTx(tx)
 			if err != nil {
-				w.logger.TxError(module, tx, err)
+				return err
 			}
 		}
 	}
-	w.handleMessages(tx)
+	return w.handleMessages(tx)
 }
 
 // handleMessages handles all the messages events in a transaction
-func (w Worker) handleMessages(tx types.Tx) {
+func (w Worker) handleMessages(tx types.Tx) error {
 	for _, msg := range tx.Messages {
 		msg := msg
-		w.handleMessage(tx, msg)
+		err := w.handleMessage(tx, msg)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func (w Worker) handleMessage(tx types.Tx, msg types.Message) {
+func (w Worker) handleMessage(tx types.Tx, msg types.Message) error {
 	for _, module := range w.modules {
 		if messageModule, ok := module.(modules.MessageModule); ok {
-
 			err := messageModule.HandleMsg(msg, tx)
 			if err != nil {
-				w.logger.MsgError(module, tx, msg, err)
+				return err
 			}
 		}
 	}
+	return nil
 }

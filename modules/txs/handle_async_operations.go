@@ -9,16 +9,21 @@ import (
 func (m *Module) RunAsyncOperations() {
 	for {
 		block := <-m.buffer
-		_ = m.pool.Submit(func() {
+		err := <-m.pool.DoAsync(func() error {
 			txRows, err := dbtypes.NewTxRowsFromTxs(block.Txs)
 			if err != nil {
-				log.Error().Str("module", m.Name()).Uint64("slot", block.Slot).Err(err).Send()
+				return err
 			}
-
 			err = m.db.SaveTxs(txRows)
 			if err != nil {
-				log.Error().Str("module", m.Name()).Uint64("slot", block.Slot).Err(err).Send()
+				return err
 			}
+			return nil
 		})
+		if err != nil {
+			log.Error().Str("module", m.Name()).Err(err).Send()
+			log.Info().Str("module", m.Name()).Msg("re-enqueueing failed txs")
+			m.buffer <- block
+		}
 	}
 }
