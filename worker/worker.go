@@ -147,7 +147,9 @@ func (w Worker) handleBlockModules(block types.Block) error {
 	for _, module := range w.modules {
 		if blockModule, ok := module.(modules.BlockModule); ok {
 			err := blockModule.HandleBlock(block)
-			return err
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
