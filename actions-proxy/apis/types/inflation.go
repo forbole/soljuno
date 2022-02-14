@@ -21,19 +21,19 @@ func NewInflationRateResponse(inflation clienttypes.InflationRate) InflationRate
 // --------------------------------------------------------------
 
 type InflationGovernorResponse struct {
-	Initial            float64 `json:"initial"`
-	Terminal           float64 `json:"terminal"`
-	Taper              float64 `json:"taper"`
-	Foundation         float64 `json:"foundation"`
-	FoundationTerminal float64 `json:"foundation_terminal"`
+	Initial        float64 `json:"initial"`
+	Terminal       float64 `json:"terminal"`
+	Taper          float64 `json:"taper"`
+	Foundation     float64 `json:"foundation"`
+	FoundationTerm float64 `json:"foundation_term"`
 }
 
 func NewInflationGovernorResponse(governor clienttypes.InflationGovernor) InflationGovernorResponse {
 	return InflationGovernorResponse{
-		Initial:            governor.Initial,
-		Terminal:           governor.Terminal,
-		Taper:              governor.Taper,
-		Foundation:         governor.Foundation,
-		FoundationTerminal: governor.FoundationTerminal,
+		Initial:        governor.Initial,
+		Terminal:       governor.Terminal,
+		Taper:          governor.Taper,
+		Foundation:     governor.Foundation,
+		FoundationTerm: governor.FoundationTerm,
 	}
 }

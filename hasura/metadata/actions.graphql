@@ -1,11 +1,11 @@
 type Query {
-    epoch_info: EpochInfo!
-    epoch_schedule_param: EpochSchedule!
-    inflation_rate: InflationRate!
-    inflation_governor_param: InflationGovernor!
-    tx(hash: String!): Tx!
-    txs_by_address(address: String!, config: TxsByAddressConfig): [TxMeta!]!
-    account_info(address: String!): AccountInfo!
+    actions_epoch_info: EpochInfo!
+    actions_epoch_schedule: EpochSchedule!
+    actions_inflation_rate: InflationRate!
+    actions_inflation_governor: InflationGovernor!
+    actions_tx(hash: String!): Tx!
+    actions_txs_by_address(address: String!, config: TxsByAddressConfig): [TxMeta!]!
+    actions_account_info(address: String!): AccountInfo!
 }
 
 # ----------------------------------------------------------------
@@ -39,7 +39,7 @@ type InflationGovernor {
     terminal: Float!
     taper: Float!
     foundation: Float!
-    foundation_terminal: Float!
+    foundation_term: Float!
 }
 
 # ----------------------------------------------------------------
