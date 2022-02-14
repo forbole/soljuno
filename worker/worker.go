@@ -129,7 +129,11 @@ func (w Worker) handleBlock(block types.Block) error {
 	errChs := make([]chan error, len(block.Txs))
 	for i, tx := range block.Txs {
 		tx := tx
-		errChs[i] = w.pool.DoAsync(func() error { return w.handleTx(tx) })
+		errCh, err := w.pool.DoAsync(func() error { return w.handleTx(tx) })
+		if err != nil {
+			return err
+		}
+		errChs[i] = errCh
 	}
 
 	// check errors

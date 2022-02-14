@@ -2,6 +2,7 @@ package txs
 
 import (
 	dbtypes "github.com/forbole/soljuno/db/types"
+	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
 )
 
@@ -9,21 +10,25 @@ import (
 func (m *Module) RunAsyncOperations() {
 	for {
 		block := <-m.buffer
-		err := <-m.pool.DoAsync(func() error {
+		_, err := m.pool.DoAsync(func() error {
 			txRows, err := dbtypes.NewTxRowsFromTxs(block.Txs)
 			if err != nil {
-				return err
+				m.handleAsyncError(err, block)
+				return nil
 			}
+
 			err = m.db.SaveTxs(txRows)
-			if err != nil {
-				return err
-			}
+			m.handleAsyncError(err, block)
 			return nil
 		})
-		if err != nil {
-			log.Error().Str("module", m.Name()).Err(err).Send()
-			log.Info().Str("module", m.Name()).Msg("re-enqueueing failed txs")
-			m.buffer <- block
-		}
+		m.handleAsyncError(err, block)
+	}
+}
+
+func (m *Module) handleAsyncError(err error, block types.Block) {
+	if err != nil {
+		log.Error().Str("module", m.Name()).Err(err).Send()
+		log.Info().Str("module", m.Name()).Msg("re-enqueueing failed txs")
+		m.buffer <- block
 	}
 }

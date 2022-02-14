@@ -16,23 +16,13 @@ func (m *Module) RunAsyncOperations() {
 
 func (m *Module) consumeMsgs() {
 	msgs := m.getMsgRows()
-	err := <-m.pool.DoAsync(func() error {
+	_, err := m.pool.DoAsync(func() error {
 		err := m.db.SaveMessages(msgs)
-
-		// re-enqueueing failed messages in the same goroutine
-		if err != nil {
-			log.Error().Str("module", m.Name()).Err(err).Send()
-			for _, msg := range msgs {
-				m.buffer <- msg
-			}
-			log.Info().Str("module", m.Name()).Msg("re-enqueueing failed messages")
-		}
+		m.handleAsyncError(err, msgs)
 		return nil
 	})
 
-	if err != nil {
-		log.Error().Str("module", m.Name()).Err(err).Send()
-	}
+	m.handleAsyncError(err, msgs)
 }
 
 func (m *Module) getMsgRows() []dbtypes.MsgRow {
@@ -44,6 +34,17 @@ func (m *Module) getMsgRows() []dbtypes.MsgRow {
 			msgs = append(msgs, msg)
 		case <-timeout:
 			return msgs
+		}
+	}
+}
+
+func (m *Module) handleAsyncError(err error, msgs []dbtypes.MsgRow) {
+	if err != nil {
+		// re-enqueueing failed messages in the same goroutine
+		log.Error().Str("module", m.Name()).Err(err).Send()
+		log.Info().Str("module", m.Name()).Msg("re-enqueueing failed messages")
+		for _, msg := range msgs {
+			m.buffer <- msg
 		}
 	}
 }

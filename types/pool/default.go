@@ -11,15 +11,12 @@ type defaultPool struct {
 	pool *ants.Pool
 }
 
-func (p *defaultPool) DoAsync(fun func() error) chan error {
+func (p *defaultPool) DoAsync(fun func() error) (chan error, error) {
 	errCh := make(chan error, 1)
 	err := p.pool.Submit(func() {
 		errCh <- fun()
 	})
-	if err != nil {
-		errCh <- err
-	}
-	return errCh
+	return errCh, err
 }
 
 func (p *defaultPool) IsFree() bool {
