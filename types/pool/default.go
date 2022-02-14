@@ -26,6 +26,6 @@ func (p *defaultPool) IsFree() bool {
 	return p.pool.Free() != 0
 }
 
-func (p *defaultPool) IsStopped() bool {
+func (p *defaultPool) IsEmpty() bool {
 	return p.pool.Running() == 0
 }
