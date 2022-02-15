@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/forbole/soljuno/apis/coingecko"
 	"github.com/stretchr/testify/require"
-
-	"github.com/forbole/soljuno/modules/pricefeed/coingecko"
 )
 
 func TestConvertCoingeckoPrices(t *testing.T) {
@@ -111,8 +110,7 @@ func TestConvertCoingeckoPrices(t *testing.T) {
 	err := json.Unmarshal([]byte(result), &apisPrices)
 	require.NoError(t, err)
 
-	prices := coingecko.ConvertCoingeckoPrices(apisPrices)
-	require.Equal(t, int64(8809250407), prices[0].MarketCap)
-	require.Equal(t, int64(0), prices[1].MarketCap)
-	require.Equal(t, int64(836648999243), prices[2].MarketCap)
+	require.Equal(t, float64(8809250407), apisPrices[0].MarketCap)
+	require.Equal(t, float64(0), apisPrices[1].MarketCap)
+	require.Equal(t, float64(836648999243), apisPrices[2].MarketCap)
 }

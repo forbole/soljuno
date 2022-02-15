@@ -2,12 +2,13 @@ package pricefeed
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
+	"github.com/forbole/soljuno/apis/coingecko"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	"github.com/forbole/soljuno/modules/pricefeed/coingecko"
 	"github.com/forbole/soljuno/modules/utils"
 )
 
@@ -46,12 +47,12 @@ func (m *Module) getTokenPrices() ([]dbtypes.TokenPriceRow, error) {
 	}
 
 	// Get the tokens prices
-	prices, err := coingecko.GetTokensPrices(ids)
+	prices, err := m.client.GetTokensPrices(ids)
 	if err != nil {
 		return nil, fmt.Errorf("error while getting tokens prices: %s", err)
 	}
 
-	return prices, err
+	return convertCoingeckoPrices(prices), err
 }
 
 // updatePrice fetch total amount of coins in the system from RPC and store it into database
@@ -63,7 +64,7 @@ func (m *Module) updatePrice() error {
 
 	prices, err := m.getTokenPrices()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting token prices")
 	}
 
 	// Save the token prices
@@ -72,4 +73,19 @@ func (m *Module) updatePrice() error {
 		return fmt.Errorf("error while saving token prices: %s", err)
 	}
 	return nil
+}
+
+// convertCoingeckoPrices converts the MarketTicker list into TokenPriceRow list
+func convertCoingeckoPrices(prices []coingecko.MarketTicker) []dbtypes.TokenPriceRow {
+	tokenPrices := make([]dbtypes.TokenPriceRow, len(prices))
+	for i, price := range prices {
+		tokenPrices[i] = dbtypes.NewTokenPriceRow(
+			price.ID,
+			price.CurrentPrice,
+			int64(math.Trunc(price.MarketCap)),
+			price.Symbol,
+			price.LastUpdated,
+		)
+	}
+	return tokenPrices
 }
