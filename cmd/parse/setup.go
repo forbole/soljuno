@@ -6,8 +6,6 @@ import (
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types/pool"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/modules"
 	modsregistrar "github.com/forbole/soljuno/modules/registrar"
@@ -19,10 +17,6 @@ import (
 func GetParsingContext(config Config) (*Context, error) {
 	// Get the global config
 	cfg := types.Cfg
-
-	// Setup the SDK configuration
-	sdkConfig := sdk.GetConfig()
-	sdkConfig.Seal()
 
 	// Get the database
 	databaseCtx := db.NewContext(cfg.GetDatabaseConfig(), config.GetLogger())
