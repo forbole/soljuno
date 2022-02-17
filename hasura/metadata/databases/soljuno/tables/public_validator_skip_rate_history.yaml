@@ -1,5 +1,5 @@
 table:
-  name: validator_skip_rate
+  name: validator_skip_rate_history
   schema: public
 select_permissions:
 - permission:
