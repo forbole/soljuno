@@ -36,26 +36,31 @@ func (m *Module) updateValidatorSkipRates(epoch uint64) error {
 	count := 0
 	end := int(endSlot % solanatypes.SlotsInEpoch)
 	for validator, schedule := range schedules {
-		skipRate := CalculateSkipRate(end, produced, schedule)
-		skipRateRows[count] = dbtypes.NewValidatorSkipRateRow(validator, epoch, skipRate)
+		total, skip := getSkipRateReference(end, produced, schedule)
+		skipRate := float64(skip) / float64(total)
+		skipRateRows[count] = dbtypes.NewValidatorSkipRateRow(validator, epoch, skipRate, total, skip)
 		count++
 	}
 
-	return m.db.SaveValidatorSkipRates(skipRateRows)
+	err = m.db.SaveValidatorSkipRates(skipRateRows)
+	if err != nil {
+		return err
+	}
+	return m.db.SaveHistoryValidatorSkipRates(skipRateRows)
 }
 
-// CalculateSkipRate returns the skip rate of the validator from the given produced map and the validator schedule
-func CalculateSkipRate(end int, produced map[int]bool, schedule []int) float64 {
-	var missingCount float64 = 0
-	var shouldProducedCount float64 = 0
+// getSkipRateReference returns the total and skip amount in a epoch of the validator from the given produced map and the validator schedule
+func getSkipRateReference(end int, produced map[int]bool, schedule []int) (int, int) {
+	var skip int = 0
+	var total int = 0
 	for _, slotInEpoch := range schedule {
-		shouldProducedCount++
+		total++
 		if slotInEpoch > end {
 			break
 		}
 		if ok := produced[slotInEpoch]; !ok {
-			missingCount++
+			skip++
 		}
 	}
-	return missingCount / shouldProducedCount
+	return total, skip
 }

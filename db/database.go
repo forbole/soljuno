@@ -95,10 +95,10 @@ type BankDb interface {
 	// SaveAccountBalances allows to store the given token balance data inside the database
 	SaveAccountTokenBalances(slot uint64, accounts []string, balances []uint64) error
 
-	// SaveAccountHistoryBalances allows to store the given native balance data inside the database
+	// SaveAccountHistoryBalances allows to store the given historical native balance data inside the database
 	SaveAccountHistoryBalances(time time.Time, accounts []string, balances []uint64) error
 
-	// SaveAccountHistoryTokenBalances allows to store the given token balance data inside the database
+	// SaveAccountHistoryTokenBalances allows to store the given historical token balance data inside the database
 	SaveAccountHistoryTokenBalances(time time.Time, accounts []string, balances []uint64) error
 }
 
@@ -201,8 +201,11 @@ type VoteDb interface {
 	// It is for calculating validator skip rates
 	GetEpochProducedBlocks(epoch uint64) ([]uint64, error)
 
-	// SaveValidatorSkipRates allows to store the given epoch of the validator skiprate inside the database
+	// SaveValidatorSkipRates allows to store the historical validator skip rates of the given epoch inside the database
 	SaveValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error
+
+	// SaveValidatorSkipRates allows to store the historical validator skip rates of the given epoch inside the database
+	SaveHistoryValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error
 
 	VoteCheckerDb
 }

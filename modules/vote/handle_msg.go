@@ -16,6 +16,8 @@ func HandleMsg(msg types.Message, tx types.Tx, db db.VoteDb, client client.Clien
 		return handleMsgInitialize(msg, tx, db)
 	case "authorize":
 		return handleMsgAuthorize(msg, tx, db, client)
+	case "withdraw":
+		return handleMsgWithdraw(msg, tx, db, client)
 	case "updateValidatorIdentity":
 		return handleMsgUpdateValidatorIdentity(msg, tx, db, client)
 	case "updateCommission":
