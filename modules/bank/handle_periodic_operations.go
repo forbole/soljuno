@@ -3,7 +3,6 @@ package bank
 import (
 	"fmt"
 
-	"github.com/forbole/soljuno/modules/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 )
@@ -19,7 +18,10 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 		tokenBalances := m.tokenBalanceEntries
 		m.balanceEntries = nil
 		m.tokenBalanceEntries = nil
-		utils.WatchMethod(m, func() error { return m.updateBalances(balances, tokenBalances) })
+		err := m.updateBalances(balances, tokenBalances)
+		if err != nil {
+			log.Error().Str("module", m.Name()).Err(err).Send()
+		}
 	}); err != nil {
 		return fmt.Errorf("error while setting up bank periodic operation: %s", err)
 	}
@@ -27,14 +29,14 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 }
 
 func (m *Module) updateBalances(balances []AccountBalanceEntry, tokenBalances []TokenAccountBalanceEntry) error {
-	errChan := make(chan error)
+	errChan := make(chan error, 2)
 	go func() {
 		errChan <- m.db.SaveAccountBalances(EntriesToBalances(balances))
 	}()
 	go func() {
 		errChan <- m.db.SaveAccountTokenBalances(EntriesToTokenBalances(tokenBalances))
 	}()
-	for i := 0; i < 2; i++ {
+	for i := 0; i < len(errChan); i++ {
 		err := <-errChan
 		if err != nil {
 			return err
