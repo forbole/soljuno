@@ -77,18 +77,40 @@ func (db *Database) GetEpochProducedBlocks(epoch uint64) ([]uint64, error) {
 
 // SaveValidatorSkipRates implements the db.VoteDb
 func (db *Database) SaveValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error {
-	insertStmt := `INSERT INTO validator_skip_rate (address, epoch, skip_rate) VALUES`
+	insertStmt := `INSERT INTO validator_skip_rate (address, epoch, skip_rate, total, skip) VALUES`
 	conflictStmt := `
 	ON CONFLICT (address) DO UPDATE
 		SET epoch = excluded.epoch,
-			skip_rate = excluded.skip_rate
+			skip_rate = excluded.skip_rate,
+			total = excluded.total,
+			skip = excluded.skip
 	WHERE validator_skip_rate.epoch <= excluded.epoch
 	`
 	var params []interface{}
-	paramsNumber := 3
+	paramsNumber := 5
 	params = make([]interface{}, 0, paramsNumber*len(skipRates))
 	for _, row := range skipRates {
-		params = append(params, row.Address, row.Epoch, row.SkipRate)
+		params = append(params, row.Address, row.Epoch, row.SkipRate, row.Total, row.Skip)
+	}
+	return db.InsertBatch(
+		insertStmt,
+		conflictStmt,
+		params,
+		paramsNumber,
+	)
+}
+
+// SaveValidatorSkipRates implements the db.VoteDb
+func (db *Database) SaveHistoryValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error {
+	insertStmt := `INSERT INTO validator_skip_rate_history (address, epoch, skip_rate, total, skip) VALUES`
+	conflictStmt := `
+	ON CONFLICT (address, epoch) DO NOTHING
+	`
+	var params []interface{}
+	paramsNumber := 5
+	params = make([]interface{}, 0, paramsNumber*len(skipRates))
+	for _, row := range skipRates {
+		params = append(params, row.Address, row.Epoch, row.SkipRate, row.Total, row.Skip)
 	}
 	return db.InsertBatch(
 		insertStmt,
