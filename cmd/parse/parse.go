@@ -68,8 +68,11 @@ func StartParsing(ctx *Context) error {
 
 	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parserManager, ctx.Logger, ctx.Pool, exportQueue, ctx.Modules)
 	workers := make([]worker.Worker, cfg.GetWorkers())
+	workerStopChs := make([]chan bool, cfg.GetWorkers())
 	for i := range workers {
-		workers[i] = worker.NewWorker(i, workerCtx)
+		stopCh := make(chan bool, 1)
+		workers[i] = worker.NewWorker(i, workerCtx).WithStopChannel(stopCh)
+		workerStopChs[i] = stopCh
 	}
 
 	waitGroup.Add(1)
@@ -89,7 +92,7 @@ func StartParsing(ctx *Context) error {
 	}
 
 	// Listen for and trap any OS signal to gracefully shutdown and exit
-	trapSignal(ctx)
+	trapSignal(ctx, workerStopChs)
 
 	latestSlot, err := ctx.Proxy.GetLatestSlot()
 	if err != nil {
@@ -149,7 +152,7 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 
 // trapSignal will listen for any OS signal and invoke Done on the main
 // WaitGroup allowing the main process to gracefully exit.
-func trapSignal(ctx *Context) {
+func trapSignal(ctx *Context, workerStopCh []chan bool) {
 	var sigCh = make(chan os.Signal)
 
 	signal.Notify(sigCh, syscall.SIGTERM)
@@ -158,6 +161,23 @@ func trapSignal(ctx *Context) {
 	go func() {
 		sig := <-sigCh
 		ctx.Logger.Info("caught signal; shutting down...", "signal", sig.String())
+
+		ctx.Logger.Info("closing workers...")
+		// close workers
+		for _, ch := range workerStopCh {
+			ch <- true
+		}
+
+		// wait if the pool is not empty
+		waitCh := make(chan bool)
+		go func() {
+			for !ctx.Pool.IsEmpty() {
+				time.Sleep(time.Second)
+			}
+			waitCh <- true
+		}()
+		<-waitCh
+
 		defer ctx.Database.Close()
 		defer waitGroup.Done()
 	}()

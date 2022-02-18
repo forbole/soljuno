@@ -27,6 +27,8 @@ type Worker struct {
 	pool    pool.Pool
 	index   int
 	modules []modules.Module
+
+	stopChannel chan bool
 }
 
 // NewWorker allows to create a new Worker implementation.
@@ -43,10 +45,21 @@ func NewWorker(index int, ctx *Context) Worker {
 	}
 }
 
+func (w Worker) WithStopChannel(ch chan bool) Worker {
+	w.stopChannel = ch
+	return w
+}
+
 // Start starts a worker by listening for new jobs (block heights) from the
 // given worker queue. Any failed job is logged and re-enqueued.
 func (w Worker) Start() {
 	logging.WorkerCount.Inc()
+
+	var stopSignal bool
+	go func() {
+		stopSignal = <-w.stopChannel
+	}()
+
 	for i := range w.queue {
 		start := time.Now()
 		if err := w.process(i); err != nil {
@@ -57,14 +70,21 @@ func (w Worker) Start() {
 		}
 		logging.WorkerSlot.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(i))
 		w.logger.Debug("processed block time", "slot", i, "seconds", time.Since(start).Seconds())
-		wait := make(chan bool)
+
+		// wait if the pool is full
+		waitCh := make(chan bool)
 		go func() {
 			for !w.pool.IsFree() {
 				time.Sleep(time.Second)
 			}
-			wait <- true
+			waitCh <- true
 		}()
-		<-wait
+		<-waitCh
+
+		if stopSignal {
+			w.logger.Debug("closed worker", "number", w.index)
+			return
+		}
 	}
 }
 
