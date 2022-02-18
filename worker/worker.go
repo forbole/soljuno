@@ -2,6 +2,7 @@ package worker
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/forbole/soljuno/types/logging"
@@ -72,17 +73,19 @@ func (w Worker) Start() {
 		w.logger.Debug("processed block time", "slot", i, "seconds", time.Since(start).Seconds())
 
 		// wait if the pool is full
-		waitCh := make(chan bool)
+		wg := sync.WaitGroup{}
+		wg.Add(1)
 		go func() {
 			for !w.pool.IsFree() {
 				time.Sleep(time.Second)
 			}
-			waitCh <- true
+			wg.Done()
 		}()
-		<-waitCh
+		wg.Wait()
 
 		if stopSignal {
 			w.logger.Debug("closed worker", "number", w.index)
+			w.stopChannel <- true
 			return
 		}
 	}

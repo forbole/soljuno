@@ -50,6 +50,7 @@ type Config interface {
 	GetDatabaseConfig() DatabaseConfig
 	GetLoggingConfig() LoggingConfig
 	GetParsingConfig() ParsingConfig
+	SetParsingConfig(config ParsingConfig)
 	GetPruningConfig() PruningConfig
 	GetTelemetryConfig() TelemetryConfig
 	GetWorkerConfig() WorkerConfig
@@ -130,6 +131,11 @@ func (c *config) GetParsingConfig() ParsingConfig {
 		return DefaultParsingConfig()
 	}
 	return c.Parsing
+}
+
+// GetParsingConfig implements Config
+func (c *config) SetParsingConfig(config ParsingConfig) {
+	c.Parsing = config
 }
 
 // GetPruningConfig implements Config
@@ -377,6 +383,7 @@ type ParsingConfig interface {
 	ShouldParseNewBlocks() bool
 	ShouldParseOldBlocks() bool
 	GetStartSlot() uint64
+	SetStartSlot(slot uint64)
 }
 
 var _ ParsingConfig = &parsingConfig{}
@@ -430,6 +437,11 @@ func (p *parsingConfig) ShouldParseOldBlocks() bool {
 // GetStartHeight implements ParsingConfig
 func (p *parsingConfig) GetStartSlot() uint64 {
 	return p.StartSlot
+}
+
+// SetStartSlot implements ParsingConfig
+func (p *parsingConfig) SetStartSlot(slot uint64) {
+	p.StartSlot = slot
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

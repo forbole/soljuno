@@ -23,24 +23,26 @@ type Config interface {
 
 // Context contains the parsing context
 type Context struct {
-	Proxy    client.ClientProxy
-	Database db.Database
-	Logger   logging.Logger
-	Modules  []modules.Module
-	Pool     pool.Pool
+	GlobalCfg types.Config
+	Proxy     client.ClientProxy
+	Database  db.Database
+	Logger    logging.Logger
+	Modules   []modules.Module
+	Pool      pool.Pool
 }
 
 // NewContext builds a new Context instance
 func NewContext(
-	proxy client.ClientProxy, db db.Database,
+	globalCfg types.Config, proxy client.ClientProxy, db db.Database,
 	logger logging.Logger, modules []modules.Module,
 	pool pool.Pool,
 ) *Context {
 	return &Context{
-		Proxy:    proxy,
-		Database: db,
-		Modules:  modules,
-		Logger:   logger,
-		Pool:     pool,
+		GlobalCfg: globalCfg,
+		Proxy:     proxy,
+		Database:  db,
+		Modules:   modules,
+		Logger:    logger,
+		Pool:      pool,
 	}
 }
