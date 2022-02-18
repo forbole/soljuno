@@ -92,7 +92,7 @@ func StartParsing(ctx *Context) error {
 	}
 
 	// Listen for and trap any OS signal to gracefully shutdown and exit
-	trapSignal(ctx, workerStopChs)
+	trapSignal(ctx, exportQueue, workerStopChs)
 
 	latestSlot, err := ctx.Proxy.GetLatestSlot()
 	if err != nil {
@@ -152,7 +152,7 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 
 // trapSignal will listen for any OS signal and invoke Done on the main
 // WaitGroup allowing the main process to gracefully exit.
-func trapSignal(ctx *Context, workerStopCh []chan bool) {
+func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) {
 	var sigCh = make(chan os.Signal)
 
 	signal.Notify(sigCh, syscall.SIGTERM)
@@ -164,21 +164,38 @@ func trapSignal(ctx *Context, workerStopCh []chan bool) {
 
 		ctx.Logger.Info("closing workers...")
 		// close workers
-		for _, ch := range workerStopCh {
+		for _, ch := range workerStopChs {
 			ch <- true
 		}
 
+		// wait stopped signal from workers
+		for i := 0; i < len(workerStopChs); i++ {
+			<-workerStopChs[i]
+		}
+
 		// wait if the pool is not empty
-		waitCh := make(chan bool)
+		wg := sync.WaitGroup{}
 		go func() {
 			for !ctx.Pool.IsEmpty() {
 				time.Sleep(time.Second)
 			}
-			waitCh <- true
+			wg.Done()
 		}()
-		<-waitCh
+		wg.Wait()
 
+		next := <-queue
+		err := updateStartSlot(ctx.GlobalCfg, next)
+		if err != nil {
+			ctx.Logger.Info("failed to update start slot")
+		}
 		defer ctx.Database.Close()
 		defer waitGroup.Done()
 	}()
+}
+
+func updateStartSlot(cfg types.Config, slot uint64) error {
+	parsingCfg := cfg.GetParsingConfig()
+	parsingCfg.SetStartSlot(slot)
+	cfg.SetParsingConfig(parsingCfg)
+	return types.Write(cfg, types.GetConfigFilePath())
 }

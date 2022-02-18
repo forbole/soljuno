@@ -62,5 +62,5 @@ func GetParsingContext(config Config) (*Context, error) {
 		}
 	}
 
-	return NewContext(cp, database, config.GetLogger(), registeredModules, pool), nil
+	return NewContext(cfg, cp, database, config.GetLogger(), registeredModules, pool), nil
 }
