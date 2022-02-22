@@ -98,13 +98,23 @@ func StartParsing(ctx *Context) error {
 	if err != nil {
 		panic(fmt.Errorf("failed to get last block from RPC client: %s", err))
 	}
+
+	var oldBlockListenerWg sync.WaitGroup
 	if cfg.ShouldParseOldBlocks() {
 		cfg := types.Cfg.GetParsingConfig()
-		go enqueueMissingSlots(ctx, exportQueue, cfg.GetStartSlot(), latestSlot)
+		oldBlockListenerWg.Add(1)
+
+		go func() {
+			enqueueMissingSlots(ctx, exportQueue, cfg.GetStartSlot(), latestSlot)
+			oldBlockListenerWg.Done()
+		}()
 	}
 
 	if cfg.ShouldParseNewBlocks() {
-		go startNewBlockListener(ctx, exportQueue, latestSlot)
+		go func() {
+			oldBlockListenerWg.Wait()
+			startNewBlockListener(ctx, exportQueue, latestSlot+1)
+		}()
 	}
 
 	// Block main process (signal capture will call WaitGroup's Done)
