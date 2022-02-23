@@ -10,6 +10,15 @@ object_relationships:
         name: block
       column_mapping:
         slot: slot
+array_relationships:
+- name: messages
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: message
+      column_mapping:
+        hash: transaction_hash
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -19,6 +28,5 @@ select_permissions:
     - error
     - fee
     - logs
-    - messages
     filter: {}
   role: anonymous

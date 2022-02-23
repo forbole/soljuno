@@ -19,7 +19,6 @@ CREATE TABLE transaction
     error           BOOLEAN NOT NULL,
     fee             INT     NOT NULL,
     logs            TEXT[],
-    messages        JSON    NOT NULL DEFAULT '{}',
     partition_id    INT     NOT NULL,
     CHECK (slot / 1000 = partition_id)
 ) PARTITION BY LIST(partition_id);

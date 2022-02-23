@@ -14,7 +14,7 @@ func (suite *DbTestSuite) TestSaveTxs() {
 	}{
 		{
 			name:        "initialize the data",
-			data:        dbtypes.NewTxRow("hash", 1, true, 500, []string{"logs"}, "{}"),
+			data:        dbtypes.NewTxRow("hash", 1, true, 500, []string{"logs"}),
 			expectedLen: 1,
 		},
 		{
@@ -25,19 +25,18 @@ func (suite *DbTestSuite) TestSaveTxs() {
 				Error:       true,
 				Fee:         500,
 				Logs:        []string{"logs"},
-				Messages:    "{}",
 				PartitionId: 100,
 			},
 			shouldErr: true,
 		},
 		{
 			name:        "insert the existed data",
-			data:        dbtypes.NewTxRow("hash", 1, true, 500, []string{"logs"}, "{}"),
+			data:        dbtypes.NewTxRow("hash", 1, true, 500, []string{"logs"}),
 			expectedLen: 1,
 		},
 		{
 			name:        "insert the new data",
-			data:        dbtypes.NewTxRow("hash2", 2, true, 500, []string{"logs"}, "{}"),
+			data:        dbtypes.NewTxRow("hash2", 2, true, 500, []string{"logs"}),
 			expectedLen: 2,
 		},
 	}
@@ -66,7 +65,7 @@ func (suite *DbTestSuite) TestPruneTxsBeforeSlot() {
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveTxs([]dbtypes.TxRow{
-		dbtypes.NewTxRow("hash", 1, true, 500, []string{"logs"}, "{}"),
+		dbtypes.NewTxRow("hash", 1, true, 500, []string{"logs"}),
 	})
 	suite.Require().NoError(err)
 
