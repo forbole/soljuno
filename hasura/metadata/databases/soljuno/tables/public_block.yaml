@@ -2,15 +2,6 @@ table:
   name: block
   schema: public
 array_relationships:
-- name: validator
-  using:
-    manual_configuration:
-      remote_table:
-        schema: public
-        name: validator
-      column_mapping:
-        proposer: node
-array_relationships:
 - name: transactions
   using:
     manual_configuration:
@@ -19,6 +10,14 @@ array_relationships:
         name: transaction
       column_mapping:
         slot: slot
+- name: validator
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: validator
+      column_mapping:
+        proposer: node
 select_permissions:
 - permission:
     allow_aggregations: true
