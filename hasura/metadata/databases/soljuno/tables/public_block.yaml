@@ -9,7 +9,7 @@ object_relationships:
         schema: public
         name: validator
       column_mapping:
-        proposer: address
+        proposer: node
 array_relationships:
 - name: transactions
   using:
