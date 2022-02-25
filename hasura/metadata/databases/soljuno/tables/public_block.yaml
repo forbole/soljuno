@@ -1,7 +1,7 @@
 table:
   name: block
   schema: public
-object_relationships:
+array_relationships:
 - name: validator
   using:
     manual_configuration:
