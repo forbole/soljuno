@@ -1,6 +1,15 @@
 table:
   name: block
   schema: public
+object_relationships:
+- name: validator
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: validator
+      column_mapping:
+        proposer: address
 array_relationships:
 - name: transactions
   using:
