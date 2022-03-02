@@ -24,7 +24,7 @@ CREATE TABLE transaction
 ) PARTITION BY LIST(partition_id);
 ALTER TABLE transaction ADD UNIQUE (hash, partition_id);
 CREATE INDEX transaction_hash_index ON transaction (hash);
-CREATE INDEX transaction_slot_index ON transaction (slot);
+CREATE INDEX transaction_slot_index ON transaction (slot DESC);
 
 
 CREATE TABLE message
