@@ -6,25 +6,34 @@ func (db *Database) InsertBatch(insertStmt string, conflictStmt string, params [
 	start := 0
 	maxParamsAmount := MAX_PARAMS_LENGTH / paramsNumber * paramsNumber
 	sliceNumber := len(params) / maxParamsAmount
+	errChs := make(chan error)
 
-	for i := 0; i < sliceNumber; i++ {
+	fmt.Println(len(params))
+
+	for i := 0; i <= sliceNumber; i++ {
 		paramsStmt := ""
-		for j := 0; j < maxParamsAmount; j += paramsNumber {
+		var amount = maxParamsAmount
+		// the last run
+		if i == sliceNumber {
+			amount = len(params) - start
+		}
+
+		for j := 0; j < amount; j += paramsNumber {
 			paramsStmt += getParamsStmt(j, paramsNumber)
 		}
-		err := db.insertWithParams(insertStmt, paramsStmt, conflictStmt, params[start:start+maxParamsAmount])
+		go func(start int, end int) {
+			errChs <- db.insertWithParams(insertStmt, paramsStmt, conflictStmt, params[start:end])
+		}(start, start+amount)
+		start += amount
+	}
+
+	for i := 0; i <= sliceNumber; i++ {
+		err := <-errChs
 		if err != nil {
 			return err
 		}
-		start += maxParamsAmount
 	}
-
-	// store the rest of params
-	paramsStmt := ""
-	for curr := 0; curr < len(params)-start; curr += paramsNumber {
-		paramsStmt += getParamsStmt(curr, paramsNumber)
-	}
-	return db.insertWithParams(insertStmt, paramsStmt, conflictStmt, params[start:])
+	return nil
 }
 
 func (db *Database) insertWithParams(insertStmt string, paramsStmt string, conflictStmt string, params []interface{}) error {
