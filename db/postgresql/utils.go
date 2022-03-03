@@ -8,8 +8,6 @@ func (db *Database) InsertBatch(insertStmt string, conflictStmt string, params [
 	sliceNumber := len(params) / maxParamsAmount
 	errChs := make(chan error)
 
-	fmt.Println(len(params))
-
 	for i := 0; i <= sliceNumber; i++ {
 		paramsStmt := ""
 		var amount = maxParamsAmount
