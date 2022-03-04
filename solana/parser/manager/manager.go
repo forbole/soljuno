@@ -36,10 +36,18 @@ func (m *manager) Register(programID string, parser parser.ProgramParser) {
 }
 
 func (m manager) Parse(accounts []string, programID string, base58Data string) types.ParsedInstruction {
+	defer func() {
+		r := recover()
+		if r != nil {
+			panic(fmt.Errorf("panic on parse program %v with data: %v", programID, base58Data))
+		}
+	}()
+
 	parser, ok := m.programs[programID]
 	if !ok {
 		return types.NewParsedInstruction("unknown", nil)
 	}
+
 	if len(base58Data) != 0 {
 		bz, err := base58.Decode(base58Data)
 		if err != nil {
