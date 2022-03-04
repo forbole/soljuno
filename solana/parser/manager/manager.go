@@ -1,8 +1,6 @@
 package manager
 
 import (
-	"fmt"
-
 	"github.com/forbole/soljuno/solana/parser"
 	associatedTokenAccount "github.com/forbole/soljuno/solana/program/associated-token-account"
 	"github.com/forbole/soljuno/solana/program/bpfloader"
@@ -36,10 +34,11 @@ func (m *manager) Register(programID string, parser parser.ProgramParser) {
 }
 
 func (m manager) Parse(accounts []string, programID string, base58Data string) types.ParsedInstruction {
+	var parsed types.ParsedInstruction
 	defer func() {
 		r := recover()
 		if r != nil {
-			panic(fmt.Errorf("panic on parse program %v with data: %v", programID, base58Data))
+			parsed = types.NewParsedInstruction("unknown", nil)
 		}
 	}()
 
@@ -51,12 +50,13 @@ func (m manager) Parse(accounts []string, programID string, base58Data string) t
 	if len(base58Data) != 0 {
 		bz, err := base58.Decode(base58Data)
 		if err != nil {
-			fmt.Println(err)
 			return types.NewParsedInstruction("unknown", nil)
 		}
 		return parser.Parse(accounts, bz)
 	}
-	return parser.Parse(accounts, []byte{})
+
+	parsed = parser.Parse(accounts, []byte{})
+	return parsed
 }
 
 func NewDefaultManager() ParserManager {
