@@ -61,16 +61,13 @@ func (w Worker) Start() {
 		stopSignal = <-w.stopChannel
 	}()
 
-	for i := range w.queue {
-		start := time.Now()
-		if err := w.process(i); err != nil {
-			// re-enqueue any failed job
-			// TODO: Implement exponential backoff or max retries for a block slot.
-			w.logger.Error("re-enqueueing failed block", "slot", i, "err", err)
-			w.queue <- i
+	for {
+		// check the stop signal
+		if stopSignal {
+			w.logger.Debug("closed worker", "number", w.index)
+			w.stopChannel <- true
+			return
 		}
-		logging.WorkerSlot.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(i))
-		w.logger.Debug("processed block time", "slot", i, "seconds", time.Since(start).Seconds())
 
 		// wait if the pool is full
 		wg := sync.WaitGroup{}
@@ -83,12 +80,27 @@ func (w Worker) Start() {
 		}()
 		wg.Wait()
 
-		if stopSignal {
-			w.logger.Debug("closed worker", "number", w.index)
-			w.stopChannel <- true
-			return
+		// work on the block
+		timeout := time.After(5 * time.Second)
+		select {
+		case slot := <-w.queue:
+			w.work(slot)
+		case <-timeout:
+			continue
 		}
 	}
+}
+
+func (w Worker) work(slot uint64) {
+	start := time.Now()
+	if err := w.process(slot); err != nil {
+		// re-enqueue any failed job
+		// TODO: Implement exponential backoff or max retries for a block slot.
+		w.logger.Error("re-enqueueing failed block", "slot", slot, "err", err)
+		w.queue <- slot
+	}
+	logging.WorkerSlot.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(slot))
+	w.logger.Debug("processed block time", "slot", slot, "seconds", time.Since(start).Seconds())
 }
 
 // process defines the job consumer workflow. It will fetch a block for a given
