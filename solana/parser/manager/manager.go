@@ -1,6 +1,8 @@
 package manager
 
 import (
+	"fmt"
+
 	"github.com/forbole/soljuno/solana/parser"
 	associatedTokenAccount "github.com/forbole/soljuno/solana/program/associated-token-account"
 	"github.com/forbole/soljuno/solana/program/bpfloader"
@@ -12,6 +14,7 @@ import (
 	"github.com/forbole/soljuno/solana/program/vote"
 	"github.com/forbole/soljuno/solana/types"
 	"github.com/mr-tron/base58"
+	"github.com/rs/zerolog/log"
 )
 
 type ParserManager interface {
@@ -38,6 +41,7 @@ func (m manager) Parse(accounts []string, programID string, base58Data string) t
 	defer func() {
 		r := recover()
 		if r != nil {
+			log.Err(fmt.Errorf("failed to parsed message on program %v with data: %v", programID, base58Data)).Send()
 			parsed = types.NewParsedInstruction("unknown", nil)
 		}
 	}()
