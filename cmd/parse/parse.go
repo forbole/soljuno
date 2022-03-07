@@ -169,6 +169,10 @@ func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) 
 	signal.Notify(sigCh, syscall.SIGINT)
 
 	go func() {
+		defer ctx.Database.Close()
+		defer waitGroup.Done()
+		defer ctx.Logger.Info("stopped the program...")
+
 		sig := <-sigCh
 		ctx.Logger.Info("caught signal; shutting down...", "signal", sig.String())
 
@@ -185,6 +189,7 @@ func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) 
 
 		// wait if the pool is not empty
 		wg := sync.WaitGroup{}
+		wg.Add(1)
 		go func() {
 			for !ctx.Pool.IsEmpty() {
 				time.Sleep(time.Second)
@@ -198,8 +203,7 @@ func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) 
 		if err != nil {
 			ctx.Logger.Info("failed to update start slot")
 		}
-		defer ctx.Database.Close()
-		defer waitGroup.Done()
+
 	}()
 }
 
