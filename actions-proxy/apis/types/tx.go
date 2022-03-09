@@ -14,17 +14,17 @@ type TxArgs struct {
 }
 
 type TxResponse struct {
-	Hash     string        `json:"hash"`
-	Slot     uint64        `json:"slot"`
-	Error    bool          `json:"error"`
-	Fee      uint64        `json:"fee"`
-	Logs     []string      `json:"logs"`
-	Messages []MsgResponse `json:"messages"`
+	Hash         string                `json:"hash"`
+	Slot         uint64                `json:"slot"`
+	Error        bool                  `json:"error"`
+	Fee          uint64                `json:"fee"`
+	Logs         []string              `json:"logs"`
+	Instructions []InstructionResponse `json:"instructions"`
 
 	Accounts []string `json:"accounts"`
 }
 
-type MsgResponse struct {
+type InstructionResponse struct {
 	Index            int        `json:"index"`
 	InnerIndex       int        `json:"inner_index"`
 	Program          string     `json:"program"`
@@ -46,9 +46,9 @@ func NewTxResponse(tx types.Tx) TxResponse {
 	res.Fee = tx.Fee
 	res.Logs = tx.Logs
 	res.Accounts = tx.Accounts
-	res.Messages = make([]MsgResponse, len(tx.Instructions))
+	res.Instructions = make([]InstructionResponse, len(tx.Instructions))
 	for i, msg := range tx.Instructions {
-		res.Messages[i] = MsgResponse{
+		res.Instructions[i] = InstructionResponse{
 			msg.Index,
 			msg.InnerIndex,
 			msg.Program,

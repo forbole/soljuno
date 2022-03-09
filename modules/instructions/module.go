@@ -40,8 +40,8 @@ func (m *Module) HandleBlock(block types.Block) error {
 	return m.createPartition(block.Slot)
 }
 
-// HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(msg types.Instruction, tx types.Tx) error {
+// HandleInstruction implements modules.MessageModule
+func (m *Module) HandleInstruction(msg types.Instruction, tx types.Tx) error {
 	m.buffer <- dbtypes.NewMsgRowFromMessage(msg)
 	return nil
 }

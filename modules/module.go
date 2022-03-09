@@ -87,11 +87,11 @@ type TransactionModule interface {
 	HandleTx(tx types.Tx) error
 }
 
-type MessageModule interface {
-	// HandleMsg handles a single message.
-	// For convenience of use, the index of the message inside the transaction and the transaction itself
+type InstructionModule interface {
+	// HandleInstruction handles a single instruction.
+	// For convenience of use, the index of the instruction inside the transaction and the transaction itself
 	// are passed as well.
 	// NOTE. The returned error will be logged using the logging.LogMsgError method. All other modules' handlers
 	// will still be called.
-	HandleMsg(msg types.Instruction, tx types.Tx) error
+	HandleInstruction(msg types.Instruction, tx types.Tx) error
 }
