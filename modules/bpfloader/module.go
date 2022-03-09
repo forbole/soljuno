@@ -27,7 +27,7 @@ func (m *Module) Name() string {
 }
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
+func (m *Module) HandleMsg(msg types.Instruction, tx types.Tx) error {
 	if !tx.Successful() {
 		return nil
 	}

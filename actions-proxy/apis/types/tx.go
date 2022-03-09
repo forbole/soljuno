@@ -46,8 +46,8 @@ func NewTxResponse(tx types.Tx) TxResponse {
 	res.Fee = tx.Fee
 	res.Logs = tx.Logs
 	res.Accounts = tx.Accounts
-	res.Messages = make([]MsgResponse, len(tx.Messages))
-	for i, msg := range tx.Messages {
+	res.Messages = make([]MsgResponse, len(tx.Instructions))
+	for i, msg := range tx.Instructions {
 		res.Messages[i] = MsgResponse{
 			msg.Index,
 			msg.InnerIndex,

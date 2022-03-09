@@ -17,7 +17,7 @@ func (m *Module) RunAsyncOperations() {
 func (m *Module) consumeMsgs() {
 	msgs := m.getMsgRows()
 	_, err := m.pool.DoAsync(func() error {
-		err := m.db.SaveMessages(msgs)
+		err := m.db.SaveInstructions(msgs)
 		m.handleAsyncError(err, msgs)
 		return nil
 	})
@@ -25,8 +25,8 @@ func (m *Module) consumeMsgs() {
 	m.handleAsyncError(err, msgs)
 }
 
-func (m *Module) getMsgRows() []dbtypes.MsgRow {
-	var msgs []dbtypes.MsgRow
+func (m *Module) getMsgRows() []dbtypes.InstructionRow {
+	var msgs []dbtypes.InstructionRow
 	timeout := time.After(5 * time.Second)
 	for {
 		select {
@@ -38,7 +38,7 @@ func (m *Module) getMsgRows() []dbtypes.MsgRow {
 	}
 }
 
-func (m *Module) handleAsyncError(err error, msgs []dbtypes.MsgRow) {
+func (m *Module) handleAsyncError(err error, msgs []dbtypes.InstructionRow) {
 	if err != nil {
 		// re-enqueueing failed messages in the same goroutine
 		log.Error().Str("module", m.Name()).Err(err).Send()

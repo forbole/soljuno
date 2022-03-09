@@ -93,5 +93,5 @@ type MessageModule interface {
 	// are passed as well.
 	// NOTE. The returned error will be logged using the logging.LogMsgError method. All other modules' handlers
 	// will still be called.
-	HandleMsg(msg types.Message, tx types.Tx) error
+	HandleMsg(msg types.Instruction, tx types.Tx) error
 }

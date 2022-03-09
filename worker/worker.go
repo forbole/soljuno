@@ -209,7 +209,7 @@ func (w Worker) handleTx(tx types.Tx) error {
 
 // handleMessages handles all the messages events in a transaction
 func (w Worker) handleMessages(tx types.Tx) error {
-	for _, msg := range tx.Messages {
+	for _, msg := range tx.Instructions {
 		msg := msg
 		err := w.handleMessage(tx, msg)
 		if err != nil {
@@ -219,7 +219,7 @@ func (w Worker) handleMessages(tx types.Tx) error {
 	return nil
 }
 
-func (w Worker) handleMessage(tx types.Tx, msg types.Message) error {
+func (w Worker) handleMessage(tx types.Tx, msg types.Instruction) error {
 	for _, module := range w.modules {
 		if messageModule, ok := module.(modules.MessageModule); ok {
 			err := messageModule.HandleMsg(msg, tx)

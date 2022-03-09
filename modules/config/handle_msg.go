@@ -14,7 +14,7 @@ import (
 )
 
 // HandleMsg allows to handle different messages types for the config module
-func HandleMsg(msg types.Message, tx types.Tx, db db.ConfigDb, client client.ClientProxy) error {
+func HandleMsg(msg types.Instruction, tx types.Tx, db db.ConfigDb, client client.ClientProxy) error {
 	if len(msg.InvolvedAccounts) != 2 {
 		return nil
 	}

@@ -2,7 +2,7 @@ package types
 
 import "github.com/forbole/soljuno/types"
 
-type MsgRow struct {
+type InstructionRow struct {
 	TxHash           string      `db:"transaction_hash"`
 	Slot             uint64      `db:"slot"`
 	Index            int         `db:"index"`
@@ -15,10 +15,10 @@ type MsgRow struct {
 	PartitionId      int         `db:"partition_id"`
 }
 
-func NewMsgRow(
+func NewInstructionRow(
 	txHash string, slot uint64, index int, innerIndex int, program string, involvedAccounts []string, rawData string, typ string, value interface{},
-) MsgRow {
-	return MsgRow{
+) InstructionRow {
+	return InstructionRow{
 		TxHash:           txHash,
 		Slot:             slot,
 		Index:            index,
@@ -33,9 +33,9 @@ func NewMsgRow(
 }
 
 func NewMsgRowFromMessage(
-	msg types.Message,
-) MsgRow {
-	return NewMsgRow(
+	msg types.Instruction,
+) InstructionRow {
+	return NewInstructionRow(
 		msg.TxHash,
 		msg.Slot,
 		msg.Index,

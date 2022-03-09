@@ -8,10 +8,10 @@ import (
 	"github.com/lib/pq"
 )
 
-var _ db.MsgDb = &Database{}
+var _ db.InstructionDb = &Database{}
 
-// SaveMessages implements db.MsgDb
-func (db *Database) SaveMessages(msgs []dbtypes.MsgRow) error {
+// SaveInstructions implements db.MsgDb
+func (db *Database) SaveInstructions(msgs []dbtypes.InstructionRow) error {
 	if len(msgs) == 0 {
 		return nil
 	}
@@ -45,15 +45,15 @@ func (db *Database) SaveMessages(msgs []dbtypes.MsgRow) error {
 	)
 }
 
-// CreateMsgPartition implements db.MsgDb
-func (db *Database) CreateMsgPartition(id int) error {
+// CreateInstructionsPartition implements db.MsgDb
+func (db *Database) CreateInstructionsPartition(id int) error {
 	return db.createPartition("message", id)
 }
 
-// PruneMsgsBeforeSlot implements db.MsgDb
-func (db *Database) PruneMsgsBeforeSlot(slot uint64) error {
+// PruneInstructionsBeforeSlot implements db.MsgDb
+func (db *Database) PruneInstructionsBeforeSlot(slot uint64) error {
 	for {
-		name, err := db.getOldestMsgPartitionBeforeSlot(slot)
+		name, err := db.getOldestInstructionsPartitionBeforeSlot(slot)
 		if err != nil {
 			return err
 		}
@@ -68,8 +68,8 @@ func (db *Database) PruneMsgsBeforeSlot(slot uint64) error {
 	}
 }
 
-// getOldestMsgPartitionBeforeSlot allows to get the oldest msg partition
-func (db *Database) getOldestMsgPartitionBeforeSlot(slot uint64) (string, error) {
+// getOldestInstructionsPartitionBeforeSlot allows to get the oldest msg partition
+func (db *Database) getOldestInstructionsPartitionBeforeSlot(slot uint64) (string, error) {
 	stmt := `
 	SELECT tableoid::pg_catalog.regclass FROM message WHERE slot <= $1 ORDER BY slot ASC LIMIT 1;
 	`
