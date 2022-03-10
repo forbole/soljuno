@@ -2,10 +2,16 @@ package system
 
 import (
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/system"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
+)
+
+var (
+	_ modules.Module            = &Module{}
+	_ modules.InstructionModule = &Module{}
 )
 
 type Module struct {

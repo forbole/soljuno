@@ -2,11 +2,14 @@ package config
 
 import (
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/config"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
 )
+
+var _ modules.InstructionModule = &Module{}
 
 type Module struct {
 	db     db.Database

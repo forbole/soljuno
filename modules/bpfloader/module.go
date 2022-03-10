@@ -2,12 +2,15 @@ package bpfloader
 
 import (
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/solana/client"
 	upgradableLoader "github.com/forbole/soljuno/solana/program/bpfloader/upgradeable"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/soljuno/types"
 )
+
+var _ modules.InstructionModule = &Module{}
 
 type Module struct {
 	db     db.Database

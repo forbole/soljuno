@@ -10,8 +10,11 @@ import (
 	"github.com/forbole/soljuno/types/pool"
 )
 
-var _ modules.Module = &Module{}
-var _ pruning.PruningService = &Module{}
+var (
+	_ modules.Module                = &Module{}
+	_ modules.AsyncOperationsModule = &Module{}
+	_ pruning.PruningService        = &Module{}
+)
 
 type Module struct {
 	db     db.TxDb

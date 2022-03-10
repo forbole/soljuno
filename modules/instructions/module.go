@@ -11,8 +11,12 @@ import (
 	"github.com/forbole/soljuno/types/pool"
 )
 
-var _ modules.Module = &Module{}
-var _ pruning.PruningService = &Module{}
+var (
+	_ modules.Module                = &Module{}
+	_ modules.InstructionModule     = &Module{}
+	_ modules.AsyncOperationsModule = &Module{}
+	_ pruning.PruningService        = &Module{}
+)
 
 // Module represents the module allowing to store instructions properly inside a dedicated table
 type Module struct {
