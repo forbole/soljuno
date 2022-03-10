@@ -37,7 +37,7 @@ func (m *Module) Name() string {
 	return "txs"
 }
 
-// HandleBlock implements modules.MessageModule
+// HandleBlock implements modules.InstructionModule
 func (m *Module) HandleBlock(block types.Block) error {
 	err := m.createPartition(block.Slot)
 	if err != nil {

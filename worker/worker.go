@@ -221,8 +221,8 @@ func (w Worker) handleInstructions(tx types.Tx) error {
 
 func (w Worker) handleInstruction(tx types.Tx, instruction types.Instruction) error {
 	for _, module := range w.modules {
-		if messageModule, ok := module.(modules.InstructionModule); ok {
-			err := messageModule.HandleInstruction(instruction, tx)
+		if InstructionModule, ok := module.(modules.InstructionModule); ok {
+			err := InstructionModule.HandleInstruction(instruction, tx)
 			if err != nil {
 				return err
 			}

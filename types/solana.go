@@ -140,7 +140,7 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 		accounts = getAccounts(accountKeys, instruction.Accounts)
 		programID := accountKeys[instruction.ProgramIDIndex]
 		parsed := parserManager.Parse(accounts, programID, instruction.Data)
-		instructions = append(instructions, NewMessage(hash, slot, i, innerIndex, accountKeys[instruction.ProgramIDIndex], accounts, instruction.Data, parsed))
+		instructions = append(instructions, NewInstruction(hash, slot, i, innerIndex, accountKeys[instruction.ProgramIDIndex], accounts, instruction.Data, parsed))
 		innerIndex++
 
 		if inner, ok := innerInstructionMap[uint8(i)]; ok {
@@ -148,7 +148,7 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 				accounts = getAccounts(accountKeys, innerInstruction.Accounts)
 				programID := accountKeys[innerInstruction.ProgramIDIndex]
 				parsed := parserManager.Parse(accounts, programID, innerInstruction.Data)
-				instructions = append(instructions, NewMessage(hash, slot, i, innerIndex, accountKeys[innerInstruction.ProgramIDIndex], accounts, innerInstruction.Data, parsed))
+				instructions = append(instructions, NewInstruction(hash, slot, i, innerIndex, accountKeys[innerInstruction.ProgramIDIndex], accounts, innerInstruction.Data, parsed))
 				innerIndex++
 			}
 		}
@@ -179,7 +179,7 @@ type Instruction struct {
 	Parsed           types.ParsedInstruction
 }
 
-func NewMessage(
+func NewInstruction(
 	hash string,
 	slot uint64,
 	index int,
