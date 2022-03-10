@@ -71,8 +71,8 @@ type InstructionDb interface {
 	// An error is returned if the operation fails.
 	SaveInstructions(msg []dbtypes.InstructionRow) error
 
-	// CreateInstructionsPartition allows to create a instruction partition
-	CreateInstructionsPartition(Id int) error
+	// CreateInstructionPartition allows to create a instruction partition
+	CreateInstructionPartition(Id int) error
 
 	// PruneInstructionsBeforeSlot allows to prune the msgs before the given slot
 	PruneInstructionsBeforeSlot(slot uint64) error

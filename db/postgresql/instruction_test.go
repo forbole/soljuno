@@ -3,7 +3,7 @@ package postgresql_test
 import dbtypes "github.com/forbole/soljuno/db/types"
 
 func (suite *DbTestSuite) TestSaveInstructions() {
-	err := suite.database.CreateInstructionsPartition(0)
+	err := suite.database.CreateInstructionPartition(0)
 	suite.Require().NoError(err)
 
 	testCases := []struct {
@@ -65,7 +65,7 @@ func (suite *DbTestSuite) TestSaveInstructions() {
 }
 
 func (suite *DbTestSuite) TestPruneInstructionsBeforeSlot() {
-	err := suite.database.CreateInstructionsPartition(0)
+	err := suite.database.CreateInstructionPartition(0)
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveInstructions([]dbtypes.InstructionRow{

@@ -45,7 +45,7 @@ func (db *Database) CreateTxPartition(Id int) error {
 	return db.createPartition("transaction", Id)
 }
 
-// PruneMsgsBeforeSlot implements db.MsgDb
+// PruneTxsBeforeSlot implements db.TxDb
 func (db *Database) PruneTxsBeforeSlot(slot uint64) error {
 	for {
 		name, err := db.getOldestTxPartitionBeforeSlot(slot)

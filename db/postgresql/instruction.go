@@ -10,7 +10,7 @@ import (
 
 var _ db.InstructionDb = &Database{}
 
-// SaveInstructions implements db.MsgDb
+// SaveInstructions implements db.InstructionDb
 func (db *Database) SaveInstructions(instructions []dbtypes.InstructionRow) error {
 	if len(instructions) == 0 {
 		return nil
@@ -45,12 +45,12 @@ func (db *Database) SaveInstructions(instructions []dbtypes.InstructionRow) erro
 	)
 }
 
-// CreateInstructionsPartition implements db.MsgDb
-func (db *Database) CreateInstructionsPartition(id int) error {
+// CreateInstructionsPartition implements db.InstructionDb
+func (db *Database) CreateInstructionPartition(id int) error {
 	return db.createPartition("instruction", id)
 }
 
-// PruneInstructionsBeforeSlot implements db.MsgDb
+// PruneInstructionsBeforeSlot implements db.InstructionDb
 func (db *Database) PruneInstructionsBeforeSlot(slot uint64) error {
 	for {
 		name, err := db.getOldestInstructionsPartitionBeforeSlot(slot)
