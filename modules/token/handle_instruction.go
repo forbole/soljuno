@@ -9,7 +9,7 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-// HandleInstruction allows to handle different messages types for the token module
+// HandleInstruction allows to handle different instructions types for the token module
 func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	switch instruction.Parsed.Type {
 	case "initializeMint":

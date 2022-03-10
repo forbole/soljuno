@@ -207,7 +207,7 @@ func (w Worker) handleTx(tx types.Tx) error {
 	return w.handleInstructions(tx)
 }
 
-// handleInstructions handles all the messages events in a transaction
+// handleInstructions handles all the instructions events in a transaction
 func (w Worker) handleInstructions(tx types.Tx) error {
 	for _, instruction := range tx.Instructions {
 		instruction := instruction

@@ -200,27 +200,3 @@ func NewMessage(
 		Parsed:           parsed,
 	}
 }
-
-type SanitizedMessage struct {
-	Index            int                     `json:"index"`
-	InnerIndex       int                     `json:"inner_index"`
-	Program          string                  `json:"program"`
-	InvolvedAccounts []string                `json:"involved_accounts"`
-	RawData          string                  `json:"raw_data"`
-	Parsed           types.ParsedInstruction `json:"parsed"`
-}
-
-func NewSanitizedMessages(instructions []Instruction) []SanitizedMessage {
-	sanitizedMsgs := make([]SanitizedMessage, len(instructions))
-	for i, instruction := range instructions {
-		sanitizedMsgs[i] = SanitizedMessage{
-			Index:            instruction.Index,
-			InnerIndex:       instruction.InnerIndex,
-			Program:          instruction.Program,
-			InvolvedAccounts: instruction.InvolvedAccounts,
-			RawData:          instruction.RawData,
-			Parsed:           instruction.Parsed,
-		}
-	}
-	return sanitizedMsgs
-}

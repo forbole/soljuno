@@ -9,7 +9,7 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-// HandleInstruction allows to handle different messages types for the vote module
+// HandleInstruction allows to handle different instructions types for the vote module
 func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	switch instruction.Parsed.Type {
 	case "initialize":
