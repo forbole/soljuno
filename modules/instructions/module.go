@@ -54,7 +54,7 @@ func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) e
 func (m *Module) createPartition(slot uint64) error {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
-	err := m.db.CreateInstructionsPartition(int(slot / 1000))
+	err := m.db.CreateInstructionPartition(int(slot / 1000))
 	if err != nil {
 		return err
 	}
