@@ -204,14 +204,14 @@ func (w Worker) handleTx(tx types.Tx) error {
 			}
 		}
 	}
-	return w.handleMessages(tx)
+	return w.handleInstructions(tx)
 }
 
-// handleMessages handles all the messages events in a transaction
-func (w Worker) handleMessages(tx types.Tx) error {
-	for _, msg := range tx.Instructions {
-		msg := msg
-		err := w.handleMessage(tx, msg)
+// handleInstructions handles all the messages events in a transaction
+func (w Worker) handleInstructions(tx types.Tx) error {
+	for _, instruction := range tx.Instructions {
+		instruction := instruction
+		err := w.handleInstruction(tx, instruction)
 		if err != nil {
 			return err
 		}
@@ -219,10 +219,10 @@ func (w Worker) handleMessages(tx types.Tx) error {
 	return nil
 }
 
-func (w Worker) handleMessage(tx types.Tx, msg types.Instruction) error {
+func (w Worker) handleInstruction(tx types.Tx, instruction types.Instruction) error {
 	for _, module := range w.modules {
 		if messageModule, ok := module.(modules.InstructionModule); ok {
-			err := messageModule.HandleInstruction(msg, tx)
+			err := messageModule.HandleInstruction(instruction, tx)
 			if err != nil {
 				return err
 			}

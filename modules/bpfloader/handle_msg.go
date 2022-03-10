@@ -9,83 +9,83 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-// HandleMsg allows to handle different messages types for the bpfloader module
-func HandleMsg(msg types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
-	switch msg.Parsed.Type {
+// HandleMsg allows to handle different instructions types for the bpfloader module
+func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+	switch instruction.Parsed.Type {
 	case "initializeBuffer":
-		return handleMsgInitializeBuffer(msg, tx, db, client)
+		return handleMsgInitializeBuffer(instruction, tx, db, client)
 	case "deployWithMaxDataLen":
-		return handleMsgDeployWithMaxDataLen(msg, tx, db, client)
+		return handleMsgDeployWithMaxDataLen(instruction, tx, db, client)
 	case "upgrade":
-		return handleMsgUpgrade(msg, tx, db, client)
+		return handleMsgUpgrade(instruction, tx, db, client)
 	case "setAuthority":
-		return handleMsgSetAuthority(msg, tx, db, client)
+		return handleMsgSetAuthority(instruction, tx, db, client)
 	case "close":
-		return handleMsgClose(msg, tx, db, client)
+		return handleMsgClose(instruction, tx, db, client)
 	}
 	return nil
 }
 
 // handleMsgInitializeBuffer handles a MsgInitializeBuffer
-func handleMsgInitializeBuffer(msg types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Value.(upgradableLoader.ParsedInitializeBuffer)
+func handleMsgInitializeBuffer(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+	parsed, ok := instruction.Parsed.Value.(upgradableLoader.ParsedInitializeBuffer)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "initializeBuffer", msg.Parsed.Type)
+		return fmt.Errorf("instruction does not match %s type: %s", "initializeBuffer", instruction.Parsed.Type)
 
 	}
-	return updateBufferAccount(instruction.Account, tx.Slot, db, client)
+	return updateBufferAccount(parsed.Account, tx.Slot, db, client)
 }
 
 // handleMsgDeployWithMaxDataLen handles a MsgDeployWithMaxDataLen
-func handleMsgDeployWithMaxDataLen(msg types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Value.(upgradableLoader.ParsedDeployWithMaxDataLen)
+func handleMsgDeployWithMaxDataLen(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+	parsed, ok := instruction.Parsed.Value.(upgradableLoader.ParsedDeployWithMaxDataLen)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "deployWithMaxDataLen", msg.Parsed.Type)
+		return fmt.Errorf("instruction does not match %s type: %s", "deployWithMaxDataLen", instruction.Parsed.Type)
 
 	}
-	if err := updateBufferAccount(instruction.BufferAccount, tx.Slot, db, client); err != nil {
+	if err := updateBufferAccount(parsed.BufferAccount, tx.Slot, db, client); err != nil {
 		return err
 	}
-	if err := updateProgramAccount(instruction.ProgramAccount, tx.Slot, db, client); err != nil {
+	if err := updateProgramAccount(parsed.ProgramAccount, tx.Slot, db, client); err != nil {
 		return err
 	}
-	return updateProgramDataAccount(instruction.ProgramDataAccount, tx.Slot, db, client)
+	return updateProgramDataAccount(parsed.ProgramDataAccount, tx.Slot, db, client)
 }
 
 // handleMsgUpgrade handles a MsgUpgrade
-func handleMsgUpgrade(msg types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Value.(upgradableLoader.ParsedUpgrade)
+func handleMsgUpgrade(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+	parsed, ok := instruction.Parsed.Value.(upgradableLoader.ParsedUpgrade)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "upgrade", msg.Parsed.Type)
+		return fmt.Errorf("instruction does not match %s type: %s", "upgrade", instruction.Parsed.Type)
 
 	}
-	if err := updateBufferAccount(instruction.BufferAccount, tx.Slot, db, client); err != nil {
+	if err := updateBufferAccount(parsed.BufferAccount, tx.Slot, db, client); err != nil {
 		return err
 	}
-	if err := updateProgramAccount(instruction.ProgramAccount, tx.Slot, db, client); err != nil {
+	if err := updateProgramAccount(parsed.ProgramAccount, tx.Slot, db, client); err != nil {
 		return err
 	}
-	return updateProgramDataAccount(instruction.ProgramDataAccount, tx.Slot, db, client)
+	return updateProgramDataAccount(parsed.ProgramDataAccount, tx.Slot, db, client)
 }
 
 // handleMsgSetAuthority handles a MsgSetAuthority
-func handleMsgSetAuthority(msg types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Value.(upgradableLoader.ParsedSetAuthority)
+func handleMsgSetAuthority(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+	parsed, ok := instruction.Parsed.Value.(upgradableLoader.ParsedSetAuthority)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "setAuthority", msg.Parsed.Type)
+		return fmt.Errorf("instruction does not match %s type: %s", "setAuthority", instruction.Parsed.Type)
 	}
-	if err := updateBufferAccount(instruction.Account, tx.Slot, db, client); err != nil {
+	if err := updateBufferAccount(parsed.Account, tx.Slot, db, client); err != nil {
 		return err
 	}
-	return updateProgramDataAccount(instruction.Account, tx.Slot, db, client)
+	return updateProgramDataAccount(parsed.Account, tx.Slot, db, client)
 }
 
 // handleMsgClose handles a MsgClose
-func handleMsgClose(msg types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
-	instruction, ok := msg.Parsed.Value.(upgradableLoader.ParsedClose)
+func handleMsgClose(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+	parsed, ok := instruction.Parsed.Value.(upgradableLoader.ParsedClose)
 	if !ok {
-		return fmt.Errorf("instruction does not match %s type: %s", "close", msg.Parsed.Type)
+		return fmt.Errorf("instruction does not match %s type: %s", "close", instruction.Parsed.Type)
 
 	}
-	return updateProgramDataAccount(instruction.Account, tx.Slot, db, client)
+	return updateProgramDataAccount(parsed.Account, tx.Slot, db, client)
 }

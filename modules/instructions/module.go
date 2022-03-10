@@ -14,7 +14,7 @@ import (
 var _ modules.Module = &Module{}
 var _ pruning.PruningService = &Module{}
 
-// Module represents the module allowing to store messages properly inside a dedicated table
+// Module represents the module allowing to store instructions properly inside a dedicated table
 type Module struct {
 	db     db.InstructionDb
 	buffer chan dbtypes.InstructionRow
@@ -40,9 +40,9 @@ func (m *Module) HandleBlock(block types.Block) error {
 	return m.createPartition(block.Slot)
 }
 
-// HandleInstruction implements modules.MessageModule
-func (m *Module) HandleInstruction(msg types.Instruction, tx types.Tx) error {
-	m.buffer <- dbtypes.NewMsgRowFromMessage(msg)
+// HandleInstruction implements modules.InstructionModule
+func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) error {
+	m.buffer <- dbtypes.NewInstructionRowFromInstruction(instruction)
 	return nil
 }
 

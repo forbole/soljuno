@@ -26,25 +26,25 @@ func (m *Module) consumeMsgs() {
 }
 
 func (m *Module) getMsgRows() []dbtypes.InstructionRow {
-	var msgs []dbtypes.InstructionRow
+	var instructions []dbtypes.InstructionRow
 	timeout := time.After(5 * time.Second)
 	for {
 		select {
-		case msg := <-m.buffer:
-			msgs = append(msgs, msg)
+		case instruction := <-m.buffer:
+			instructions = append(instructions, instruction)
 		case <-timeout:
-			return msgs
+			return instructions
 		}
 	}
 }
 
-func (m *Module) handleAsyncError(err error, msgs []dbtypes.InstructionRow) {
+func (m *Module) handleAsyncError(err error, instructions []dbtypes.InstructionRow) {
 	if err != nil {
-		// re-enqueueing failed messages in the same goroutine
+		// re-enqueueing failed instructions in the same goroutine
 		log.Error().Str("module", m.Name()).Err(err).Send()
-		log.Info().Str("module", m.Name()).Msg("re-enqueueing failed messages")
-		for _, msg := range msgs {
-			m.buffer <- msg
+		log.Info().Str("module", m.Name()).Msg("re-enqueueing failed instructions")
+		for _, instruction := range instructions {
+			m.buffer <- instruction
 		}
 	}
 }

@@ -26,16 +26,16 @@ func (m *Module) Name() string {
 	return "bpfloader"
 }
 
-// HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(msg types.Instruction, tx types.Tx) error {
+// HandleInstruction implements modules.InstructionModule
+func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) error {
 	if !tx.Successful() {
 		return nil
 	}
-	if msg.Program != upgradableLoader.ProgramID {
+	if instruction.Program != upgradableLoader.ProgramID {
 		return nil
 	}
 
-	err := HandleMsg(msg, tx, m.db, m.client)
+	err := HandleInstruction(instruction, tx, m.db, m.client)
 	if err != nil {
 		return err
 	}

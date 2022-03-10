@@ -56,7 +56,7 @@ func (suite *DbTestSuite) TestSaveInstructions() {
 
 				// Verify the data
 				rows := []dbtypes.InstructionRow{}
-				err = suite.database.Sqlx.Select(&rows, "SELECT * FROM message")
+				err = suite.database.Sqlx.Select(&rows, "SELECT * FROM instruction")
 				suite.Require().NoError(err)
 				suite.Require().Len(rows, tc.expectedLen)
 			}
@@ -77,7 +77,7 @@ func (suite *DbTestSuite) TestPruneInstructionsBeforeSlot() {
 	suite.Require().NoError(err)
 
 	rows := []dbtypes.InstructionRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM message")
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM instruction")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 0)
 }

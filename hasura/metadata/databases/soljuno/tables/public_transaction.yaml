@@ -11,12 +11,12 @@ object_relationships:
       column_mapping:
         slot: slot
 array_relationships:
-- name: messages
+- name: instructions
   using:
     manual_configuration:
       remote_table:
         schema: public
-        name: message
+        name: instruction
       column_mapping:
         hash: transaction_hash
         partition_id: partition_id

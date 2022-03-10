@@ -47,16 +47,16 @@ func NewTxResponse(tx types.Tx) TxResponse {
 	res.Logs = tx.Logs
 	res.Accounts = tx.Accounts
 	res.Instructions = make([]InstructionResponse, len(tx.Instructions))
-	for i, msg := range tx.Instructions {
+	for i, instruction := range tx.Instructions {
 		res.Instructions[i] = InstructionResponse{
-			msg.Index,
-			msg.InnerIndex,
-			msg.Program,
-			msg.InvolvedAccounts,
-			msg.RawData,
+			instruction.Index,
+			instruction.InnerIndex,
+			instruction.Program,
+			instruction.InvolvedAccounts,
+			instruction.RawData,
 			ParsedData{
-				msg.Parsed.Type,
-				msg.Parsed.Value,
+				instruction.Parsed.Type,
+				instruction.Parsed.Value,
 			},
 		}
 	}

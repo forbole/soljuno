@@ -134,13 +134,13 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 	}
 
 	instructions := make([]Instruction, 0, len(txResult.Transaction.Message.Instructions)+len(txResult.Meta.InnerInstructions))
-	for i, msg := range rawMsg.Instructions {
+	for i, instruction := range rawMsg.Instructions {
 		var accounts []string
 		innerIndex := 0
-		accounts = getAccounts(accountKeys, msg.Accounts)
-		programID := accountKeys[msg.ProgramIDIndex]
-		parsed := parserManager.Parse(accounts, programID, msg.Data)
-		instructions = append(instructions, NewMessage(hash, slot, i, innerIndex, accountKeys[msg.ProgramIDIndex], accounts, msg.Data, parsed))
+		accounts = getAccounts(accountKeys, instruction.Accounts)
+		programID := accountKeys[instruction.ProgramIDIndex]
+		parsed := parserManager.Parse(accounts, programID, instruction.Data)
+		instructions = append(instructions, NewMessage(hash, slot, i, innerIndex, accountKeys[instruction.ProgramIDIndex], accounts, instruction.Data, parsed))
 		innerIndex++
 
 		if inner, ok := innerInstructionMap[uint8(i)]; ok {
@@ -210,16 +210,16 @@ type SanitizedMessage struct {
 	Parsed           types.ParsedInstruction `json:"parsed"`
 }
 
-func NewSanitizedMessages(msgs []Instruction) []SanitizedMessage {
-	sanitizedMsgs := make([]SanitizedMessage, len(msgs))
-	for i, msg := range msgs {
+func NewSanitizedMessages(instructions []Instruction) []SanitizedMessage {
+	sanitizedMsgs := make([]SanitizedMessage, len(instructions))
+	for i, instruction := range instructions {
 		sanitizedMsgs[i] = SanitizedMessage{
-			Index:            msg.Index,
-			InnerIndex:       msg.InnerIndex,
-			Program:          msg.Program,
-			InvolvedAccounts: msg.InvolvedAccounts,
-			RawData:          msg.RawData,
-			Parsed:           msg.Parsed,
+			Index:            instruction.Index,
+			InnerIndex:       instruction.InnerIndex,
+			Program:          instruction.Program,
+			InvolvedAccounts: instruction.InvolvedAccounts,
+			RawData:          instruction.RawData,
+			Parsed:           instruction.Parsed,
 		}
 	}
 	return sanitizedMsgs

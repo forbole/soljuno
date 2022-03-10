@@ -99,14 +99,14 @@ func (d *defaultLogger) TxError(module modules.Module, tx types.Tx, err error) {
 }
 
 // InstructionError implements Logger
-func (d *defaultLogger) MsgError(module modules.Module, tx types.Tx, msg types.Instruction, err error) {
+func (d *defaultLogger) MsgError(module modules.Module, tx types.Tx, instruction types.Instruction, err error) {
 	d.Error("error while handling message",
 		"err", err,
 		LogKeyModule, module.Name(),
 		LogKeySlot, tx.Slot,
 		LogKeyTxHash, tx.Hash,
-		LogKeyProgram, msg.Program,
-		LogKeyMsgType, msg.Parsed.Type,
+		LogKeyProgram, instruction.Program,
+		LogKeyMsgType, instruction.Parsed.Type,
 	)
 }
 

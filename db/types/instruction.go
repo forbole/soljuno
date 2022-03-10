@@ -32,18 +32,18 @@ func NewInstructionRow(
 	}
 }
 
-func NewMsgRowFromMessage(
-	msg types.Instruction,
+func NewInstructionRowFromInstruction(
+	instruction types.Instruction,
 ) InstructionRow {
 	return NewInstructionRow(
-		msg.TxHash,
-		msg.Slot,
-		msg.Index,
-		msg.InnerIndex,
-		msg.Program,
-		msg.InvolvedAccounts,
-		msg.RawData,
-		msg.Parsed.Type,
-		msg.Parsed.GetValueJSON(),
+		instruction.TxHash,
+		instruction.Slot,
+		instruction.Index,
+		instruction.InnerIndex,
+		instruction.Program,
+		instruction.InvolvedAccounts,
+		instruction.RawData,
+		instruction.Parsed.Type,
+		instruction.Parsed.GetValueJSON(),
 	)
 }
