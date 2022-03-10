@@ -11,8 +11,8 @@ import (
 var _ db.InstructionDb = &Database{}
 
 // SaveInstructions implements db.MsgDb
-func (db *Database) SaveInstructions(msgs []dbtypes.InstructionRow) error {
-	if len(msgs) == 0 {
+func (db *Database) SaveInstructions(instructions []dbtypes.InstructionRow) error {
+	if len(instructions) == 0 {
 		return nil
 	}
 	insertStmt := `INSERT INTO instruction
@@ -21,7 +21,7 @@ func (db *Database) SaveInstructions(msgs []dbtypes.InstructionRow) error {
 
 	var params []interface{}
 	paramsNumber := 10
-	params = make([]interface{}, 0, paramsNumber*len(msgs))
+	params = make([]interface{}, 0, paramsNumber*len(instructions))
 	for _, instruction := range instructions {
 		params = append(
 			params,
