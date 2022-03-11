@@ -88,10 +88,10 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 		{
 			name: "initialize the data",
 			data: []dbtypes.ValidatorStatusRow{
-				{"address", 1, 100, 0, 0, true},
+				{Address: "address", Slot: 1, ActivatedStake: 100, LastVote: 0, RootSlot: 0, Active: true},
 			},
 			expected: []dbtypes.ValidatorStatusRow{
-				{"address", 1, 100, 0, 0, true},
+				{Address: "address", Slot: 1, ActivatedStake: 100, LastVote: 0, RootSlot: 0, Active: true},
 			},
 		},
 	}

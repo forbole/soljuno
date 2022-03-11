@@ -44,10 +44,10 @@ func (db *Database) SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow)
 INSERT INTO validator_status
 	(address, slot, activated_stake, last_vote, root_slot, active) VALUES`
 	var params []interface{}
-	paramsNumber := 5
+	paramsNumber := 6
 	params = make([]interface{}, 0, paramsNumber*len(statuses))
 	for _, status := range statuses {
-		params = append(params, status.Address, status.Slot, status.ActivatedStake, status.LastVote, status.Active)
+		params = append(params, status.Address, status.Slot, status.ActivatedStake, status.LastVote, status.RootSlot, status.Active)
 	}
 	return db.InsertBatch(
 		stmt,
