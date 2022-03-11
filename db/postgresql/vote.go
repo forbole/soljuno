@@ -33,30 +33,28 @@ WHERE validator.slot <= excluded.slot`
 	return err
 }
 
-// SaveValidatorStatus implements the db.VoteDb
-func (db *Database) SaveValidatorStatus(address string, slot uint64, activatedStake uint64, lastVote uint64, rootSlot uint64, active bool) error {
+// SaveValidatorStatuses implements the db.VoteDb
+func (db *Database) SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow) error {
+	// clean the current state
+	if _, err := db.Sqlx.Exec("TRUNCATE validator_status"); err != nil {
+		return err
+	}
+
 	stmt := `
 INSERT INTO validator_status
-	(address, slot, activated_stake, last_vote, root_slot, active)
-VALUES ($1, $2, $3, $4, $5, $6)
-ON CONFLICT (address) DO UPDATE 
-	SET slot = EXCLUDED.slot,
-	    activated_stake = EXCLUDED.activated_stake,
-		last_vote = EXCLUDED.last_vote,
-		root_slot = EXCLUDED.root_slot,
-		active = EXCLUDED.active
-	WHERE validator_status.slot <= EXCLUDED.slot
-		`
-	_, err := db.Sqlx.Exec(
+	(address, slot, activated_stake, last_vote, root_slot, active) VALUES`
+	var params []interface{}
+	paramsNumber := 5
+	params = make([]interface{}, 0, paramsNumber*len(statuses))
+	for _, status := range statuses {
+		params = append(params, status.Address, status.Slot, status.ActivatedStake, status.LastVote, status.Active)
+	}
+	return db.InsertBatch(
 		stmt,
-		address,
-		slot,
-		activatedStake,
-		lastVote,
-		rootSlot,
-		active,
+		"",
+		params,
+		paramsNumber,
 	)
-	return err
 }
 
 // GetEpochProducedBlocks implements the db.VoteDb

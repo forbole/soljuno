@@ -79,54 +79,19 @@ func (suite *DbTestSuite) TestSaveValidator() {
 }
 
 func (suite *DbTestSuite) TestSaveValidatorStatus() {
-	type ValidatorStatusRow struct {
-		Address        string `db:"address"`
-		Slot           uint64 `db:"slot"`
-		ActivatedStake uint64 `db:"activated_stake"`
-		LastVote       uint64 `db:"last_vote"`
-		RootSlot       uint64 `db:"root_slot"`
-		Active         bool   `db:"active"`
-	}
 
 	testCases := []struct {
 		name     string
-		data     ValidatorStatusRow
-		expected []ValidatorStatusRow
+		data     []dbtypes.ValidatorStatusRow
+		expected []dbtypes.ValidatorStatusRow
 	}{
 		{
 			name: "initialize the data",
-			data: ValidatorStatusRow{
-				"address", 1, 100, 0, 0, true,
-			},
-			expected: []ValidatorStatusRow{
+			data: []dbtypes.ValidatorStatusRow{
 				{"address", 1, 100, 0, 0, true},
 			},
-		},
-		{
-			name: "insert with lower slot",
-			data: ValidatorStatusRow{
-				"address", 0, 1000, 0, 0, true,
-			},
-			expected: []ValidatorStatusRow{
+			expected: []dbtypes.ValidatorStatusRow{
 				{"address", 1, 100, 0, 0, true},
-			},
-		},
-		{
-			name: "insert with same slot",
-			data: ValidatorStatusRow{
-				"address", 1, 1000, 0, 0, true,
-			},
-			expected: []ValidatorStatusRow{
-				{"address", 1, 1000, 0, 0, true},
-			},
-		},
-		{
-			name: "insert with higher slot",
-			data: ValidatorStatusRow{
-				"address", 2, 2000, 0, 0, true,
-			},
-			expected: []ValidatorStatusRow{
-				{"address", 2, 2000, 0, 0, true},
 			},
 		},
 	}
@@ -134,18 +99,11 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveValidatorStatus(
-				tc.data.Address,
-				tc.data.Slot,
-				tc.data.ActivatedStake,
-				tc.data.LastVote,
-				tc.data.RootSlot,
-				tc.data.Active,
-			)
+			err := suite.database.SaveValidatorStatuses(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []ValidatorStatusRow{}
+			rows := []dbtypes.ValidatorStatusRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_status")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, len(tc.expected))
