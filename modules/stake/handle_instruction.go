@@ -42,7 +42,7 @@ func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.StakeDb
 	return nil
 }
 
-// handleInitialize handles a MsgInitialize
+// handleInitialize handles a instruction of Initialize
 func handleInitialize(instruction types.Instruction, tx types.Tx, db db.StakeDb) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedInitialize)
 	if !ok {
@@ -56,7 +56,7 @@ func handleInitialize(instruction types.Instruction, tx types.Tx, db db.StakeDb)
 	return db.SaveStakeLockup(parsed.StakeAccount, tx.Slot, parsed.Lockup.Custodian, parsed.Lockup.Epoch, parsed.Lockup.UnixTimestamp)
 }
 
-// handleAuthorize handles a MsgAuthorize
+// handleAuthorize handles a instruction of Authorize
 func handleAuthorize(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedAuthorize)
 	if !ok {
@@ -66,7 +66,7 @@ func handleAuthorize(instruction types.Instruction, tx types.Tx, db db.StakeDb, 
 	return updateStakeAccount(parsed.StakeAccount, tx.Slot, db, client)
 }
 
-// handleDelegate handles a MsgDelegate
+// handleDelegate handles a instruction of Delegate
 func handleDelegate(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedDelegateStake)
 	if !ok {
@@ -76,7 +76,7 @@ func handleDelegate(instruction types.Instruction, tx types.Tx, db db.StakeDb, c
 	return updateStakeAccount(parsed.StakeAccount, tx.Slot, db, client)
 }
 
-// handleSplit handles a MsgSplit
+// handleSplit handles a instruction of Split
 func handleSplit(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedSplit)
 	if !ok {
@@ -90,7 +90,7 @@ func handleSplit(instruction types.Instruction, tx types.Tx, db db.StakeDb, clie
 	return updateStakeAccount(parsed.NewSplitAccount, tx.Slot, db, client)
 }
 
-// handleWithdraw handles a MsgWithdraw
+// handleWithdraw handles a instruction of Withdraw
 func handleWithdraw(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedWithdraw)
 	if !ok {
@@ -100,7 +100,7 @@ func handleWithdraw(instruction types.Instruction, tx types.Tx, db db.StakeDb, c
 	return updateStakeAccount(parsed.StakeAccount, tx.Slot, db, client)
 }
 
-// handleDeactivate handles a MsgDeactivate
+// handleDeactivate handles a instruction of Deactivate
 func handleDeactivate(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedDeactivate)
 	if !ok {
@@ -110,7 +110,7 @@ func handleDeactivate(instruction types.Instruction, tx types.Tx, db db.StakeDb,
 	return updateStakeAccount(parsed.StakeAccount, tx.Slot, db, client)
 }
 
-// handleSetLockup handles a MsgSetLockup
+// handleSetLockup handles a instruction of SetLockup
 func handleSetLockup(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedSetLockup)
 	if !ok {
@@ -120,7 +120,7 @@ func handleSetLockup(instruction types.Instruction, tx types.Tx, db db.StakeDb, 
 	return updateStakeAccount(parsed.StakeAccount, tx.Slot, db, client)
 }
 
-// handleMerge handles a MsgMerge
+// handleMerge handles a instruction of Merge
 func handleMerge(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedMerge)
 	if !ok {
@@ -134,7 +134,7 @@ func handleMerge(instruction types.Instruction, tx types.Tx, db db.StakeDb, clie
 	return updateStakeAccount(parsed.Destination, tx.Slot, db, client)
 }
 
-// handleAuthorizeWithSeed handles a MsgAuthorizeWithSeed
+// handleAuthorizeWithSeed handles a instruction of AuthorizeWithSeed
 func handleAuthorizeWithSeed(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedAuthorizeWithSeed)
 	if !ok {
@@ -144,7 +144,7 @@ func handleAuthorizeWithSeed(instruction types.Instruction, tx types.Tx, db db.S
 	return updateStakeAccount(parsed.StakeAccount, tx.Slot, db, client)
 }
 
-// handleInitializeChecked handles a MsgInitializeChecked
+// handleInitializeChecked handles a instruction of InitializeChecked
 func handleInitializeChecked(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedInitializeChecked)
 	if !ok {
@@ -154,7 +154,7 @@ func handleInitializeChecked(instruction types.Instruction, tx types.Tx, db db.S
 	return updateStakeAccount(parsed.StakeAccount, tx.Slot, db, client)
 }
 
-// handleAuthorizeChecked handles a MsgAuthorizeChecked
+// handleAuthorizeChecked handles a instruction of AuthorizeChecked
 func handleAuthorizeChecked(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedAuthorizeChecked)
 	if !ok {
@@ -164,7 +164,7 @@ func handleAuthorizeChecked(instruction types.Instruction, tx types.Tx, db db.St
 	return updateStakeAccount(parsed.StakeAccount, tx.Slot, db, client)
 }
 
-// handleAuthorizeCheckedWithSeed handles a MsgAuthorizeCheckedWithSeed
+// handleAuthorizeCheckedWithSeed handles a instruction of AuthorizeCheckedWithSeed
 func handleAuthorizeCheckedWithSeed(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedAuthorizeCheckedWithSeed)
 	if !ok {
@@ -174,7 +174,7 @@ func handleAuthorizeCheckedWithSeed(instruction types.Instruction, tx types.Tx, 
 	return updateStakeAccount(parsed.StakeAccount, tx.Slot, db, client)
 }
 
-// handleSetLockupChecked handles a MsgSetLockupChecked
+// handleSetLockupChecked handles a instruction of SetLockupChecked
 func handleSetLockupChecked(instruction types.Instruction, tx types.Tx, db db.StakeDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedSetLockupChecked)
 	if !ok {

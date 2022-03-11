@@ -13,7 +13,7 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-// HandleMsg allows to handle different instructions types for the config module
+// HandleInstruction allows to handle different instructions types for the config module
 func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.ConfigDb, client client.ClientProxy) error {
 	if len(instruction.InvolvedAccounts) != 2 {
 		return nil

@@ -10,22 +10,22 @@ import (
 // RunAsyncOperations implements modules.Module
 func (m *Module) RunAsyncOperations() {
 	for {
-		m.consumeMsgs()
+		m.consumeInstructions()
 	}
 }
 
-func (m *Module) consumeMsgs() {
-	msgs := m.getMsgRows()
+func (m *Module) consumeInstructions() {
+	instructions := m.getInstructionRows()
 	_, err := m.pool.DoAsync(func() error {
-		err := m.db.SaveInstructions(msgs)
-		m.handleAsyncError(err, msgs)
+		err := m.db.SaveInstructions(instructions)
+		m.handleAsyncError(err, instructions)
 		return nil
 	})
 
-	m.handleAsyncError(err, msgs)
+	m.handleAsyncError(err, instructions)
 }
 
-func (m *Module) getMsgRows() []dbtypes.InstructionRow {
+func (m *Module) getInstructionRows() []dbtypes.InstructionRow {
 	var instructions []dbtypes.InstructionRow
 	timeout := time.After(5 * time.Second)
 	for {

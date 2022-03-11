@@ -24,7 +24,7 @@ func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.SystemD
 	return nil
 }
 
-// handleAdvanceNonce handles a MsgAdvaceNonce
+// handleAdvanceNonce handles a instruction of AdvaceNonce
 func handleAdvanceNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(system.ParsedAdvanceNonceAccount)
 	if !ok {
@@ -34,7 +34,7 @@ func handleAdvanceNonce(instruction types.Instruction, tx types.Tx, db db.System
 	return updateNonce(parsed.NonceAccount, tx.Slot, db, client)
 }
 
-// handleAuthorizeNonce handles a MsgWithdrawFromNonce
+// handleAuthorizeNonce handles a instruction of WithdrawFromNonce
 func handleWithdrawFromNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(system.ParsedWithdrawNonceAccount)
 	if !ok {
@@ -44,7 +44,7 @@ func handleWithdrawFromNonce(instruction types.Instruction, tx types.Tx, db db.S
 	return updateNonce(parsed.NonceAccount, tx.Slot, db, client)
 }
 
-// handleAuthorizeNonce handles a MsgInitializeNonce
+// handleAuthorizeNonce handles a instruction of InitializeNonce
 func handleInitializeNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(system.ParsedInitializeNonceAccount)
 	if !ok {
@@ -54,7 +54,7 @@ func handleInitializeNonce(instruction types.Instruction, tx types.Tx, db db.Sys
 	return updateNonce(parsed.NonceAccount, tx.Slot, db, client)
 }
 
-// handleAuthorizeNonce handles a MsgAuthorizeNonce
+// handleAuthorizeNonce handles a instruction of AuthorizeNonce
 func handleAuthorizeNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(system.ParsedAuthorizeNonceAccount)
 	if !ok {

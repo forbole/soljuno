@@ -28,7 +28,7 @@ func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.VoteDb,
 	return nil
 }
 
-// handleInitialize handles a MsgInitialize
+// handleInitialize handles a instruction of Initialize
 func handleInitialize(instruction types.Instruction, tx types.Tx, db db.VoteDb) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedInitializeAccount)
 	if !ok {
@@ -38,7 +38,7 @@ func handleInitialize(instruction types.Instruction, tx types.Tx, db db.VoteDb) 
 	return db.SaveValidator(parsed.VoteAccount, tx.Slot, parsed.Node, parsed.AuthorizedVoter, parsed.AuthorizedWithdrawer, parsed.Commission)
 }
 
-// handleAuthorize handles a MsgAuthorize
+// handleAuthorize handles a instruction of Authorize
 func handleAuthorize(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedAuthorize)
 	if !ok {
@@ -48,7 +48,7 @@ func handleAuthorize(instruction types.Instruction, tx types.Tx, db db.VoteDb, c
 	return updateVoteAccount(parsed.VoteAccount, tx.Slot, db, client)
 }
 
-// handleWithdraw handles a MsgWithdraw
+// handleWithdraw handles a instruction of Withdraw
 func handleWithdraw(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedWithdraw)
 	if !ok {
@@ -58,7 +58,7 @@ func handleWithdraw(instruction types.Instruction, tx types.Tx, db db.VoteDb, cl
 	return updateVoteAccount(parsed.VoteAccount, tx.Slot, db, client)
 }
 
-// handleUpdateValidatorIdentity handles a MsgUpdateValidatorIdentity
+// handleUpdateValidatorIdentity handles a instruction of UpdateValidatorIdentity
 func handleUpdateValidatorIdentity(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedUpdateValidatorIdentity)
 	if !ok {
@@ -68,7 +68,7 @@ func handleUpdateValidatorIdentity(instruction types.Instruction, tx types.Tx, d
 	return updateVoteAccount(parsed.VoteAccount, tx.Slot, db, client)
 }
 
-// handleUpdateCommission handles a MsgUpdateCommission
+// handleUpdateCommission handles a instruction of UpdateCommission
 func handleUpdateCommission(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedUpdateCommission)
 	if !ok {
@@ -78,7 +78,7 @@ func handleUpdateCommission(instruction types.Instruction, tx types.Tx, db db.Vo
 	return updateVoteAccount(parsed.VoteAccount, tx.Slot, db, client)
 }
 
-// handleAuthorizeChecked handles a MsgAuthorizeChecked
+// handleAuthorizeChecked handles a instruction of AuthorizeChecked
 func handleAuthorizeChecked(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedAuthorizeChecked)
 	if !ok {

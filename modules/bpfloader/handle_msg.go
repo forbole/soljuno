@@ -9,25 +9,25 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-// HandleMsg allows to handle different instructions types for the bpfloader module
+// HandleInstruction allows to handle different instructions types for the bpfloader module
 func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
 	switch instruction.Parsed.Type {
 	case "initializeBuffer":
-		return handleMsgInitializeBuffer(instruction, tx, db, client)
+		return handleInitializeBuffer(instruction, tx, db, client)
 	case "deployWithMaxDataLen":
-		return handleMsgDeployWithMaxDataLen(instruction, tx, db, client)
+		return handleDeployWithMaxDataLen(instruction, tx, db, client)
 	case "upgrade":
-		return handleMsgUpgrade(instruction, tx, db, client)
+		return handleUpgrade(instruction, tx, db, client)
 	case "setAuthority":
-		return handleMsgSetAuthority(instruction, tx, db, client)
+		return handleSetAuthority(instruction, tx, db, client)
 	case "close":
-		return handleMsgClose(instruction, tx, db, client)
+		return handleClose(instruction, tx, db, client)
 	}
 	return nil
 }
 
-// handleMsgInitializeBuffer handles a MsgInitializeBuffer
-func handleMsgInitializeBuffer(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+// handleInitializeBuffer handles a instruction of InitializeBuffer
+func handleInitializeBuffer(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(upgradableLoader.ParsedInitializeBuffer)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeBuffer", instruction.Parsed.Type)
@@ -36,8 +36,8 @@ func handleMsgInitializeBuffer(instruction types.Instruction, tx types.Tx, db db
 	return updateBufferAccount(parsed.Account, tx.Slot, db, client)
 }
 
-// handleMsgDeployWithMaxDataLen handles a MsgDeployWithMaxDataLen
-func handleMsgDeployWithMaxDataLen(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+// handleDeployWithMaxDataLen handles a instruction of DeployWithMaxDataLen
+func handleDeployWithMaxDataLen(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(upgradableLoader.ParsedDeployWithMaxDataLen)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "deployWithMaxDataLen", instruction.Parsed.Type)
@@ -52,8 +52,8 @@ func handleMsgDeployWithMaxDataLen(instruction types.Instruction, tx types.Tx, d
 	return updateProgramDataAccount(parsed.ProgramDataAccount, tx.Slot, db, client)
 }
 
-// handleMsgUpgrade handles a MsgUpgrade
-func handleMsgUpgrade(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+// handleUpgrade handles a instruction of Upgrade
+func handleUpgrade(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(upgradableLoader.ParsedUpgrade)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "upgrade", instruction.Parsed.Type)
@@ -68,8 +68,8 @@ func handleMsgUpgrade(instruction types.Instruction, tx types.Tx, db db.BpfLoade
 	return updateProgramDataAccount(parsed.ProgramDataAccount, tx.Slot, db, client)
 }
 
-// handleMsgSetAuthority handles a MsgSetAuthority
-func handleMsgSetAuthority(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+// handleSetAuthority handles a instruction of SetAuthority
+func handleSetAuthority(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(upgradableLoader.ParsedSetAuthority)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "setAuthority", instruction.Parsed.Type)
@@ -80,8 +80,8 @@ func handleMsgSetAuthority(instruction types.Instruction, tx types.Tx, db db.Bpf
 	return updateProgramDataAccount(parsed.Account, tx.Slot, db, client)
 }
 
-// handleMsgClose handles a MsgClose
-func handleMsgClose(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
+// handleClose handles a instruction ofClose
+func handleClose(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(upgradableLoader.ParsedClose)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "close", instruction.Parsed.Type)

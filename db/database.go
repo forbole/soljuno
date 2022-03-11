@@ -69,12 +69,12 @@ type TxDb interface {
 type InstructionDb interface {
 	// SaveInstructions stores a batch of instructions.
 	// An error is returned if the operation fails.
-	SaveInstructions(msg []dbtypes.InstructionRow) error
+	SaveInstructions(instruction []dbtypes.InstructionRow) error
 
 	// CreateInstructionPartition allows to create a instruction partition
 	CreateInstructionPartition(Id int) error
 
-	// PruneInstructionsBeforeSlot allows to prune the msgs before the given slot
+	// PruneInstructionsBeforeSlot allows to prune the instructions before the given slot
 	PruneInstructionsBeforeSlot(slot uint64) error
 }
 

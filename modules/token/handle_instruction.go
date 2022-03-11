@@ -67,7 +67,7 @@ func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.TokenDb
 	return nil
 }
 
-// handleInitializeMint handles a MsgInitializeMint and properly stores the new token inside the database
+// handleInitializeMint handles a instruction of InitializeMint and properly stores the new token inside the database
 func handleInitializeMint(instruction types.Instruction, tx types.Tx, db db.TokenDb) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedInitializeMint)
 	if !ok {
@@ -86,7 +86,7 @@ func handleInitializeMint(instruction types.Instruction, tx types.Tx, db db.Toke
 	return db.SaveTokenSupply(parsed.Mint, tx.Slot, 0)
 }
 
-// handleInitializeAccount handles a MsgInitializeAccount and properly stores the new token account inside the database
+// handleInitializeAccount handles a instruction of InitializeAccount and properly stores the new token account inside the database
 func handleInitializeAccount(instruction types.Instruction, tx types.Tx, db db.TokenDb) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedInitializeAccount)
 	if !ok {
@@ -104,7 +104,7 @@ func handleInitializeAccount(instruction types.Instruction, tx types.Tx, db db.T
 	return nil
 }
 
-// handleInitializeMultisig handles a MsgInitializeMultisig and properly stores the new multisig inside the database
+// handleInitializeMultisig handles a instruction of InitializeMultisig and properly stores the new multisig inside the database
 func handleInitializeMultisig(instruction types.Instruction, tx types.Tx, db db.TokenDb) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedInitializeMultisig)
 	if !ok {
@@ -122,7 +122,7 @@ func handleInitializeMultisig(instruction types.Instruction, tx types.Tx, db db.
 	return nil
 }
 
-// handleApproveChecked handles a MsgApprove
+// handleApproveChecked handles a instruction of Approve
 func handleApprove(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedApprove)
 	if !ok {
@@ -131,7 +131,7 @@ func handleApprove(instruction types.Instruction, tx types.Tx, db db.TokenDb, cl
 	return updateDelegation(parsed.Source, tx.Slot, db, client)
 }
 
-// handleApproveChecked handles a MsgApproveChecked
+// handleApproveChecked handles a instruction of ApproveChecked
 func handleApproveChecked(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedApproveChecked)
 	if !ok {
@@ -140,7 +140,7 @@ func handleApproveChecked(instruction types.Instruction, tx types.Tx, db db.Toke
 	return updateDelegation(parsed.Source, tx.Slot, db, client)
 }
 
-// handleRevoke handles a MsgRevoke
+// handleRevoke handles a instruction of Revoke
 func handleRevoke(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedRevoke)
 	if !ok {
@@ -149,7 +149,7 @@ func handleRevoke(instruction types.Instruction, tx types.Tx, db db.TokenDb, cli
 	return updateDelegation(parsed.Source, tx.Slot, db, client)
 }
 
-// handleSetAuthority handles a MsgSetAuthority
+// handleSetAuthority handles a instruction of SetAuthority
 func handleSetAuthority(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedSetAuthority)
 	if !ok {
@@ -161,7 +161,7 @@ func handleSetAuthority(instruction types.Instruction, tx types.Tx, db db.TokenD
 	return updateTokenAccount(parsed.Account, tx.Slot, db, client)
 }
 
-// handleMintTo handles a MsgMintTo
+// handleMintTo handles a instruction of MintTo
 func handleMintTo(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedMintTo)
 	if !ok {
@@ -170,7 +170,7 @@ func handleMintTo(instruction types.Instruction, tx types.Tx, db db.TokenDb, cli
 	return updateTokenSupply(parsed.Mint, tx.Slot, db, client)
 }
 
-// handleMintToChecked handles a MsgMintToChecked
+// handleMintToChecked handles a instruction of MintToChecked
 func handleMintToChecked(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedMintToChecked)
 	if !ok {
@@ -179,7 +179,7 @@ func handleMintToChecked(instruction types.Instruction, tx types.Tx, db db.Token
 	return updateTokenSupply(parsed.Mint, tx.Slot, db, client)
 }
 
-// handleBurn handles a MsgBurn
+// handleBurn handles a instruction of Burn
 func handleBurn(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedBurn)
 	if !ok {
@@ -188,7 +188,7 @@ func handleBurn(instruction types.Instruction, tx types.Tx, db db.TokenDb, clien
 	return updateTokenSupply(parsed.Mint, tx.Slot, db, client)
 }
 
-// handleBurn handles a MsgBurnChecked
+// handleBurn handles a instruction of BurnChecked
 func handleBurnChecked(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedBurnChecked)
 	if !ok {
@@ -197,7 +197,7 @@ func handleBurnChecked(instruction types.Instruction, tx types.Tx, db db.TokenDb
 	return updateTokenSupply(parsed.Mint, tx.Slot, db, client)
 }
 
-// handleCloseAccount handles a MsgCloseAccount
+// handleCloseAccount handles a instruction of CloseAccount
 func handleCloseAccount(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedCloseAccount)
 	if !ok {
@@ -206,7 +206,7 @@ func handleCloseAccount(instruction types.Instruction, tx types.Tx, db db.TokenD
 	return updateTokenAccount(parsed.Account, tx.Slot, db, client)
 }
 
-// handleFreezeAccount handles a MsgFreezeAccount
+// handleFreezeAccount handles a instruction of FreezeAccount
 func handleFreezeAccount(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedFreezeAccount)
 	if !ok {
@@ -215,7 +215,7 @@ func handleFreezeAccount(instruction types.Instruction, tx types.Tx, db db.Token
 	return updateTokenAccount(parsed.Account, tx.Slot, db, client)
 }
 
-// handleThawAccount handles a MsgThawAccount
+// handleThawAccount handles a instruction of ThawAccount
 func handleThawAccount(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedThawAccount)
 	if !ok {

@@ -50,7 +50,7 @@ func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) e
 	return nil
 }
 
-// createPartition creates a new partition for the msgs module
+// createPartition creates a new partition for the instructions module
 func (m *Module) createPartition(slot uint64) error {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()

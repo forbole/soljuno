@@ -98,7 +98,7 @@ func NewTx(
 	err interface{},
 	fee uint64,
 	logs []string,
-	msgs []Instruction,
+	instructions []Instruction,
 	accounts []string,
 	postBalances []uint64,
 	postTokenBalances []clienttypes.TransactionTokenBalance,
@@ -109,7 +109,7 @@ func NewTx(
 		Error:        err,
 		Fee:          fee,
 		Logs:         logs,
-		Instructions: msgs,
+		Instructions: instructions,
 
 		Accounts:          accounts,
 		PostBalances:      postBalances,

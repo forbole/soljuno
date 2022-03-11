@@ -68,7 +68,7 @@ func (db *Database) PruneInstructionsBeforeSlot(slot uint64) error {
 	}
 }
 
-// getOldestInstructionsPartitionBeforeSlot allows to get the oldest msg partition
+// getOldestInstructionsPartitionBeforeSlot allows to get the oldest  partition
 func (db *Database) getOldestInstructionsPartitionBeforeSlot(slot uint64) (string, error) {
 	stmt := `
 	SELECT tableoid::pg_catalog.regclass FROM instruction WHERE slot <= $1 ORDER BY slot ASC LIMIT 1;
