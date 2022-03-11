@@ -127,7 +127,7 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 	rawMsg := txResult.Transaction.Message
 	accountKeys := rawMsg.AccountKeys
 
-	// Put innerstructions to map in order to create msg after the main instruction
+	// Put innerstructions to map in order to create inner instructions after the main instruction
 	var innerInstructionMap = make(map[uint8][]clienttypes.UiCompiledInstruction)
 	for _, inner := range txResult.Meta.InnerInstructions {
 		innerInstructionMap[inner.Index] = append(innerInstructionMap[inner.Index], inner.Instructions...)

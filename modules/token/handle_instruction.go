@@ -35,7 +35,7 @@ func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.TokenDb
 	case "transferChecked":
 		return nil
 
-	// Delegate msgs
+	// Delegate instructions
 	case "approve":
 		return handleApprove(instruction, tx, db, client)
 	case "approveChecked":
@@ -46,7 +46,7 @@ func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.TokenDb
 	case "setAuthority":
 		return handleSetAuthority(instruction, tx, db, client)
 
-	// Token supply msgs
+	// Token supply instructions
 	case "mintTo":
 		return handleMintTo(instruction, tx, db, client)
 	case "mintToChecked":
@@ -56,7 +56,7 @@ func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.TokenDb
 	case "burnChecked":
 		return handleBurnChecked(instruction, tx, db, client)
 
-	// Account state msgs
+	// Account state instructions
 	case "closeAccount":
 		return handleCloseAccount(instruction, tx, db, client)
 	case "freezeAccount":

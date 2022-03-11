@@ -45,6 +45,6 @@ func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) e
 		return err
 	}
 	log.Debug().Str("module", m.Name()).Str("tx", tx.Hash).Uint64("slot", tx.Slot).
-		Msg("handled msg")
+		Msg("handled instructions")
 	return nil
 }
