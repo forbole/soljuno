@@ -6,6 +6,8 @@ import (
 	"github.com/forbole/soljuno/modules/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
+
+	dbtypes "github.com/forbole/soljuno/db/types"
 )
 
 // RegisterPeriodicOperations implements modules.Module
@@ -28,30 +30,30 @@ func (m *Module) updateValidatorsStatus() error {
 		return nil
 	}
 
+	statuses := make([]dbtypes.ValidatorStatusRow, len(voteAccounts.Current)+len(voteAccounts.Delinquent))
+	count := 0
 	for _, account := range voteAccounts.Current {
-		if err := m.db.SaveValidatorStatus(
+		statuses[count] = dbtypes.NewValidatorStatusRow(
 			account.VotePubkey,
 			slot,
 			account.ActivatedStake,
 			account.LastVote,
 			account.RootSlot,
 			true,
-		); err != nil {
-			return err
-		}
+		)
+		count++
 	}
 
 	for _, account := range voteAccounts.Delinquent {
-		if err := m.db.SaveValidatorStatus(
+		statuses[count] = dbtypes.NewValidatorStatusRow(
 			account.VotePubkey,
 			slot,
 			account.ActivatedStake,
 			account.LastVote,
 			account.RootSlot,
 			false,
-		); err != nil {
-			return err
-		}
+		)
+		count++
 	}
-	return nil
+	return m.db.SaveValidatorStatuses(statuses)
 }
