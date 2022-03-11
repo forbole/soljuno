@@ -194,8 +194,8 @@ type VoteDb interface {
 	// SaveValidator allows to store the given vote account data inside the database
 	SaveValidator(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
 
-	// SaveValidatorStatus allows to store the given current validator status inside the database
-	SaveValidatorStatus(address string, slot uint64, activatedStake uint64, lastVote uint64, rootSlot uint64, active bool) error
+	// SaveValidatorStatuses allows to store the given current validator statuses inside the database
+	SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow) error
 
 	// GetEpochProducedBlocks allows to get the slots in a epoch inside the database
 	// It is for calculating validator skip rates
