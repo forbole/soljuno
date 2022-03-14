@@ -9,34 +9,33 @@ import (
 	accountParser "github.com/forbole/soljuno/solana/account"
 )
 
-func updateAccountBalance(ctx *Context, slot uint64, addresses []string, balances []uint64) error {
-	bankDb := ctx.Database.(db.BankDb)
-	return bankDb.SaveAccountBalances(slot, addresses, balances)
-}
-
 func updateToken(ctx *Context, address string, slot uint64, token accountParser.Token) error {
 	tokenDb := ctx.Database.(db.TokenDb)
 	err := tokenDb.SaveToken(
-		address,
-		slot,
-		token.Decimals,
-		token.MintAuthority.String(),
-		token.FreezeAuthority.String(),
+		dbtypes.NewTokenRow(
+			address,
+			slot,
+			token.Decimals,
+			token.MintAuthority.String(),
+			token.FreezeAuthority.String(),
+		),
 	)
 	if err != nil {
 		return err
 	}
 
-	return tokenDb.SaveTokenSupply(address, slot, token.Supply)
+	return tokenDb.SaveTokenSupply(dbtypes.NewTokenSupplyRow(address, slot, token.Supply))
 }
 
 func updateTokenAccount(ctx *Context, address string, slot uint64, account accountParser.TokenAccount) error {
 	tokenDb := ctx.Database.(db.TokenDb)
 	err := tokenDb.SaveTokenAccount(
-		address,
-		slot,
-		account.Mint.String(),
-		account.Owner.String(),
+		dbtypes.NewTokenAccountRow(
+			address,
+			slot,
+			account.Mint.String(),
+			account.Owner.String(),
+		),
 	)
 	if err != nil {
 		return err

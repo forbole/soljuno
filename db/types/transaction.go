@@ -5,7 +5,7 @@ import (
 )
 
 type TxRow struct {
-	Hash        string      `db:"hash"`
+	Signature   string      `db:"signature"`
 	Slot        uint64      `db:"slot"`
 	Error       bool        `db:"error"`
 	Fee         uint64      `db:"fee"`
@@ -13,9 +13,9 @@ type TxRow struct {
 	PartitionId int         `db:"partition_id"`
 }
 
-func NewTxRow(hash string, slot uint64, isErr bool, fee uint64, logs []string) TxRow {
+func NewTxRow(signature string, slot uint64, isErr bool, fee uint64, logs []string) TxRow {
 	return TxRow{
-		Hash:        hash,
+		Signature:   signature,
 		Slot:        slot,
 		Error:       isErr,
 		Fee:         fee,
@@ -28,7 +28,7 @@ func NewTxRowsFromTxs(txs []types.Tx) ([]TxRow, error) {
 	txRows := make([]TxRow, len(txs))
 	for i, tx := range txs {
 		txRows[i] = NewTxRow(
-			tx.Hash,
+			tx.Signature,
 			tx.Slot,
 			tx.Successful(),
 			tx.Fee,

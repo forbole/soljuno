@@ -41,7 +41,7 @@ func (m manager) Parse(accounts []string, programID string, base58Data string) t
 	defer func() {
 		r := recover()
 		if r != nil {
-			log.Err(fmt.Errorf("failed to parsed message on program %v with data: %v", programID, base58Data)).Send()
+			log.Err(fmt.Errorf("failed to parsed instruction on program %v with data: %v", programID, base58Data)).Send()
 			parsed = types.NewParsedInstruction("unknown", nil)
 		}
 	}()

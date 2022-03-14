@@ -3,18 +3,18 @@ CREATE TABLE block
     slot        BIGINT      PRIMARY KEY,
     height      BIGINT      NOT NULL,
     hash        TEXT        NOT NULL UNIQUE,
-    proposer    TEXT        NOT NULL DEFAULT '',
+    leader    TEXT        NOT NULL DEFAULT '',
     timestamp   TIMESTAMP   WITHOUT TIME ZONE NOT NULL,
     num_txs     INT         NOT NULL DEFAULT 0
 );
 CREATE INDEX block_hash_index ON block (hash);
-CREATE INDEX block_proposer_index ON block (proposer);
+CREATE INDEX block_leader_index ON block (leader);
 CREATE INDEX block_timestamp_index ON block (timestamp DESC);
 
 
 CREATE TABLE transaction
 (
-    hash            TEXT    NOT NULL,
+    signature       TEXT    NOT NULL,
     slot            BIGINT  NOT NULL,
     error           BOOLEAN NOT NULL,
     fee             INT     NOT NULL,
@@ -22,14 +22,14 @@ CREATE TABLE transaction
     partition_id    INT     NOT NULL,
     CHECK (slot / 1000 = partition_id)
 ) PARTITION BY LIST(partition_id);
-ALTER TABLE transaction ADD UNIQUE (hash, partition_id);
-CREATE INDEX transaction_hash_index ON transaction (hash);
+ALTER TABLE transaction ADD UNIQUE (signature, partition_id);
+CREATE INDEX transaction_signature_index ON transaction (signature);
 CREATE INDEX transaction_slot_index ON transaction (slot DESC);
 
 
-CREATE TABLE message
+CREATE TABLE instruction
 (
-    transaction_hash    TEXT    NOT NULL,
+    tx_signature        TEXT    NOT NULL,
     slot                BIGINT  NOT NULL,
     index               INT     NOT NULL,
     inner_index         INT     NOT NULL,
@@ -41,26 +41,26 @@ CREATE TABLE message
     partition_id        INT     NOT NULL,
     CHECK (slot / 1000 = partition_id)
 ) PARTITION BY LIST(partition_id);
-ALTER TABLE message ADD UNIQUE (transaction_hash, index, inner_index, partition_id);
-CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
-CREATE INDEX message_slot_index ON message (slot DESC);
-CREATE INDEX message_program_index ON message (program);
-CREATE INDEX message_accounts_index ON message USING GIN(involved_accounts);
+ALTER TABLE instruction ADD UNIQUE (tx_signature, index, inner_index, partition_id);
+CREATE INDEX instruction_tx_signature_index ON instruction (tx_signature);
+CREATE INDEX instruction_slot_index ON instruction (slot DESC);
+CREATE INDEX instruction_program_index ON instruction (program);
+CREATE INDEX instruction_accounts_index ON instruction USING GIN(involved_accounts);
 
 /**
  * This function is used to find all the utils that involve any of the given addresses and have
  * type that is one of the specified types.
  */
-CREATE FUNCTION messages_by_address(
+CREATE FUNCTION instructions_by_address(
     addresses TEXT[],
     programs TEXT[],
     "limit" BIGINT = 100,
     "offset" BIGINT = 0)
-    RETURNS SETOF message AS
+    RETURNS SETOF instruction AS
 $$
 SELECT 
-    message.transaction_hash, message.slot, message.index, message.inner_index, message.program, message.involved_accounts, message.raw_data, message.type, message.value, message.partition_id
-FROM message
+    instruction.tx_signature, instruction.slot, instruction.index, instruction.inner_index, instruction.program, instruction.involved_accounts, instruction.raw_data, instruction.type, instruction.value, instruction.partition_id
+FROM instruction
 WHERE (cardinality(programs) = 0 OR program = ANY (programs))
   AND involved_accounts @> addresses
 ORDER BY slot DESC,

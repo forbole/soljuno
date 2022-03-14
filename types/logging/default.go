@@ -94,19 +94,19 @@ func (d *defaultLogger) TxError(module modules.Module, tx types.Tx, err error) {
 		"err", err,
 		LogKeyModule, module.Name(),
 		LogKeySlot, tx.Slot,
-		LogKeyTxHash, tx.Hash,
+		LogKeyTxSignature, tx.Signature,
 	)
 }
 
 // InstructionError implements Logger
-func (d *defaultLogger) MsgError(module modules.Module, tx types.Tx, msg types.Message, err error) {
-	d.Error("error while handling message",
+func (d *defaultLogger) InstructionError(module modules.Module, tx types.Tx, instruction types.Instruction, err error) {
+	d.Error("error while handling instruction",
 		"err", err,
 		LogKeyModule, module.Name(),
 		LogKeySlot, tx.Slot,
-		LogKeyTxHash, tx.Hash,
-		LogKeyProgram, msg.Program,
-		LogKeyMsgType, msg.Parsed.Type,
+		LogKeyTxSignature, tx.Signature,
+		LogKeyProgram, instruction.Program,
+		LogKeyInstructionType, instruction.Parsed.Type,
 	)
 }
 

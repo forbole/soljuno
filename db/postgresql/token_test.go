@@ -1,73 +1,63 @@
 package postgresql_test
 
-import "github.com/lib/pq"
+import (
+	dbtypes "github.com/forbole/soljuno/db/types"
+	"github.com/lib/pq"
+)
 
 func (suite *DbTestSuite) TestSaveToken() {
-	type TokenRow struct {
-		Address         string `db:"address"`
-		Slot            uint64 `db:"slot"`
-		Decimals        uint8  `db:"decimals"`
-		MintAuthority   string `db:"mint_authority"`
-		FreezeAuthority string `db:"freeze_authority"`
-	}
 
 	testCases := []struct {
 		name     string
-		data     TokenRow
-		expected TokenRow
+		data     dbtypes.TokenRow
+		expected dbtypes.TokenRow
 	}{
 		{
 			name: "initialize the data",
-			data: TokenRow{
-				"address", 1, 9, "owner", "freeze",
-			},
-			expected: TokenRow{
-				"address", 1, 9, "owner", "freeze",
-			},
+			data: dbtypes.NewTokenRow(
+				"mint", 1, 9, "owner", "freeze",
+			),
+			expected: dbtypes.NewTokenRow(
+				"mint", 1, 9, "owner", "freeze",
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: TokenRow{
-				"address", 0, 9, "pre_owner", "freeze",
-			},
-			expected: TokenRow{
-				"address", 1, 9, "owner", "freeze",
-			},
+			data: dbtypes.NewTokenRow(
+				"mint", 0, 9, "pre_owner", "freeze",
+			),
+			expected: dbtypes.NewTokenRow(
+				"mint", 1, 9, "owner", "freeze",
+			),
 		},
 		{
 			name: "update with same slot",
-			data: TokenRow{
-				"address", 1, 9, "new_owner", "freeze",
-			},
-			expected: TokenRow{
-				"address", 1, 9, "new_owner", "freeze",
-			},
+			data: dbtypes.NewTokenRow(
+				"mint", 1, 9, "new_owner", "freeze",
+			),
+			expected: dbtypes.NewTokenRow(
+				"mint", 1, 9, "new_owner", "freeze",
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: TokenRow{
-				"address", 2, 9, "new_owner", "new_freeze",
-			},
-			expected: TokenRow{
-				"address", 2, 9, "new_owner", "new_freeze",
-			},
+			data: dbtypes.NewTokenRow(
+				"mint", 2, 9, "new_owner", "new_freeze",
+			),
+			expected: dbtypes.NewTokenRow(
+				"mint", 2, 9, "new_owner", "new_freeze",
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveToken(
-				tc.data.Address,
-				tc.data.Slot,
-				tc.data.Decimals,
-				tc.data.MintAuthority,
-				tc.data.FreezeAuthority,
-			)
+			err := suite.database.SaveToken(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []TokenRow{}
+			rows := []dbtypes.TokenRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
@@ -77,69 +67,58 @@ func (suite *DbTestSuite) TestSaveToken() {
 }
 
 func (suite *DbTestSuite) TestSaveTokenAccount() {
-	type TokenAccountRow struct {
-		Address string `db:"address"`
-		Slot    uint64 `db:"slot"`
-		Token   string `db:"token"`
-		Owner   string `db:"owner"`
-	}
 
 	testCases := []struct {
 		name     string
-		data     TokenAccountRow
-		expected TokenAccountRow
+		data     dbtypes.TokenAccountRow
+		expected dbtypes.TokenAccountRow
 	}{
 		{
 			name: "initialize the data",
-			data: TokenAccountRow{
+			data: dbtypes.NewTokenAccountRow(
 				"mint", 1, "mint", "owner",
-			},
-			expected: TokenAccountRow{
+			),
+			expected: dbtypes.NewTokenAccountRow(
 				"mint", 1, "mint", "owner",
-			},
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: TokenAccountRow{
+			data: dbtypes.NewTokenAccountRow(
 				"mint", 0, "mint", "pre_owner",
-			},
-			expected: TokenAccountRow{
+			),
+			expected: dbtypes.NewTokenAccountRow(
 				"mint", 1, "mint", "owner",
-			},
+			),
 		},
 		{
 			name: "update with same slot",
-			data: TokenAccountRow{
+			data: dbtypes.NewTokenAccountRow(
 				"mint", 1, "mint", "new_owner",
-			},
-			expected: TokenAccountRow{
+			),
+			expected: dbtypes.NewTokenAccountRow(
 				"mint", 1, "mint", "new_owner",
-			},
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: TokenAccountRow{
+			data: dbtypes.NewTokenAccountRow(
 				"mint", 2, "mint", "new_owner",
-			},
-			expected: TokenAccountRow{
+			),
+			expected: dbtypes.NewTokenAccountRow(
 				"mint", 2, "mint", "new_owner",
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveTokenAccount(
-				tc.data.Address,
-				tc.data.Slot,
-				tc.data.Token,
-				tc.data.Owner,
-			)
+			err := suite.database.SaveTokenAccount(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []TokenAccountRow{}
+			rows := []dbtypes.TokenAccountRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_account")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
@@ -149,20 +128,9 @@ func (suite *DbTestSuite) TestSaveTokenAccount() {
 }
 
 func (suite *DbTestSuite) TestDeleteTokenAccount() {
-	err := suite.database.SaveTokenAccount(
-		"address",
-		0,
-		"mint",
-		"owner",
-	)
+	err := suite.database.SaveTokenAccount(dbtypes.NewTokenAccountRow("address", 0, "mint", "owner"))
 	suite.Require().NoError(err)
-	rows := []struct {
-		Address string `db:"address"`
-		Slot    uint64 `db:"slot"`
-		Token   string `db:"token"`
-		Owner   string `db:"owner"`
-		State   string `db:"state"`
-	}{}
+	rows := []dbtypes.TokenAccountRow{}
 
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_account")
 	suite.Require().NoError(err)
@@ -351,67 +319,57 @@ func (suite *DbTestSuite) TestDeleteTokenDelegation() {
 }
 
 func (suite *DbTestSuite) SaveTokenSupply() {
-	type TokenSupplyRow struct {
-		Mint   string `db:"mint"`
-		Slot   uint64 `db:"slot"`
-		Supply uint64 `db:"supply"`
-	}
-
 	testCases := []struct {
 		name     string
-		data     TokenSupplyRow
-		expected TokenSupplyRow
+		data     dbtypes.TokenSupplyRow
+		expected dbtypes.TokenSupplyRow
 	}{
 		{
 			name: "initialize the data",
-			data: TokenSupplyRow{
+			data: dbtypes.NewTokenSupplyRow(
 				"mint", 1, 1,
-			},
-			expected: TokenSupplyRow{
+			),
+			expected: dbtypes.NewTokenSupplyRow(
 				"mint", 1, 1,
-			},
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: TokenSupplyRow{
+			data: dbtypes.NewTokenSupplyRow(
 				"mint", 0, 10,
-			},
-			expected: TokenSupplyRow{
+			),
+			expected: dbtypes.NewTokenSupplyRow(
 				"mint", 1, 1,
-			},
+			),
 		},
 		{
 			name: "update with same slot",
-			data: TokenSupplyRow{
+			data: dbtypes.NewTokenSupplyRow(
 				"mint", 1, 100,
-			},
-			expected: TokenSupplyRow{
+			),
+			expected: dbtypes.NewTokenSupplyRow(
 				"mint", 1, 100,
-			},
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: TokenSupplyRow{
+			data: dbtypes.NewTokenSupplyRow(
 				"mint", 2, 1000,
-			},
-			expected: TokenSupplyRow{
+			),
+			expected: dbtypes.NewTokenSupplyRow(
 				"mint", 2, 1000,
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveTokenSupply(
-				tc.data.Mint,
-				tc.data.Slot,
-				tc.data.Supply,
-			)
+			err := suite.database.SaveTokenSupply(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []TokenSupplyRow{}
+			rows := []dbtypes.TokenSupplyRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_supply")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)

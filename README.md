@@ -26,7 +26,7 @@ The main reason behind the fork what to improve the original project by:
 
 We achieved the first objective by supporting both PostgreSQL and MongoDB. We also reviewed the code design by using a database interface so that you can implement whatever database backend you prefer most. 
 
-On the other hand, to achieve a highly modular code, we implemented extension points through the `worker.RegisterBlockHandler`, `worker.RegisterTxHandler` and `worker.RegisterMsgHandler` methods. You can use those to extend the default working of the code (which simply parses and saves the data on the database) with whatever operation you want.    
+On the other hand, to achieve a highly modular code, we implemented extension points through the `worker.RegisterBlockHandler`, `worker.RegisterTxHandler` and `worker.RegisterInstructionHandler` methods. You can use those to extend the default working of the code (which simply parses and saves the data on the database) with whatever operation you want.    
 
 ## Usage
 To know how to setup and run Juno, please refer to the [docs folder](.docs).
