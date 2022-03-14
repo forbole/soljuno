@@ -14,13 +14,13 @@ func (suite *DbTestSuite) TestSaveTxs() {
 	}{
 		{
 			name:        "initialize the data",
-			data:        dbtypes.NewTxRow("hash", 1, true, 500, []string{"logs"}),
+			data:        dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}),
 			expectedLen: 1,
 		},
 		{
 			name: "insert the wrong tx",
 			data: dbtypes.TxRow{
-				Hash:        "hash",
+				Signature:   "signature",
 				Slot:        1,
 				Error:       true,
 				Fee:         500,
@@ -31,12 +31,12 @@ func (suite *DbTestSuite) TestSaveTxs() {
 		},
 		{
 			name:        "insert the existed data",
-			data:        dbtypes.NewTxRow("hash", 1, true, 500, []string{"logs"}),
+			data:        dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}),
 			expectedLen: 1,
 		},
 		{
 			name:        "insert the new data",
-			data:        dbtypes.NewTxRow("hash2", 2, true, 500, []string{"logs"}),
+			data:        dbtypes.NewTxRow("signature2", 2, true, 500, []string{"logs"}),
 			expectedLen: 2,
 		},
 	}
@@ -65,7 +65,7 @@ func (suite *DbTestSuite) TestPruneTxsBeforeSlot() {
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveTxs([]dbtypes.TxRow{
-		dbtypes.NewTxRow("hash", 1, true, 500, []string{"logs"}),
+		dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}),
 	})
 	suite.Require().NoError(err)
 

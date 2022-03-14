@@ -14,13 +14,13 @@ func (suite *DbTestSuite) TestSaveInstructions() {
 	}{
 		{
 			name:        "initialize the data",
-			data:        dbtypes.NewInstructionRow("hash", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
+			data:        dbtypes.NewInstructionRow("signature", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
 			expectedLen: 1,
 		},
 		{
 			name: "insert the wrong tx",
 			data: dbtypes.InstructionRow{
-				TxHash:           "txHash",
+				TxSignature:      "txSignature",
 				Slot:             1,
 				Index:            1,
 				InnerIndex:       0,
@@ -35,12 +35,12 @@ func (suite *DbTestSuite) TestSaveInstructions() {
 		},
 		{
 			name:        "insert the existed data",
-			data:        dbtypes.NewInstructionRow("hash", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
+			data:        dbtypes.NewInstructionRow("signature", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
 			expectedLen: 1,
 		},
 		{
 			name:        "insert the new data",
-			data:        dbtypes.NewInstructionRow("hash", 1, 1, 1, "program", []string{"address"}, "raw", "type", "{}"),
+			data:        dbtypes.NewInstructionRow("signature", 1, 1, 1, "program", []string{"address"}, "raw", "type", "{}"),
 			expectedLen: 2,
 		},
 	}
@@ -69,7 +69,7 @@ func (suite *DbTestSuite) TestPruneInstructionsBeforeSlot() {
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveInstructions([]dbtypes.InstructionRow{
-		dbtypes.NewInstructionRow("hash", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
+		dbtypes.NewInstructionRow("signature", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
 	})
 	suite.Require().NoError(err)
 
