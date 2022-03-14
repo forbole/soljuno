@@ -4,6 +4,8 @@ import (
 	"strconv"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
+
 	"github.com/lib/pq"
 )
 
@@ -11,17 +13,13 @@ var _ db.TokenDb = &Database{}
 
 // SaveToken implements the db.TokenDb
 func (db *Database) SaveToken(
-	address string,
-	slot uint64,
-	decimals uint8,
-	mintAuthority string,
-	freezeAuthority string,
+	token dbtypes.TokenRow,
 ) error {
 	stmt := `
 INSERT INTO token
-    (address, slot, decimals, mint_authority, freeze_authority)
+    (mint, slot, decimals, mint_authority, freeze_authority)
 VALUES ($1, $2, $3, $4, $5)
-ON CONFLICT (address) DO UPDATE
+ON CONFLICT (mint) DO UPDATE
     SET slot = excluded.slot,
 	decimals = excluded.decimals,
 	mint_authority = excluded.mint_authority,
@@ -29,32 +27,32 @@ ON CONFLICT (address) DO UPDATE
 WHERE token.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		decimals,
-		mintAuthority,
-		freezeAuthority,
+		token.Mint,
+		token.Slot,
+		token.Decimals,
+		token.MintAuthority,
+		token.FreezeAuthority,
 	)
 	return err
 }
 
 // SaveTokenAccount implements the db.TokenDb
-func (db *Database) SaveTokenAccount(address string, slot uint64, token, owner string) error {
+func (db *Database) SaveTokenAccount(account dbtypes.TokenAccountRow) error {
 	stmt := `
 INSERT INTO token_account
-	(address, slot, token, owner)
+	(address, slot, mint, owner)
 VALUES ($1, $2, $3, $4)
 ON CONFLICT (address) DO UPDATE
 	SET slot = excluded.slot,
-	token = excluded.token,
+	mint = excluded.mint,
 	owner = excluded.owner
 WHERE token_account.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		token,
-		owner,
+		account.Address,
+		account.Slot,
+		account.Mint,
+		account.Owner,
 	)
 	return err
 }
@@ -115,20 +113,20 @@ func (db *Database) DeleteTokenDelegation(address string) error {
 }
 
 // SaveTokenSupply implements the db.TokenDb
-func (db *Database) SaveTokenSupply(address string, slot uint64, supply uint64) error {
+func (db *Database) SaveTokenSupply(supply dbtypes.TokenSupplyRow) error {
 	stmt := `
 INSERT INTO token_supply
-	(address, slot, supply)
+	(mint, slot, supply)
 VALUES ($1, $2, $3)
-ON CONFLICT (address) DO UPDATE
+ON CONFLICT (mint) DO UPDATE
 	SET slot = excluded.slot,
 	supply = excluded.supply
 WHERE token_supply.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		strconv.FormatUint(supply, 10),
+		supply.Mint,
+		supply.Slot,
+		strconv.FormatUint(supply.Supply, 10),
 	)
 	return err
 }

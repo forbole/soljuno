@@ -9,7 +9,7 @@ object_relationships:
         schema: public
         name: token_supply
       column_mapping:
-        address: address
+        mint: mint
 array_relationships:
 - name: token_accounts
   using:
@@ -18,12 +18,12 @@ array_relationships:
         schema: public
         name: token_account
       column_mapping:
-        address: token
+        mint: mint
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - address
+    - mint
     - decimals
     - mint_authority
     - freeze_authority

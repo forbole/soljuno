@@ -19,8 +19,8 @@ func (db *Database) SaveTokenUnits(units []dbtypes.TokenUnitRow) error {
 		return nil
 	}
 
-	insertStmt := `INSERT INTO token_unit (address, price_id, unit_name, logo_uri, description, website) VALUES`
-	conflictStmt := `ON CONFLICT (address) DO UPDATE
+	insertStmt := `INSERT INTO token_unit (mint, price_id, unit_name, logo_uri, description, website) VALUES`
+	conflictStmt := `ON CONFLICT (mint) DO UPDATE
 		SET price_id = EXCLUDED.price_id,
 			unit_name = EXCLUDED.unit_name,
 			description = EXCLUDED.description,
@@ -30,7 +30,7 @@ func (db *Database) SaveTokenUnits(units []dbtypes.TokenUnitRow) error {
 	paramsNumber := 6
 	params = make([]interface{}, 0, paramsNumber*len(units))
 	for _, unit := range units {
-		params = append(params, unit.Address, unit.PriceID, unit.Name, unit.LogoURI, unit.Description, unit.Website)
+		params = append(params, unit.Mint, unit.PriceID, unit.Name, unit.LogoURI, unit.Description, unit.Website)
 	}
 	return db.InsertBatch(
 		insertStmt,
