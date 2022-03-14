@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/token"
 	"github.com/forbole/soljuno/types"
@@ -74,16 +75,18 @@ func handleInitializeMint(instruction types.Instruction, tx types.Tx, db db.Toke
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeMint", instruction.Parsed.Type)
 	}
 	err := db.SaveToken(
-		parsed.Mint,
-		tx.Slot,
-		parsed.Decimals,
-		parsed.MintAuthority,
-		parsed.FreezeAuthority,
+		dbtypes.NewTokenRow(
+			parsed.Mint,
+			tx.Slot,
+			parsed.Decimals,
+			parsed.MintAuthority,
+			parsed.FreezeAuthority,
+		),
 	)
 	if err != nil {
 		return err
 	}
-	return db.SaveTokenSupply(parsed.Mint, tx.Slot, 0)
+	return db.SaveTokenSupply(dbtypes.NewTokenSupplyRow(parsed.Mint, tx.Slot, 0))
 }
 
 // handleInitializeAccount handles a instruction of InitializeAccount and properly stores the new token account inside the database
@@ -93,10 +96,12 @@ func handleInitializeAccount(instruction types.Instruction, tx types.Tx, db db.T
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeAccount", instruction.Parsed.Type)
 	}
 	err := db.SaveTokenAccount(
-		parsed.Account,
-		tx.Slot,
-		parsed.Mint,
-		parsed.Owner,
+		dbtypes.NewTokenAccountRow(
+			parsed.Account,
+			tx.Slot,
+			parsed.Mint,
+			parsed.Owner,
+		),
 	)
 	if err != nil {
 		return err

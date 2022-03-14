@@ -1,11 +1,13 @@
 package postgresql_test
 
+import dbtypes "github.com/forbole/soljuno/db/types"
+
 func (suite *DbTestSuite) TestCheckTokenLatest() {
 	// empty rows returns true
 	isLatest := suite.database.CheckTokenLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveToken("address", 1, 9, "mint_authority", "freeze_authority")
+	err := suite.database.SaveToken(dbtypes.NewTokenRow("address", 1, 9, "mint_authority", "freeze_authority"))
 	suite.Require().NoError(err)
 
 	// older slot returns false
@@ -22,7 +24,7 @@ func (suite *DbTestSuite) TestCheckTokenAccountLatest() {
 	isLatest := suite.database.CheckTokenAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveTokenAccount("address", 1, "mint", "owner")
+	err := suite.database.SaveTokenAccount(dbtypes.NewTokenAccountRow("address", 1, "mint", "owner"))
 	suite.Require().NoError(err)
 
 	// older slot returns false
@@ -73,7 +75,7 @@ func (suite *DbTestSuite) TestCheckTokenSupplyLatest() {
 	isLatest := suite.database.CheckTokenSupplyLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveTokenSupply("address", 1, 100)
+	err := suite.database.SaveTokenSupply(dbtypes.NewTokenSupplyRow("address", 1, 100))
 	suite.Require().NoError(err)
 
 	// older slot returns false
