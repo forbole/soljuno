@@ -3,12 +3,12 @@ CREATE TABLE block
     slot        BIGINT      PRIMARY KEY,
     height      BIGINT      NOT NULL,
     hash        TEXT        NOT NULL UNIQUE,
-    proposer    TEXT        NOT NULL DEFAULT '',
+    leader    TEXT        NOT NULL DEFAULT '',
     timestamp   TIMESTAMP   WITHOUT TIME ZONE NOT NULL,
     num_txs     INT         NOT NULL DEFAULT 0
 );
 CREATE INDEX block_hash_index ON block (hash);
-CREATE INDEX block_proposer_index ON block (proposer);
+CREATE INDEX block_leader_index ON block (leader);
 CREATE INDEX block_timestamp_index ON block (timestamp DESC);
 
 

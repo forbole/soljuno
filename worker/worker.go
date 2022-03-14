@@ -131,12 +131,12 @@ func (w Worker) process(slot uint64) error {
 	}
 	block := types.NewBlockFromResult(w.parserManager, slot, b)
 
-	// set block proposer
-	proposers, err := w.cp.GetSlotLeaders(slot, 1)
+	// set block leader
+	leaders, err := w.cp.GetSlotLeaders(slot, 1)
 	if err != nil {
 		return err
 	}
-	block.Proposer = proposers[0]
+	block.Leader = leaders[0]
 
 	err = w.ExportBlock(block)
 	return err
