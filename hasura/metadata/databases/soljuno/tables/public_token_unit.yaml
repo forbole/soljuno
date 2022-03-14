@@ -17,7 +17,7 @@ object_relationships:
         schema: public
         name: token
       column_mapping:
-        address: address
+        mint: mint
 array_relationships:
 - name: token_price_history
   using:
