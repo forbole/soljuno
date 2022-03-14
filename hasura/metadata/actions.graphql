@@ -44,7 +44,7 @@ type InflationGovernor {
 
 # ----------------------------------------------------------------
 
-scalar Message
+scalar Instruction
 
 type Tx {
     hash: String!
@@ -53,7 +53,7 @@ type Tx {
     fee: bigint!
     logs: [String!]!
     accounts: [String!]!
-    messages: [Message!]!
+    instructions: [Instruction!]!
 }
 
 type TxMeta {

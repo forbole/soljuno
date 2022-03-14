@@ -2,12 +2,15 @@ package bpfloader
 
 import (
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/solana/client"
 	upgradableLoader "github.com/forbole/soljuno/solana/program/bpfloader/upgradeable"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/soljuno/types"
 )
+
+var _ modules.InstructionModule = &Module{}
 
 type Module struct {
 	db     db.Database
@@ -26,20 +29,20 @@ func (m *Module) Name() string {
 	return "bpfloader"
 }
 
-// HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
+// HandleInstruction implements modules.InstructionModule
+func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) error {
 	if !tx.Successful() {
 		return nil
 	}
-	if msg.Program != upgradableLoader.ProgramID {
+	if instruction.Program != upgradableLoader.ProgramID {
 		return nil
 	}
 
-	err := HandleMsg(msg, tx, m.db, m.client)
+	err := HandleInstruction(instruction, tx, m.db, m.client)
 	if err != nil {
 		return err
 	}
 	log.Debug().Str("module", m.Name()).Str("tx", tx.Hash).Uint64("slot", tx.Slot).
-		Msg("handled msg")
+		Msg("handled instruction")
 	return nil
 }

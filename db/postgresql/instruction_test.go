@@ -2,24 +2,24 @@ package postgresql_test
 
 import dbtypes "github.com/forbole/soljuno/db/types"
 
-func (suite *DbTestSuite) TestSaveMessages() {
-	err := suite.database.CreateMsgPartition(0)
+func (suite *DbTestSuite) TestSaveInstructions() {
+	err := suite.database.CreateInstructionPartition(0)
 	suite.Require().NoError(err)
 
 	testCases := []struct {
 		name        string
-		data        dbtypes.MsgRow
+		data        dbtypes.InstructionRow
 		expectedLen int
 		shouldErr   bool
 	}{
 		{
 			name:        "initialize the data",
-			data:        dbtypes.NewMsgRow("hash", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
+			data:        dbtypes.NewInstructionRow("hash", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
 			expectedLen: 1,
 		},
 		{
 			name: "insert the wrong tx",
-			data: dbtypes.MsgRow{
+			data: dbtypes.InstructionRow{
 				TxHash:           "txHash",
 				Slot:             1,
 				Index:            1,
@@ -35,12 +35,12 @@ func (suite *DbTestSuite) TestSaveMessages() {
 		},
 		{
 			name:        "insert the existed data",
-			data:        dbtypes.NewMsgRow("hash", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
+			data:        dbtypes.NewInstructionRow("hash", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
 			expectedLen: 1,
 		},
 		{
 			name:        "insert the new data",
-			data:        dbtypes.NewMsgRow("hash", 1, 1, 1, "program", []string{"address"}, "raw", "type", "{}"),
+			data:        dbtypes.NewInstructionRow("hash", 1, 1, 1, "program", []string{"address"}, "raw", "type", "{}"),
 			expectedLen: 2,
 		},
 	}
@@ -48,15 +48,15 @@ func (suite *DbTestSuite) TestSaveMessages() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveMessages([]dbtypes.MsgRow{tc.data})
+			err := suite.database.SaveInstructions([]dbtypes.InstructionRow{tc.data})
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 
 				// Verify the data
-				rows := []dbtypes.MsgRow{}
-				err = suite.database.Sqlx.Select(&rows, "SELECT * FROM message")
+				rows := []dbtypes.InstructionRow{}
+				err = suite.database.Sqlx.Select(&rows, "SELECT * FROM instruction")
 				suite.Require().NoError(err)
 				suite.Require().Len(rows, tc.expectedLen)
 			}
@@ -64,20 +64,20 @@ func (suite *DbTestSuite) TestSaveMessages() {
 	}
 }
 
-func (suite *DbTestSuite) TestPruneMsgsBeforeSlot() {
-	err := suite.database.CreateMsgPartition(0)
+func (suite *DbTestSuite) TestPruneInstructionsBeforeSlot() {
+	err := suite.database.CreateInstructionPartition(0)
 	suite.Require().NoError(err)
 
-	err = suite.database.SaveMessages([]dbtypes.MsgRow{
-		dbtypes.NewMsgRow("hash", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
+	err = suite.database.SaveInstructions([]dbtypes.InstructionRow{
+		dbtypes.NewInstructionRow("hash", 1, 1, 0, "program", []string{"address"}, "raw", "type", "{}"),
 	})
 	suite.Require().NoError(err)
 
-	err = suite.database.PruneMsgsBeforeSlot(10000)
+	err = suite.database.PruneInstructionsBeforeSlot(10000)
 	suite.Require().NoError(err)
 
-	rows := []dbtypes.MsgRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM message")
+	rows := []dbtypes.InstructionRow{}
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM instruction")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 0)
 }

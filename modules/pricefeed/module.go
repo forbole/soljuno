@@ -3,7 +3,13 @@ package pricefeed
 import (
 	"github.com/forbole/soljuno/apis/coingecko"
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
 	"github.com/go-co-op/gocron"
+)
+
+var (
+	_ modules.Module                   = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
 )
 
 type Module struct {

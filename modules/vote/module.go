@@ -2,10 +2,17 @@ package vote
 
 import (
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/vote"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
+)
+
+var (
+	_ modules.Module                   = &Module{}
+	_ modules.InstructionModule        = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
 )
 
 type Module struct {
@@ -25,20 +32,20 @@ func (m *Module) Name() string {
 	return "vote"
 }
 
-// HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
+// HandleInstruction implements modules.InstructionModule
+func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) error {
 	if !tx.Successful() {
 		return nil
 	}
-	if msg.Program != vote.ProgramID {
+	if instruction.Program != vote.ProgramID {
 		return nil
 	}
 
-	err := HandleMsg(msg, tx, m.db, m.client)
+	err := HandleInstruction(instruction, tx, m.db, m.client)
 	if err != nil {
 		return err
 	}
 	log.Debug().Str("module", m.Name()).Str("tx", tx.Hash).Uint64("slot", tx.Slot).
-		Msg("handled msg")
+		Msg("handled instruction")
 	return nil
 }

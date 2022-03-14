@@ -15,7 +15,7 @@ type Database interface {
 
 	TxDb
 
-	MsgDb
+	InstructionDb
 
 	ExcecutorDb
 
@@ -66,16 +66,16 @@ type TxDb interface {
 	PruneTxsBeforeSlot(slot uint64) error
 }
 
-type MsgDb interface {
-	// SaveMessages stores a batch of messages.
+type InstructionDb interface {
+	// SaveInstructions stores a batch of instructions.
 	// An error is returned if the operation fails.
-	SaveMessages(msg []dbtypes.MsgRow) error
+	SaveInstructions(instruction []dbtypes.InstructionRow) error
 
-	// CreateMsgPartition allows to create a message partition
-	CreateMsgPartition(Id int) error
+	// CreateInstructionPartition allows to create a instruction partition
+	CreateInstructionPartition(Id int) error
 
-	// PruneMsgsBeforeSlot allows to prune the msgs before the given slot
-	PruneMsgsBeforeSlot(slot uint64) error
+	// PruneInstructionsBeforeSlot allows to prune the instructions before the given slot
+	PruneInstructionsBeforeSlot(slot uint64) error
 }
 
 // ExcecutorDb represents an abstract database that can excute a raw sql

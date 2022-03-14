@@ -63,7 +63,7 @@ func StartParsing(ctx *Context) error {
 	// Create a queue that will collect, aggregate, and export blocks and metadata
 	exportQueue := types.NewQueue(25)
 
-	// Create and register solana message parserManager
+	// Create and register solana instruction parserManager
 	parserManager := manager.NewDefaultManager()
 
 	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parserManager, ctx.Logger, ctx.Pool, exportQueue, ctx.Modules)

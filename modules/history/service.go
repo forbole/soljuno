@@ -13,7 +13,10 @@ func (m *Module) RegisterService(services ...HistroyService) {
 
 func (m *Module) RunServices(scheduler *gocron.Scheduler) error {
 	for _, service := range m.services {
-		m.registerService(scheduler, service)
+		err := m.registerService(scheduler, service)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
