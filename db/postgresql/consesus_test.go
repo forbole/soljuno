@@ -15,19 +15,19 @@ func (suite *DbTestSuite) TestGetLastBlock() {
 	err = suite.database.SaveBlock(types.Block{
 		Slot:      1,
 		Height:    1,
-		Proposer:  "proposer",
+		Leader:    "leader",
 		Hash:      "hash",
 		Timestamp: date,
 	})
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewBlockRow(1, 1, "hash", "proposer", date, 0)
+	expected := dbtypes.NewBlockRow(1, 1, "hash", "leader", date, 0)
 
 	result, err := suite.database.GetLastBlock()
 	suite.Require().NoError(err)
 	suite.Require().Equal(expected.Slot, result.Slot)
 	suite.Require().Equal(expected.Height, result.Height)
-	suite.Require().Equal(expected.Proposer, result.Proposer)
+	suite.Require().Equal(expected.Leader, result.Leader)
 	suite.Require().Equal(expected.Hash, result.Hash)
 	suite.Require().Equal(expected.Timestamp.Unix(), result.Timestamp.Unix())
 }
@@ -44,7 +44,7 @@ func (suite *DbTestSuite) TestGetBlockHourAgo() {
 	err = suite.database.SaveBlock(types.Block{
 		Slot:      1,
 		Height:    1,
-		Proposer:  "proposer",
+		Leader:    "leader",
 		Hash:      "hash",
 		Timestamp: timeAgo,
 	})

@@ -29,19 +29,19 @@ type Block struct {
 	Slot      uint64
 	Height    uint64
 	Hash      string
-	Proposer  string
+	Leader    string
 	Rewards   []clienttypes.Reward
 	Timestamp time.Time
 	Txs       []Tx
 }
 
 // NewBlock allows to build a new Block instance
-func NewBlock(slot, height uint64, hash, proposer string, timestamp time.Time, txs []Tx) Block {
+func NewBlock(slot, height uint64, hash, leader string, timestamp time.Time, txs []Tx) Block {
 	return Block{
 		Slot:      slot,
 		Height:    height,
 		Hash:      hash,
-		Proposer:  proposer,
+		Leader:    leader,
 		Timestamp: timestamp,
 		Txs:       txs,
 	}
@@ -59,7 +59,7 @@ func NewBlockFromResult(parserManager manager.ParserManager, slot uint64, b clie
 		Height:    b.BlockHeight,
 		Hash:      b.Blockhash,
 		Rewards:   b.Rewards,
-		Proposer:  "",
+		Leader:    "",
 		Timestamp: time.Unix(int64(b.BlockTime), 0),
 		Txs:       txs,
 	}
