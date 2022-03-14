@@ -15,7 +15,7 @@ func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 	if len(txs) == 0 {
 		return nil
 	}
-	insertStmt := `INSERT INTO transaction (hash, slot, error, fee, logs, partition_id) VALUES`
+	insertStmt := `INSERT INTO transaction (signature, slot, error, fee, logs, partition_id) VALUES`
 	conflictStmt := `ON CONFLICT DO NOTHING`
 
 	var params []interface{}
@@ -24,7 +24,7 @@ func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 	for _, tx := range txs {
 		params = append(
 			params,
-			tx.Hash,
+			tx.Signature,
 			tx.Slot,
 			tx.Error,
 			tx.Fee,

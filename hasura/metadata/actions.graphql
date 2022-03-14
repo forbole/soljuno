@@ -3,7 +3,7 @@ type Query {
     actions_epoch_schedule: EpochSchedule!
     actions_inflation_rate: InflationRate!
     actions_inflation_governor: InflationGovernor!
-    actions_tx(hash: String!): Tx!
+    actions_tx(signature: String!): Tx!
     actions_txs_by_address(address: String!, config: TxsByAddressConfig): [TxMeta!]!
     actions_account_info(address: String!): AccountInfo!
 }
@@ -47,7 +47,7 @@ type InflationGovernor {
 scalar Instruction
 
 type Tx {
-    hash: String!
+    signature: String!
     slot: bigint!
     error: Boolean!
     fee: bigint!
@@ -59,7 +59,7 @@ type Tx {
 type TxMeta {
     slot: bigint!
     block_time: bigint!
-    hash: String!
+    signature: String!
     error: Boolean!
     memo: String!
 }

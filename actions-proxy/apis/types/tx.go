@@ -10,11 +10,11 @@ type TxPayload struct {
 }
 
 type TxArgs struct {
-	Hash string `json:"hash"`
+	Signature string `json:"signature"`
 }
 
 type TxResponse struct {
-	Hash         string                `json:"hash"`
+	Signature    string                `json:"signature"`
 	Slot         uint64                `json:"slot"`
 	Error        bool                  `json:"error"`
 	Fee          uint64                `json:"fee"`
@@ -40,7 +40,7 @@ type ParsedData struct {
 
 func NewTxResponse(tx types.Tx) TxResponse {
 	var res TxResponse
-	res.Hash = tx.Hash
+	res.Signature = tx.Signature
 	res.Slot = tx.Slot
 	res.Error = !tx.Successful()
 	res.Fee = tx.Fee

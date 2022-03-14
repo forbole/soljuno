@@ -9,20 +9,20 @@ func Up(db db.ExcecutorDb) error {
 	DROP TABLE message CASCADE;
 	CREATE TABLE instruction
 	(
-		transaction_hash    TEXT    NOT NULL,
-		slot                BIGINT  NOT NULL,
-		index               INT     NOT NULL,
-		inner_index         INT     NOT NULL,
-		program             TEXT    NOT NULL,      
-		involved_accounts   TEXT[]  NOT NULL DEFAULT array[]::TEXT[],
-		raw_data            TEXT    NOT NULL,
-		type                TEXT    NOT NULL DEFAULT 'unknown',
-		value               JSON    NOT NULL DEFAULT '{}',
-		partition_id        INT     NOT NULL,
+		tx_signature   			TEXT    NOT NULL,
+		slot                	BIGINT  NOT NULL,
+		index               	INT     NOT NULL,
+		inner_index         	INT     NOT NULL,
+		program             	TEXT    NOT NULL,      
+		involved_accounts   	TEXT[]  NOT NULL DEFAULT array[]::TEXT[],
+		raw_data            	TEXT    NOT NULL,
+		type                	TEXT    NOT NULL DEFAULT 'unknown',
+		value               	JSON    NOT NULL DEFAULT '{}',
+		partition_id        	INT     NOT NULL,
 		CHECK (slot / 1000 = partition_id)
 	) PARTITION BY LIST(partition_id);
-	ALTER TABLE instruction ADD UNIQUE (transaction_hash, index, inner_index, partition_id);
-	CREATE INDEX instruction_transaction_hash_index ON instruction (transaction_hash);
+	ALTER TABLE instruction ADD UNIQUE (tx_signature, index, inner_index, partition_id);
+	CREATE INDEX instruction_tx_signature_index ON instruction (tx_signature);
 	CREATE INDEX instruction_slot_index ON instruction (slot DESC);
 	CREATE INDEX instruction_program_index ON instruction (program);
 	CREATE INDEX instruction_accounts_index ON instruction USING GIN(involved_accounts);
@@ -35,7 +35,7 @@ func Up(db db.ExcecutorDb) error {
 		RETURNS SETOF instruction AS
 	$$
 	SELECT 
-		instruction.transaction_hash, instruction.slot, instruction.index, instruction.inner_index, instruction.program, instruction.involved_accounts, instruction.raw_data, instruction.type, instruction.value, instruction.partition_id
+		instruction.tx_signature, instruction.slot, instruction.index, instruction.inner_index, instruction.program, instruction.involved_accounts, instruction.raw_data, instruction.type, instruction.value, instruction.partition_id
 	FROM instruction
 	WHERE (cardinality(programs) = 0 OR program = ANY (programs))
 	  AND involved_accounts @> addresses
@@ -51,7 +51,7 @@ func Down(db db.ExcecutorDb) error {
 	DROP TABLE instruction CASCADE;
 	CREATE TABLE message
 	(
-		transaction_hash    TEXT    NOT NULL,
+		tx_signature    	TEXT    NOT NULL,
 		slot                BIGINT  NOT NULL,
 		index               INT     NOT NULL,
 		inner_index         INT     NOT NULL,
@@ -63,8 +63,8 @@ func Down(db db.ExcecutorDb) error {
 		partition_id        INT     NOT NULL,
 		CHECK (slot / 1000 = partition_id)
 	) PARTITION BY LIST(partition_id);
-	ALTER TABLE message ADD UNIQUE (transaction_hash, index, inner_index, partition_id);
-	CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
+	ALTER TABLE message ADD UNIQUE (tx_signature, index, inner_index, partition_id);
+	CREATE INDEX message_tx_signature_index ON message (tx_signature);
 	CREATE INDEX message_slot_index ON message (slot DESC);
 	CREATE INDEX message_program_index ON message (program);
 	CREATE INDEX message_accounts_index ON message USING GIN(involved_accounts);
@@ -81,7 +81,7 @@ func Down(db db.ExcecutorDb) error {
 		RETURNS SETOF message AS
 	$$
 	SELECT 
-		message.transaction_hash, message.slot, message.index, message.inner_index, message.program, message.involved_accounts, message.raw_data, message.type, message.value, message.partition_id
+		message.tx_signature, message.slot, message.index, message.inner_index, message.program, message.involved_accounts, message.raw_data, message.type, message.value, message.partition_id
 	FROM message
 	WHERE (cardinality(programs) = 0 OR program = ANY (programs))
 	AND involved_accounts @> addresses

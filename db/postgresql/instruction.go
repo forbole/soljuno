@@ -16,7 +16,7 @@ func (db *Database) SaveInstructions(instructions []dbtypes.InstructionRow) erro
 		return nil
 	}
 	insertStmt := `INSERT INTO instruction
-	(transaction_hash, slot, index, inner_index, involved_accounts, program, raw_data, type, value, partition_id) VALUES`
+	(tx_signature, slot, index, inner_index, involved_accounts, program, raw_data, type, value, partition_id) VALUES`
 	conflictStmt := `ON CONFLICT DO NOTHING`
 
 	var params []interface{}
@@ -25,7 +25,7 @@ func (db *Database) SaveInstructions(instructions []dbtypes.InstructionRow) erro
 	for _, instruction := range instructions {
 		params = append(
 			params,
-			instruction.TxHash,
+			instruction.TxSignature,
 			instruction.Slot,
 			instruction.Index,
 			instruction.InnerIndex,

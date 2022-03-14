@@ -3,7 +3,7 @@ package types
 import "github.com/forbole/soljuno/types"
 
 type InstructionRow struct {
-	TxHash           string      `db:"transaction_hash"`
+	TxSignature      string      `db:"tx_signature"`
 	Slot             uint64      `db:"slot"`
 	Index            int         `db:"index"`
 	InnerIndex       int         `db:"inner_index"`
@@ -16,10 +16,10 @@ type InstructionRow struct {
 }
 
 func NewInstructionRow(
-	txHash string, slot uint64, index int, innerIndex int, program string, involvedAccounts []string, rawData string, typ string, value interface{},
+	txSignature string, slot uint64, index int, innerIndex int, program string, involvedAccounts []string, rawData string, typ string, value interface{},
 ) InstructionRow {
 	return InstructionRow{
-		TxHash:           txHash,
+		TxSignature:      txSignature,
 		Slot:             slot,
 		Index:            index,
 		InnerIndex:       innerIndex,
@@ -36,7 +36,7 @@ func NewInstructionRowFromInstruction(
 	instruction types.Instruction,
 ) InstructionRow {
 	return NewInstructionRow(
-		instruction.TxHash,
+		instruction.TxSignature,
 		instruction.Slot,
 		instruction.Index,
 		instruction.InnerIndex,
