@@ -78,11 +78,11 @@ func (db *Database) HasBlock(height uint64) (bool, error) {
 // SaveBlock implements db.Database
 func (db *Database) SaveBlock(block types.Block) error {
 	stmt := `
-INSERT INTO block (slot, height, hash, leader, timestamp, num_txs)
+INSERT INTO block (slot, height, hash, proposer, timestamp, num_txs)
 VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
-	leader := sql.NullString{Valid: len(block.Leader) != 0, String: block.Leader}
+	proposer := sql.NullString{Valid: len(block.Proposer) != 0, String: block.Proposer}
 	_, err := db.Sqlx.Exec(
-		stmt, block.Slot, block.Height, block.Hash, leader, block.Timestamp, len(block.Txs),
+		stmt, block.Slot, block.Height, block.Hash, proposer, block.Timestamp, len(block.Txs),
 	)
 	return err
 }

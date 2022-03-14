@@ -29,19 +29,19 @@ type Block struct {
 	Slot      uint64
 	Height    uint64
 	Hash      string
-	Leader    string
+	Proposer  string
 	Rewards   []clienttypes.Reward
 	Timestamp time.Time
 	Txs       []Tx
 }
 
 // NewBlock allows to build a new Block instance
-func NewBlock(slot, height uint64, hash, leader string, timestamp time.Time, txs []Tx) Block {
+func NewBlock(slot, height uint64, hash, proposer string, timestamp time.Time, txs []Tx) Block {
 	return Block{
 		Slot:      slot,
 		Height:    height,
 		Hash:      hash,
-		Leader:    leader,
+		Proposer:  proposer,
 		Timestamp: timestamp,
 		Txs:       txs,
 	}
@@ -59,7 +59,7 @@ func NewBlockFromResult(parserManager manager.ParserManager, slot uint64, b clie
 		Height:    b.BlockHeight,
 		Hash:      b.Blockhash,
 		Rewards:   b.Rewards,
-		Leader:    "",
+		Proposer:  "",
 		Timestamp: time.Unix(int64(b.BlockTime), 0),
 		Txs:       txs,
 	}
@@ -79,12 +79,12 @@ func getAccounts(accountKeys []string, ids []uint8) []string {
 
 // Tx represents an already existing blockchain transaction
 type Tx struct {
-	Signature    string
-	Slot         uint64
-	Error        interface{}
-	Fee          uint64
-	Logs         []string
-	Instructions []Instruction
+	Hash     string
+	Slot     uint64
+	Error    interface{}
+	Fee      uint64
+	Logs     []string
+	Messages []Message
 
 	Accounts          []string
 	PostBalances      []uint64
@@ -93,23 +93,23 @@ type Tx struct {
 
 // NewTx allows to build a new Tx instance
 func NewTx(
-	signature string,
+	hash string,
 	slot uint64,
 	err interface{},
 	fee uint64,
 	logs []string,
-	instructions []Instruction,
+	msgs []Message,
 	accounts []string,
 	postBalances []uint64,
 	postTokenBalances []clienttypes.TransactionTokenBalance,
 ) Tx {
 	return Tx{
-		Signature:    signature,
-		Slot:         slot,
-		Error:        err,
-		Fee:          fee,
-		Logs:         logs,
-		Instructions: instructions,
+		Hash:     hash,
+		Slot:     slot,
+		Error:    err,
+		Fee:      fee,
+		Logs:     logs,
+		Messages: msgs,
 
 		Accounts:          accounts,
 		PostBalances:      postBalances,
@@ -123,43 +123,43 @@ func (tx Tx) Successful() bool {
 }
 
 func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResult clienttypes.EncodedTransactionWithStatusMeta) Tx {
-	signature := txResult.Transaction.Signatures[0]
+	hash := txResult.Transaction.Signatures[0]
 	rawMsg := txResult.Transaction.Message
 	accountKeys := rawMsg.AccountKeys
 
-	// Put innerstructions to map in order to create inner instructions after the main instruction
+	// Put innerstructions to map in order to create msg after the main instruction
 	var innerInstructionMap = make(map[uint8][]clienttypes.UiCompiledInstruction)
 	for _, inner := range txResult.Meta.InnerInstructions {
 		innerInstructionMap[inner.Index] = append(innerInstructionMap[inner.Index], inner.Instructions...)
 	}
 
-	instructions := make([]Instruction, 0, len(txResult.Transaction.Message.Instructions)+len(txResult.Meta.InnerInstructions))
-	for i, instruction := range rawMsg.Instructions {
+	msgs := make([]Message, 0, len(txResult.Transaction.Message.Instructions)+len(txResult.Meta.InnerInstructions))
+	for i, msg := range rawMsg.Instructions {
 		var accounts []string
 		innerIndex := 0
-		accounts = getAccounts(accountKeys, instruction.Accounts)
-		programID := accountKeys[instruction.ProgramIDIndex]
-		parsed := parserManager.Parse(accounts, programID, instruction.Data)
-		instructions = append(instructions, NewInstruction(signature, slot, i, innerIndex, accountKeys[instruction.ProgramIDIndex], accounts, instruction.Data, parsed))
+		accounts = getAccounts(accountKeys, msg.Accounts)
+		programID := accountKeys[msg.ProgramIDIndex]
+		parsed := parserManager.Parse(accounts, programID, msg.Data)
+		msgs = append(msgs, NewMessage(hash, slot, i, innerIndex, accountKeys[msg.ProgramIDIndex], accounts, msg.Data, parsed))
 		innerIndex++
 
 		if inner, ok := innerInstructionMap[uint8(i)]; ok {
-			for _, innerInstruction := range inner {
-				accounts = getAccounts(accountKeys, innerInstruction.Accounts)
-				programID := accountKeys[innerInstruction.ProgramIDIndex]
-				parsed := parserManager.Parse(accounts, programID, innerInstruction.Data)
-				instructions = append(instructions, NewInstruction(signature, slot, i, innerIndex, accountKeys[innerInstruction.ProgramIDIndex], accounts, innerInstruction.Data, parsed))
+			for _, innerMsg := range inner {
+				accounts = getAccounts(accountKeys, innerMsg.Accounts)
+				programID := accountKeys[innerMsg.ProgramIDIndex]
+				parsed := parserManager.Parse(accounts, programID, innerMsg.Data)
+				msgs = append(msgs, NewMessage(hash, slot, i, innerIndex, accountKeys[innerMsg.ProgramIDIndex], accounts, innerMsg.Data, parsed))
 				innerIndex++
 			}
 		}
 	}
 	return NewTx(
-		signature,
+		hash,
 		slot,
 		txResult.Meta.Err,
 		txResult.Meta.Fee,
 		txResult.Meta.LogMessages,
-		instructions,
+		msgs,
 		txResult.Transaction.Message.AccountKeys,
 		txResult.Meta.PostBalances,
 		txResult.Meta.PreTokenBalances,
@@ -168,8 +168,8 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 
 // -------------------------------------------------------------------------------------------------------------------
 
-type Instruction struct {
-	TxSignature      string
+type Message struct {
+	TxHash           string
 	Slot             uint64
 	Index            int
 	InnerIndex       int
@@ -179,8 +179,8 @@ type Instruction struct {
 	Parsed           types.ParsedInstruction
 }
 
-func NewInstruction(
-	signature string,
+func NewMessage(
+	hash string,
 	slot uint64,
 	index int,
 	innerIndex int,
@@ -188,9 +188,9 @@ func NewInstruction(
 	involvedAccounts []string,
 	rawData string,
 	parsed types.ParsedInstruction,
-) Instruction {
-	return Instruction{
-		TxSignature:      signature,
+) Message {
+	return Message{
+		TxHash:           hash,
 		Slot:             slot,
 		Index:            index,
 		InnerIndex:       innerIndex,
@@ -199,4 +199,28 @@ func NewInstruction(
 		RawData:          rawData,
 		Parsed:           parsed,
 	}
+}
+
+type SanitizedMessage struct {
+	Index            int                     `json:"index"`
+	InnerIndex       int                     `json:"inner_index"`
+	Program          string                  `json:"program"`
+	InvolvedAccounts []string                `json:"involved_accounts"`
+	RawData          string                  `json:"raw_data"`
+	Parsed           types.ParsedInstruction `json:"parsed"`
+}
+
+func NewSanitizedMessages(msgs []Message) []SanitizedMessage {
+	sanitizedMsgs := make([]SanitizedMessage, len(msgs))
+	for i, msg := range msgs {
+		sanitizedMsgs[i] = SanitizedMessage{
+			Index:            msg.Index,
+			InnerIndex:       msg.InnerIndex,
+			Program:          msg.Program,
+			InvolvedAccounts: msg.InvolvedAccounts,
+			RawData:          msg.RawData,
+			Parsed:           msg.Parsed,
+		}
+	}
+	return sanitizedMsgs
 }

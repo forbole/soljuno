@@ -10,21 +10,21 @@ type TxPayload struct {
 }
 
 type TxArgs struct {
-	Signature string `json:"signature"`
+	Hash string `json:"hash"`
 }
 
 type TxResponse struct {
-	Signature    string                `json:"signature"`
-	Slot         uint64                `json:"slot"`
-	Error        bool                  `json:"error"`
-	Fee          uint64                `json:"fee"`
-	Logs         []string              `json:"logs"`
-	Instructions []InstructionResponse `json:"instructions"`
+	Hash     string        `json:"hash"`
+	Slot     uint64        `json:"slot"`
+	Error    bool          `json:"error"`
+	Fee      uint64        `json:"fee"`
+	Logs     []string      `json:"logs"`
+	Messages []MsgResponse `json:"messages"`
 
 	Accounts []string `json:"accounts"`
 }
 
-type InstructionResponse struct {
+type MsgResponse struct {
 	Index            int        `json:"index"`
 	InnerIndex       int        `json:"inner_index"`
 	Program          string     `json:"program"`
@@ -40,23 +40,23 @@ type ParsedData struct {
 
 func NewTxResponse(tx types.Tx) TxResponse {
 	var res TxResponse
-	res.Signature = tx.Signature
+	res.Hash = tx.Hash
 	res.Slot = tx.Slot
 	res.Error = !tx.Successful()
 	res.Fee = tx.Fee
 	res.Logs = tx.Logs
 	res.Accounts = tx.Accounts
-	res.Instructions = make([]InstructionResponse, len(tx.Instructions))
-	for i, instruction := range tx.Instructions {
-		res.Instructions[i] = InstructionResponse{
-			instruction.Index,
-			instruction.InnerIndex,
-			instruction.Program,
-			instruction.InvolvedAccounts,
-			instruction.RawData,
+	res.Messages = make([]MsgResponse, len(tx.Messages))
+	for i, msg := range tx.Messages {
+		res.Messages[i] = MsgResponse{
+			msg.Index,
+			msg.InnerIndex,
+			msg.Program,
+			msg.InvolvedAccounts,
+			msg.RawData,
 			ParsedData{
-				instruction.Parsed.Type,
-				instruction.Parsed.Value,
+				msg.Parsed.Type,
+				msg.Parsed.Value,
 			},
 		}
 	}

@@ -60,9 +60,9 @@ type ClientProxy interface {
 		config clienttypes.GetSignaturesForAddressConfig,
 	) ([]clienttypes.ConfirmedTransactionStatusWithSignature, error)
 
-	// GetTransaction returns the transaction of the given signature
+	// GetTransaction returns the transaction of the given hash
 	// An error is returned if the query fails
-	GetTransaction(signature string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error)
+	GetTransaction(hash string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error)
 
 	// GetSlotLeaders returns the leader of given slot
 	// An error is returned if the query fails
@@ -187,9 +187,9 @@ func (c *Client) GetSignaturesForAddress(
 	return sig, err
 }
 
-func (c *Client) GetTransaction(signature string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error) {
+func (c *Client) GetTransaction(hash string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error) {
 	var tx clienttypes.EncodedConfirmedTransactionWithStatusMeta
-	err := c.rpcClient.CallFor(&tx, "getTransaction", signature, "json")
+	err := c.rpcClient.CallFor(&tx, "getTransaction", hash, "json")
 	if isEmpty(tx) {
 		return tx, fmt.Errorf("target doesn't exist on the chain")
 	}

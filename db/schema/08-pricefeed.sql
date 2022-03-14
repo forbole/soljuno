@@ -1,6 +1,6 @@
 CREATE TABLE token_unit
 (
-    mint        TEXT    NOT NULL PRIMARY KEY,
+    address     TEXT    NOT NULL PRIMARY KEY,
     price_id    TEXT    NOT NULL DEFAULT '',
     unit_name   TEXT    NOT NULL DEFAULT '',
     logo_uri    TEXT    NOT NULL DEFAULT '',

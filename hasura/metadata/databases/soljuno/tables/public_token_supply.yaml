@@ -5,7 +5,7 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - mint
+    - address
     - supply
     filter: {}
   role: anonymous

@@ -1,5 +1,5 @@
 table:
-  name: instruction
+  name: message
   schema: public
 object_relationships:
 - name: transaction
@@ -9,12 +9,12 @@ object_relationships:
         schema: public
         name: transaction
       column_mapping:
-        tx_signature: signature
+        transaction_hash: hash
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - tx_signature
+    - transaction_hash
     - index
     - inner_index
     - program

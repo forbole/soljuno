@@ -2,8 +2,8 @@ package types
 
 import "github.com/forbole/soljuno/types"
 
-type InstructionRow struct {
-	TxSignature      string      `db:"tx_signature"`
+type MsgRow struct {
+	TxHash           string      `db:"transaction_hash"`
 	Slot             uint64      `db:"slot"`
 	Index            int         `db:"index"`
 	InnerIndex       int         `db:"inner_index"`
@@ -15,11 +15,11 @@ type InstructionRow struct {
 	PartitionId      int         `db:"partition_id"`
 }
 
-func NewInstructionRow(
-	txSignature string, slot uint64, index int, innerIndex int, program string, involvedAccounts []string, rawData string, typ string, value interface{},
-) InstructionRow {
-	return InstructionRow{
-		TxSignature:      txSignature,
+func NewMsgRow(
+	txHash string, slot uint64, index int, innerIndex int, program string, involvedAccounts []string, rawData string, typ string, value interface{},
+) MsgRow {
+	return MsgRow{
+		TxHash:           txHash,
 		Slot:             slot,
 		Index:            index,
 		InnerIndex:       innerIndex,
@@ -32,18 +32,18 @@ func NewInstructionRow(
 	}
 }
 
-func NewInstructionRowFromInstruction(
-	instruction types.Instruction,
-) InstructionRow {
-	return NewInstructionRow(
-		instruction.TxSignature,
-		instruction.Slot,
-		instruction.Index,
-		instruction.InnerIndex,
-		instruction.Program,
-		instruction.InvolvedAccounts,
-		instruction.RawData,
-		instruction.Parsed.Type,
-		instruction.Parsed.GetValueJSON(),
+func NewMsgRowFromMessage(
+	msg types.Message,
+) MsgRow {
+	return NewMsgRow(
+		msg.TxHash,
+		msg.Slot,
+		msg.Index,
+		msg.InnerIndex,
+		msg.Program,
+		msg.InvolvedAccounts,
+		msg.RawData,
+		msg.Parsed.Type,
+		msg.Parsed.GetValueJSON(),
 	)
 }
