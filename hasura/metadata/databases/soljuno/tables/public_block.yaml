@@ -17,7 +17,7 @@ array_relationships:
         schema: public
         name: validator
       column_mapping:
-        leader: node
+        proposer: node
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -25,7 +25,7 @@ select_permissions:
     - slot
     - height
     - hash
-    - leader
+    - proposer
     - timestamp
     - num_txs
     filter: {}

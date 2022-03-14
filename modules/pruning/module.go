@@ -8,10 +8,7 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-var (
-	_ modules.Module                = &Module{}
-	_ modules.AsyncOperationsModule = &Module{}
-)
+var _ modules.Module = &Module{}
 
 // PruningService represents a service allowing to clean the database
 type PruningService interface {

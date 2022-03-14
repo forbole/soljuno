@@ -9,13 +9,13 @@ object_relationships:
         schema: public
         name: token
       column_mapping:
-        mint: mint
+        token: address
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
     - address
-    - mint
+    - token
     - owner
     filter: {}
   role: anonymous

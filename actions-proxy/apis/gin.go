@@ -79,7 +79,7 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 			c.JSON(http.StatusBadRequest, types.NewError(err))
 			return
 		}
-		encodedTx, err := proxy.GetTransaction(playload.Input.Signature)
+		encodedTx, err := proxy.GetTransaction(playload.Input.Hash)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, types.NewError(err))
 			return

@@ -1,7 +1,10 @@
 package modules
 
 import (
+	"encoding/json"
+
 	"github.com/go-co-op/gocron"
+	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/forbole/soljuno/types"
 )
@@ -50,6 +53,22 @@ type PeriodicOperationsModule interface {
 	RegisterPeriodicOperations(scheduler *gocron.Scheduler) error
 }
 
+type FastSyncModule interface {
+	// DownloadState allows to download the module state at the given height.
+	// This will be called only when the fast sync is used, and only once for the initial height.
+	// It should query the gRPC and get all the possible data.
+	// NOTE. If an error is returned, following modules will still be called.
+	DownloadState(height int64) error
+}
+
+type GenesisModule interface {
+	// HandleGenesis allows to handle the genesis state.
+	// For convenience of use, the already-unmarshalled AppState is provided along with the full GenesisDoc.
+	// NOTE. The returned error will be logged using the logging.LogGenesisError method. All other modules' handlers
+	// will still be called.
+	HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error
+}
+
 type BlockModule interface {
 	// HandleBlock allows to handle a single block.
 	// For convenience of use, all the transactions present inside the given block
@@ -62,17 +81,17 @@ type BlockModule interface {
 
 type TransactionModule interface {
 	// HandleTx handles a single transaction.
-	// For each instruction present inside the transaction, HandleInstruction will be called as well.
+	// For each message present inside the transaction, HandleMsg will be called as well.
 	// NOTE. The returned error will be logged using the logging.LogTxError method. All other modules' handlers
 	// will still be called.
 	HandleTx(tx types.Tx) error
 }
 
-type InstructionModule interface {
-	// HandleInstruction handles a single instruction.
-	// For convenience of use, the index of the instruction inside the transaction and the transaction itself
+type MessageModule interface {
+	// HandleMsg handles a single message.
+	// For convenience of use, the index of the message inside the transaction and the transaction itself
 	// are passed as well.
-	// NOTE. The returned error will be logged using the logging.LogInstructionError method. All other modules' handlers
+	// NOTE. The returned error will be logged using the logging.LogMsgError method. All other modules' handlers
 	// will still be called.
-	HandleInstruction(instruction types.Instruction, tx types.Tx) error
+	HandleMsg(msg types.Message, tx types.Tx) error
 }

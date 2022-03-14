@@ -25,4 +25,4 @@
 - "!include public_token_price_history.yaml"
 - "!include public_account_balance_history.yaml"
 - "!include public_token_account_balance_history.yaml"
-- "!include public_instruction.yaml"
+- "!include public_message.yaml"

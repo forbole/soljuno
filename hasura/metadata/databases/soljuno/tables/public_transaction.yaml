@@ -11,20 +11,20 @@ object_relationships:
       column_mapping:
         slot: slot
 array_relationships:
-- name: instructions
+- name: messages
   using:
     manual_configuration:
       remote_table:
         schema: public
-        name: instruction
+        name: message
       column_mapping:
-        signature: tx_signature
+        hash: transaction_hash
         partition_id: partition_id
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - signature
+    - hash
     - slot
     - error
     - fee

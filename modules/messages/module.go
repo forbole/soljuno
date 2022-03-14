@@ -1,9 +1,10 @@
-package txs
+package messages
 
 import (
 	"sync"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/modules/pruning"
 	"github.com/forbole/soljuno/types"
@@ -13,42 +14,43 @@ import (
 var _ modules.Module = &Module{}
 var _ pruning.PruningService = &Module{}
 
+// Module represents the module allowing to store messages properly inside a dedicated table
 type Module struct {
-	db     db.TxDb
-	buffer chan types.Block
+	db     db.MsgDb
+	buffer chan dbtypes.MsgRow
 	pool   pool.Pool
 
 	mtx sync.Mutex
 }
 
-func NewModule(db db.TxDb, pool pool.Pool) *Module {
+func NewModule(db db.MsgDb, pool pool.Pool) *Module {
 	return &Module{
 		db:     db,
-		buffer: make(chan types.Block),
+		buffer: make(chan dbtypes.MsgRow),
 		pool:   pool,
 	}
 }
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "txs"
+	return "messages"
 }
 
-// HandleBlock implements modules.MessageModule
 func (m *Module) HandleBlock(block types.Block) error {
-	err := m.createPartition(block.Slot)
-	if err != nil {
-		return err
-	}
-	m.buffer <- block
+	return m.createPartition(block.Slot)
+}
+
+// HandleMsg implements modules.MessageModule
+func (m *Module) HandleMsg(msg types.Message, tx types.Tx) error {
+	m.buffer <- dbtypes.NewMsgRowFromMessage(msg)
 	return nil
 }
 
-// createPartition creates a new partition for the txs module
+// createPartition creates a new partition for the msgs module
 func (m *Module) createPartition(slot uint64) error {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
-	err := m.db.CreateTxPartition(int(slot / 1000))
+	err := m.db.CreateMsgPartition(int(slot / 1000))
 	if err != nil {
 		return err
 	}
@@ -57,5 +59,5 @@ func (m *Module) createPartition(slot uint64) error {
 
 // Prune implements pruning.PruningService
 func (m *Module) Prune(slot uint64) error {
-	return m.db.PruneTxsBeforeSlot(slot)
+	return m.db.PruneMsgsBeforeSlot(slot)
 }

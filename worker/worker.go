@@ -131,12 +131,12 @@ func (w Worker) process(slot uint64) error {
 	}
 	block := types.NewBlockFromResult(w.parserManager, slot, b)
 
-	// set block leader
-	leaders, err := w.cp.GetSlotLeaders(slot, 1)
+	// set block proposer
+	proposers, err := w.cp.GetSlotLeaders(slot, 1)
 	if err != nil {
 		return err
 	}
-	block.Leader = leaders[0]
+	block.Proposer = proposers[0]
 
 	err = w.ExportBlock(block)
 	return err
@@ -204,14 +204,14 @@ func (w Worker) handleTx(tx types.Tx) error {
 			}
 		}
 	}
-	return w.handleInstructions(tx)
+	return w.handleMessages(tx)
 }
 
-// handleInstructions handles all the instructions events in a transaction
-func (w Worker) handleInstructions(tx types.Tx) error {
-	for _, instruction := range tx.Instructions {
-		instruction := instruction
-		err := w.handleInstruction(tx, instruction)
+// handleMessages handles all the messages events in a transaction
+func (w Worker) handleMessages(tx types.Tx) error {
+	for _, msg := range tx.Messages {
+		msg := msg
+		err := w.handleMessage(tx, msg)
 		if err != nil {
 			return err
 		}
@@ -219,10 +219,10 @@ func (w Worker) handleInstructions(tx types.Tx) error {
 	return nil
 }
 
-func (w Worker) handleInstruction(tx types.Tx, instruction types.Instruction) error {
+func (w Worker) handleMessage(tx types.Tx, msg types.Message) error {
 	for _, module := range w.modules {
-		if InstructionModule, ok := module.(modules.InstructionModule); ok {
-			err := InstructionModule.HandleInstruction(instruction, tx)
+		if messageModule, ok := module.(modules.MessageModule); ok {
+			err := messageModule.HandleMsg(msg, tx)
 			if err != nil {
 				return err
 			}

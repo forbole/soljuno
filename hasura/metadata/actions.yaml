@@ -80,5 +80,5 @@ custom_types:
   - name: Tx
   - name: TxMeta
   scalars:
-  - name: Instruction
+  - name: Message
   - name: ParsedAccount

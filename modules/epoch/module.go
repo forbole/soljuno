@@ -4,11 +4,8 @@ import (
 	"sync"
 
 	"github.com/forbole/soljuno/db"
-	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/solana/client"
 )
-
-var _ modules.BlockModule = &Module{}
 
 type Module struct {
 	db       db.Database
