@@ -15,37 +15,37 @@ func (suite *DbTestSuite) TestSaveToken() {
 		{
 			name: "initialize the data",
 			data: dbtypes.NewTokenRow(
-				"address", 1, 9, "owner", "freeze",
+				"mint", 1, 9, "owner", "freeze",
 			),
 			expected: dbtypes.NewTokenRow(
-				"address", 1, 9, "owner", "freeze",
+				"mint", 1, 9, "owner", "freeze",
 			),
 		},
 		{
 			name: "update with lower slot",
 			data: dbtypes.NewTokenRow(
-				"address", 0, 9, "pre_owner", "freeze",
+				"mint", 0, 9, "pre_owner", "freeze",
 			),
 			expected: dbtypes.NewTokenRow(
-				"address", 1, 9, "owner", "freeze",
+				"mint", 1, 9, "owner", "freeze",
 			),
 		},
 		{
 			name: "update with same slot",
 			data: dbtypes.NewTokenRow(
-				"address", 1, 9, "new_owner", "freeze",
+				"mint", 1, 9, "new_owner", "freeze",
 			),
 			expected: dbtypes.NewTokenRow(
-				"address", 1, 9, "new_owner", "freeze",
+				"mint", 1, 9, "new_owner", "freeze",
 			),
 		},
 		{
 			name: "update with higher slot",
 			data: dbtypes.NewTokenRow(
-				"address", 2, 9, "new_owner", "new_freeze",
+				"mint", 2, 9, "new_owner", "new_freeze",
 			),
 			expected: dbtypes.NewTokenRow(
-				"address", 2, 9, "new_owner", "new_freeze",
+				"mint", 2, 9, "new_owner", "new_freeze",
 			),
 		},
 	}
@@ -130,13 +130,7 @@ func (suite *DbTestSuite) TestSaveTokenAccount() {
 func (suite *DbTestSuite) TestDeleteTokenAccount() {
 	err := suite.database.SaveTokenAccount(dbtypes.NewTokenAccountRow("address", 0, "mint", "owner"))
 	suite.Require().NoError(err)
-	rows := []struct {
-		Address string `db:"address"`
-		Slot    uint64 `db:"slot"`
-		Token   string `db:"token"`
-		Owner   string `db:"owner"`
-		State   string `db:"state"`
-	}{}
+	rows := []dbtypes.TokenAccountRow{}
 
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_account")
 	suite.Require().NoError(err)

@@ -42,6 +42,10 @@ func Up(db db.ExcecutorDb) error {
 	ORDER BY slot DESC,
 	involved_accounts LIMIT "limit" OFFSET "offset"
 	$$ LANGUAGE sql STABLE;
+
+	ALTER TABLE token RENAME COLUMN address TO mint;
+	ALTER TABLE token_supply RENAME COLUMN address TO mint;
+	ALTER TABLE token_account RENAME COLUMN token TO mint;
 	`)
 	return err
 }
@@ -88,6 +92,10 @@ func Down(db db.ExcecutorDb) error {
 	ORDER BY slot DESC,
 	involved_accounts LIMIT "limit" OFFSET "offset"
 	$$ LANGUAGE sql STABLE;
+
+	ALTER TABLE token RENAME COLUMN mint TO address;
+	ALTER TABLE token_supply RENAME COLUMN mint TO address;
+	ALTER TABLE token_account RENAME COLUMN mint TO token;
 	`)
 	return err
 }
