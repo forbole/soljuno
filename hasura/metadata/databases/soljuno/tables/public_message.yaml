@@ -9,12 +9,12 @@ object_relationships:
         schema: public
         name: transaction
       column_mapping:
-        transaction_hash: hash
+        tx_signature: signature
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - transaction_hash
+    - tx_signature
     - index
     - inner_index
     - program

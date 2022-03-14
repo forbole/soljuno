@@ -44,7 +44,7 @@ func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) e
 	if err != nil {
 		return err
 	}
-	log.Debug().Str("module", m.Name()).Str("tx", tx.Hash).Uint64("slot", tx.Slot).
+	log.Debug().Str("module", m.Name()).Str("tx", tx.Signature).Uint64("slot", tx.Slot).
 		Msg("handled instruction")
 	return nil
 }

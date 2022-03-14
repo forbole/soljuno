@@ -19,7 +19,7 @@ type TxsByAddressConfig struct {
 }
 
 type TxMetaResponse struct {
-	Hash      string `json:"hash"`
+	Signature string `json:"signature"`
 	Slot      uint64 `json:"slot"`
 	Error     bool   `json:"error"`
 	Memo      string `json:"memo"`
@@ -30,7 +30,7 @@ func NewTxMetasResponse(metas []clienttypes.ConfirmedTransactionStatusWithSignat
 	res := make([]TxMetaResponse, len(metas))
 	for i, meta := range metas {
 		res[i] = TxMetaResponse{
-			Hash:      meta.Signature,
+			Signature: meta.Signature,
 			Slot:      meta.Slot,
 			Error:     meta.Err != nil,
 			Memo:      meta.Memo,

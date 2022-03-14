@@ -79,7 +79,7 @@ func getAccounts(accountKeys []string, ids []uint8) []string {
 
 // Tx represents an already existing blockchain transaction
 type Tx struct {
-	Hash         string
+	Signature    string
 	Slot         uint64
 	Error        interface{}
 	Fee          uint64
@@ -93,7 +93,7 @@ type Tx struct {
 
 // NewTx allows to build a new Tx instance
 func NewTx(
-	hash string,
+	signature string,
 	slot uint64,
 	err interface{},
 	fee uint64,
@@ -104,7 +104,7 @@ func NewTx(
 	postTokenBalances []clienttypes.TransactionTokenBalance,
 ) Tx {
 	return Tx{
-		Hash:         hash,
+		Signature:    signature,
 		Slot:         slot,
 		Error:        err,
 		Fee:          fee,
@@ -123,7 +123,7 @@ func (tx Tx) Successful() bool {
 }
 
 func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResult clienttypes.EncodedTransactionWithStatusMeta) Tx {
-	hash := txResult.Transaction.Signatures[0]
+	signature := txResult.Transaction.Signatures[0]
 	rawMsg := txResult.Transaction.Message
 	accountKeys := rawMsg.AccountKeys
 
@@ -140,7 +140,7 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 		accounts = getAccounts(accountKeys, instruction.Accounts)
 		programID := accountKeys[instruction.ProgramIDIndex]
 		parsed := parserManager.Parse(accounts, programID, instruction.Data)
-		instructions = append(instructions, NewInstruction(hash, slot, i, innerIndex, accountKeys[instruction.ProgramIDIndex], accounts, instruction.Data, parsed))
+		instructions = append(instructions, NewInstruction(signature, slot, i, innerIndex, accountKeys[instruction.ProgramIDIndex], accounts, instruction.Data, parsed))
 		innerIndex++
 
 		if inner, ok := innerInstructionMap[uint8(i)]; ok {
@@ -148,13 +148,13 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 				accounts = getAccounts(accountKeys, innerInstruction.Accounts)
 				programID := accountKeys[innerInstruction.ProgramIDIndex]
 				parsed := parserManager.Parse(accounts, programID, innerInstruction.Data)
-				instructions = append(instructions, NewInstruction(hash, slot, i, innerIndex, accountKeys[innerInstruction.ProgramIDIndex], accounts, innerInstruction.Data, parsed))
+				instructions = append(instructions, NewInstruction(signature, slot, i, innerIndex, accountKeys[innerInstruction.ProgramIDIndex], accounts, innerInstruction.Data, parsed))
 				innerIndex++
 			}
 		}
 	}
 	return NewTx(
-		hash,
+		signature,
 		slot,
 		txResult.Meta.Err,
 		txResult.Meta.Fee,
@@ -169,7 +169,7 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 // -------------------------------------------------------------------------------------------------------------------
 
 type Instruction struct {
-	TxHash           string
+	TxSignature      string
 	Slot             uint64
 	Index            int
 	InnerIndex       int
@@ -180,7 +180,7 @@ type Instruction struct {
 }
 
 func NewInstruction(
-	hash string,
+	signature string,
 	slot uint64,
 	index int,
 	innerIndex int,
@@ -190,7 +190,7 @@ func NewInstruction(
 	parsed types.ParsedInstruction,
 ) Instruction {
 	return Instruction{
-		TxHash:           hash,
+		TxSignature:      signature,
 		Slot:             slot,
 		Index:            index,
 		InnerIndex:       innerIndex,

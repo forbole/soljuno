@@ -94,7 +94,7 @@ func (d *defaultLogger) TxError(module modules.Module, tx types.Tx, err error) {
 		"err", err,
 		LogKeyModule, module.Name(),
 		LogKeySlot, tx.Slot,
-		LogKeyTxHash, tx.Hash,
+		LogKeyTxSignature, tx.Signature,
 	)
 }
 
@@ -104,7 +104,7 @@ func (d *defaultLogger) InstructionError(module modules.Module, tx types.Tx, ins
 		"err", err,
 		LogKeyModule, module.Name(),
 		LogKeySlot, tx.Slot,
-		LogKeyTxHash, tx.Hash,
+		LogKeyTxSignature, tx.Signature,
 		LogKeyProgram, instruction.Program,
 		LogKeyInstructionType, instruction.Parsed.Type,
 	)

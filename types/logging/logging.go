@@ -8,7 +8,7 @@ import (
 const (
 	LogKeyModule          = "module"
 	LogKeySlot            = "slot"
-	LogKeyTxHash          = "tx_hash"
+	LogKeyTxSignature     = "tx_signature"
 	LogKeyProgram         = "program"
 	LogKeyInstructionType = "instruction_type"
 )
