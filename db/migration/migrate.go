@@ -43,6 +43,8 @@ func Up(db db.ExcecutorDb) error {
 	involved_accounts LIMIT "limit" OFFSET "offset"
 	$$ LANGUAGE sql STABLE;
 
+	ALTER TABLE block RENAME COLUMN proposer TO leader;
+	ALTER TABLE transaction RENAME COLUMN hash TO signature;
 	ALTER TABLE token RENAME COLUMN address TO mint;
 	ALTER TABLE token_supply RENAME COLUMN address TO mint;
 	ALTER TABLE token_unit RENAME COLUMN address TO mint;
@@ -94,6 +96,8 @@ func Down(db db.ExcecutorDb) error {
 	involved_accounts LIMIT "limit" OFFSET "offset"
 	$$ LANGUAGE sql STABLE;
 
+	ALTER TABLE block RENAME COLUMN leader TO proposer;
+	ALTER TABLE transaction RENAME COLUMN signature TO hash;
 	ALTER TABLE token RENAME COLUMN mint TO address;
 	ALTER TABLE token_supply RENAME COLUMN mint TO address;
 	ALTER TABLE token_unit RENAME COLUMN mint TO address;
