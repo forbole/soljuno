@@ -13,7 +13,7 @@ import (
 	"github.com/forbole/soljuno/modules/consensus"
 	"github.com/forbole/soljuno/modules/epoch"
 	"github.com/forbole/soljuno/modules/history"
-	"github.com/forbole/soljuno/modules/messages"
+	"github.com/forbole/soljuno/modules/instructions"
 	"github.com/forbole/soljuno/modules/pricefeed"
 	"github.com/forbole/soljuno/modules/pruning"
 	"github.com/forbole/soljuno/modules/stake"
@@ -91,8 +91,8 @@ func NewDefaultRegistrar() *DefaultRegistrar {
 func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	pruningModule := pruning.NewModule(ctx.Config.GetPruningConfig(), ctx.Database, ctx.Logger)
 	txsModule := txs.NewModule(ctx.Database, ctx.Pool)
-	msgsModule := messages.NewModule(ctx.Database, ctx.Pool)
-	pruningModule.RegisterService(txsModule, msgsModule)
+	instructionsModule := instructions.NewModule(ctx.Database, ctx.Pool)
+	pruningModule.RegisterService(txsModule, instructionsModule)
 
 	epochModule := epoch.NewModule(ctx.Database, ctx.Proxy)
 	voteModule := vote.NewModule(ctx.Database, ctx.Proxy)
@@ -115,7 +115,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		pricefeedModule,
 		pruningModule,
 		txsModule,
-		msgsModule,
+		instructionsModule,
 		epochModule,
 		voteModule,
 		historyModule,

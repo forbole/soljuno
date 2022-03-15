@@ -4,8 +4,14 @@ import (
 	"sync"
 
 	"github.com/forbole/soljuno/db"
+	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
+)
+
+var (
+	_ modules.BlockModule              = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
 )
 
 type Module struct {

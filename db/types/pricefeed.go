@@ -3,7 +3,7 @@ package types
 import "time"
 
 type TokenUnitRow struct {
-	Address     string `db:"address"`
+	Mint        string `db:"mint"`
 	PriceID     string `db:"price_id"`
 	Name        string `db:"unit_name"`
 	LogoURI     string `db:"logo_uri"`
@@ -12,7 +12,7 @@ type TokenUnitRow struct {
 }
 
 func NewTokenUnitRow(
-	address string,
+	mint string,
 	priceID string,
 	name string,
 	logoURI string,
@@ -20,7 +20,7 @@ func NewTokenUnitRow(
 	website string,
 ) TokenUnitRow {
 	return TokenUnitRow{
-		Address:     address,
+		Mint:        mint,
 		PriceID:     priceID,
 		Name:        name,
 		LogoURI:     logoURI,

@@ -17,7 +17,7 @@ object_relationships:
         schema: public
         name: token
       column_mapping:
-        address: address
+        mint: mint
 array_relationships:
 - name: token_price_history
   using:
@@ -33,7 +33,7 @@ select_permissions:
     columns:
     - unit_name
     - price_id
-    - address
+    - mint
     - logo_uri
     - description
     - website

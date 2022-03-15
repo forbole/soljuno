@@ -15,7 +15,7 @@ type Database interface {
 
 	TxDb
 
-	MsgDb
+	InstructionDb
 
 	ExcecutorDb
 
@@ -66,16 +66,16 @@ type TxDb interface {
 	PruneTxsBeforeSlot(slot uint64) error
 }
 
-type MsgDb interface {
-	// SaveMessages stores a batch of messages.
+type InstructionDb interface {
+	// SaveInstructions stores a batch of instructions.
 	// An error is returned if the operation fails.
-	SaveMessages(msg []dbtypes.MsgRow) error
+	SaveInstructions(instruction []dbtypes.InstructionRow) error
 
-	// CreateMsgPartition allows to create a message partition
-	CreateMsgPartition(Id int) error
+	// CreateInstructionPartition allows to create a instruction partition
+	CreateInstructionPartition(Id int) error
 
-	// PruneMsgsBeforeSlot allows to prune the msgs before the given slot
-	PruneMsgsBeforeSlot(slot uint64) error
+	// PruneInstructionsBeforeSlot allows to prune the instructions before the given slot
+	PruneInstructionsBeforeSlot(slot uint64) error
 }
 
 // ExcecutorDb represents an abstract database that can excute a raw sql
@@ -105,10 +105,10 @@ type BankDb interface {
 // TokenDb represents a database that supports token properly
 type TokenDb interface {
 	// SaveToken allows to store the given token data inside the database
-	SaveToken(address string, slot uint64, decimals uint8, mintAuthority string, freezeAuthority string) error
+	SaveToken(token dbtypes.TokenRow) error
 
 	// SaveTokenAccount allows to store the given token account data inside the database
-	SaveTokenAccount(address string, slot uint64, mint, owner string) error
+	SaveTokenAccount(account dbtypes.TokenAccountRow) error
 
 	// DeleteTokenAccount allows to delete the given address of the token account inside the database
 	DeleteTokenAccount(address string) error
@@ -123,7 +123,7 @@ type TokenDb interface {
 	DeleteTokenDelegation(address string) error
 
 	// SaveTokenSupply allows to store the given token data inside the database
-	SaveTokenSupply(address string, slot uint64, supply uint64) error
+	SaveTokenSupply(supply dbtypes.TokenSupplyRow) error
 
 	TokenCheckerDb
 }
@@ -131,7 +131,7 @@ type TokenDb interface {
 // TokenCheckerDb represents a database that checks account statement of token properly
 type TokenCheckerDb interface {
 	// CheckTokenLatest checks if the token statement is latest
-	CheckTokenLatest(address string, currentSlot uint64) bool
+	CheckTokenLatest(mint string, currentSlot uint64) bool
 
 	// CheckTokenAccountLatest checks if the token account statement is latest
 	CheckTokenAccountLatest(address string, currentSlot uint64) bool
@@ -143,7 +143,7 @@ type TokenCheckerDb interface {
 	CheckTokenDelegateLatest(address string, currentSlot uint64) bool
 
 	// CheckTokenSupplyLatest checks if the token supply statement is latest
-	CheckTokenSupplyLatest(address string, currentSlot uint64) bool
+	CheckTokenSupplyLatest(mint string, currentSlot uint64) bool
 }
 
 // SystemDb represents a database that checks account statement of system properly

@@ -3,7 +3,7 @@ package postgresql
 // CheckTokenLatest implements the db.TokenCheckerDb
 // if error, it returns true since there is no address statement inside database
 func (db *Database) CheckTokenLatest(address string, currentSlot uint64) bool {
-	stmt := `SELECT slot FROM token WHERE address=$1`
+	stmt := `SELECT slot FROM token WHERE mint=$1`
 	var latestSlot uint64
 	err := db.Sqlx.Get(&latestSlot, stmt, address)
 	if err != nil {
@@ -51,7 +51,7 @@ func (db *Database) CheckTokenDelegateLatest(sourceAddress string, currentSlot u
 // CheckTokenSupplyLatest implements the db.TokenCheckerDb
 // if error, it returns true since there is no address statement inside database
 func (db *Database) CheckTokenSupplyLatest(address string, currentSlot uint64) bool {
-	stmt := `SELECT slot FROM token_supply WHERE address=$1`
+	stmt := `SELECT slot FROM token_supply WHERE mint=$1`
 	var latestSlot uint64
 	err := db.Sqlx.Get(&latestSlot, stmt, address)
 	if err != nil {

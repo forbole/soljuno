@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	accountParser "github.com/forbole/soljuno/solana/account"
 	"github.com/forbole/soljuno/solana/client"
 )
@@ -37,12 +38,12 @@ func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client c
 }
 
 // updateToken properly stores the authority of mint inside the database
-func updateToken(address string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
-	if !db.CheckTokenLatest(address, currentSlot) {
+func updateToken(mint string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
+	if !db.CheckTokenLatest(mint, currentSlot) {
 		return nil
 	}
 
-	info, err := client.GetAccountInfo(address)
+	info, err := client.GetAccountInfo(mint)
 	if err != nil {
 		return err
 	}
@@ -54,15 +55,17 @@ func updateToken(address string, currentSlot uint64, db db.TokenDb, client clien
 
 	token, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.Token)
 	if !ok {
-		return fmt.Errorf("failed to parse token:%s", address)
+		return fmt.Errorf("failed to parse token:%s", mint)
 	}
 
 	return db.SaveToken(
-		address,
-		info.Context.Slot,
-		token.Decimals,
-		token.MintAuthority.String(),
-		token.FreezeAuthority.String(),
+		dbtypes.NewTokenRow(
+			mint,
+			info.Context.Slot,
+			token.Decimals,
+			token.MintAuthority.String(),
+			token.FreezeAuthority.String(),
+		),
 	)
 }
 
@@ -90,16 +93,19 @@ func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, clien
 	if !ok {
 		return db.DeleteTokenAccount(address)
 	}
-	return db.SaveTokenAccount(address, info.Context.Slot, tokenAccount.Mint.String(), tokenAccount.Owner.String())
+	return db.SaveTokenAccount(
+		dbtypes.NewTokenAccountRow(
+			address, info.Context.Slot, tokenAccount.Mint.String(), tokenAccount.Owner.String()),
+	)
 }
 
 // updateTokenSupply properly stores the supply of the given mint inside the database
-func updateTokenSupply(address string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
-	if !db.CheckTokenSupplyLatest(address, currentSlot) {
+func updateTokenSupply(mint string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
+	if !db.CheckTokenSupplyLatest(mint, currentSlot) {
 		return nil
 	}
 
-	info, err := client.GetAccountInfo(address)
+	info, err := client.GetAccountInfo(mint)
 	if err != nil {
 		return err
 	}
@@ -111,7 +117,7 @@ func updateTokenSupply(address string, currentSlot uint64, db db.TokenDb, client
 
 	token, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.Token)
 	if !ok {
-		return fmt.Errorf("failed to parse token:%s", address)
+		return fmt.Errorf("failed to parse token:%s", mint)
 	}
-	return db.SaveTokenSupply(address, info.Context.Slot, token.Supply)
+	return db.SaveTokenSupply(dbtypes.NewTokenSupplyRow(mint, info.Context.Slot, token.Supply))
 }
