@@ -14,12 +14,13 @@ CREATE INDEX block_timestamp_index ON block (timestamp DESC);
 
 CREATE TABLE transaction
 (
-    signature       TEXT    NOT NULL,
-    slot            BIGINT  NOT NULL,
-    error           BOOLEAN NOT NULL,
-    fee             INT     NOT NULL,
-    logs            TEXT[],
-    partition_id    INT     NOT NULL,
+    signature           TEXT    NOT NULL,
+    slot                BIGINT  NOT NULL,
+    error               BOOLEAN NOT NULL,
+    fee                 INT     NOT NULL,
+    logs                TEXT[],
+    num_instructions    INT     NOT NULL DEFAULT 0,
+    partition_id        INT     NOT NULL,
     CHECK (slot / 1000 = partition_id)
 ) PARTITION BY LIST(partition_id);
 ALTER TABLE transaction ADD UNIQUE (signature, partition_id);

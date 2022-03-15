@@ -28,6 +28,7 @@ select_permissions:
     - slot
     - error
     - fee
+    - num_instructions
     - logs
     filter: {}
   role: anonymous

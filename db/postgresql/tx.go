@@ -15,11 +15,11 @@ func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 	if len(txs) == 0 {
 		return nil
 	}
-	insertStmt := `INSERT INTO transaction (signature, slot, error, fee, logs, partition_id) VALUES`
+	insertStmt := `INSERT INTO transaction (signature, slot, error, fee, logs, num_instructions, partition_id) VALUES`
 	conflictStmt := `ON CONFLICT DO NOTHING`
 
 	var params []interface{}
-	paramsNumber := 6
+	paramsNumber := 7
 	params = make([]interface{}, 0, paramsNumber*len(txs))
 	for _, tx := range txs {
 		params = append(
@@ -29,6 +29,7 @@ func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 			tx.Error,
 			tx.Fee,
 			pq.Array(tx.Logs),
+			tx.NumInstructions,
 			tx.PartitionId,
 		)
 	}

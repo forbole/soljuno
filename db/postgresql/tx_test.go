@@ -7,15 +7,17 @@ func (suite *DbTestSuite) TestSaveTxs() {
 	suite.Require().NoError(err)
 
 	testCases := []struct {
-		name        string
-		data        dbtypes.TxRow
-		expectedLen int
-		shouldErr   bool
+		name      string
+		data      dbtypes.TxRow
+		expected  []dbtypes.TxRow
+		shouldErr bool
 	}{
 		{
-			name:        "initialize the data",
-			data:        dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}),
-			expectedLen: 1,
+			name: "initialize the data",
+			data: dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}, 2),
+			expected: []dbtypes.TxRow{
+				dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}, 2),
+			},
 		},
 		{
 			name: "insert the wrong tx",
@@ -30,14 +32,19 @@ func (suite *DbTestSuite) TestSaveTxs() {
 			shouldErr: true,
 		},
 		{
-			name:        "insert the existed data",
-			data:        dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}),
-			expectedLen: 1,
+			name: "insert the existed data",
+			data: dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}, 2),
+			expected: []dbtypes.TxRow{
+				dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}, 2),
+			},
 		},
 		{
-			name:        "insert the new data",
-			data:        dbtypes.NewTxRow("signature2", 2, true, 500, []string{"logs"}),
-			expectedLen: 2,
+			name: "insert the new data",
+			data: dbtypes.NewTxRow("signature2", 2, true, 500, []string{"logs"}, 2),
+			expected: []dbtypes.TxRow{
+				dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}, 2),
+				dbtypes.NewTxRow("signature2", 2, true, 500, []string{"logs"}, 2),
+			},
 		},
 	}
 
@@ -54,7 +61,7 @@ func (suite *DbTestSuite) TestSaveTxs() {
 				rows := []dbtypes.TxRow{}
 				err = suite.database.Sqlx.Select(&rows, "SELECT * FROM transaction")
 				suite.Require().NoError(err)
-				suite.Require().Len(rows, tc.expectedLen)
+				suite.Require().Len(rows, len(tc.expected))
 			}
 		})
 	}
@@ -65,7 +72,7 @@ func (suite *DbTestSuite) TestPruneTxsBeforeSlot() {
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveTxs([]dbtypes.TxRow{
-		dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}),
+		dbtypes.NewTxRow("signature", 1, true, 500, []string{"logs"}, 2),
 	})
 	suite.Require().NoError(err)
 

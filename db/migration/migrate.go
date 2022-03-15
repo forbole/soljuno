@@ -49,6 +49,8 @@ func Up(db db.ExcecutorDb) error {
 	ALTER TABLE token_supply RENAME COLUMN address TO mint;
 	ALTER TABLE token_unit RENAME COLUMN address TO mint;
 	ALTER TABLE token_account RENAME COLUMN token TO mint;
+
+	ALTER TABLE transaction ADD COLUMN num_instructions INT NOT NULL DEFAULT 0;
 	`)
 	return err
 }
@@ -102,6 +104,8 @@ func Down(db db.ExcecutorDb) error {
 	ALTER TABLE token_supply RENAME COLUMN mint TO address;
 	ALTER TABLE token_unit RENAME COLUMN mint TO address;
 	ALTER TABLE token_account RENAME COLUMN mint TO token;
+
+	ALTER TABLE transaction DROP COLUMN num_instructions CASCADE;
 	`)
 	return err
 }
