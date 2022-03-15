@@ -112,7 +112,7 @@ type StakeDelegation struct {
 // --------------------------------
 
 type TokenAccountInfo struct {
-	Mint           string           `json:"token"`
+	Mint           string           `json:"mint"`
 	Owner          string           `json:"owner"`
 	Amount         uint64           `json:"amount"`
 	Delegate       *TokenDelegation `json:"delegate,omitempty"`
