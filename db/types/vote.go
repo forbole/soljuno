@@ -17,3 +17,30 @@ func NewValidatorSkipRateRow(address string, epoch uint64, skipRate float64, tot
 		Skip:     skip,
 	}
 }
+
+type ValidatorStatusRow struct {
+	Address        string `db:"address"`
+	Slot           uint64 `db:"slot"`
+	ActivatedStake uint64 `db:"activated_stake"`
+	LastVote       uint64 `db:"last_vote"`
+	RootSlot       uint64 `db:"root_slot"`
+	Active         bool   `db:"active"`
+}
+
+func NewValidatorStatusRow(
+	address string,
+	slot uint64,
+	activatedStake uint64,
+	lastVote uint64,
+	rootSlot uint64,
+	active bool,
+) ValidatorStatusRow {
+	return ValidatorStatusRow{
+		Address:        address,
+		Slot:           slot,
+		ActivatedStake: activatedStake,
+		LastVote:       lastVote,
+		RootSlot:       rootSlot,
+		Active:         active,
+	}
+}
