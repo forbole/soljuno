@@ -33,7 +33,7 @@ select_permissions:
     columns:
     - unit_name
     - price_id
-    - address
+    - mint
     - logo_uri
     - description
     - website
