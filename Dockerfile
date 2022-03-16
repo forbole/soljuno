@@ -27,7 +27,7 @@ WORKDIR /go/src/github.com/forbole/soljuno
 # Add source files
 COPY . .
 
-# Install minimum necessary dependencies, build Cosmos SDK, remove packages
+# Install minimum necessary dependencies
 RUN apk update
 RUN apk add --no-cache $PACKAGES && \
     make install

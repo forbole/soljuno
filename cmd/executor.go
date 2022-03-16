@@ -32,9 +32,6 @@ var (
 // setupCfg method will be used to customize the SDK configuration. If you don't want any customization
 // you can use the config.DefaultConfigSetup variable.
 //
-// encodingConfigBuilder is used to provide a codec that will later be used to deserialize the
-// transaction messages. Make sure you register all the types you need properly.
-//
 // dbBuilder is used to provide the database that will be used to save the data. If you don't have any
 // particular need, you can use the Create variable to build a default database instance.
 func BuildDefaultExecutor(config *cmdtypes.Config) cli.Executor {
@@ -57,10 +54,9 @@ func BuildDefaultExecutor(config *cmdtypes.Config) cli.Executor {
 func RootCmd(name string) *cobra.Command {
 	return &cobra.Command{
 		Use:   name,
-		Short: fmt.Sprintf("%s is a Cosmos SDK-based chain data aggregator and exporter", name),
-		Long: fmt.Sprintf(`A Cosmos chain data aggregator. It improves the chain's data accessibility
-by providing an indexed database exposing aggregated resources and models such as blocks, validators, pre-commits, 
-transactions, and various aspects of the governance module. 
+		Short: fmt.Sprintf("%s is a Solana data aggregator and exporter", name),
+		Long: fmt.Sprintf(`A Solana chain data aggregator. It improves the chain's data accessibility
+by providing an indexed database exposing aggregated resources and models such as blocks, validators, transactions, and etc. 
 %s is meant to run with a GraphQL layer on top so that it even further eases the ability for developers and
 downstream clients to answer queries such as "What is the average gas cost of a block?" while also allowing
 them to compose more aggregate and complex queries.`, name),

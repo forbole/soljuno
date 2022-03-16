@@ -4,8 +4,8 @@ In order to properly setup this project to work with PostgreSQL and, at the same
 ## 1. Install PostgreSQL
 First of all, install PostgreSQL following the [official documentation](https://www.postgresql.org/download/).
 
-## 2. Create the Juno database 
-Once you have installed PostgreSQL, you will need to create the Juno database. To do so, follow the below steps. 
+## 2. Create the Soluno database 
+Once you have installed PostgreSQL, you will need to create the Soluno database. To do so, follow the below steps. 
 
 1. Log into PostgreSQL with root access.
    ```bash
@@ -22,14 +22,14 @@ Once you have installed PostgreSQL, you will need to create the Juno database. T
    \q
    ```
    
-4. Create the Juno database and set yor user to be the owner. 
+4. Create the Soluno database and set yor user to be the owner. 
    ```bash
-   createdb juno -O <your-username>
+   createdb Soluno -O <your-username>
    ```
    
-5. Log into the Juno database. 
+5. Log into the Soluno database. 
    ```bash
-   psql juno
+   psql soljuno
    ```
    
 6. Create all the required tables.  
