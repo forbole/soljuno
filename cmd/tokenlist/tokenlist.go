@@ -37,20 +37,14 @@ func ImportTokenList(ctx *Context, file string) error {
 	}
 	tokens := getMainnetTokens(tokenList)
 	ctx.Logger.Info(fmt.Sprintf("Importing %d tokens into database...", len(tokens)))
-	count := 0
 	var rows []dbtypes.TokenUnitRow
 	// Add solana to the list
 	rows = append(rows, dbtypes.NewTokenUnitRow("", "solana", "Solana", "", tokenList.LogoURI, "https://solana.com"))
 
 	tokenMap := make(map[string]bool)
 	for _, token := range tokens {
-		if len(rows) >= 1000 {
-			err := ctx.Database.SaveTokenUnits(rows)
-			if err != nil {
-				return err
-			}
-			rows = nil
-			count = 0
+		if tokenMap[token.Address] {
+			continue
 		}
 		rows = append(rows, dbtypes.NewTokenUnitRow(
 			token.Address,
@@ -61,7 +55,6 @@ func ImportTokenList(ctx *Context, file string) error {
 			token.Extensions.Website,
 		))
 		tokenMap[token.Address] = true
-		count++
 	}
 	return ctx.Database.SaveTokenUnits(rows)
 }
