@@ -84,8 +84,8 @@ Currently we support the followings Cosmos modules:
 - `bpfloader` to parse the data of `bpfloader` program
 - `pricefeed` to get the token prices
 - `pruning` to parse the `x/slashing` data
-- `history`
-- `epoch`
+- `history` to execute history services
+- `epoch` to execute epoch services
 
 ## `rpc`
 This section contains the details of the chain RPC to which Soljuno will connect.
@@ -149,3 +149,8 @@ This section allows to configure the telemetry details of Soljuno.
 If the telemetry server is enabled, a new endpoint at the provided port and path `/metrics` will expose [Prometheus](https://prometheus.io/) data.
 
 ## `worker`
+This section allows to configure the worker pool details of Soljuno.
+
+| Attribute | Type | Description | Example |
+| :-------: | :---: | :--------- | :------ |
+| `pool-size` | `uint` | Size of the worker pool | `5000` | 
