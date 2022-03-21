@@ -15,6 +15,7 @@ CREATE TABLE token_price
     price       DECIMAL                     NOT NULL,
     market_cap  BIGINT                      NOT NULL,
     symbol      TEXT                        NOT NULL,
+    volume      BIGINT                      NOT NULL DEFAULT 0,
     timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
@@ -24,6 +25,7 @@ CREATE TABLE token_price_history
     price       DECIMAL                     NOT NULL,
     market_cap  BIGINT                      NOT NULL,
     symbol      TEXT                        NOT NULL,
+    volume      BIGINT                      NOT NULL DEFAULT 0,
     timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 CREATE INDEX token_price_history_id_index ON token_price_history (id);
