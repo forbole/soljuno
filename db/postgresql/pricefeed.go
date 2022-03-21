@@ -46,20 +46,21 @@ func (db *Database) SaveTokenPrices(prices []dbtypes.TokenPriceRow) error {
 		return nil
 	}
 
-	insertStmt := `INSERT INTO token_price (id, price, market_cap, symbol, timestamp) VALUES`
+	insertStmt := `INSERT INTO token_price (id, price, market_cap, symbol, timestamp, volume) VALUES`
 	conflictStmt := `
 	ON CONFLICT (id) DO UPDATE 
 		SET price = excluded.price,
 			market_cap = excluded.market_cap,
 			symbol = excluded.symbol,
-			timestamp = excluded.timestamp
+			timestamp = excluded.timestamp,
+			volume = excluded.volume
 	WHERE token_price.timestamp <= excluded.timestamp`
 	var params []interface{}
-	paramsNumber := 5
+	paramsNumber := 6
 	params = make([]interface{}, 0, paramsNumber*len(prices))
 
 	for _, ticker := range prices {
-		params = append(params, ticker.ID, ticker.Price, ticker.MarketCap, ticker.Symbol, ticker.Timestamp)
+		params = append(params, ticker.ID, ticker.Price, ticker.MarketCap, ticker.Symbol, ticker.Timestamp, ticker.Volume)
 	}
 
 	return db.InsertBatch(
@@ -76,14 +77,14 @@ func (db *Database) SaveHistoryTokenPrices(prices []dbtypes.TokenPriceRow) error
 		return nil
 	}
 
-	insertStmt := `INSERT INTO token_price_history (id, price, market_cap, symbol, timestamp) VALUES`
+	insertStmt := `INSERT INTO token_price_history (id, price, market_cap, symbol, timestamp, volume) VALUES`
 	conflictStmt := ""
 	var params []interface{}
-	paramsNumber := 5
+	paramsNumber := 6
 	params = make([]interface{}, 0, paramsNumber*len(prices))
 
 	for _, ticker := range prices {
-		params = append(params, ticker.ID, ticker.Price, ticker.MarketCap, ticker.Symbol, ticker.Timestamp)
+		params = append(params, ticker.ID, ticker.Price, ticker.MarketCap, ticker.Symbol, ticker.Timestamp, ticker.Volume)
 	}
 
 	return db.InsertBatch(

@@ -40,6 +40,7 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 			10,
 			"sol",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+			1,
 		),
 		dbtypes.NewTokenPriceRow(
 			"usdc",
@@ -47,6 +48,7 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 			20,
 			"usdc",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+			1,
 		),
 	}
 	err := suite.database.SaveTokenPrices(tickers)
@@ -60,6 +62,7 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 			10,
 			"sol",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+			1,
 		),
 		dbtypes.NewTokenPriceRow(
 			"usdc",
@@ -67,6 +70,7 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 			20,
 			"usdc",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+			1,
 		),
 	}
 
@@ -90,6 +94,7 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 			10,
 			"sol",
 			time.Date(2020, 10, 10, 16, 00, 00, 000, time.UTC),
+			1,
 		),
 		dbtypes.NewTokenPriceRow(
 			"usdc",
@@ -97,6 +102,7 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 			20,
 			"usdc",
 			time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC),
+			1,
 		),
 	}
 	err = suite.database.SaveTokenPrices(tickers)
@@ -110,6 +116,7 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 			10,
 			"sol",
 			time.Date(2020, 10, 10, 16, 00, 00, 000, time.UTC),
+			1,
 		),
 		dbtypes.NewTokenPriceRow(
 			"usdc",
@@ -117,6 +124,7 @@ func (suite *DbTestSuite) TestSaveTokenPrices() {
 			20,
 			"usdc",
 			time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC),
+			1,
 		),
 	}
 
@@ -143,6 +151,7 @@ func (suite *DbTestSuite) TestSaveHistoryTokenPrices() {
 			10,
 			"sol",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+			1,
 		),
 		dbtypes.NewTokenPriceRow(
 			"usdc",
@@ -150,6 +159,7 @@ func (suite *DbTestSuite) TestSaveHistoryTokenPrices() {
 			20,
 			"usdc",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+			1,
 		),
 	}
 	err := suite.database.SaveTokenPrices(tickers)
@@ -163,6 +173,7 @@ func (suite *DbTestSuite) TestSaveHistoryTokenPrices() {
 			10,
 			"sol",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+			1,
 		),
 		dbtypes.NewTokenPriceRow(
 			"usdc",
@@ -170,6 +181,7 @@ func (suite *DbTestSuite) TestSaveHistoryTokenPrices() {
 			20,
 			"usdc",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+			1,
 		),
 	}
 
@@ -193,6 +205,7 @@ func (suite *DbTestSuite) TestSaveHistoryTokenPrices() {
 			10,
 			"sol",
 			time.Date(2020, 10, 10, 16, 00, 00, 000, time.UTC),
+			1,
 		),
 		dbtypes.NewTokenPriceRow(
 			"usdc",
@@ -200,6 +213,7 @@ func (suite *DbTestSuite) TestSaveHistoryTokenPrices() {
 			20,
 			"usdc",
 			time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC),
+			1,
 		),
 	}
 	err = suite.database.SaveTokenPrices(tickers)
@@ -213,6 +227,7 @@ func (suite *DbTestSuite) TestSaveHistoryTokenPrices() {
 			10,
 			"sol",
 			time.Date(2020, 10, 10, 16, 00, 00, 000, time.UTC),
+			1,
 		),
 		dbtypes.NewTokenPriceRow(
 			"usdc",
@@ -220,6 +235,7 @@ func (suite *DbTestSuite) TestSaveHistoryTokenPrices() {
 			20,
 			"usdc",
 			time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC),
+			1,
 		),
 		dbtypes.NewTokenPriceRow(
 			"sol",
@@ -227,6 +243,7 @@ func (suite *DbTestSuite) TestSaveHistoryTokenPrices() {
 			10,
 			"sol",
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+			1,
 		),
 		dbtypes.NewTokenPriceRow(
 			"usdc",
@@ -234,6 +251,7 @@ func (suite *DbTestSuite) TestSaveHistoryTokenPrices() {
 			20,
 			"usdc",
 			time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC),
+			1,
 		),
 	}
 

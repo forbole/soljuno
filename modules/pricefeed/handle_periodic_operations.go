@@ -85,6 +85,7 @@ func convertCoingeckoPrices(prices []coingecko.MarketTicker) []dbtypes.TokenPric
 			int64(math.Trunc(price.MarketCap)),
 			price.Symbol,
 			price.LastUpdated,
+			price.Volume,
 		)
 	}
 	return tokenPrices
