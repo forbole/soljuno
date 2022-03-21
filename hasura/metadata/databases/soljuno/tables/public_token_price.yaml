@@ -18,6 +18,7 @@ select_permissions:
     - price
     - market_cap
     - symbol
+    - volume
     - timestamp
     filter: {}
   role: anonymous
