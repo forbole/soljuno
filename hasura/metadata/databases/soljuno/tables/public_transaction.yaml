@@ -19,7 +19,6 @@ array_relationships:
         name: instruction
       column_mapping:
         signature: tx_signature
-        partition_id: partition_id
 select_permissions:
 - permission:
     allow_aggregations: true
