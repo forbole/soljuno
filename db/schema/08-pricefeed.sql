@@ -15,7 +15,7 @@ CREATE TABLE token_price
     price       DECIMAL                     NOT NULL,
     market_cap  BIGINT                      NOT NULL,
     symbol      TEXT                        NOT NULL,
-    volume      BIGINT                      NOT NULL DEFAULT 0,
+    volume      FLOAT                       NOT NULL DEFAULT 0,
     timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 

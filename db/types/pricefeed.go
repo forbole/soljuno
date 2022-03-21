@@ -35,10 +35,10 @@ type TokenPriceRow struct {
 	MarketCap int64     `db:"market_cap"`
 	Symbol    string    `db:"symbol"`
 	Timestamp time.Time `db:"timestamp"`
-	Volume    uint64    `db:"volume"`
+	Volume    float64   `db:"volume"`
 }
 
-func NewTokenPriceRow(id string, price float64, marketCap int64, symbol string, timestamp time.Time, volume uint64) TokenPriceRow {
+func NewTokenPriceRow(id string, price float64, marketCap int64, symbol string, timestamp time.Time, volume float64) TokenPriceRow {
 	return TokenPriceRow{
 		ID:        id,
 		Price:     price,

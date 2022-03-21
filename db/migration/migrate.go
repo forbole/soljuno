@@ -6,16 +6,16 @@ import (
 
 func Up(db db.ExcecutorDb) error {
 	_, err := db.Exec(`
-	ALTER TABLE token_price ADD COLUMN volume BIGINT NOT NULL DEFAULT 0;
-	ALTER TABLE token_price_history ADD COLUMN volume BIGINT NOT NULL DEFAULT 0;
+	ALTER TABLE token_price ALTER COLUMN volume TYPE FLOAT;
+	ALTER TABLE token_price_history ALTER COLUMN volume TYPE FLOAT;
 	`)
 	return err
 }
 
 func Down(db db.ExcecutorDb) error {
 	_, err := db.Exec(`
-	ALTER TABLE token_price DROP COLUMN volume;
-	ALTER TABLE token_price_history DROP COLUMN volume;
+	ALTER TABLE token_price ALTER COLUMN volume TYPE BIGINT;
+	ALTER TABLE token_price_history ALTER COLUMN volume TYPE BIGINT;
 	`)
 	return err
 }

@@ -19,7 +19,7 @@ type MarketTicker struct {
 	CurrentPrice float64   `json:"current_price"`
 	MarketCap    float64   `json:"market_cap"`
 	LastUpdated  time.Time `json:"last_updated"`
-	Volume       uint64    `json:"total_volume"`
+	Volume       float64   `json:"total_volume"`
 }
 
 // MarketTickers is an array of MarketTicker
