@@ -114,15 +114,6 @@ func (w Worker) process(slot uint64) error {
 			panic(fmt.Errorf("panic on slot %v with error: %v", slot, r))
 		}
 	}()
-	exists, err := w.db.HasBlock(slot)
-	if err != nil {
-		return fmt.Errorf("error while searching for block: %s", err)
-	}
-
-	if exists {
-		w.logger.Debug("skipping already exported block", "slot", slot)
-		return nil
-	}
 
 	w.logger.Info("processing block", "slot", slot)
 	b, err := w.cp.GetBlock(slot)
@@ -146,11 +137,6 @@ func (w Worker) process(slot uint64) error {
 // and persists them to the database along with attributable metadata. An error
 // is returned if the write fails.
 func (w Worker) ExportBlock(block types.Block) error {
-	// Save the block
-	err := w.db.SaveBlock(block)
-	if err != nil {
-		return fmt.Errorf("failed to persist block: %s", err)
-	}
 	return w.handleBlock(block)
 }
 

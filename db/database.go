@@ -11,7 +11,7 @@ import (
 
 // Database represents an abstract database that can be used to save data inside it
 type Database interface {
-	BasicDb
+	BlockDb
 
 	TxDb
 
@@ -43,7 +43,7 @@ type Database interface {
 	Close()
 }
 
-type BasicDb interface {
+type BlockDb interface {
 	// HasBlock tells whether or not the database has already stored the block having the given height.
 	// An error is returned if the operation fails.
 	HasBlock(slot uint64) (bool, error)
