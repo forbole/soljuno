@@ -8,6 +8,7 @@ import (
 	"github.com/forbole/soljuno/types"
 
 	"github.com/forbole/soljuno/modules/bank"
+	"github.com/forbole/soljuno/modules/blocks"
 	"github.com/forbole/soljuno/modules/bpfloader"
 	"github.com/forbole/soljuno/modules/config"
 	"github.com/forbole/soljuno/modules/consensus"
@@ -119,6 +120,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		epochModule,
 		voteModule,
 		historyModule,
+		blocks.NewModule(ctx.Database),
 	}
 }
 
