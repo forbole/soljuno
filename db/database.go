@@ -51,7 +51,7 @@ type BlockDb interface {
 	// SaveBlock will be called when a new block is parsed, passing the block itself
 	// and the transactions contained inside that block.
 	// An error is returned if the operation fails.
-	SaveBlock(block types.Block) error
+	SaveBlock(block dbtypes.BlockRow) error
 }
 
 type TxDb interface {

@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 
+	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/types/logging"
 	"github.com/jmoiron/sqlx"
 
 	"github.com/forbole/soljuno/db"
-	"github.com/forbole/soljuno/types"
 )
 
 const MAX_PARAMS_LENGTH = 65535
@@ -76,13 +76,13 @@ func (db *Database) HasBlock(height uint64) (bool, error) {
 }
 
 // SaveBlock implements db.Database
-func (db *Database) SaveBlock(block types.Block) error {
+func (db *Database) SaveBlock(block dbtypes.BlockRow) error {
 	stmt := `
 INSERT INTO block (slot, height, hash, leader, timestamp, num_txs)
 VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
 	leader := sql.NullString{Valid: len(block.Leader) != 0, String: block.Leader}
 	_, err := db.Sqlx.Exec(
-		stmt, block.Slot, block.Height, block.Hash, leader, block.Timestamp, len(block.Txs),
+		stmt, block.Slot, block.Height, block.Hash, leader, block.Timestamp, block.NumTxs,
 	)
 	return err
 }

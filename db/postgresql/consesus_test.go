@@ -4,7 +4,6 @@ import (
 	"time"
 
 	dbtypes "github.com/forbole/soljuno/db/types"
-	"github.com/forbole/soljuno/types"
 )
 
 func (suite *DbTestSuite) TestGetLastBlock() {
@@ -12,13 +11,9 @@ func (suite *DbTestSuite) TestGetLastBlock() {
 	suite.Require().Error(err)
 
 	date := time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC)
-	err = suite.database.SaveBlock(types.Block{
-		Slot:      1,
-		Height:    1,
-		Leader:    "leader",
-		Hash:      "hash",
-		Timestamp: date,
-	})
+	err = suite.database.SaveBlock(dbtypes.NewBlockRow(
+		1, 1, "leader", "hash", date, 0,
+	))
 	suite.Require().NoError(err)
 
 	expected := dbtypes.NewBlockRow(1, 1, "hash", "leader", date, 0)
@@ -41,13 +36,9 @@ func (suite *DbTestSuite) TestGetBlockHourAgo() {
 	suite.Require().Error(err)
 
 	slot := uint64(1)
-	err = suite.database.SaveBlock(types.Block{
-		Slot:      1,
-		Height:    1,
-		Leader:    "leader",
-		Hash:      "hash",
-		Timestamp: timeAgo,
-	})
+	err = suite.database.SaveBlock(dbtypes.NewBlockRow(
+		1, 1, "leader", "hash", timeAgo, 0,
+	))
 	suite.Require().NoError(err)
 	result, err = suite.database.GetBlockHourAgo(timeNow)
 	suite.Require().NoError(err)
