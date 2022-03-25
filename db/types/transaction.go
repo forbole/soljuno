@@ -7,18 +7,18 @@ import (
 type TxRow struct {
 	Signature       string      `db:"signature"`
 	Slot            uint64      `db:"slot"`
-	Error           bool        `db:"error"`
+	Success         bool        `db:"success"`
 	Fee             uint64      `db:"fee"`
 	Logs            interface{} `db:"logs"`
 	NumInstructions int         `db:"num_instructions"`
 	PartitionId     int         `db:"partition_id"`
 }
 
-func NewTxRow(signature string, slot uint64, isErr bool, fee uint64, logs []string, numInstructions int) TxRow {
+func NewTxRow(signature string, slot uint64, success bool, fee uint64, logs []string, numInstructions int) TxRow {
 	return TxRow{
 		Signature:       signature,
 		Slot:            slot,
-		Error:           isErr,
+		Success:         success,
 		Fee:             fee,
 		Logs:            logs,
 		NumInstructions: numInstructions,

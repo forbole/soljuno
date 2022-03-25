@@ -24,7 +24,7 @@ func (suite *DbTestSuite) TestSaveTxs() {
 			data: dbtypes.TxRow{
 				Signature:   "signature",
 				Slot:        1,
-				Error:       true,
+				Success:     true,
 				Fee:         500,
 				Logs:        []string{"logs"},
 				PartitionId: 100,

@@ -16,7 +16,7 @@ CREATE TABLE transaction
 (
     signature           TEXT    NOT NULL,
     slot                BIGINT  NOT NULL,
-    error               BOOLEAN NOT NULL,
+    success             BOOLEAN NOT NULL,
     fee                 INT     NOT NULL,
     logs                TEXT[],
     num_instructions    INT     NOT NULL DEFAULT 0,

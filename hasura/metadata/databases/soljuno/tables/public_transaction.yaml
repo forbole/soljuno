@@ -25,7 +25,7 @@ select_permissions:
     columns:
     - signature
     - slot
-    - error
+    - success
     - fee
     - num_instructions
     - logs
