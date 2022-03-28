@@ -12,7 +12,7 @@ func (suite *DbTestSuite) TestGetLastBlock() {
 
 	date := time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC)
 	err = suite.database.SaveBlock(dbtypes.NewBlockRow(
-		1, 1, "leader", "hash", date, 0,
+		1, 1, "hash", "leader", date, 0,
 	))
 	suite.Require().NoError(err)
 

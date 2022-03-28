@@ -51,7 +51,11 @@ func updateTokenAccount(ctx *Context, address string, slot uint64, account accou
 
 func updateMultisig(ctx *Context, address string, slot uint64, multisig accountParser.Multisig) error {
 	tokenDb := ctx.Database.(db.TokenDb)
-	return tokenDb.SaveMultisig(address, slot, multisig.StringSigners(), multisig.M)
+	return tokenDb.SaveMultisig(
+		dbtypes.NewMultisigRow(
+			address, slot, multisig.StringSigners(), multisig.M,
+		),
+	)
 }
 
 func updateStakeAccount(ctx *Context, address string, slot uint64, account accountParser.StakeAccount) error {

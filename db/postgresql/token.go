@@ -65,7 +65,7 @@ func (db *Database) DeleteTokenAccount(address string) error {
 }
 
 // SaveMultisig implements the db.TokenDb
-func (db *Database) SaveMultisig(address string, slot uint64, singers []string, minimum uint8) error {
+func (db *Database) SaveMultisig(multisig dbtypes.MultisigRow) error {
 	stmt := `
 INSERT INTO multisig
 	(address, slot, signers, minimum)
@@ -77,16 +77,16 @@ ON CONFLICT (address) DO UPDATE
 WHERE multisig.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		pq.Array(singers),
-		minimum,
+		multisig.Address,
+		multisig.Slot,
+		pq.Array(multisig.Signers),
+		multisig.Minimum,
 	)
 	return err
 }
 
 // SaveTokenDelegate implements the db.TokenDb
-func (db *Database) SaveTokenDelegation(source string, delegate string, slot uint64, amount uint64) error {
+func (db *Database) SaveTokenDelegation(delegation dbtypes.TokenDelegationRow) error {
 	stmt := `
 INSERT INTO token_delegation
 	(source_address, delegate_address, slot, amount)
@@ -97,10 +97,10 @@ ON CONFLICT (source_address) DO UPDATE
 WHERE token_delegation.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		source,
-		delegate,
-		slot,
-		strconv.FormatUint(amount, 10),
+		delegation.Source,
+		delegation.Destination,
+		delegation.Slot,
+		strconv.FormatUint(delegation.Amount, 10),
 	)
 	return err
 }

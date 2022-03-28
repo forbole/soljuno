@@ -41,7 +41,11 @@ func (suite *DbTestSuite) TestCheckMultisigLatest() {
 	isLatest := suite.database.CheckMultisigLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveMultisig("address", 1, []string{"signer1"}, 1)
+	err := suite.database.SaveMultisig(
+		dbtypes.NewMultisigRow(
+			"address", 1, []string{"signer1"}, 1,
+		),
+	)
 	suite.Require().NoError(err)
 
 	// older slot returns false
@@ -58,7 +62,11 @@ func (suite *DbTestSuite) TestCheckTokenDelegateLatest() {
 	isLatest := suite.database.CheckTokenDelegateLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveTokenDelegation("source", "destination", 1, 100)
+	err := suite.database.SaveTokenDelegation(
+		dbtypes.NewTokenDelegationRow(
+			"source", "destination", 1, 100,
+		),
+	)
 	suite.Require().NoError(err)
 
 	// older slot returns false

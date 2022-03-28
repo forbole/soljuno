@@ -116,10 +116,12 @@ func handleInitializeMultisig(instruction types.Instruction, tx types.Tx, db db.
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeMultisig", instruction.Parsed.Type)
 	}
 	err := db.SaveMultisig(
-		parsed.MultiSig,
-		tx.Slot,
-		parsed.Signers,
-		parsed.M,
+		dbtypes.NewMultisigRow(
+			parsed.MultiSig,
+			tx.Slot,
+			parsed.Signers,
+			parsed.M,
+		),
 	)
 	if err != nil {
 		return err

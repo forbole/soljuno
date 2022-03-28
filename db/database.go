@@ -114,10 +114,10 @@ type TokenDb interface {
 	DeleteTokenAccount(address string) error
 
 	// SaveMultisig allows to store the given multisig data inside the database
-	SaveMultisig(address string, slot uint64, singers []string, m uint8) error
+	SaveMultisig(multisig dbtypes.MultisigRow) error
 
 	// SaveDelegate allows to store the given approve state inside the database
-	SaveTokenDelegation(source string, destination string, slot uint64, amount uint64) error
+	SaveTokenDelegation(delegation dbtypes.TokenDelegationRow) error
 
 	// DeleteTokenDelegation allows to delete the given address of the token delegation inside the database
 	DeleteTokenDelegation(address string) error

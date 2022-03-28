@@ -2,7 +2,6 @@ package postgresql_test
 
 import (
 	dbtypes "github.com/forbole/soljuno/db/types"
-	"github.com/lib/pq"
 )
 
 func (suite *DbTestSuite) TestSaveToken() {
@@ -146,69 +145,58 @@ func (suite *DbTestSuite) TestDeleteTokenAccount() {
 }
 
 func (suite *DbTestSuite) TestSaveMultisig() {
-	type MultisigRow struct {
-		Address string         `db:"address"`
-		Slot    uint64         `db:"slot"`
-		Signers pq.StringArray `db:"signers"`
-		Minimum uint8          `db:"minimum"`
-	}
 
 	testCases := []struct {
 		name     string
-		data     MultisigRow
-		expected MultisigRow
+		data     dbtypes.MultisigRow
+		expected dbtypes.MultisigRow
 	}{
 		{
 			name: "initialize the data",
-			data: MultisigRow{
+			data: dbtypes.NewMultisigRow(
 				"mint", 1, []string{"signer1", "signer2"}, 1,
-			},
-			expected: MultisigRow{
+			),
+			expected: dbtypes.NewMultisigRow(
 				"mint", 1, []string{"signer1", "signer2"}, 1,
-			},
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: MultisigRow{
+			data: dbtypes.NewMultisigRow(
 				"mint", 0, []string{"signer1"}, 1,
-			},
-			expected: MultisigRow{
+			),
+			expected: dbtypes.NewMultisigRow(
 				"mint", 1, []string{"signer1", "signer2"}, 1,
-			},
+			),
 		},
 		{
 			name: "update with same slot",
-			data: MultisigRow{
+			data: dbtypes.NewMultisigRow(
 				"mint", 1, []string{"signer1"}, 1,
-			},
-			expected: MultisigRow{
+			),
+			expected: dbtypes.NewMultisigRow(
 				"mint", 1, []string{"signer1"}, 1,
-			},
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: MultisigRow{
+			data: dbtypes.NewMultisigRow(
 				"mint", 2, []string{"signer1", "signer2"}, 1,
-			},
-			expected: MultisigRow{
+			),
+			expected: dbtypes.NewMultisigRow(
 				"mint", 2, []string{"signer1", "signer2"}, 1,
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveMultisig(
-				tc.data.Address,
-				tc.data.Slot,
-				tc.data.Signers,
-				tc.data.Minimum,
-			)
+			err := suite.database.SaveMultisig(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []MultisigRow{}
+			rows := []dbtypes.MultisigRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM multisig")
 
 			suite.Require().NoError(err)
@@ -219,69 +207,57 @@ func (suite *DbTestSuite) TestSaveMultisig() {
 }
 
 func (suite *DbTestSuite) TestSaveDelegation() {
-	type DelegateRow struct {
-		SourceAddress   string `db:"source_address"`
-		DelegateAddress string `db:"delegate_address"`
-		Slot            uint64 `db:"slot"`
-		Amount          uint64 `db:"amount"`
-	}
-
 	testCases := []struct {
 		name     string
-		data     DelegateRow
-		expected DelegateRow
+		data     dbtypes.TokenDelegationRow
+		expected dbtypes.TokenDelegationRow
 	}{
 		{
 			name: "initialize the data",
-			data: DelegateRow{
+			data: dbtypes.NewTokenDelegationRow(
 				"source_address", "delegate_address", 1, 1,
-			},
-			expected: DelegateRow{
+			),
+			expected: dbtypes.NewTokenDelegationRow(
 				"source_address", "delegate_address", 1, 1,
-			},
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: DelegateRow{
+			data: dbtypes.NewTokenDelegationRow(
 				"source_address", "delegate_address", 0, 10,
-			},
-			expected: DelegateRow{
+			),
+			expected: dbtypes.NewTokenDelegationRow(
 				"source_address", "delegate_address", 1, 1,
-			},
+			),
 		},
 		{
 			name: "update with same slot",
-			data: DelegateRow{
+			data: dbtypes.NewTokenDelegationRow(
 				"source_address", "delegate_address", 1, 10,
-			},
-			expected: DelegateRow{
+			),
+			expected: dbtypes.NewTokenDelegationRow(
 				"source_address", "delegate_address", 1, 10,
-			},
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: DelegateRow{
+			data: dbtypes.NewTokenDelegationRow(
 				"source_address", "delegate_address", 1, 100,
-			},
-			expected: DelegateRow{
+			),
+			expected: dbtypes.NewTokenDelegationRow(
 				"source_address", "delegate_address", 1, 100,
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveTokenDelegation(
-				tc.data.SourceAddress,
-				tc.data.DelegateAddress,
-				tc.data.Slot,
-				tc.data.Amount,
-			)
+			err := suite.database.SaveTokenDelegation(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []DelegateRow{}
+			rows := []dbtypes.TokenDelegationRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_delegation")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
@@ -292,10 +268,12 @@ func (suite *DbTestSuite) TestSaveDelegation() {
 
 func (suite *DbTestSuite) TestDeleteTokenDelegation() {
 	err := suite.database.SaveTokenDelegation(
-		"address",
-		"dest",
-		0,
-		100,
+		dbtypes.NewTokenDelegationRow(
+			"address",
+			"dest",
+			0,
+			100,
+		),
 	)
 	suite.Require().NoError(err)
 	rows := []struct {
