@@ -1,16 +1,15 @@
 package postgresql
 
-import "github.com/forbole/soljuno/db"
+import (
+	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
+)
 
 var _ db.SystemDb = &Database{}
 
 // SaveNonceAccount implements the db.SystemDb
 func (db *Database) SaveNonceAccount(
-	address string,
-	slot uint64,
-	authority string,
-	blockhash string,
-	lamportsPerSignature uint64,
+	account dbtypes.NonceAccountRow,
 ) error {
 	stmt := `
 INSERT INTO nonce_account
@@ -24,11 +23,11 @@ ON CONFLICT (address) DO UPDATE
 WHERE nonce_account.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		authority,
-		blockhash,
-		lamportsPerSignature,
+		account.Address,
+		account.Slot,
+		account.Authority,
+		account.Blockhash,
+		account.LamportsPerSignature,
 	)
 	return err
 }

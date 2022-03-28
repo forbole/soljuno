@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	accountParser "github.com/forbole/soljuno/solana/account"
 	"github.com/forbole/soljuno/solana/client"
 )
@@ -34,10 +35,12 @@ func updateNonce(address string, currentSlot uint64, db db.SystemDb, client clie
 	}
 
 	return db.SaveNonceAccount(
-		address,
-		info.Context.Slot,
-		nonce.Authority.String(),
-		nonce.BlockHash.String(),
-		nonce.FeeCalculator.LamportsPerSignature,
+		dbtypes.NewNonceAccountRow(
+			address,
+			info.Context.Slot,
+			nonce.Authority.String(),
+			nonce.BlockHash.String(),
+			nonce.FeeCalculator.LamportsPerSignature,
+		),
 	)
 }

@@ -1,11 +1,17 @@
 package postgresql_test
 
+import dbtypes "github.com/forbole/soljuno/db/types"
+
 func (suite *DbTestSuite) TestCheckNonceAccountLatest() {
 	// empty rows returns true
 	isLatest := suite.database.CheckNonceAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveNonceAccount("address", 1, "new_owner", "blockhash", 5000)
+	err := suite.database.SaveNonceAccount(
+		dbtypes.NewNonceAccountRow(
+			"address", 1, "new_owner", "blockhash", 5000,
+		),
+	)
 	suite.Require().NoError(err)
 
 	// older slot returns false
