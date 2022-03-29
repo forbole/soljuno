@@ -192,7 +192,7 @@ type StakeCheckerDb interface {
 // VoteDb represents a database that supports vote properly
 type VoteDb interface {
 	// SaveValidator allows to store the given vote account data inside the database
-	SaveValidator(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
+	SaveValidator(account dbtypes.VoteAccountRow) error
 
 	// SaveValidatorStatuses allows to store the given current validator statuses inside the database
 	SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow) error

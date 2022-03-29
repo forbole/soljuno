@@ -3,73 +3,58 @@ package postgresql_test
 import dbtypes "github.com/forbole/soljuno/db/types"
 
 func (suite *DbTestSuite) TestSaveValidator() {
-	type VoteAccountRow struct {
-		Address    string `db:"address"`
-		Slot       uint64 `db:"slot"`
-		Node       string `db:"node"`
-		Voter      string `db:"voter"`
-		Withdrawer string `db:"withdrawer"`
-		Commission uint8  `db:"commission"`
-	}
 
 	testCases := []struct {
 		name     string
-		data     VoteAccountRow
-		expected VoteAccountRow
+		data     dbtypes.VoteAccountRow
+		expected dbtypes.VoteAccountRow
 	}{
 		{
 			name: "initialize the data",
-			data: VoteAccountRow{
+			data: dbtypes.NewVoteAccountRow(
 				"address", 1, "node", "voter", "withdrawer", 5,
-			},
-			expected: VoteAccountRow{
+			),
+			expected: dbtypes.NewVoteAccountRow(
 				"address", 1, "node", "voter", "withdrawer", 5,
-			},
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: VoteAccountRow{
+			data: dbtypes.NewVoteAccountRow(
 				"address", 0, "pre_node", "voter", "withdrawer", 5,
-			},
-			expected: VoteAccountRow{
+			),
+			expected: dbtypes.NewVoteAccountRow(
 				"address", 1, "node", "voter", "withdrawer", 5,
-			},
+			),
 		},
 		{
 			name: "update with same slot",
-			data: VoteAccountRow{
+			data: dbtypes.NewVoteAccountRow(
 				"address", 1, "same_node", "voter", "withdrawer", 5,
-			},
-			expected: VoteAccountRow{
+			),
+			expected: dbtypes.NewVoteAccountRow(
 				"address", 1, "same_node", "voter", "withdrawer", 5,
-			},
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: VoteAccountRow{
+			data: dbtypes.NewVoteAccountRow(
 				"address", 2, "new_node", "voter", "withdrawer", 5,
-			},
-			expected: VoteAccountRow{
+			),
+			expected: dbtypes.NewVoteAccountRow(
 				"address", 2, "new_node", "voter", "withdrawer", 5,
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveValidator(
-				tc.data.Address,
-				tc.data.Slot,
-				tc.data.Node,
-				tc.data.Voter,
-				tc.data.Withdrawer,
-				tc.data.Commission,
-			)
+			err := suite.database.SaveValidator(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []VoteAccountRow{}
+			rows := []dbtypes.VoteAccountRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
