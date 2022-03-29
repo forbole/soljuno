@@ -129,28 +129,34 @@ func updateNonceAccount(ctx *Context, address string, slot uint64, account accou
 func updateBufferAccount(ctx *Context, address string, slot uint64, account accountParser.BufferAccount) error {
 	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
 	return bpfLoaderDb.SaveBufferAccount(
-		address,
-		slot,
-		account.Authority.String(),
+		dbtypes.NewBufferAccountRow(
+			address,
+			slot,
+			account.Authority.String(),
+		),
 	)
 }
 
 func updateProgramAccount(ctx *Context, address string, slot uint64, account accountParser.ProgramAccount) error {
 	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
 	return bpfLoaderDb.SaveProgramAccount(
-		address,
-		slot,
-		account.ProgramDataAccount.String(),
+		dbtypes.NewProgramAccountRow(
+			address,
+			slot,
+			account.ProgramDataAccount.String(),
+		),
 	)
 }
 
 func updateProgramDataAccount(ctx *Context, address string, slot uint64, account accountParser.ProgramDataAccount) error {
 	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
 	return bpfLoaderDb.SaveProgramDataAccount(
-		address,
-		slot,
-		account.Slot,
-		account.Authority.String(),
+		dbtypes.NewProgramDataAccountRow(
+			address,
+			slot,
+			account.Slot,
+			account.Authority.String(),
+		),
 	)
 }
 

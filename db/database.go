@@ -225,19 +225,19 @@ type ConfigDb interface {
 // BpfLoaderDb represents a database that supports bpf loader properly
 type BpfLoaderDb interface {
 	// SaveBufferAccount allows to store the given buffer account data inside the database
-	SaveBufferAccount(address string, slot uint64, authority string) error
+	SaveBufferAccount(account dbtypes.BufferAccountRow) error
 
 	// DeleteBufferAccount allows to delete the given address of the buffer account inside the database
 	DeleteBufferAccount(address string) error
 
 	// SaveProgramAccount allows to store the given program account data inside the database
-	SaveProgramAccount(address string, slot uint64, programDataAccount string) error
+	SaveProgramAccount(account dbtypes.ProgramAccountRow) error
 
 	// DeleteBufferAccount allows to delete the given address of the program account inside the database
 	DeleteProgramAccount(address string) error
 
 	// SaveProgramDataAccount allows to store the given program data account inside the database
-	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string) error
+	SaveProgramDataAccount(account dbtypes.ProgramDataAccountRow) error
 
 	// DeleteBufferAccount allows to delete the given address of the program data account inside the database
 	DeleteProgramDataAccount(address string) error
