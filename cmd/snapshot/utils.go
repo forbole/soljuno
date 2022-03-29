@@ -102,12 +102,14 @@ func updateStakeAccount(ctx *Context, address string, slot uint64, account accou
 func updateVoteAccount(ctx *Context, address string, slot uint64, account accountParser.VoteAccount) error {
 	voteDb := ctx.Database.(db.VoteDb)
 	return voteDb.SaveValidator(
-		address,
-		slot,
-		account.Node.String(),
-		account.Voters[0].Pubkey.String(),
-		account.Withdrawer.String(),
-		account.Commission,
+		dbtypes.NewVoteAccountRow(
+			address,
+			slot,
+			account.Node.String(),
+			account.Voters[0].Pubkey.String(),
+			account.Withdrawer.String(),
+			account.Commission,
+		),
 	)
 }
 

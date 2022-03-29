@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/vote"
 	"github.com/forbole/soljuno/types"
@@ -35,7 +36,11 @@ func handleInitialize(instruction types.Instruction, tx types.Tx, db db.VoteDb) 
 		return fmt.Errorf("instruction does not match %s type: %s", "initialize", instruction.Parsed.Type)
 
 	}
-	return db.SaveValidator(parsed.VoteAccount, tx.Slot, parsed.Node, parsed.AuthorizedVoter, parsed.AuthorizedWithdrawer, parsed.Commission)
+	return db.SaveValidator(
+		dbtypes.NewVoteAccountRow(
+			parsed.VoteAccount, tx.Slot, parsed.Node, parsed.AuthorizedVoter, parsed.AuthorizedWithdrawer, parsed.Commission,
+		),
+	)
 }
 
 // handleAuthorize handles a instruction of Authorize

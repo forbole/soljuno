@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	accountParser "github.com/forbole/soljuno/solana/account"
 	"github.com/forbole/soljuno/solana/client"
 )
@@ -18,7 +19,7 @@ func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client 
 		return err
 	}
 	if info.Value == nil {
-		return db.SaveValidator(address, info.Context.Slot, "", "", "", 0)
+		return nil
 	}
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
 	if err != nil {
@@ -26,14 +27,16 @@ func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client 
 	}
 	voteAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.VoteAccount)
 	if !ok {
-		return db.SaveValidator(address, info.Context.Slot, "", "", "", 0)
+		return nil
 	}
 	return db.SaveValidator(
-		address,
-		info.Context.Slot,
-		voteAccount.Node.String(),
-		voteAccount.Withdrawer.String(),
-		voteAccount.Voters[0].Pubkey.String(),
-		voteAccount.Commission,
+		dbtypes.NewVoteAccountRow(
+			address,
+			info.Context.Slot,
+			voteAccount.Node.String(),
+			voteAccount.Withdrawer.String(),
+			voteAccount.Voters[0].Pubkey.String(),
+			voteAccount.Commission,
+		),
 	)
 }
