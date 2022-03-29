@@ -42,6 +42,14 @@ func NewStakeLockupRow(
 	}
 }
 
+func (lockup StakeLockupRow) Equal(other StakeLockupRow) bool {
+	return lockup.Address == other.Address &&
+		lockup.Slot == other.Slot &&
+		lockup.Custodian == other.Custodian &&
+		lockup.Epoch == other.Epoch &&
+		lockup.UnixTimestamp.Equal(other.UnixTimestamp)
+}
+
 //____________________________________________________________________________
 
 type StakeDelegationRow struct {

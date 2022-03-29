@@ -22,3 +22,12 @@ func NewBlockRow(slot uint64, height uint64, hash string, leader string, timesta
 		NumTxs:    numTxs,
 	}
 }
+
+func (b BlockRow) Equal(otherBlock BlockRow) bool {
+	return b.Slot == otherBlock.Slot &&
+		b.Height == otherBlock.Height &&
+		b.Hash == otherBlock.Hash &&
+		b.Leader == otherBlock.Leader &&
+		b.Timestamp.Equal(otherBlock.Timestamp) &&
+		b.NumTxs == otherBlock.NumTxs
+}

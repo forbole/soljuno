@@ -20,11 +20,7 @@ func (suite *DbTestSuite) TestGetLastBlock() {
 
 	result, err := suite.database.GetLastBlock()
 	suite.Require().NoError(err)
-	suite.Require().Equal(expected.Slot, result.Slot)
-	suite.Require().Equal(expected.Height, result.Height)
-	suite.Require().Equal(expected.Leader, result.Leader)
-	suite.Require().Equal(expected.Hash, result.Hash)
-	suite.Require().Equal(expected.Timestamp.Unix(), result.Timestamp.Unix())
+	suite.Require().True(expected.Equal(result))
 }
 
 func (suite *DbTestSuite) TestGetBlockHourAgo() {
