@@ -8,7 +8,6 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	"github.com/forbole/soljuno/db"
-	"github.com/forbole/soljuno/types"
 )
 
 const MAX_PARAMS_LENGTH = 65535
@@ -59,55 +58,6 @@ var _ db.Database = &Database{}
 type Database struct {
 	Sqlx   *sqlx.DB
 	Logger logging.Logger
-}
-
-// LastBlockSlot implements db.Database
-func (db *Database) LastBlockSlot() (int64, error) {
-	var height int64
-	err := db.Sqlx.QueryRow(`SELECT coalesce(MAX(slot),0) AS slot FROM block;`).Scan(&height)
-	return height, err
-}
-
-// HasBlock implements db.Database
-func (db *Database) HasBlock(height uint64) (bool, error) {
-	var res bool
-	err := db.Sqlx.QueryRow(`SELECT EXISTS(SELECT 1 FROM block WHERE slot = $1);`, height).Scan(&res)
-	return res, err
-}
-
-// SaveBlock implements db.Database
-func (db *Database) SaveBlock(block types.Block) error {
-	stmt := `
-INSERT INTO block (slot, height, hash, leader, timestamp, num_txs)
-VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
-	leader := sql.NullString{Valid: len(block.Leader) != 0, String: block.Leader}
-	_, err := db.Sqlx.Exec(
-		stmt, block.Slot, block.Height, block.Hash, leader, block.Timestamp, len(block.Txs),
-	)
-	return err
-}
-
-// createPartition allows to create a partition with the id for the given table name
-func (db *Database) createPartition(table string, id int) error {
-	stmt := fmt.Sprintf(
-		"CREATE TABLE IF NOT EXISTS %v_%d PARTITION OF %v FOR VALUES IN (%d)",
-		table,
-		id,
-		table,
-		id,
-	)
-	_, err := db.Exec(stmt)
-	return err
-}
-
-// dropPartition allows to drop a partition with the given partition name
-func (db *Database) dropPartition(name string) error {
-	stmt := fmt.Sprintf(
-		"DROP TABLE IF EXISTS %v",
-		name,
-	)
-	_, err := db.Exec(stmt)
-	return err
 }
 
 // Close implements db.Database

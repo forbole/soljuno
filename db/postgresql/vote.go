@@ -9,7 +9,7 @@ import (
 var _ db.VoteDb = &Database{}
 
 // SaveValidator implements the db.VoteDb
-func (db *Database) SaveValidator(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error {
+func (db *Database) SaveValidator(account dbtypes.VoteAccountRow) error {
 	stmt := `
 INSERT INTO validator
     (address, slot, node, voter, withdrawer, commission)
@@ -23,12 +23,12 @@ ON CONFLICT (address) DO UPDATE
 WHERE validator.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		node,
-		voter,
-		withdrawer,
-		commission,
+		account.Address,
+		account.Slot,
+		account.Node,
+		account.Voter,
+		account.Withdrawer,
+		account.Commission,
 	)
 	return err
 }

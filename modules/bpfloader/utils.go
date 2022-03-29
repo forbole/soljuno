@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	accountParser "github.com/forbole/soljuno/solana/account"
 	"github.com/forbole/soljuno/solana/client"
 )
@@ -34,9 +35,11 @@ func updateBufferAccount(address string, currentSlot uint64, db db.BpfLoaderDb, 
 	}
 
 	return db.SaveBufferAccount(
-		address,
-		info.Context.Slot,
-		bufferAccount.Authority.String(),
+		dbtypes.NewBufferAccountRow(
+			address,
+			info.Context.Slot,
+			bufferAccount.Authority.String(),
+		),
 	)
 }
 
@@ -66,9 +69,11 @@ func updateProgramAccount(address string, currentSlot uint64, db db.BpfLoaderDb,
 
 	}
 	return db.SaveProgramAccount(
-		address,
-		info.Context.Slot,
-		programAccount.ProgramDataAccount.String(),
+		dbtypes.NewProgramAccountRow(
+			address,
+			info.Context.Slot,
+			programAccount.ProgramDataAccount.String(),
+		),
 	)
 }
 
@@ -97,9 +102,11 @@ func updateProgramDataAccount(address string, currentSlot uint64, db db.BpfLoade
 		return db.DeleteProgramDataAccount(address)
 	}
 	return db.SaveProgramDataAccount(
-		address,
-		info.Context.Slot,
-		programDataAccount.Slot,
-		programDataAccount.Authority.String(),
+		dbtypes.NewProgramDataAccountRow(
+			address,
+			info.Context.Slot,
+			programDataAccount.Slot,
+			programDataAccount.Authority.String(),
+		),
 	)
 }

@@ -1,12 +1,15 @@
 package postgresql
 
-import "github.com/forbole/soljuno/db"
+import (
+	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
+)
 
 // type check to ensure interface is properly implemented
 var _ db.BpfLoaderDb = &Database{}
 
 // SaveBufferAccount implements the db.BpfLoaderDb
-func (db *Database) SaveBufferAccount(address string, slot uint64, authority string) error {
+func (db *Database) SaveBufferAccount(account dbtypes.BufferAccountRow) error {
 	stmt := `
 INSERT INTO buffer_account
     (address, slot, authority)
@@ -17,9 +20,9 @@ ON CONFLICT (address) DO UPDATE
 WHERE buffer_account.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		authority,
+		account.Address,
+		account.Slot,
+		account.Authority,
 	)
 	return err
 }
@@ -32,7 +35,7 @@ func (db *Database) DeleteBufferAccount(address string) error {
 }
 
 // SaveProgramAccount implements the db.BpfLoaderDb
-func (db *Database) SaveProgramAccount(address string, slot uint64, programDataAccount string) error {
+func (db *Database) SaveProgramAccount(account dbtypes.ProgramAccountRow) error {
 	stmt := `
 INSERT INTO program_account
     (address, slot, program_data_account)
@@ -43,9 +46,9 @@ ON CONFLICT (address) DO UPDATE
 WHERE program_account.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		programDataAccount,
+		account.Address,
+		account.Slot,
+		account.ProgramDataAccount,
 	)
 	return err
 }
@@ -58,7 +61,7 @@ func (db *Database) DeleteProgramAccount(address string) error {
 }
 
 // SaveProgramDataAccount implements the db.BpfLoaderDb
-func (db *Database) SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string) error {
+func (db *Database) SaveProgramDataAccount(account dbtypes.ProgramDataAccountRow) error {
 	stmt := `
 INSERT INTO program_data_account
     (address, slot, last_modified_slot, update_authority)
@@ -70,10 +73,10 @@ ON CONFLICT (address) DO UPDATE
 WHERE program_data_account.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		lastModifiedSlot,
-		updateAuthority,
+		account.Address,
+		account.Slot,
+		account.LastModifiedSlot,
+		account.UpdateAuthority,
 	)
 	return err
 }

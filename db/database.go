@@ -51,7 +51,7 @@ type BlockDb interface {
 	// SaveBlock will be called when a new block is parsed, passing the block itself
 	// and the transactions contained inside that block.
 	// An error is returned if the operation fails.
-	SaveBlock(block types.Block) error
+	SaveBlock(block dbtypes.BlockRow) error
 }
 
 type TxDb interface {
@@ -114,10 +114,10 @@ type TokenDb interface {
 	DeleteTokenAccount(address string) error
 
 	// SaveMultisig allows to store the given multisig data inside the database
-	SaveMultisig(address string, slot uint64, singers []string, m uint8) error
+	SaveMultisig(multisig dbtypes.MultisigRow) error
 
 	// SaveDelegate allows to store the given approve state inside the database
-	SaveTokenDelegation(source string, destination string, slot uint64, amount uint64) error
+	SaveTokenDelegation(delegation dbtypes.TokenDelegationRow) error
 
 	// DeleteTokenDelegation allows to delete the given address of the token delegation inside the database
 	DeleteTokenDelegation(address string) error
@@ -149,7 +149,7 @@ type TokenCheckerDb interface {
 // SystemDb represents a database that checks account statement of system properly
 type SystemDb interface {
 	// SaveNonceAccount allows to store the given nonce account data inside the database
-	SaveNonceAccount(address string, slot uint64, authority string, blockhash string, lamportsPerSignature uint64) error
+	SaveNonceAccount(nonce dbtypes.NonceAccountRow) error
 
 	// DeleteNonceAccount allows to delete the given address of the nonce account inside the database
 	DeleteNonceAccount(address string) error
@@ -166,16 +166,16 @@ type SystemCheckerDb interface {
 // StakeDb represents a database that supports stake properly
 type StakeDb interface {
 	// SaveStakeAccount allows to store the given stake account data inside the database
-	SaveStakeAccount(address string, slot uint64, staker string, withdrawer string) error
+	SaveStakeAccount(account dbtypes.StakeAccountRow) error
 
 	// DeleteStakeAccount allows to delete the given address of the stake account inside the database
 	DeleteStakeAccount(address string) error
 
 	// SaveStakeLockup allows to store the given stake account lockup state inside the database
-	SaveStakeLockup(address string, slot uint64, custodian string, epoch uint64, unixTimestamp int64) error
+	SaveStakeLockup(lockup dbtypes.StakeLockupRow) error
 
 	// SaveStakeDelegation allows to store the given delegation of stake account inside the database
-	SaveStakeDelegation(address string, slot uint64, activationEpoch uint64, deactivationEpoch uint64, stake uint64, voter string, rate float64) error
+	SaveStakeDelegation(delegation dbtypes.StakeDelegationRow) error
 
 	// DeleteStakeDelegation allows to delete the given address of the stake delegation inside the database
 	DeleteStakeDelegation(address string) error
@@ -192,7 +192,7 @@ type StakeCheckerDb interface {
 // VoteDb represents a database that supports vote properly
 type VoteDb interface {
 	// SaveValidator allows to store the given vote account data inside the database
-	SaveValidator(address string, slot uint64, node string, voter string, withdrawer string, commission uint8) error
+	SaveValidator(account dbtypes.VoteAccountRow) error
 
 	// SaveValidatorStatuses allows to store the given current validator statuses inside the database
 	SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow) error
@@ -225,19 +225,19 @@ type ConfigDb interface {
 // BpfLoaderDb represents a database that supports bpf loader properly
 type BpfLoaderDb interface {
 	// SaveBufferAccount allows to store the given buffer account data inside the database
-	SaveBufferAccount(address string, slot uint64, authority string) error
+	SaveBufferAccount(account dbtypes.BufferAccountRow) error
 
 	// DeleteBufferAccount allows to delete the given address of the buffer account inside the database
 	DeleteBufferAccount(address string) error
 
 	// SaveProgramAccount allows to store the given program account data inside the database
-	SaveProgramAccount(address string, slot uint64, programDataAccount string) error
+	SaveProgramAccount(account dbtypes.ProgramAccountRow) error
 
 	// DeleteBufferAccount allows to delete the given address of the program account inside the database
 	DeleteProgramAccount(address string) error
 
 	// SaveProgramDataAccount allows to store the given program data account inside the database
-	SaveProgramDataAccount(address string, slot uint64, lastModifiedSlot uint64, updateAuthority string) error
+	SaveProgramDataAccount(account dbtypes.ProgramDataAccountRow) error
 
 	// DeleteBufferAccount allows to delete the given address of the program data account inside the database
 	DeleteProgramDataAccount(address string) error

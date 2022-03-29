@@ -51,27 +51,35 @@ func updateTokenAccount(ctx *Context, address string, slot uint64, account accou
 
 func updateMultisig(ctx *Context, address string, slot uint64, multisig accountParser.Multisig) error {
 	tokenDb := ctx.Database.(db.TokenDb)
-	return tokenDb.SaveMultisig(address, slot, multisig.StringSigners(), multisig.M)
+	return tokenDb.SaveMultisig(
+		dbtypes.NewMultisigRow(
+			address, slot, multisig.StringSigners(), multisig.M,
+		),
+	)
 }
 
 func updateStakeAccount(ctx *Context, address string, slot uint64, account accountParser.StakeAccount) error {
 	stakeDb := ctx.Database.(db.StakeDb)
 	err := stakeDb.SaveStakeAccount(
-		address,
-		slot,
-		account.Meta.Authorized.Staker.String(),
-		account.Meta.Authorized.Withdrawer.String(),
+		dbtypes.NewStakeAccountRow(
+			address,
+			slot,
+			account.Meta.Authorized.Staker.String(),
+			account.Meta.Authorized.Withdrawer.String(),
+		),
 	)
 	if err != nil {
 		return err
 	}
 
 	err = stakeDb.SaveStakeLockup(
-		address,
-		slot,
-		account.Meta.Lockup.Custodian.String(),
-		account.Meta.Lockup.Epoch,
-		account.Meta.Lockup.UnixTimestamp,
+		dbtypes.NewStakeLockupRow(
+			address,
+			slot,
+			account.Meta.Lockup.Custodian.String(),
+			account.Meta.Lockup.Epoch,
+			account.Meta.Lockup.UnixTimestamp,
+		),
 	)
 	if err != nil {
 		return err
@@ -79,64 +87,76 @@ func updateStakeAccount(ctx *Context, address string, slot uint64, account accou
 
 	delegation := account.Stake.Delegation
 	return stakeDb.SaveStakeDelegation(
-		address,
-		slot,
-		delegation.ActivationEpoch,
-		delegation.DeactivationEpoch,
-		delegation.Stake,
-		delegation.VoterPubkey.String(),
-		delegation.WarmupCooldownRate,
+		dbtypes.NewStakeDelegationRow(
+			address,
+			slot,
+			delegation.ActivationEpoch,
+			delegation.DeactivationEpoch,
+			delegation.Stake,
+			delegation.VoterPubkey.String(),
+			delegation.WarmupCooldownRate,
+		),
 	)
 }
 
 func updateVoteAccount(ctx *Context, address string, slot uint64, account accountParser.VoteAccount) error {
 	voteDb := ctx.Database.(db.VoteDb)
 	return voteDb.SaveValidator(
-		address,
-		slot,
-		account.Node.String(),
-		account.Voters[0].Pubkey.String(),
-		account.Withdrawer.String(),
-		account.Commission,
+		dbtypes.NewVoteAccountRow(
+			address,
+			slot,
+			account.Node.String(),
+			account.Voters[0].Pubkey.String(),
+			account.Withdrawer.String(),
+			account.Commission,
+		),
 	)
 }
 
 func updateNonceAccount(ctx *Context, address string, slot uint64, account accountParser.NonceAccount) error {
 	systemDb := ctx.Database.(db.SystemDb)
 	return systemDb.SaveNonceAccount(
-		address,
-		slot,
-		account.Authority.String(),
-		account.BlockHash.String(),
-		account.FeeCalculator.LamportsPerSignature,
+		dbtypes.NewNonceAccountRow(
+			address,
+			slot,
+			account.Authority.String(),
+			account.BlockHash.String(),
+			account.FeeCalculator.LamportsPerSignature,
+		),
 	)
 }
 
 func updateBufferAccount(ctx *Context, address string, slot uint64, account accountParser.BufferAccount) error {
 	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
 	return bpfLoaderDb.SaveBufferAccount(
-		address,
-		slot,
-		account.Authority.String(),
+		dbtypes.NewBufferAccountRow(
+			address,
+			slot,
+			account.Authority.String(),
+		),
 	)
 }
 
 func updateProgramAccount(ctx *Context, address string, slot uint64, account accountParser.ProgramAccount) error {
 	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
 	return bpfLoaderDb.SaveProgramAccount(
-		address,
-		slot,
-		account.ProgramDataAccount.String(),
+		dbtypes.NewProgramAccountRow(
+			address,
+			slot,
+			account.ProgramDataAccount.String(),
+		),
 	)
 }
 
 func updateProgramDataAccount(ctx *Context, address string, slot uint64, account accountParser.ProgramDataAccount) error {
 	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
 	return bpfLoaderDb.SaveProgramDataAccount(
-		address,
-		slot,
-		account.Slot,
-		account.Authority.String(),
+		dbtypes.NewProgramDataAccountRow(
+			address,
+			slot,
+			account.Slot,
+			account.Authority.String(),
+		),
 	)
 }
 

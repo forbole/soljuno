@@ -1,11 +1,15 @@
 package postgresql_test
 
+import dbtypes "github.com/forbole/soljuno/db/types"
+
 func (suite *DbTestSuite) TestCheckBufferAccountLatest() {
 	// empty rows returns true
 	isLatest := suite.database.CheckBufferAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveBufferAccount("address", 1, "owner")
+	err := suite.database.SaveBufferAccount(
+		dbtypes.NewBufferAccountRow("address", 1, "owner"),
+	)
 	suite.Require().NoError(err)
 
 	// older slot returns false
@@ -22,7 +26,9 @@ func (suite *DbTestSuite) TestCheckProgramAccountLatest() {
 	isLatest := suite.database.CheckBufferAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveProgramAccount("address", 1, "program_data")
+	err := suite.database.SaveProgramAccount(
+		dbtypes.NewProgramAccountRow("address", 1, "program_data"),
+	)
 	suite.Require().NoError(err)
 
 	// older slot returns false
@@ -39,7 +45,9 @@ func (suite *DbTestSuite) TestCheckProgramDataAccountLatest() {
 	isLatest := suite.database.CheckProgramDataAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveProgramDataAccount("address", 1, 1, "owner")
+	err := suite.database.SaveProgramDataAccount(
+		dbtypes.NewProgramDataAccountRow("address", 1, 1, "owner"),
+	)
 	suite.Require().NoError(err)
 
 	// older slot returns false

@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	accountParser "github.com/forbole/soljuno/solana/account"
 	"github.com/forbole/soljuno/solana/client"
 )
@@ -34,21 +35,25 @@ func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, clien
 	}
 
 	err = db.SaveStakeAccount(
-		address,
-		info.Context.Slot,
-		stakeAccount.Meta.Authorized.Staker.String(),
-		stakeAccount.Meta.Authorized.Withdrawer.String(),
+		dbtypes.NewStakeAccountRow(
+			address,
+			info.Context.Slot,
+			stakeAccount.Meta.Authorized.Staker.String(),
+			stakeAccount.Meta.Authorized.Withdrawer.String(),
+		),
 	)
 	if err != nil {
 		return err
 	}
 
 	err = db.SaveStakeLockup(
-		address,
-		info.Context.Slot,
-		stakeAccount.Meta.Lockup.Custodian.String(),
-		stakeAccount.Meta.Lockup.Epoch,
-		stakeAccount.Meta.Lockup.UnixTimestamp,
+		dbtypes.NewStakeLockupRow(
+			address,
+			info.Context.Slot,
+			stakeAccount.Meta.Lockup.Custodian.String(),
+			stakeAccount.Meta.Lockup.Epoch,
+			stakeAccount.Meta.Lockup.UnixTimestamp,
+		),
 	)
 	if err != nil {
 		return err
@@ -60,12 +65,14 @@ func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, clien
 
 	delegation := stakeAccount.Stake.Delegation
 	return db.SaveStakeDelegation(
-		address,
-		info.Context.Slot,
-		delegation.ActivationEpoch,
-		delegation.DeactivationEpoch,
-		delegation.Stake,
-		delegation.VoterPubkey.String(),
-		delegation.WarmupCooldownRate,
+		dbtypes.NewStakeDelegationRow(
+			address,
+			info.Context.Slot,
+			delegation.ActivationEpoch,
+			delegation.DeactivationEpoch,
+			delegation.Stake,
+			delegation.VoterPubkey.String(),
+			delegation.WarmupCooldownRate,
+		),
 	)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/stake"
 	"github.com/forbole/soljuno/types"
@@ -49,11 +50,19 @@ func handleInitialize(instruction types.Instruction, tx types.Tx, db db.StakeDb)
 		return fmt.Errorf("instruction does not match %s type: %s", "initialize", instruction.Parsed.Type)
 
 	}
-	err := db.SaveStakeAccount(parsed.StakeAccount, tx.Slot, parsed.Authorized.Staker, parsed.Authorized.Withdrawer)
+	err := db.SaveStakeAccount(
+		dbtypes.NewStakeAccountRow(
+			parsed.StakeAccount, tx.Slot, parsed.Authorized.Staker, parsed.Authorized.Withdrawer,
+		),
+	)
 	if err != nil {
 		return err
 	}
-	return db.SaveStakeLockup(parsed.StakeAccount, tx.Slot, parsed.Lockup.Custodian, parsed.Lockup.Epoch, parsed.Lockup.UnixTimestamp)
+	return db.SaveStakeLockup(
+		dbtypes.NewStakeLockupRow(
+			parsed.StakeAccount, tx.Slot, parsed.Lockup.Custodian, parsed.Lockup.Epoch, parsed.Lockup.UnixTimestamp,
+		),
+	)
 }
 
 // handleAuthorize handles a instruction of Authorize

@@ -1,5 +1,7 @@
 package types
 
+import "github.com/lib/pq"
+
 type TokenRow struct {
 	Mint            string `db:"mint"`
 	Slot            uint64 `db:"slot"`
@@ -24,11 +26,13 @@ func NewTokenRow(
 	}
 }
 
+//____________________________________________________________________________
+
 type TokenAccountRow struct {
 	Address string `db:"address"`
 	Slot    uint64 `db:"slot"`
-	Mint    string `json:"mint"`
-	Owner   string `json:"owner"`
+	Mint    string `db:"mint"`
+	Owner   string `db:"owner"`
 }
 
 func NewTokenAccountRow(
@@ -41,6 +45,44 @@ func NewTokenAccountRow(
 		Owner:   owner,
 	}
 }
+
+//____________________________________________________________________________
+
+type MultisigRow struct {
+	Address string         `db:"address"`
+	Slot    uint64         `db:"slot"`
+	Signers pq.StringArray `db:"signers"`
+	Minimum uint8          `db:"minimum"`
+}
+
+func NewMultisigRow(address string, slot uint64, signers []string, m uint8) MultisigRow {
+	return MultisigRow{
+		Address: address,
+		Slot:    slot,
+		Signers: *pq.Array(signers).(*pq.StringArray),
+		Minimum: m,
+	}
+}
+
+//____________________________________________________________________________
+
+type TokenDelegationRow struct {
+	Source      string `db:"source_address"`
+	Destination string `db:"delegate_address"`
+	Slot        uint64 `db:"slot"`
+	Amount      uint64 `db:"amount"`
+}
+
+func NewTokenDelegationRow(source string, destination string, slot uint64, amount uint64) TokenDelegationRow {
+	return TokenDelegationRow{
+		Source:      source,
+		Destination: destination,
+		Slot:        slot,
+		Amount:      amount,
+	}
+}
+
+//____________________________________________________________________________
 
 type TokenSupplyRow struct {
 	Mint   string `db:"mint"`

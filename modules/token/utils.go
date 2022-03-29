@@ -34,7 +34,11 @@ func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client c
 	if !ok || tokenAccount.Delegate.String() == "" {
 		return db.DeleteTokenDelegation(source)
 	}
-	return db.SaveTokenDelegation(source, tokenAccount.Delegate.String(), info.Context.Slot, tokenAccount.DelegateAmount)
+	return db.SaveTokenDelegation(
+		dbtypes.NewTokenDelegationRow(
+			source, tokenAccount.Delegate.String(), info.Context.Slot, tokenAccount.DelegateAmount,
+		),
+	)
 }
 
 // updateToken properly stores the authority of mint inside the database

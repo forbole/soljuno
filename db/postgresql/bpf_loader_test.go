@@ -1,66 +1,59 @@
 package postgresql_test
 
+import dbtypes "github.com/forbole/soljuno/db/types"
+
 func (suite *DbTestSuite) TestSaveBufferAccount() {
-	type BufferAccountRow struct {
-		Address   string `db:"address"`
-		Slot      uint64 `db:"slot"`
-		Authority string `db:"authority"`
-	}
 	testCases := []struct {
 		name     string
-		data     BufferAccountRow
-		expected BufferAccountRow
+		data     dbtypes.BufferAccountRow
+		expected dbtypes.BufferAccountRow
 	}{
 		{
 			name: "initialize the data",
-			data: BufferAccountRow{
+			data: dbtypes.NewBufferAccountRow(
 				"address", 1, "owner",
-			},
-			expected: BufferAccountRow{
+			),
+			expected: dbtypes.NewBufferAccountRow(
 				"address", 1, "owner",
-			},
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: BufferAccountRow{
+			data: dbtypes.NewBufferAccountRow(
 				"address", 0, "pre_owner",
-			},
-			expected: BufferAccountRow{
+			),
+			expected: dbtypes.NewBufferAccountRow(
 				"address", 1, "owner",
-			},
+			),
 		},
 		{
 			name: "update with same slot",
-			data: BufferAccountRow{
+			data: dbtypes.NewBufferAccountRow(
 				"address", 1, "cur_owner",
-			},
-			expected: BufferAccountRow{
+			),
+			expected: dbtypes.NewBufferAccountRow(
 				"address", 1, "cur_owner",
-			},
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: BufferAccountRow{
+			data: dbtypes.NewBufferAccountRow(
 				"address", 2, "new_owner",
-			},
-			expected: BufferAccountRow{
+			),
+			expected: dbtypes.NewBufferAccountRow(
 				"address", 2, "new_owner",
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveBufferAccount(
-				tc.data.Address,
-				tc.data.Slot,
-				tc.data.Authority,
-			)
+			err := suite.database.SaveBufferAccount(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []BufferAccountRow{}
+			rows := []dbtypes.BufferAccountRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM buffer_account")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
@@ -71,9 +64,11 @@ func (suite *DbTestSuite) TestSaveBufferAccount() {
 
 func (suite *DbTestSuite) TestDeleteBufferAccount() {
 	err := suite.database.SaveBufferAccount(
-		"address",
-		0,
-		"owner",
+		dbtypes.NewBufferAccountRow(
+			"address",
+			0,
+			"owner",
+		),
 	)
 	suite.Require().NoError(err)
 
@@ -97,67 +92,58 @@ func (suite *DbTestSuite) TestDeleteBufferAccount() {
 }
 
 func (suite *DbTestSuite) TestSaveProgramAccount() {
-	type ProgramAccountAccountRow struct {
-		Address            string `db:"address"`
-		Slot               uint64 `db:"slot"`
-		ProgramDataAccount string `db:"program_data_account"`
-	}
 
 	testCases := []struct {
 		name     string
-		data     ProgramAccountAccountRow
-		expected ProgramAccountAccountRow
+		data     dbtypes.ProgramAccountRow
+		expected dbtypes.ProgramAccountRow
 	}{
 		{
 			name: "initialize the data",
-			data: ProgramAccountAccountRow{
+			data: dbtypes.NewProgramAccountRow(
 				"address", 1, "program_data",
-			},
-			expected: ProgramAccountAccountRow{
+			),
+			expected: dbtypes.NewProgramAccountRow(
 				"address", 1, "program_data",
-			},
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: ProgramAccountAccountRow{
+			data: dbtypes.NewProgramAccountRow(
 				"address", 0, "pre_program_data",
-			},
-			expected: ProgramAccountAccountRow{
+			),
+			expected: dbtypes.NewProgramAccountRow(
 				"address", 1, "program_data",
-			},
+			),
 		},
 		{
 			name: "update with same slot",
-			data: ProgramAccountAccountRow{
+			data: dbtypes.NewProgramAccountRow(
 				"address", 1, "cur_program_data",
-			},
-			expected: ProgramAccountAccountRow{
+			),
+			expected: dbtypes.NewProgramAccountRow(
 				"address", 1, "cur_program_data",
-			},
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: ProgramAccountAccountRow{
+			data: dbtypes.NewProgramAccountRow(
 				"address", 2, "new_program_data",
-			},
-			expected: ProgramAccountAccountRow{
+			),
+			expected: dbtypes.NewProgramAccountRow(
 				"address", 2, "new_program_data",
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveProgramAccount(
-				tc.data.Address,
-				tc.data.Slot,
-				tc.data.ProgramDataAccount,
-			)
+			err := suite.database.SaveProgramAccount(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []ProgramAccountAccountRow{}
+			rows := []dbtypes.ProgramAccountRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM program_account")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
@@ -168,9 +154,11 @@ func (suite *DbTestSuite) TestSaveProgramAccount() {
 
 func (suite *DbTestSuite) TestDeleteProgramAccount() {
 	err := suite.database.SaveProgramAccount(
-		"address",
-		0,
-		"data",
+		dbtypes.NewProgramAccountRow(
+			"address",
+			0,
+			"data",
+		),
 	)
 	suite.Require().NoError(err)
 
@@ -193,69 +181,57 @@ func (suite *DbTestSuite) TestDeleteProgramAccount() {
 }
 
 func (suite *DbTestSuite) TestSaveProgramDataAccount() {
-	type ProgramDataAccountRow struct {
-		Address          string `db:"address"`
-		Slot             uint64 `db:"slot"`
-		LastModifiedSlot uint64 `db:"last_modified_slot"`
-		UpdateAuthority  string `db:"update_authority"`
-	}
-
 	testCases := []struct {
 		name     string
-		data     ProgramDataAccountRow
-		expected ProgramDataAccountRow
+		data     dbtypes.ProgramDataAccountRow
+		expected dbtypes.ProgramDataAccountRow
 	}{
 		{
 			name: "initialize the data",
-			data: ProgramDataAccountRow{
+			data: dbtypes.NewProgramDataAccountRow(
 				"address", 1, 0, "owner",
-			},
-			expected: ProgramDataAccountRow{
+			),
+			expected: dbtypes.NewProgramDataAccountRow(
 				"address", 1, 0, "owner",
-			},
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: ProgramDataAccountRow{
+			data: dbtypes.NewProgramDataAccountRow(
 				"address", 0, 0, "pre_owner",
-			},
-			expected: ProgramDataAccountRow{
+			),
+			expected: dbtypes.NewProgramDataAccountRow(
 				"address", 1, 0, "owner",
-			},
+			),
 		},
 		{
 			name: "update with same slot",
-			data: ProgramDataAccountRow{
+			data: dbtypes.NewProgramDataAccountRow(
 				"address", 1, 0, "cur_owner",
-			},
-			expected: ProgramDataAccountRow{
+			),
+			expected: dbtypes.NewProgramDataAccountRow(
 				"address", 1, 0, "cur_owner",
-			},
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: ProgramDataAccountRow{
+			data: dbtypes.NewProgramDataAccountRow(
 				"address", 2, 0, "new_owner",
-			},
-			expected: ProgramDataAccountRow{
+			),
+			expected: dbtypes.NewProgramDataAccountRow(
 				"address", 2, 0, "new_owner",
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveProgramDataAccount(
-				tc.data.Address,
-				tc.data.Slot,
-				tc.data.LastModifiedSlot,
-				tc.data.UpdateAuthority,
-			)
+			err := suite.database.SaveProgramDataAccount(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []ProgramDataAccountRow{}
+			rows := []dbtypes.ProgramDataAccountRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM program_data_account")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
@@ -266,10 +242,12 @@ func (suite *DbTestSuite) TestSaveProgramDataAccount() {
 
 func (suite *DbTestSuite) TestDeleteProgramDataAccount() {
 	err := suite.database.SaveProgramDataAccount(
-		"address",
-		0,
-		0,
-		"owner",
+		dbtypes.NewProgramDataAccountRow(
+			"address",
+			0,
+			0,
+			"owner",
+		),
 	)
 	suite.Require().NoError(err)
 	rows := []struct {

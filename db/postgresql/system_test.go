@@ -1,71 +1,59 @@
 package postgresql_test
 
-func (suite *DbTestSuite) TestSaveNonceAccount() {
-	type NonceRow struct {
-		Address              string `db:"address"`
-		Slot                 uint64 `db:"slot"`
-		Authority            string `db:"authority"`
-		Blockhash            string `db:"blockhash"`
-		LamportsPerSignature uint64 `db:"lamports_per_signature"`
-	}
+import dbtypes "github.com/forbole/soljuno/db/types"
 
+func (suite *DbTestSuite) TestSaveNonceAccount() {
 	testCases := []struct {
 		name     string
-		data     NonceRow
-		expected NonceRow
+		data     dbtypes.NonceAccountRow
+		expected dbtypes.NonceAccountRow
 	}{
 		{
 			name: "initialize the data",
-			data: NonceRow{
+			data: dbtypes.NewNonceAccountRow(
 				"address", 1, "owner", "blockhash", 5000,
-			},
-			expected: NonceRow{
+			),
+			expected: dbtypes.NewNonceAccountRow(
 				"address", 1, "owner", "blockhash", 5000,
-			},
+			),
 		},
 		{
 			name: "update with lower slot",
-			data: NonceRow{
+			data: dbtypes.NewNonceAccountRow(
 				"address", 0, "pre_owner", "blockhash", 5000,
-			},
-			expected: NonceRow{
+			),
+			expected: dbtypes.NewNonceAccountRow(
 				"address", 1, "owner", "blockhash", 5000,
-			},
+			),
 		},
 		{
 			name: "update with same slot",
-			data: NonceRow{
+			data: dbtypes.NewNonceAccountRow(
 				"address", 1, "same_owner", "blockhash", 5000,
-			},
-			expected: NonceRow{
+			),
+			expected: dbtypes.NewNonceAccountRow(
 				"address", 1, "same_owner", "blockhash", 5000,
-			},
+			),
 		},
 		{
 			name: "update with higher slot",
-			data: NonceRow{
+			data: dbtypes.NewNonceAccountRow(
 				"address", 2, "new_owner", "blockhash", 5000,
-			},
-			expected: NonceRow{
+			),
+			expected: dbtypes.NewNonceAccountRow(
 				"address", 2, "new_owner", "blockhash", 5000,
-			},
+			),
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			err := suite.database.SaveNonceAccount(
-				tc.data.Address,
-				tc.data.Slot,
-				tc.data.Authority,
-				tc.data.Blockhash,
-				tc.data.LamportsPerSignature,
-			)
+			err := suite.database.SaveNonceAccount(tc.data)
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []NonceRow{}
+			rows := []dbtypes.NonceAccountRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM nonce_account")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
@@ -76,20 +64,16 @@ func (suite *DbTestSuite) TestSaveNonceAccount() {
 
 func (suite *DbTestSuite) TestDeleteNonceAccount() {
 	err := suite.database.SaveNonceAccount(
-		"address",
-		0,
-		"owner",
-		"hash",
-		20,
+		dbtypes.NewNonceAccountRow(
+			"address",
+			0,
+			"owner",
+			"hash",
+			20,
+		),
 	)
 	suite.Require().NoError(err)
-	rows := []struct {
-		Address              string `db:"address"`
-		Slot                 uint64 `db:"slot"`
-		Authority            string `db:"authority"`
-		Blockhash            string `db:"blockhash"`
-		LamportsPerSignature uint64 `db:"lamports_per_signature"`
-	}{}
+	rows := []dbtypes.NonceAccountRow{}
 
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM nonce_account")
 	suite.Require().NoError(err)
