@@ -166,16 +166,16 @@ type SystemCheckerDb interface {
 // StakeDb represents a database that supports stake properly
 type StakeDb interface {
 	// SaveStakeAccount allows to store the given stake account data inside the database
-	SaveStakeAccount(address string, slot uint64, staker string, withdrawer string) error
+	SaveStakeAccount(account dbtypes.StakeAccountRow) error
 
 	// DeleteStakeAccount allows to delete the given address of the stake account inside the database
 	DeleteStakeAccount(address string) error
 
 	// SaveStakeLockup allows to store the given stake account lockup state inside the database
-	SaveStakeLockup(address string, slot uint64, custodian string, epoch uint64, unixTimestamp int64) error
+	SaveStakeLockup(lockup dbtypes.StakeLockupRow) error
 
 	// SaveStakeDelegation allows to store the given delegation of stake account inside the database
-	SaveStakeDelegation(address string, slot uint64, activationEpoch uint64, deactivationEpoch uint64, stake uint64, voter string, rate float64) error
+	SaveStakeDelegation(delegation dbtypes.StakeDelegationRow) error
 
 	// DeleteStakeDelegation allows to delete the given address of the stake delegation inside the database
 	DeleteStakeDelegation(address string) error

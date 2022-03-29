@@ -2,15 +2,15 @@ package postgresql
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 )
 
 var _ db.StakeDb = &Database{}
 
 // SaveStake implements the db.StakeDb
-func (db *Database) SaveStakeAccount(address string, slot uint64, staker string, withdrawer string) error {
+func (db *Database) SaveStakeAccount(account dbtypes.StakeAccountRow) error {
 	stmt := `
 INSERT INTO stake_account
 	(address, slot, staker, withdrawer)
@@ -23,10 +23,10 @@ WHERE stake_account.slot <= excluded.slot`
 
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		staker,
-		withdrawer,
+		account.Address,
+		account.Slot,
+		account.Staker,
+		account.Withdrawer,
 	)
 	return err
 }
@@ -39,7 +39,7 @@ func (db *Database) DeleteStakeAccount(address string) error {
 }
 
 // SaveStakeLockup implements the db.StakeDb
-func (db *Database) SaveStakeLockup(address string, slot uint64, custodian string, epoch uint64, unixTimestamp int64) error {
+func (db *Database) SaveStakeLockup(lockup dbtypes.StakeLockupRow) error {
 	stmt := `
 INSERT INTO stake_lockup
     (address, slot, custodian, epoch, unix_timestamp)
@@ -52,17 +52,17 @@ ON CONFLICT (address) DO UPDATE
 WHERE stake_lockup.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		custodian,
-		epoch,
-		time.Unix(unixTimestamp, 0).UTC(),
+		lockup.Address,
+		lockup.Slot,
+		lockup.Custodian,
+		lockup.Epoch,
+		lockup.UnixTimestamp,
 	)
 	return err
 }
 
 // SaveStakeDelegation implements the db.StakeDb
-func (db *Database) SaveStakeDelegation(address string, slot uint64, activationEpoch uint64, deactivationEpoch uint64, stake uint64, voter string, rate float64) error {
+func (db *Database) SaveStakeDelegation(delegation dbtypes.StakeDelegationRow) error {
 	stmt := `
 INSERT INTO stake_delegation
     (address, slot, activation_epoch, deactivation_epoch, stake, voter, warmup_cooldown_rate)
@@ -77,13 +77,13 @@ ON CONFLICT (address) DO UPDATE
 WHERE stake_delegation.slot <= excluded.slot`
 	_, err := db.Sqlx.Exec(
 		stmt,
-		address,
-		slot,
-		strconv.FormatUint(activationEpoch, 10),
-		strconv.FormatUint(deactivationEpoch, 10),
-		stake,
-		voter,
-		rate,
+		delegation.Address,
+		delegation.Slot,
+		strconv.FormatUint(delegation.ActivationEpoch, 10),
+		strconv.FormatUint(delegation.DeactivationEpoch, 10),
+		delegation.Stake,
+		delegation.Voter,
+		delegation.WarmupCooldownRate,
 	)
 	return err
 }

@@ -61,21 +61,25 @@ func updateMultisig(ctx *Context, address string, slot uint64, multisig accountP
 func updateStakeAccount(ctx *Context, address string, slot uint64, account accountParser.StakeAccount) error {
 	stakeDb := ctx.Database.(db.StakeDb)
 	err := stakeDb.SaveStakeAccount(
-		address,
-		slot,
-		account.Meta.Authorized.Staker.String(),
-		account.Meta.Authorized.Withdrawer.String(),
+		dbtypes.NewStakeAccountRow(
+			address,
+			slot,
+			account.Meta.Authorized.Staker.String(),
+			account.Meta.Authorized.Withdrawer.String(),
+		),
 	)
 	if err != nil {
 		return err
 	}
 
 	err = stakeDb.SaveStakeLockup(
-		address,
-		slot,
-		account.Meta.Lockup.Custodian.String(),
-		account.Meta.Lockup.Epoch,
-		account.Meta.Lockup.UnixTimestamp,
+		dbtypes.NewStakeLockupRow(
+			address,
+			slot,
+			account.Meta.Lockup.Custodian.String(),
+			account.Meta.Lockup.Epoch,
+			account.Meta.Lockup.UnixTimestamp,
+		),
 	)
 	if err != nil {
 		return err
@@ -83,13 +87,15 @@ func updateStakeAccount(ctx *Context, address string, slot uint64, account accou
 
 	delegation := account.Stake.Delegation
 	return stakeDb.SaveStakeDelegation(
-		address,
-		slot,
-		delegation.ActivationEpoch,
-		delegation.DeactivationEpoch,
-		delegation.Stake,
-		delegation.VoterPubkey.String(),
-		delegation.WarmupCooldownRate,
+		dbtypes.NewStakeDelegationRow(
+			address,
+			slot,
+			delegation.ActivationEpoch,
+			delegation.DeactivationEpoch,
+			delegation.Stake,
+			delegation.VoterPubkey.String(),
+			delegation.WarmupCooldownRate,
+		),
 	)
 }
 
@@ -108,11 +114,13 @@ func updateVoteAccount(ctx *Context, address string, slot uint64, account accoun
 func updateNonceAccount(ctx *Context, address string, slot uint64, account accountParser.NonceAccount) error {
 	systemDb := ctx.Database.(db.SystemDb)
 	return systemDb.SaveNonceAccount(
-		address,
-		slot,
-		account.Authority.String(),
-		account.BlockHash.String(),
-		account.FeeCalculator.LamportsPerSignature,
+		dbtypes.NewNonceAccountRow(
+			address,
+			slot,
+			account.Authority.String(),
+			account.BlockHash.String(),
+			account.FeeCalculator.LamportsPerSignature,
+		),
 	)
 }
 
