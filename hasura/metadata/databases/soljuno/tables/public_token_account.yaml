@@ -2,12 +2,12 @@ table:
   name: token_account
   schema: public
 object_relationships:
-- name: token_info
+- name: token
   using:
     manual_configuration:
       remote_table:
         schema: public
-        name: token
+        name: token_unit
       column_mapping:
         mint: mint
 select_permissions:
