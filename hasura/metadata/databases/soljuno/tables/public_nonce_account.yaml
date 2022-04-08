@@ -1,6 +1,15 @@
 table:
   name: nonce_account
   schema: public
+object_relationships:
+- name: native_balance
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: account_balance
+      column_mapping:
+        address: address
 select_permissions:
 - permission:
     allow_aggregations: true
