@@ -7,7 +7,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 	"time"
 
@@ -63,12 +62,9 @@ func StartImportSnapshot(ctx *Context, snapshotFile string, parallelize int) err
 
 // handleSnapshot handles all accounts inside the snapshot file
 func handleSnapshot(ctx *Context, reader *bufio.Reader, parallelize int) error {
-	_, _, err := reader.ReadLine()
-	if err != nil {
-		return err
-	}
 	wg := new(sync.WaitGroup)
 	for i := 0; ; i++ {
+		// Sleep when pool is full or reach the parallelize limit
 		if ctx.Pool.Free() == 0 || (i+1)%parallelize == 0 {
 			time.Sleep(time.Second)
 		}
@@ -123,12 +119,10 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 		} else if err != nil {
 			return "", bytes.Buffer{}, err
 		}
-
 		if count == 0 {
-			pubkey = string(l)[:len(l)-1]
+			pubkey = string(l)
 			l = []byte(`account:`)
 		}
-		l = []byte(strings.Replace(string(l), "- ", "", 1))
 		_, err := buf.Write(l)
 		if err != nil {
 			return "", bytes.Buffer{}, err
@@ -139,6 +133,7 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 			return "", bytes.Buffer{}, err
 		}
 	}
+	// Check if it is the last line
 	if err == io.EOF {
 		return "", bytes.Buffer{}, err
 	}
@@ -146,7 +141,10 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 }
 
 func handleAccount(ctx *Context, account Account) error {
-	ctx.Buffer <- account
+	// Add to balances buffer for consumer to update balances
+	ctx.BalancesBuffer <- account
+
+	// Update account from node
 	address := account.Pubkey
 	info, err := ctx.Proxy.GetAccountInfo(address)
 	if err != nil {

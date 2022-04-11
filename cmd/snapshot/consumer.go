@@ -24,7 +24,7 @@ func getAccounts(ctx *Context, num int) []Account {
 	var accounts []Account
 	for {
 		select {
-		case account := <-ctx.Buffer:
+		case account := <-ctx.BalancesBuffer:
 			accounts = append(accounts, account)
 			if len(accounts) >= num {
 				return accounts
