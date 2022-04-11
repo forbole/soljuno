@@ -163,7 +163,7 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 // trapSignal will listen for any OS signal and invoke Done on the main
 // WaitGroup allowing the main process to gracefully exit.
 func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) {
-	var sigCh = make(chan os.Signal)
+	var sigCh = make(chan os.Signal, 1)
 
 	signal.Notify(sigCh, syscall.SIGTERM)
 	signal.Notify(sigCh, syscall.SIGINT)
