@@ -9,26 +9,25 @@ import (
 // RunAsyncOperations implements modules.Module
 func (m *Module) RunAsyncOperations() {
 	for {
-		block := <-m.buffer
-		_, err := m.pool.DoAsync(func() error {
-			txRows, err := dbtypes.NewTxRowsFromTxs(block.Txs)
-			if err != nil {
-				m.handleAsyncError(err, block)
-				return nil
-			}
-
-			err = m.db.SaveTxs(txRows)
-			m.handleAsyncError(err, block)
-			return nil
-		})
-		m.handleAsyncError(err, block)
+		m.HandleBuffer()
 	}
 }
 
-func (m *Module) handleAsyncError(err error, block types.Block) {
+func (m *Module) HandleBuffer() {
+	block := <-m.Buffer
+	_, err := m.pool.DoAsync(func() error {
+		txRows := dbtypes.NewTxRowsFromTxs(block.Txs)
+		err := m.db.SaveTxs(txRows)
+		m.HandleAsyncError(err, block)
+		return nil
+	})
+	m.HandleAsyncError(err, block)
+}
+
+func (m *Module) HandleAsyncError(err error, block types.Block) {
 	if err != nil {
 		log.Error().Str("module", m.Name()).Err(err).Send()
 		log.Info().Str("module", m.Name()).Msg("re-enqueueing failed txs")
-		m.buffer <- block
+		m.Buffer <- block
 	}
 }
