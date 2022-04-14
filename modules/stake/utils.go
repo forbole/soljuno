@@ -5,7 +5,7 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/account/parser"
 	"github.com/forbole/soljuno/solana/client"
 )
 
@@ -29,7 +29,7 @@ func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, clien
 		return err
 	}
 
-	stakeAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.StakeAccount)
+	stakeAccount, ok := parser.Parse(info.Value.Owner, bz).(parser.StakeAccount)
 	if !ok {
 		return db.DeleteStakeAccount(address)
 	}

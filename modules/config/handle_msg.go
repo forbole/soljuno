@@ -8,7 +8,7 @@ import (
 	"github.com/forbole/soljuno/apis/keybase"
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/account/parser"
 	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/types"
 )
@@ -27,7 +27,7 @@ func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.ConfigD
 	if err != nil {
 		return err
 	}
-	configAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.ValidatorConfig)
+	configAccount, ok := parser.Parse(info.Value.Owner, bz).(parser.ValidatorConfig)
 	if !ok {
 		return fmt.Errorf("failed to parse config account")
 	}

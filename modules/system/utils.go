@@ -5,7 +5,7 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/account/parser"
 	"github.com/forbole/soljuno/solana/client"
 )
 
@@ -29,7 +29,7 @@ func updateNonce(address string, currentSlot uint64, db db.SystemDb, client clie
 		return err
 	}
 
-	nonce, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.NonceAccount)
+	nonce, ok := parser.Parse(info.Value.Owner, bz).(parser.NonceAccount)
 	if !ok {
 		return db.DeleteNonceAccount(address)
 	}

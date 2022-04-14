@@ -6,7 +6,7 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/account/parser"
 	"github.com/forbole/soljuno/solana/client"
 )
 
@@ -30,7 +30,7 @@ func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client c
 		return err
 	}
 
-	tokenAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenAccount)
+	tokenAccount, ok := parser.Parse(info.Value.Owner, bz).(parser.TokenAccount)
 	if !ok || tokenAccount.Delegate.String() == "" {
 		return db.DeleteTokenDelegation(source)
 	}
@@ -57,7 +57,7 @@ func updateToken(mint string, currentSlot uint64, db db.TokenDb, client client.C
 		return err
 	}
 
-	token, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.Token)
+	token, ok := parser.Parse(info.Value.Owner, bz).(parser.Token)
 	if !ok {
 		return fmt.Errorf("failed to parse token:%s", mint)
 	}
@@ -93,7 +93,7 @@ func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, clien
 		return err
 	}
 
-	tokenAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.TokenAccount)
+	tokenAccount, ok := parser.Parse(info.Value.Owner, bz).(parser.TokenAccount)
 	if !ok {
 		return db.DeleteTokenAccount(address)
 	}
@@ -119,7 +119,7 @@ func updateTokenSupply(mint string, currentSlot uint64, db db.TokenDb, client cl
 		return err
 	}
 
-	token, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.Token)
+	token, ok := parser.Parse(info.Value.Owner, bz).(parser.Token)
 	if !ok {
 		return fmt.Errorf("failed to parse token:%s", mint)
 	}

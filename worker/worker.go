@@ -12,7 +12,7 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/solana/client"
-	"github.com/forbole/soljuno/solana/parser/manager"
+	"github.com/forbole/soljuno/solana/program/parser/manager"
 	"github.com/forbole/soljuno/types"
 )
 

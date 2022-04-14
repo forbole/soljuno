@@ -4,7 +4,7 @@ import (
 	"time"
 
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
-	"github.com/forbole/soljuno/solana/parser/manager"
+	"github.com/forbole/soljuno/solana/program/parser/manager"
 	"github.com/forbole/soljuno/solana/types"
 )
 

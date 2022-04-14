@@ -9,7 +9,7 @@ import (
 	"github.com/forbole/soljuno/actions-proxy/apis/types"
 	"github.com/forbole/soljuno/solana/client"
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
-	"github.com/forbole/soljuno/solana/parser/manager"
+	"github.com/forbole/soljuno/solana/program/parser/manager"
 	solanatypes "github.com/forbole/soljuno/types"
 )
 

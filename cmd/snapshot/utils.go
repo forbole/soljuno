@@ -6,12 +6,11 @@ import (
 	"github.com/forbole/soljuno/apis/keybase"
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/account/parser"
 )
 
-func updateToken(ctx *Context, address string, slot uint64, token accountParser.Token) error {
-	tokenDb := ctx.Database.(db.TokenDb)
-	err := tokenDb.SaveToken(
+func saveToken(db db.TokenDb, address string, slot uint64, token parser.Token) error {
+	err := db.SaveToken(
 		dbtypes.NewTokenRow(
 			address,
 			slot,
@@ -23,13 +22,11 @@ func updateToken(ctx *Context, address string, slot uint64, token accountParser.
 	if err != nil {
 		return err
 	}
-
-	return tokenDb.SaveTokenSupply(dbtypes.NewTokenSupplyRow(address, slot, token.Supply))
+	return db.SaveTokenSupply(dbtypes.NewTokenSupplyRow(address, slot, token.Supply))
 }
 
-func updateTokenAccount(ctx *Context, address string, slot uint64, account accountParser.TokenAccount) error {
-	tokenDb := ctx.Database.(db.TokenDb)
-	err := tokenDb.SaveTokenAccount(
+func saveTokenAccount(db db.TokenDb, address string, slot uint64, account parser.TokenAccount) error {
+	return db.SaveTokenAccount(
 		dbtypes.NewTokenAccountRow(
 			address,
 			slot,
@@ -37,30 +34,26 @@ func updateTokenAccount(ctx *Context, address string, slot uint64, account accou
 			account.Owner.String(),
 		),
 	)
-	if err != nil {
-		return err
-	}
+}
 
-	bankDb := ctx.Database.(db.BankDb)
-	return bankDb.SaveAccountTokenBalances(
+func saveTokenBalance(db db.BankDb, address string, slot uint64, account parser.TokenAccount) error {
+	return db.SaveAccountTokenBalances(
 		slot,
 		[]string{address},
 		[]uint64{account.Amount},
 	)
 }
 
-func updateMultisig(ctx *Context, address string, slot uint64, multisig accountParser.Multisig) error {
-	tokenDb := ctx.Database.(db.TokenDb)
-	return tokenDb.SaveMultisig(
+func saveMultisig(db db.TokenDb, address string, slot uint64, multisig parser.Multisig) error {
+	return db.SaveMultisig(
 		dbtypes.NewMultisigRow(
 			address, slot, multisig.StringSigners(), multisig.M,
 		),
 	)
 }
 
-func updateStakeAccount(ctx *Context, address string, slot uint64, account accountParser.StakeAccount) error {
-	stakeDb := ctx.Database.(db.StakeDb)
-	err := stakeDb.SaveStakeAccount(
+func updateStakeAccount(db db.StakeDb, address string, slot uint64, account parser.StakeAccount) error {
+	err := db.SaveStakeAccount(
 		dbtypes.NewStakeAccountRow(
 			address,
 			slot,
@@ -72,7 +65,7 @@ func updateStakeAccount(ctx *Context, address string, slot uint64, account accou
 		return err
 	}
 
-	err = stakeDb.SaveStakeLockup(
+	err = db.SaveStakeLockup(
 		dbtypes.NewStakeLockupRow(
 			address,
 			slot,
@@ -86,7 +79,7 @@ func updateStakeAccount(ctx *Context, address string, slot uint64, account accou
 	}
 
 	delegation := account.Stake.Delegation
-	return stakeDb.SaveStakeDelegation(
+	return db.SaveStakeDelegation(
 		dbtypes.NewStakeDelegationRow(
 			address,
 			slot,
@@ -99,9 +92,8 @@ func updateStakeAccount(ctx *Context, address string, slot uint64, account accou
 	)
 }
 
-func updateVoteAccount(ctx *Context, address string, slot uint64, account accountParser.VoteAccount) error {
-	voteDb := ctx.Database.(db.VoteDb)
-	return voteDb.SaveValidator(
+func saveVoteAccount(db db.VoteDb, address string, slot uint64, account parser.VoteAccount) error {
+	return db.SaveValidator(
 		dbtypes.NewVoteAccountRow(
 			address,
 			slot,
@@ -113,9 +105,8 @@ func updateVoteAccount(ctx *Context, address string, slot uint64, account accoun
 	)
 }
 
-func updateNonceAccount(ctx *Context, address string, slot uint64, account accountParser.NonceAccount) error {
-	systemDb := ctx.Database.(db.SystemDb)
-	return systemDb.SaveNonceAccount(
+func updateNonceAccount(db db.SystemDb, address string, slot uint64, account parser.NonceAccount) error {
+	return db.SaveNonceAccount(
 		dbtypes.NewNonceAccountRow(
 			address,
 			slot,
@@ -126,9 +117,8 @@ func updateNonceAccount(ctx *Context, address string, slot uint64, account accou
 	)
 }
 
-func updateBufferAccount(ctx *Context, address string, slot uint64, account accountParser.BufferAccount) error {
-	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
-	return bpfLoaderDb.SaveBufferAccount(
+func updateBufferAccount(db db.BpfLoaderDb, address string, slot uint64, account parser.BufferAccount) error {
+	return db.SaveBufferAccount(
 		dbtypes.NewBufferAccountRow(
 			address,
 			slot,
@@ -137,9 +127,8 @@ func updateBufferAccount(ctx *Context, address string, slot uint64, account acco
 	)
 }
 
-func updateProgramAccount(ctx *Context, address string, slot uint64, account accountParser.ProgramAccount) error {
-	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
-	return bpfLoaderDb.SaveProgramAccount(
+func updateProgramAccount(db db.BpfLoaderDb, address string, slot uint64, account parser.ProgramAccount) error {
+	return db.SaveProgramAccount(
 		dbtypes.NewProgramAccountRow(
 			address,
 			slot,
@@ -148,9 +137,8 @@ func updateProgramAccount(ctx *Context, address string, slot uint64, account acc
 	)
 }
 
-func updateProgramDataAccount(ctx *Context, address string, slot uint64, account accountParser.ProgramDataAccount) error {
-	bpfLoaderDb := ctx.Database.(db.BpfLoaderDb)
-	return bpfLoaderDb.SaveProgramDataAccount(
+func updateProgramDataAccount(db db.BpfLoaderDb, address string, slot uint64, account parser.ProgramDataAccount) error {
+	return db.SaveProgramDataAccount(
 		dbtypes.NewProgramDataAccountRow(
 			address,
 			slot,
@@ -160,8 +148,7 @@ func updateProgramDataAccount(ctx *Context, address string, slot uint64, account
 	)
 }
 
-func updateValidatorConfig(ctx *Context, address string, slot uint64, config accountParser.ValidatorConfig) error {
-	configDb := ctx.Database.(db.ConfigDb)
+func updateValidatorConfig(db db.ConfigDb, address string, slot uint64, config parser.ValidatorConfig) error {
 	var parsedConfig dbtypes.ParsedValidatorConfig
 	err := json.Unmarshal([]byte(config.Info), &parsedConfig)
 	if err != nil {
@@ -178,5 +165,5 @@ func updateValidatorConfig(ctx *Context, address string, slot uint64, config acc
 		address, slot, config.Keys[1].Pubkey.String(), parsedConfig, avatarUrl,
 	)
 
-	return configDb.SaveValidatorConfig(row)
+	return db.SaveValidatorConfig(row)
 }
