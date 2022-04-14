@@ -14,7 +14,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	cmdtypes "github.com/forbole/soljuno/cmd/types"
-	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/account/parser"
 )
 
 const (
@@ -144,7 +144,7 @@ func handleAccount(ctx *Context, account Account) error {
 	// Add to balances buffer for consumer to update balances
 	ctx.BalancesBuffer <- account
 
-	// Update account from node
+	// Update account data from node
 	address := account.Pubkey
 	info, err := ctx.Proxy.GetAccountInfo(address)
 	if err != nil {
@@ -158,36 +158,39 @@ func handleAccount(ctx *Context, account Account) error {
 		return err
 	}
 
-	switch account := accountParser.Parse(info.Value.Owner, bz).(type) {
-	case accountParser.Token:
-		return updateToken(ctx, address, info.Context.Slot, account)
+	switch account := parser.Parse(info.Value.Owner, bz).(type) {
+	case parser.Token:
+		return saveToken(ctx.Database, address, info.Context.Slot, account)
 
-	case accountParser.TokenAccount:
-		return updateTokenAccount(ctx, address, info.Context.Slot, account)
+	case parser.TokenAccount:
+		if err := saveTokenAccount(ctx.Database, address, info.Context.Slot, account); err != nil {
+			return err
+		}
+		return saveTokenBalance(ctx.Database, address, info.Context.Slot, account)
 
-	case accountParser.Multisig:
-		return updateMultisig(ctx, address, info.Context.Slot, account)
+	case parser.Multisig:
+		return saveMultisig(ctx.Database, address, info.Context.Slot, account)
 
-	case accountParser.StakeAccount:
-		return updateStakeAccount(ctx, address, info.Context.Slot, account)
+	case parser.StakeAccount:
+		return updateStakeAccount(ctx.Database, address, info.Context.Slot, account)
 
-	case accountParser.VoteAccount:
-		return updateVoteAccount(ctx, address, info.Context.Slot, account)
+	case parser.VoteAccount:
+		return saveVoteAccount(ctx.Database, address, info.Context.Slot, account)
 
-	case accountParser.NonceAccount:
-		return updateNonceAccount(ctx, address, info.Context.Slot, account)
+	case parser.NonceAccount:
+		return updateNonceAccount(ctx.Database, address, info.Context.Slot, account)
 
-	case accountParser.BufferAccount:
-		return updateBufferAccount(ctx, address, info.Context.Slot, account)
+	case parser.BufferAccount:
+		return updateBufferAccount(ctx.Database, address, info.Context.Slot, account)
 
-	case accountParser.ProgramAccount:
-		return updateProgramAccount(ctx, address, info.Context.Slot, account)
+	case parser.ProgramAccount:
+		return updateProgramAccount(ctx.Database, address, info.Context.Slot, account)
 
-	case accountParser.ProgramDataAccount:
-		return updateProgramDataAccount(ctx, address, info.Context.Slot, account)
+	case parser.ProgramDataAccount:
+		return updateProgramDataAccount(ctx.Database, address, info.Context.Slot, account)
 
-	case accountParser.ValidatorConfig:
-		return updateValidatorConfig(ctx, address, info.Context.Slot, account)
+	case parser.ValidatorConfig:
+		return updateValidatorConfig(ctx.Database, address, info.Context.Slot, account)
 
 	default:
 		return nil

@@ -5,7 +5,7 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/account/parser"
 	"github.com/forbole/soljuno/solana/client"
 )
 
@@ -29,7 +29,7 @@ func updateBufferAccount(address string, currentSlot uint64, db db.BpfLoaderDb, 
 		return err
 	}
 
-	bufferAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.BufferAccount)
+	bufferAccount, ok := parser.Parse(info.Value.Owner, bz).(parser.BufferAccount)
 	if !ok {
 		return db.DeleteBufferAccount(address)
 	}
@@ -63,7 +63,7 @@ func updateProgramAccount(address string, currentSlot uint64, db db.BpfLoaderDb,
 		return err
 	}
 
-	programAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.ProgramAccount)
+	programAccount, ok := parser.Parse(info.Value.Owner, bz).(parser.ProgramAccount)
 	if !ok {
 		return db.DeleteProgramAccount(address)
 
@@ -97,7 +97,7 @@ func updateProgramDataAccount(address string, currentSlot uint64, db db.BpfLoade
 		return err
 	}
 
-	programDataAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.ProgramDataAccount)
+	programDataAccount, ok := parser.Parse(info.Value.Owner, bz).(parser.ProgramDataAccount)
 	if !ok {
 		return db.DeleteProgramDataAccount(address)
 	}

@@ -1,7 +1,7 @@
 package associated_token_account
 
 import (
-	"github.com/forbole/soljuno/solana/parser"
+	"github.com/forbole/soljuno/solana/program/parser"
 	"github.com/forbole/soljuno/solana/types"
 )
 

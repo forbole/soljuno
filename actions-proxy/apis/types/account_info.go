@@ -3,7 +3,7 @@ package types
 import (
 	"encoding/base64"
 
-	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/account/parser"
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 )
 
@@ -30,7 +30,7 @@ func NewAccountInfoResponse(info clienttypes.AccountInfo) (AccountInfoResponse, 
 	if err != nil {
 		return AccountInfoResponse{}, err
 	}
-	parsed := accountParser.Parse(info.Value.Owner, bz)
+	parsed := parser.Parse(info.Value.Owner, bz)
 	return AccountInfoResponse{
 		Data:       info.Value.Data,
 		Executable: info.Value.Executable,
@@ -151,7 +151,7 @@ func (a VoteAccountInfo) IsParsedAccountInfo() {}
 
 func NewParsedAccountResponseFromInfo(account interface{}) *AccountResponse {
 	switch acc := account.(type) {
-	case accountParser.NonceAccount:
+	case parser.NonceAccount:
 		return NewAccountResponse(
 			"nonce_account",
 			NonceAccountInfo{
@@ -161,7 +161,7 @@ func NewParsedAccountResponseFromInfo(account interface{}) *AccountResponse {
 			},
 		)
 
-	case accountParser.StakeAccount:
+	case parser.StakeAccount:
 		meta := StakeMeta{
 			RentExemptReserve: acc.Meta.RentExemptReserve,
 			Authorized: StakeAuthorized{
@@ -196,7 +196,7 @@ func NewParsedAccountResponseFromInfo(account interface{}) *AccountResponse {
 				Stake: stake,
 			})
 
-	case accountParser.TokenAccount:
+	case parser.TokenAccount:
 		var delegate *TokenDelegation
 		if acc.Delegate.Option.Bool() {
 			delegate = &TokenDelegation{
@@ -214,7 +214,7 @@ func NewParsedAccountResponseFromInfo(account interface{}) *AccountResponse {
 				CloseAuthority: acc.CloseAuthority.String(),
 			})
 
-	case accountParser.Token:
+	case parser.Token:
 		return NewAccountResponse(
 			"token",
 			TokenInfo{
@@ -224,7 +224,7 @@ func NewParsedAccountResponseFromInfo(account interface{}) *AccountResponse {
 				FreezeAuthority: acc.FreezeAuthority.String(),
 			})
 
-	case accountParser.VoteAccount:
+	case parser.VoteAccount:
 		return NewAccountResponse(
 			"vote_account",
 			VoteAccountInfo{

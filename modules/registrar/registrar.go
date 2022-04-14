@@ -1,7 +1,7 @@
 package registrar
 
 import (
-	"github.com/forbole/soljuno/solana/parser/manager"
+	"github.com/forbole/soljuno/solana/program/parser/manager"
 	"github.com/forbole/soljuno/types/logging"
 	"github.com/forbole/soljuno/types/pool"
 

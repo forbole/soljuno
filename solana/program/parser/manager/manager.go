@@ -3,10 +3,10 @@ package manager
 import (
 	"fmt"
 
-	"github.com/forbole/soljuno/solana/parser"
 	associatedTokenAccount "github.com/forbole/soljuno/solana/program/associated-token-account"
 	"github.com/forbole/soljuno/solana/program/bpfloader"
 	upgradableLoader "github.com/forbole/soljuno/solana/program/bpfloader/upgradeable"
+	"github.com/forbole/soljuno/solana/program/parser"
 	"github.com/forbole/soljuno/solana/program/stake"
 	"github.com/forbole/soljuno/solana/program/system"
 	"github.com/forbole/soljuno/solana/program/token"

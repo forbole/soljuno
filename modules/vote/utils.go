@@ -5,7 +5,7 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	accountParser "github.com/forbole/soljuno/solana/account"
+	"github.com/forbole/soljuno/solana/account/parser"
 	"github.com/forbole/soljuno/solana/client"
 )
 
@@ -25,7 +25,7 @@ func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client 
 	if err != nil {
 		return err
 	}
-	voteAccount, ok := accountParser.Parse(info.Value.Owner, bz).(accountParser.VoteAccount)
+	voteAccount, ok := parser.Parse(info.Value.Owner, bz).(parser.VoteAccount)
 	if !ok {
 		return nil
 	}

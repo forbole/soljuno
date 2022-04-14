@@ -2,7 +2,7 @@ package tokenswap
 
 import (
 	"github.com/forbole/soljuno/solana/bincode"
-	"github.com/forbole/soljuno/solana/parser"
+	"github.com/forbole/soljuno/solana/program/parser"
 	"github.com/forbole/soljuno/solana/types"
 )
 

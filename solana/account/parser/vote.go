@@ -1,4 +1,4 @@
-package account_parser
+package parser
 
 import (
 	"github.com/forbole/soljuno/solana/bincode"
