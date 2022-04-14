@@ -26,7 +26,7 @@ func NewTxRow(signature string, slot uint64, success bool, fee uint64, logs []st
 	}
 }
 
-func NewTxRowsFromTxs(txs []types.Tx) ([]TxRow, error) {
+func NewTxRowsFromTxs(txs []types.Tx) []TxRow {
 	txRows := make([]TxRow, len(txs))
 	for i, tx := range txs {
 		txRows[i] = NewTxRow(
@@ -38,5 +38,5 @@ func NewTxRowsFromTxs(txs []types.Tx) ([]TxRow, error) {
 			len(tx.Instructions),
 		)
 	}
-	return txRows, nil
+	return txRows
 }
