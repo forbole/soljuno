@@ -18,7 +18,7 @@ var (
 
 type Module struct {
 	db     db.TxDb
-	Buffer chan types.Block
+	buffer chan types.Block
 	pool   pool.Pool
 
 	mtx sync.Mutex
@@ -27,7 +27,7 @@ type Module struct {
 func NewModule(db db.TxDb, pool pool.Pool) *Module {
 	return &Module{
 		db:     db,
-		Buffer: make(chan types.Block),
+		buffer: make(chan types.Block),
 		pool:   pool,
 	}
 }
@@ -38,7 +38,7 @@ func (m *Module) Name() string {
 }
 
 func (m *Module) WithBuffer(buffer chan types.Block) {
-	m.Buffer = buffer
+	m.buffer = buffer
 }
 
 // HandleBlock implements modules.InstructionModule
@@ -47,7 +47,7 @@ func (m *Module) HandleBlock(block types.Block) error {
 	if err != nil {
 		return err
 	}
-	m.Buffer <- block
+	m.buffer <- block
 	return nil
 }
 

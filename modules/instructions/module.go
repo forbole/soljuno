@@ -40,6 +40,11 @@ func (m *Module) Name() string {
 	return "instructions"
 }
 
+func (m *Module) WithBuffer(buffer chan dbtypes.InstructionRow) {
+	m.buffer = buffer
+}
+
+// HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(block types.Block) error {
 	return m.createPartition(block.Slot)
 }

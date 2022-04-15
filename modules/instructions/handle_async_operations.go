@@ -10,19 +10,19 @@ import (
 // RunAsyncOperations implements modules.Module
 func (m *Module) RunAsyncOperations() {
 	for {
-		m.consumeInstructions()
+		m.HandleBuffer()
 	}
 }
 
-func (m *Module) consumeInstructions() {
+func (m *Module) HandleBuffer() {
 	instructions := m.getInstructionRows()
 	_, err := m.pool.DoAsync(func() error {
 		err := m.db.SaveInstructions(instructions)
-		m.handleAsyncError(err, instructions)
+		m.HandleAsyncError(err, instructions)
 		return nil
 	})
 
-	m.handleAsyncError(err, instructions)
+	m.HandleAsyncError(err, instructions)
 }
 
 func (m *Module) getInstructionRows() []dbtypes.InstructionRow {
@@ -38,7 +38,7 @@ func (m *Module) getInstructionRows() []dbtypes.InstructionRow {
 	}
 }
 
-func (m *Module) handleAsyncError(err error, instructions []dbtypes.InstructionRow) {
+func (m *Module) HandleAsyncError(err error, instructions []dbtypes.InstructionRow) {
 	if err != nil {
 		// re-enqueueing failed instructions in the same goroutine
 		log.Error().Str("module", m.Name()).Err(err).Send()
