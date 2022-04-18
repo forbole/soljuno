@@ -6,11 +6,10 @@ import (
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/solana/account/parser"
-	"github.com/forbole/soljuno/solana/client"
 )
 
 // updateStakeAccount properly stores the statement of stake account inside the database
-func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, client client.ClientProxy) error {
+func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, client ClientProxy) error {
 	if db.CheckStakeAccountLatest(address, currentSlot) {
 		return nil
 	}
