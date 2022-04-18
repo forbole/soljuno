@@ -11,7 +11,7 @@ import (
 
 // updateVoteAccount properly stores the statement of vote account inside the database
 func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client client.ClientProxy) error {
-	if !db.CheckValidatorLatest(address, currentSlot) {
+	if db.CheckValidatorLatest(address, currentSlot) {
 		return nil
 	}
 	info, err := client.GetAccountInfo(address)

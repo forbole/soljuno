@@ -11,7 +11,7 @@ import (
 
 // updateStakeAccount properly stores the statement of stake account inside the database
 func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, client client.ClientProxy) error {
-	if !db.CheckStakeAccountLatest(address, currentSlot) {
+	if db.CheckStakeAccountLatest(address, currentSlot) {
 		return nil
 	}
 
