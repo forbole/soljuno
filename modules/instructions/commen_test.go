@@ -11,7 +11,7 @@ import (
 	"github.com/forbole/soljuno/types/pool"
 )
 
-type ModuleTestSuit struct {
+type ModuleTestSuite struct {
 	suite.Suite
 	module *instructions.Module
 }
@@ -24,11 +24,11 @@ func (db MockDb) SaveInstructions(instructions []dbtypes.InstructionRow) error {
 func (db MockDb) CreateInstructionPartition(Id int) error                      { return nil }
 func (db MockDb) PruneInstructionsBeforeSlot(slot uint64) error                { return nil }
 
-func TestModuleTestSuite(t *testing.T) {
-	suite.Run(t, new(ModuleTestSuit))
+func TestModuleTestSuitee(t *testing.T) {
+	suite.Run(t, new(ModuleTestSuite))
 }
 
-func (suite *ModuleTestSuit) SetupTest() {
+func (suite *ModuleTestSuite) SetupTest() {
 	pool, err := pool.NewDefaultPool(10)
 	suite.Require().NoError(err)
 	suite.module = instructions.NewModule(MockDb{}, pool)

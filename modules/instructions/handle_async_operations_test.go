@@ -6,7 +6,7 @@ import (
 	dbtypes "github.com/forbole/soljuno/db/types"
 )
 
-func (suite *ModuleTestSuit) TestHandleBuffer() {
+func (suite *ModuleTestSuite) TestHandleBuffer() {
 	buffer := make(chan dbtypes.InstructionRow, 1)
 	suite.module.WithBuffer(buffer)
 	buffer <- dbtypes.NewInstructionRow("sig", 0, 0, 0, "program", []string{"account"}, "", "unknown", []byte("null"))
@@ -15,7 +15,7 @@ func (suite *ModuleTestSuit) TestHandleBuffer() {
 	suite.Require().Len(buffer, 0)
 }
 
-func (suite *ModuleTestSuit) TestHandleAsyncError() {
+func (suite *ModuleTestSuite) TestHandleAsyncError() {
 	buffer := make(chan dbtypes.InstructionRow, 1)
 	suite.module.WithBuffer(buffer)
 	suite.module.HandleAsyncError(

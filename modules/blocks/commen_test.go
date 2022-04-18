@@ -10,7 +10,7 @@ import (
 	"github.com/forbole/soljuno/modules/blocks"
 )
 
-type ModuleTestSuit struct {
+type ModuleTestSuite struct {
 	suite.Suite
 	module *blocks.Module
 }
@@ -22,10 +22,10 @@ var _ db.BlockDb = &MockDb{}
 func (db MockDb) HasBlock(slot uint64) (bool, error)     { return false, nil }
 func (db MockDb) SaveBlock(block dbtypes.BlockRow) error { return nil }
 
-func TestModuleTestSuite(t *testing.T) {
-	suite.Run(t, new(ModuleTestSuit))
+func TestModuleTestSuitee(t *testing.T) {
+	suite.Run(t, new(ModuleTestSuite))
 }
 
-func (suite *ModuleTestSuit) SetupTest() {
+func (suite *ModuleTestSuite) SetupTest() {
 	suite.module = blocks.NewModule(MockDb{})
 }

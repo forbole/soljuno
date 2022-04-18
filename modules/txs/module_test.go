@@ -6,11 +6,11 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-func (suite *ModuleTestSuit) TestName() {
+func (suite *ModuleTestSuite) TestName() {
 	suite.Require().Equal("txs", suite.module.Name())
 }
 
-func (suite *ModuleTestSuit) TestHandleBlock() {
+func (suite *ModuleTestSuite) TestHandleBlock() {
 	buffer := make(chan types.Block, 1)
 	suite.module.WithBuffer(buffer)
 	err := suite.module.HandleBlock(types.NewBlock(0, 0, "hash", "leader", time.Date(2022, 04, 14, 0, 0, 0, 0, time.UTC), []types.Tx{}))
@@ -19,7 +19,7 @@ func (suite *ModuleTestSuit) TestHandleBlock() {
 	suite.Require().NoError(err)
 }
 
-func (suite *ModuleTestSuit) TestPrune() {
+func (suite *ModuleTestSuite) TestPrune() {
 	err := suite.module.Prune(0)
 	suite.Require().NoError(err)
 }
