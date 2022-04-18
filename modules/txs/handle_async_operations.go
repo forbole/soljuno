@@ -14,7 +14,7 @@ func (m *Module) RunAsyncOperations() {
 }
 
 func (m *Module) HandleBuffer() {
-	block := <-m.Buffer
+	block := <-m.buffer
 	_, err := m.pool.DoAsync(func() error {
 		txRows := dbtypes.NewTxRowsFromTxs(block.Txs)
 		err := m.db.SaveTxs(txRows)
@@ -28,6 +28,6 @@ func (m *Module) HandleAsyncError(err error, block types.Block) {
 	if err != nil {
 		log.Error().Str("module", m.Name()).Err(err).Send()
 		log.Info().Str("module", m.Name()).Msg("re-enqueueing failed txs")
-		m.Buffer <- block
+		m.buffer <- block
 	}
 }
