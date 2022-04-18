@@ -19,11 +19,11 @@ type ClientProxy interface {
 }
 
 type Module struct {
-	db     db.Database
+	db     db.SystemDb
 	client ClientProxy
 }
 
-func NewModule(db db.Database, client ClientProxy) *Module {
+func NewModule(db db.SystemDb, client ClientProxy) *Module {
 	return &Module{
 		db:     db,
 		client: client,
@@ -43,12 +43,11 @@ func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) e
 	if instruction.Program != system.ProgramID {
 		return nil
 	}
-
-	err := HandleInstruction(instruction, tx, m.db, m.client)
+	err := HandleInstruction(instruction, m.db, m.client)
 	if err != nil {
 		return err
 	}
-	log.Debug().Str("module", m.Name()).Str("tx", tx.Signature).Uint64("slot", tx.Slot).
+	log.Debug().Str("module", m.Name()).Str("tx", instruction.TxSignature).Uint64("slot", tx.Slot).
 		Msg("handled instruction")
 	return nil
 }
