@@ -11,7 +11,7 @@ import (
 
 // updateBufferAccount properly stores the statement of buffer account inside the database
 func updateBufferAccount(address string, currentSlot uint64, db db.BpfLoaderDb, client client.ClientProxy) error {
-	if !db.CheckBufferAccountLatest(address, currentSlot) {
+	if db.CheckBufferAccountLatest(address, currentSlot) {
 		return nil
 	}
 
@@ -45,7 +45,7 @@ func updateBufferAccount(address string, currentSlot uint64, db db.BpfLoaderDb, 
 
 // updateProgramAccount properly stores the statement of program account inside the database
 func updateProgramAccount(address string, currentSlot uint64, db db.BpfLoaderDb, client client.ClientProxy) error {
-	if !db.CheckProgramAccountLatest(address, currentSlot) {
+	if db.CheckProgramAccountLatest(address, currentSlot) {
 		return nil
 	}
 
@@ -79,7 +79,7 @@ func updateProgramAccount(address string, currentSlot uint64, db db.BpfLoaderDb,
 
 // updateProgramDataAccount properly stores the statement of program data account inside the database
 func updateProgramDataAccount(address string, currentSlot uint64, db db.BpfLoaderDb, client client.ClientProxy) error {
-	if !db.CheckProgramDataAccountLatest(address, currentSlot) {
+	if db.CheckProgramDataAccountLatest(address, currentSlot) {
 		return nil
 	}
 

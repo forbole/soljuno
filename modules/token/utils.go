@@ -12,7 +12,7 @@ import (
 
 // updateDelegation properly stores the statement of delegation inside the database
 func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
-	if !db.CheckTokenDelegateLatest(source, currentSlot) {
+	if db.CheckTokenDelegateLatest(source, currentSlot) {
 		return nil
 	}
 
@@ -43,7 +43,7 @@ func updateDelegation(source string, currentSlot uint64, db db.TokenDb, client c
 
 // updateToken properly stores the authority of mint inside the database
 func updateToken(mint string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
-	if !db.CheckTokenLatest(mint, currentSlot) {
+	if db.CheckTokenLatest(mint, currentSlot) {
 		return nil
 	}
 
@@ -75,7 +75,7 @@ func updateToken(mint string, currentSlot uint64, db db.TokenDb, client client.C
 
 // updateTokenAccount properly stores the account state inside database
 func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
-	if !db.CheckTokenAccountLatest(address, currentSlot) {
+	if db.CheckTokenAccountLatest(address, currentSlot) {
 		return nil
 	}
 
@@ -105,7 +105,7 @@ func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, clien
 
 // updateTokenSupply properly stores the supply of the given mint inside the database
 func updateTokenSupply(mint string, currentSlot uint64, db db.TokenDb, client client.ClientProxy) error {
-	if !db.CheckTokenSupplyLatest(mint, currentSlot) {
+	if db.CheckTokenSupplyLatest(mint, currentSlot) {
 		return nil
 	}
 

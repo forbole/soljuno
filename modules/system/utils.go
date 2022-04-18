@@ -10,7 +10,7 @@ import (
 
 // updateNonce properly stores the statement of nonce inside the database
 func updateNonce(address string, currentSlot uint64, db db.SystemDb, client ClientProxy) error {
-	if !db.CheckNonceAccountLatest(address, currentSlot) {
+	if db.CheckNonceAccountLatest(address, currentSlot) {
 		return nil
 	}
 
