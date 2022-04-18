@@ -4,13 +4,12 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/db"
-	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/system"
 	"github.com/forbole/soljuno/types"
 )
 
 // HandleInstruction allows to handle different instructions types for the system module
-func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
+func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.SystemDb, client ClientProxy) error {
 	switch instruction.Parsed.Type {
 	case "advanceNonce":
 		return handleAdvanceNonce(instruction, tx, db, client)
@@ -25,7 +24,7 @@ func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.SystemD
 }
 
 // handleAdvanceNonce handles a instruction of AdvaceNonce
-func handleAdvanceNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
+func handleAdvanceNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(system.ParsedAdvanceNonceAccount)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "advanceNonce", instruction.Parsed.Type)
@@ -35,7 +34,7 @@ func handleAdvanceNonce(instruction types.Instruction, tx types.Tx, db db.System
 }
 
 // handleAuthorizeNonce handles a instruction of WithdrawFromNonce
-func handleWithdrawFromNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
+func handleWithdrawFromNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(system.ParsedWithdrawNonceAccount)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "withdrawNonce", instruction.Parsed.Type)
@@ -45,7 +44,7 @@ func handleWithdrawFromNonce(instruction types.Instruction, tx types.Tx, db db.S
 }
 
 // handleAuthorizeNonce handles a instruction of InitializeNonce
-func handleInitializeNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
+func handleInitializeNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(system.ParsedInitializeNonceAccount)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeNonce", instruction.Parsed.Type)
@@ -55,7 +54,7 @@ func handleInitializeNonce(instruction types.Instruction, tx types.Tx, db db.Sys
 }
 
 // handleAuthorizeNonce handles a instruction of AuthorizeNonce
-func handleAuthorizeNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client client.ClientProxy) error {
+func handleAuthorizeNonce(instruction types.Instruction, tx types.Tx, db db.SystemDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(system.ParsedAuthorizeNonceAccount)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeNonce", instruction.Parsed.Type)

@@ -3,7 +3,7 @@ package system
 import (
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/modules"
-	"github.com/forbole/soljuno/solana/client"
+	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	"github.com/forbole/soljuno/solana/program/system"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
@@ -14,12 +14,16 @@ var (
 	_ modules.InstructionModule = &Module{}
 )
 
-type Module struct {
-	db     db.Database
-	client client.ClientProxy
+type ClientProxy interface {
+	GetAccountInfo(string) (clienttypes.AccountInfo, error)
 }
 
-func NewModule(db db.Database, client client.ClientProxy) *Module {
+type Module struct {
+	db     db.Database
+	client ClientProxy
+}
+
+func NewModule(db db.Database, client ClientProxy) *Module {
 	return &Module{
 		db:     db,
 		client: client,
