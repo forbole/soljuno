@@ -6,11 +6,11 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-func (suite *ModuleTestSuit) TestName() {
+func (suite *ModuleTestSuite) TestName() {
 	suite.Require().Equal("blocks", suite.module.Name())
 }
 
-func (suite *ModuleTestSuit) HandleBlock() {
+func (suite *ModuleTestSuite) HandleBlock() {
 	err := suite.module.HandleBlock(types.NewBlock(0, 0, "hash", "leader", time.Now(), []types.Tx{}))
 	suite.Require().NoError(err)
 }

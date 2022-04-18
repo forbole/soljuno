@@ -7,7 +7,7 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-func (suite *ModuleTestSuit) TestHandleBuffer() {
+func (suite *ModuleTestSuite) TestHandleBuffer() {
 	buffer := make(chan types.Block, 1)
 	suite.module.WithBuffer(buffer)
 	buffer <- types.NewBlock(0, 0, "hash", "leader", time.Date(2022, 04, 14, 0, 0, 0, 0, time.UTC), []types.Tx{})
@@ -16,7 +16,7 @@ func (suite *ModuleTestSuit) TestHandleBuffer() {
 	suite.Require().Len(buffer, 0)
 }
 
-func (suite *ModuleTestSuit) TestHandleAsyncError() {
+func (suite *ModuleTestSuite) TestHandleAsyncError() {
 	buffer := make(chan types.Block, 1)
 	suite.module.WithBuffer(buffer)
 	suite.module.HandleAsyncError(

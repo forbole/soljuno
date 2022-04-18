@@ -6,11 +6,10 @@ import (
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/solana/account/parser"
-	"github.com/forbole/soljuno/solana/client"
 )
 
-// updateNonce properly stores the statement of nonce inside the database
-func updateNonce(address string, currentSlot uint64, db db.SystemDb, client client.ClientProxy) error {
+// UpdateNonceAccount properly updates the statement of nonce inside the database
+func UpdateNonceAccount(address string, currentSlot uint64, db db.SystemDb, client ClientProxy) error {
 	if db.CheckNonceAccountLatest(address, currentSlot) {
 		return nil
 	}
