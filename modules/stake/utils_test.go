@@ -1,12 +1,12 @@
-package system_test
+package stake_test
 
 import (
-	"github.com/forbole/soljuno/modules/system"
+	"github.com/forbole/soljuno/modules/stake"
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
-	systemProgram "github.com/forbole/soljuno/solana/program/system"
+	stakeProgram "github.com/forbole/soljuno/solana/program/stake"
 )
 
-func (suite *ModuleTestSuite) TestUpdateNonceAccount() {
+func (suite *ModuleTestSuite) TestUpdateStakeAccount() {
 	testCases := []struct {
 		name      string
 		isLatest  bool
@@ -42,12 +42,12 @@ func (suite *ModuleTestSuite) TestUpdateNonceAccount() {
 			},
 		},
 		{
-			name:     "receive nonce account and update account properly",
+			name:     "receive stake account and update account properly",
 			isLatest: false,
 			account: clienttypes.AccountInfo{
 				Value: &clienttypes.AccountValue{
-					Data:  [2]string{"AAAAAAEAAADKFr/7JZLeKFJKIaGunqjtXggBBBad6ejlmbYPRoSyLJ+X5Y193+WHX7lT5pRYGWf4V70JP+EScclNbE1yU9T7iBMAAAAAAAA=", "base64"},
-					Owner: systemProgram.ProgramID,
+					Data:  [2]string{"AgAAAIDVIgAAAAAAyBJA4ron1nIF2JkcS2ipPJPqFbMjSwcV5MaNxJd+RMPIEkDiuifWcgXYmRxLaKk8k+oVsyNLBxXkxo3El35EwwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHzgaQ+C+2FHX+u9FgXvIMNGqRZ3BtgpzkaZQ1xMJ4CugJ4YpAsAAAAtAQAAAAAAAP//////////AAAAAAAA0D+PcUcGAAAAAAAAAAA=", "base64"},
+					Owner: stakeProgram.ProgramID,
 				},
 			},
 		},
@@ -62,7 +62,7 @@ func (suite *ModuleTestSuite) TestUpdateNonceAccount() {
 			client := suite.client.GetCached()
 			client.WithAccount(tc.account)
 
-			err := system.UpdateNonceAccount("address", 1, &db, &client)
+			err := stake.UpdateStakeAccount("address", 1, &db, &client)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
