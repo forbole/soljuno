@@ -8,8 +8,8 @@ import (
 	"github.com/forbole/soljuno/solana/account/parser"
 )
 
-// updateStakeAccount properly stores the statement of stake account inside the database
-func updateStakeAccount(address string, currentSlot uint64, db db.StakeDb, client ClientProxy) error {
+// UpdateStakeAccount properly stores the statement of stake account inside the database
+func UpdateStakeAccount(address string, currentSlot uint64, db db.StakeDb, client ClientProxy) error {
 	if db.CheckStakeAccountLatest(address, currentSlot) {
 		return nil
 	}

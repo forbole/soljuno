@@ -71,7 +71,7 @@ func handleAuthorize(instruction types.Instruction, db db.StakeDb, client Client
 		return fmt.Errorf("instruction does not match %s type: %s", "authorize", instruction.Parsed.Type)
 
 	}
-	return updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }
 
 // handleDelegate handles a instruction of Delegate
@@ -81,7 +81,7 @@ func handleDelegate(instruction types.Instruction, db db.StakeDb, client ClientP
 		return fmt.Errorf("instruction does not match %s type: %s", "delegate", instruction.Parsed.Type)
 
 	}
-	return updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }
 
 // handleSplit handles a instruction of Split
@@ -91,11 +91,11 @@ func handleSplit(instruction types.Instruction, db db.StakeDb, client ClientProx
 		return fmt.Errorf("instruction does not match %s type: %s", "split", instruction.Parsed.Type)
 
 	}
-	err := updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	err := UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 	if err != nil {
 		return nil
 	}
-	return updateStakeAccount(parsed.NewSplitAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.NewSplitAccount, instruction.Slot, db, client)
 }
 
 // handleWithdraw handles a instruction of Withdraw
@@ -105,7 +105,7 @@ func handleWithdraw(instruction types.Instruction, db db.StakeDb, client ClientP
 		return fmt.Errorf("instruction does not match %s type: %s", "withdraw", instruction.Parsed.Type)
 
 	}
-	return updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }
 
 // handleDeactivate handles a instruction of Deactivate
@@ -115,7 +115,7 @@ func handleDeactivate(instruction types.Instruction, db db.StakeDb, client Clien
 		return fmt.Errorf("instruction does not match %s type: %s", "deactivate", instruction.Parsed.Type)
 
 	}
-	return updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }
 
 // handleSetLockup handles a instruction of SetLockup
@@ -125,7 +125,7 @@ func handleSetLockup(instruction types.Instruction, db db.StakeDb, client Client
 		return fmt.Errorf("instruction does not match %s type: %s", "setLockup", instruction.Parsed.Type)
 
 	}
-	return updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }
 
 // handleMerge handles a instruction of Merge
@@ -135,11 +135,11 @@ func handleMerge(instruction types.Instruction, db db.StakeDb, client ClientProx
 		return fmt.Errorf("instruction does not match %s type: %s", "merge", instruction.Parsed.Type)
 
 	}
-	err := updateStakeAccount(parsed.Source, instruction.Slot, db, client)
+	err := UpdateStakeAccount(parsed.Source, instruction.Slot, db, client)
 	if err != nil {
 		return err
 	}
-	return updateStakeAccount(parsed.Destination, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.Destination, instruction.Slot, db, client)
 }
 
 // handleAuthorizeWithSeed handles a instruction of AuthorizeWithSeed
@@ -149,7 +149,7 @@ func handleAuthorizeWithSeed(instruction types.Instruction, db db.StakeDb, clien
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeWithSeed", instruction.Parsed.Type)
 
 	}
-	return updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }
 
 // handleInitializeChecked handles a instruction of InitializeChecked
@@ -159,7 +159,7 @@ func handleInitializeChecked(instruction types.Instruction, db db.StakeDb, clien
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeChecked", instruction.Parsed.Type)
 
 	}
-	return updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }
 
 // handleAuthorizeChecked handles a instruction of AuthorizeChecked
@@ -169,7 +169,7 @@ func handleAuthorizeChecked(instruction types.Instruction, db db.StakeDb, client
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeChecked", instruction.Parsed.Type)
 
 	}
-	return updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }
 
 // handleAuthorizeCheckedWithSeed handles a instruction of AuthorizeCheckedWithSeed
@@ -179,7 +179,7 @@ func handleAuthorizeCheckedWithSeed(instruction types.Instruction, db db.StakeDb
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeCheckedWithSeed", instruction.Parsed.Type)
 
 	}
-	return updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }
 
 // handleSetLockupChecked handles a instruction of SetLockupChecked
@@ -189,5 +189,5 @@ func handleSetLockupChecked(instruction types.Instruction, db db.StakeDb, client
 		return fmt.Errorf("instruction does not match %s type: %s", "setLockupChecked", instruction.Parsed.Type)
 
 	}
-	return updateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }

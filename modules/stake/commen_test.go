@@ -55,7 +55,7 @@ func (m MockClient) GetCached() MockClient {
 	return m
 }
 
-func (m *MockClient) WithNonceAccount(account clienttypes.AccountInfo) {
+func (m *MockClient) WithAccount(account clienttypes.AccountInfo) {
 	m.account = account
 }
 
