@@ -3,6 +3,7 @@ package system_test
 import (
 	"github.com/forbole/soljuno/modules/system"
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
+	systemProgram "github.com/forbole/soljuno/solana/program/system"
 )
 
 func (suite *ModuleTestSuite) TestUpdateNonceAccount() {
@@ -46,7 +47,7 @@ func (suite *ModuleTestSuite) TestUpdateNonceAccount() {
 			account: clienttypes.AccountInfo{
 				Value: &clienttypes.AccountValue{
 					Data:  [2]string{"AAAAAAEAAADKFr/7JZLeKFJKIaGunqjtXggBBBad6ejlmbYPRoSyLJ+X5Y193+WHX7lT5pRYGWf4V70JP+EScclNbE1yU9T7iBMAAAAAAAA=", "base64"},
-					Owner: "unknown",
+					Owner: systemProgram.ProgramID,
 				},
 			},
 		},
@@ -59,7 +60,7 @@ func (suite *ModuleTestSuite) TestUpdateNonceAccount() {
 			db.WithLatest(tc.isLatest)
 
 			client := suite.client.GetCached()
-			client.WithNonceAccount(tc.account)
+			client.WithAccount(tc.account)
 
 			err := system.UpdateNonceAccount("address", 1, &db, &client)
 			if tc.shouldErr {

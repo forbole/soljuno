@@ -15,7 +15,6 @@ var _ db.SystemDb = &MockDb{}
 
 type MockDb struct {
 	isLatest bool
-	isBroken bool
 }
 
 func NewDefaultMockDb() *MockDb {
@@ -36,10 +35,6 @@ func (m *MockDb) WithLatest(isLatest bool) {
 	m.isLatest = isLatest
 }
 
-func (m *MockDb) WithBroken(isBroken bool) {
-	m.isBroken = isBroken
-}
-
 // ----------------------------------------------------------------
 
 var _ system.ClientProxy = &MockClient{}
@@ -56,7 +51,7 @@ func (m MockClient) GetCached() MockClient {
 	return m
 }
 
-func (m *MockClient) WithNonceAccount(account clienttypes.AccountInfo) {
+func (m *MockClient) WithAccount(account clienttypes.AccountInfo) {
 	m.account = account
 }
 
