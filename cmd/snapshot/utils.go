@@ -78,6 +78,10 @@ func updateStakeAccount(db db.StakeDb, address string, slot uint64, account pars
 		return err
 	}
 
+	if account.State.String() != "stake" {
+		return nil
+	}
+
 	delegation := account.Stake.Delegation
 	return db.SaveStakeDelegation(
 		dbtypes.NewStakeDelegationRow(
