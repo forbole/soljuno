@@ -34,8 +34,13 @@ CREATE TABLE multisig
 
 CREATE TABLE token_delegation
 (
-    source_address      TEXT    NOT NULL PRIMARY KEY,
-    delegate_address    TEXT    NOT NULL,
-    slot                BIGINT  NOT NULL,
-    amount              NUMERIC(20,0)  NOT NULL
+    source_address      TEXT            NOT NULL PRIMARY KEY,
+    delegate_address    TEXT            NOT NULL,
+    slot                BIGINT          NOT NULL,
+    amount              NUMERIC(20,0)   NOT NULL,
+    CONSTRAINT token_delegation_source_address_fk 
+        FOREIGN KEY (source_address) REFERENCES token_account(address) ON DELETE CASCADE,
+    CONSTRAINT token_delegation_delegate_address_fk 
+        FOREIGN KEY (delegate_address) REFERENCES token_account(address) ON DELETE CASCADE
 );
+CREATE INDEX token_delegation_delegate_address_index ON token_delegation (delegate_address);

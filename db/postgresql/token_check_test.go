@@ -58,13 +58,18 @@ func (suite *DbTestSuite) TestCheckMultisigLatest() {
 }
 
 func (suite *DbTestSuite) TestCheckTokenDelegateLatest() {
+	err := suite.database.SaveTokenAccount(dbtypes.NewTokenAccountRow("source", 0, "mint", "owner"))
+	suite.NoError(err)
+	err = suite.database.SaveTokenAccount(dbtypes.NewTokenAccountRow("dest", 0, "mint", "owner"))
+	suite.NoError(err)
+
 	// empty rows returns true
-	isLatest := suite.database.CheckTokenDelegateLatest("address", 1)
+	isLatest := suite.database.CheckTokenDelegateLatest("source", 1)
 	suite.Require().True(isLatest)
 
-	err := suite.database.SaveTokenDelegation(
+	err = suite.database.SaveTokenDelegation(
 		dbtypes.NewTokenDelegationRow(
-			"source", "destination", 1, 100,
+			"source", "dest", 1, 100,
 		),
 	)
 	suite.Require().NoError(err)
