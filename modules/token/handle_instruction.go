@@ -135,7 +135,7 @@ func handleApprove(instruction types.Instruction, tx types.Tx, db db.TokenDb, cl
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "approve", instruction.Parsed.Type)
 	}
-	return updateDelegation(parsed.Source, tx.Slot, db, client)
+	return updateTokenAccount(parsed.Source, tx.Slot, db, client)
 }
 
 // handleApproveChecked handles a instruction of ApproveChecked
@@ -144,7 +144,7 @@ func handleApproveChecked(instruction types.Instruction, tx types.Tx, db db.Toke
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "approveChecked", instruction.Parsed.Type)
 	}
-	return updateDelegation(parsed.Source, tx.Slot, db, client)
+	return updateTokenAccount(parsed.Source, tx.Slot, db, client)
 }
 
 // handleRevoke handles a instruction of Revoke
@@ -153,7 +153,7 @@ func handleRevoke(instruction types.Instruction, tx types.Tx, db db.TokenDb, cli
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "approveChecked", instruction.Parsed.Type)
 	}
-	return updateDelegation(parsed.Source, tx.Slot, db, client)
+	return updateTokenAccount(parsed.Source, tx.Slot, db, client)
 }
 
 // handleSetAuthority handles a instruction of SetAuthority
