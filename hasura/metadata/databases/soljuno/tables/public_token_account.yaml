@@ -18,6 +18,14 @@ object_relationships:
         name: token
       column_mapping:
         mint: mint
+- name: token_delegate
+  using:
+     manual_configuration:
+      remote_table:
+        schema: public
+        name: token_delegation
+      column_mapping:
+        address: source_address
 select_permissions:
 - permission:
     allow_aggregations: true

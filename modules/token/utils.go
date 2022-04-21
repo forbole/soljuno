@@ -75,13 +75,8 @@ func updateTokenAccount(address string, currentSlot uint64, db db.TokenDb, clien
 		return err
 	}
 
-	if !ok || tokenAccount.Delegate.String() == "" {
+	if tokenAccount.Delegate.String() == "" {
 		return db.DeleteTokenDelegation(address)
-	}
-
-	err = updateTokenAccount(tokenAccount.Delegate.String(), currentSlot, db, client)
-	if err != nil {
-		return err
 	}
 
 	return db.SaveTokenDelegation(
