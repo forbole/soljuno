@@ -39,8 +39,5 @@ CREATE TABLE token_delegation
     slot                BIGINT          NOT NULL,
     amount              NUMERIC(20,0)   NOT NULL,
     CONSTRAINT token_delegation_source_address_fk 
-        FOREIGN KEY (source_address) REFERENCES token_account(address) ON DELETE CASCADE,
-    CONSTRAINT token_delegation_delegate_address_fk 
-        FOREIGN KEY (delegate_address) REFERENCES token_account(address) ON DELETE CASCADE
+        FOREIGN KEY (source_address) REFERENCES token_account(address) ON DELETE CASCADE
 );
-CREATE INDEX token_delegation_delegate_address_index ON token_delegation (delegate_address);
