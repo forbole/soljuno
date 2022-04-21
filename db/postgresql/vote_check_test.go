@@ -3,9 +3,9 @@ package postgresql_test
 import dbtypes "github.com/forbole/soljuno/db/types"
 
 func (suite *DbTestSuite) TestCheckValidatorLatest() {
-	// empty rows returns true
+	// empty rows returns false
 	isLatest := suite.database.CheckValidatorLatest("address", 1)
-	suite.Require().True(isLatest)
+	suite.Require().False(isLatest)
 
 	err := suite.database.SaveValidator(
 		dbtypes.NewVoteAccountRow(

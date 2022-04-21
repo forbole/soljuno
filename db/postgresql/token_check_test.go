@@ -3,9 +3,9 @@ package postgresql_test
 import dbtypes "github.com/forbole/soljuno/db/types"
 
 func (suite *DbTestSuite) TestCheckTokenLatest() {
-	// empty rows returns true
+	// empty rows returns false
 	isLatest := suite.database.CheckTokenLatest("mint", 1)
-	suite.Require().True(isLatest)
+	suite.Require().False(isLatest)
 
 	err := suite.database.SaveToken(dbtypes.NewTokenRow("mint", 1, 9, "mint_authority", "freeze_authority"))
 	suite.Require().NoError(err)
@@ -20,9 +20,9 @@ func (suite *DbTestSuite) TestCheckTokenLatest() {
 }
 
 func (suite *DbTestSuite) TestCheckTokenAccountLatest() {
-	// empty rows returns true
+	// empty rows returns false
 	isLatest := suite.database.CheckTokenAccountLatest("address", 1)
-	suite.Require().True(isLatest)
+	suite.Require().False(isLatest)
 
 	err := suite.database.SaveTokenAccount(dbtypes.NewTokenAccountRow("address", 1, "mint", "owner"))
 	suite.Require().NoError(err)
@@ -37,9 +37,9 @@ func (suite *DbTestSuite) TestCheckTokenAccountLatest() {
 }
 
 func (suite *DbTestSuite) TestCheckMultisigLatest() {
-	// empty rows returns true
+	// empty rows returns false
 	isLatest := suite.database.CheckMultisigLatest("address", 1)
-	suite.Require().True(isLatest)
+	suite.Require().False(isLatest)
 
 	err := suite.database.SaveMultisig(
 		dbtypes.NewMultisigRow(
@@ -63,9 +63,9 @@ func (suite *DbTestSuite) TestCheckTokenDelegateLatest() {
 	err = suite.database.SaveTokenAccount(dbtypes.NewTokenAccountRow("dest", 0, "mint", "owner"))
 	suite.NoError(err)
 
-	// empty rows returns true
+	// empty rows returns false
 	isLatest := suite.database.CheckTokenDelegateLatest("source", 1)
-	suite.Require().True(isLatest)
+	suite.Require().False(isLatest)
 
 	err = suite.database.SaveTokenDelegation(
 		dbtypes.NewTokenDelegationRow(
@@ -84,9 +84,9 @@ func (suite *DbTestSuite) TestCheckTokenDelegateLatest() {
 }
 
 func (suite *DbTestSuite) TestCheckTokenSupplyLatest() {
-	// empty rows returns true
+	// empty rows returns false
 	isLatest := suite.database.CheckTokenSupplyLatest("mint", 1)
-	suite.Require().True(isLatest)
+	suite.Require().False(isLatest)
 
 	err := suite.database.SaveTokenSupply(dbtypes.NewTokenSupplyRow("mint", 1, 100))
 	suite.Require().NoError(err)
