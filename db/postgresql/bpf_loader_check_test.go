@@ -3,9 +3,9 @@ package postgresql_test
 import dbtypes "github.com/forbole/soljuno/db/types"
 
 func (suite *DbTestSuite) TestCheckBufferAccountLatest() {
-	// empty rows returns true
+	// empty rows returns false
 	isLatest := suite.database.CheckBufferAccountLatest("address", 1)
-	suite.Require().True(isLatest)
+	suite.Require().False(isLatest)
 
 	err := suite.database.SaveBufferAccount(
 		dbtypes.NewBufferAccountRow("address", 1, "owner"),
@@ -22,9 +22,9 @@ func (suite *DbTestSuite) TestCheckBufferAccountLatest() {
 }
 
 func (suite *DbTestSuite) TestCheckProgramAccountLatest() {
-	// empty rows returns true
+	// empty rows returns false
 	isLatest := suite.database.CheckBufferAccountLatest("address", 1)
-	suite.Require().True(isLatest)
+	suite.Require().False(isLatest)
 
 	err := suite.database.SaveProgramAccount(
 		dbtypes.NewProgramAccountRow("address", 1, "program_data"),
@@ -41,9 +41,9 @@ func (suite *DbTestSuite) TestCheckProgramAccountLatest() {
 }
 
 func (suite *DbTestSuite) TestCheckProgramDataAccountLatest() {
-	// empty rows returns true
+	// empty rows returns false
 	isLatest := suite.database.CheckProgramDataAccountLatest("address", 1)
-	suite.Require().True(isLatest)
+	suite.Require().False(isLatest)
 
 	err := suite.database.SaveProgramDataAccount(
 		dbtypes.NewProgramDataAccountRow("address", 1, 1, "owner"),
