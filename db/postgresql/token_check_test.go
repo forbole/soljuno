@@ -10,12 +10,12 @@ func (suite *DbTestSuite) TestCheckTokenLatest() {
 	err := suite.database.SaveToken(dbtypes.NewTokenRow("mint", 1, 9, "mint_authority", "freeze_authority"))
 	suite.Require().NoError(err)
 
-	// older slot returns false
-	isLatest = suite.database.CheckTokenLatest("mint", 1)
+	// db slot is older returns false
+	isLatest = suite.database.CheckTokenLatest("mint", 2)
 	suite.Require().False(isLatest)
 
-	// latest slot returns true
-	isLatest = suite.database.CheckTokenLatest("mint", 2)
+	// db slot is latest returns true
+	isLatest = suite.database.CheckTokenLatest("mint", 1)
 	suite.Require().True(isLatest)
 }
 
@@ -27,12 +27,12 @@ func (suite *DbTestSuite) TestCheckTokenAccountLatest() {
 	err := suite.database.SaveTokenAccount(dbtypes.NewTokenAccountRow("address", 1, "mint", "owner"))
 	suite.Require().NoError(err)
 
-	// older slot returns false
-	isLatest = suite.database.CheckTokenAccountLatest("address", 1)
+	// db slot is older returns false
+	isLatest = suite.database.CheckTokenAccountLatest("address", 2)
 	suite.Require().False(isLatest)
 
-	// latest slot returns true
-	isLatest = suite.database.CheckTokenAccountLatest("address", 2)
+	// db slot is latest returns true
+	isLatest = suite.database.CheckTokenAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 }
 
@@ -48,12 +48,12 @@ func (suite *DbTestSuite) TestCheckMultisigLatest() {
 	)
 	suite.Require().NoError(err)
 
-	// older slot returns false
-	isLatest = suite.database.CheckMultisigLatest("address", 1)
+	// db slot is older returns false
+	isLatest = suite.database.CheckMultisigLatest("address", 2)
 	suite.Require().False(isLatest)
 
-	// latest slot returns true
-	isLatest = suite.database.CheckMultisigLatest("address", 2)
+	// db slot is latest returns true
+	isLatest = suite.database.CheckMultisigLatest("address", 1)
 	suite.Require().True(isLatest)
 }
 
@@ -74,12 +74,12 @@ func (suite *DbTestSuite) TestCheckTokenDelegateLatest() {
 	)
 	suite.Require().NoError(err)
 
-	// older slot returns false
-	isLatest = suite.database.CheckTokenDelegateLatest("source", 1)
+	// db slot is older returns false
+	isLatest = suite.database.CheckTokenDelegateLatest("source", 2)
 	suite.Require().False(isLatest)
 
-	// latest slot returns true
-	isLatest = suite.database.CheckTokenDelegateLatest("source", 2)
+	// db slot is latest returns true
+	isLatest = suite.database.CheckTokenDelegateLatest("source", 1)
 	suite.Require().True(isLatest)
 }
 
@@ -91,11 +91,11 @@ func (suite *DbTestSuite) TestCheckTokenSupplyLatest() {
 	err := suite.database.SaveTokenSupply(dbtypes.NewTokenSupplyRow("mint", 1, 100))
 	suite.Require().NoError(err)
 
-	// older slot returns false
-	isLatest = suite.database.CheckTokenSupplyLatest("mint", 1)
+	// db slot is older returns false
+	isLatest = suite.database.CheckTokenSupplyLatest("mint", 2)
 	suite.Require().False(isLatest)
 
-	// latest slot returns true
-	isLatest = suite.database.CheckTokenSupplyLatest("mint", 2)
+	// db slot is latest returns true
+	isLatest = suite.database.CheckTokenSupplyLatest("mint", 1)
 	suite.Require().True(isLatest)
 }

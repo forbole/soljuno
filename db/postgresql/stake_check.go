@@ -9,5 +9,5 @@ func (db *Database) CheckStakeAccountLatest(address string, currentSlot uint64) 
 	if err != nil {
 		return false
 	}
-	return currentSlot > latestSlot
+	return latestSlot >= currentSlot
 }

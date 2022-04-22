@@ -14,11 +14,11 @@ func (suite *DbTestSuite) TestCheckNonceAccountLatest() {
 	)
 	suite.Require().NoError(err)
 
-	// older slot returns false
-	isLatest = suite.database.CheckNonceAccountLatest("address", 1)
+	// db slot is older returns false
+	isLatest = suite.database.CheckNonceAccountLatest("address", 2)
 	suite.Require().False(isLatest)
 
-	// latest slot returns true
-	isLatest = suite.database.CheckNonceAccountLatest("address", 2)
+	// db slot is latest returns true
+	isLatest = suite.database.CheckNonceAccountLatest("address", 1)
 	suite.Require().True(isLatest)
 }
