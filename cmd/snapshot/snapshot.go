@@ -91,9 +91,19 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, parallelize int) error {
 			func() {
 				defer wg.Done()
 				ctx.Logger.Info("Start handling account", "address", pubkey)
-				err = handleAccount(ctx, account)
-				if err != nil {
-					ctx.Logger.Error("failed to import account", "address", pubkey, "err", err)
+				delay := 0
+				for {
+					err := handleAccount(ctx, account)
+					if err != nil {
+						ctx.Logger.Error("failed to import account", "address", pubkey, "err", err)
+						ctx.Logger.Info("retry to import account", "address", pubkey)
+						if delay <= 100 {
+							delay += 3
+						}
+						time.Sleep(time.Duration(delay) * time.Second)
+					} else {
+						return
+					}
 				}
 			},
 		)
