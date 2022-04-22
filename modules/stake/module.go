@@ -15,6 +15,7 @@ type ClientProxy interface {
 
 var (
 	_ modules.Module            = &Module{}
+	_ modules.BlockModule       = &Module{}
 	_ modules.InstructionModule = &Module{}
 )
 
@@ -33,6 +34,11 @@ func NewModule(db db.StakeDb, client ClientProxy) *Module {
 // Name implements modules.Module
 func (m *Module) Name() string {
 	return "stake"
+}
+
+// HandleBlock implements modules.BlockModule
+func (m *Module) HandleBlock(block types.Block) error {
+	return HandleBlock(block, m.db, m.client)
 }
 
 // HandleInstruction implements modules.InstructionModule
