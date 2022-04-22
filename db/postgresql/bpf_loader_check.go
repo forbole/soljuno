@@ -9,7 +9,7 @@ func (db *Database) CheckBufferAccountLatest(address string, currentSlot uint64)
 	if err != nil {
 		return false
 	}
-	return currentSlot > latestSlot
+	return latestSlot >= currentSlot
 }
 
 // CheckProgramAccountLatest implements the db.StakeCheckerDb
@@ -21,7 +21,7 @@ func (db *Database) CheckProgramAccountLatest(address string, currentSlot uint64
 	if err != nil {
 		return false
 	}
-	return currentSlot > latestSlot
+	return latestSlot >= currentSlot
 }
 
 // CheckProgramDataAccountLatest implements the db.StakeCheckerDb
@@ -33,5 +33,5 @@ func (db *Database) CheckProgramDataAccountLatest(address string, currentSlot ui
 	if err != nil {
 		return false
 	}
-	return currentSlot > latestSlot
+	return latestSlot >= currentSlot
 }

@@ -14,11 +14,11 @@ func (suite *DbTestSuite) TestCheckValidatorLatest() {
 	)
 	suite.Require().NoError(err)
 
-	// older slot returns false
-	isLatest = suite.database.CheckValidatorLatest("address", 1)
+	// db slot is older returns false
+	isLatest = suite.database.CheckValidatorLatest("address", 2)
 	suite.Require().False(isLatest)
 
-	// latest slot returns true
-	isLatest = suite.database.CheckValidatorLatest("address", 2)
+	// db slot is latest returns true
+	isLatest = suite.database.CheckValidatorLatest("address", 1)
 	suite.Require().True(isLatest)
 }

@@ -9,7 +9,7 @@ func (db *Database) CheckTokenLatest(address string, currentSlot uint64) bool {
 	if err != nil {
 		return false
 	}
-	return currentSlot > latestSlot
+	return latestSlot >= currentSlot
 }
 
 // CheckTokenAccountLatest implements the db.TokenCheckerDb
@@ -21,7 +21,7 @@ func (db *Database) CheckTokenAccountLatest(address string, currentSlot uint64) 
 	if err != nil {
 		return false
 	}
-	return currentSlot > latestSlot
+	return latestSlot >= currentSlot
 }
 
 // CheckMultisigLatest implements the db.TokenCheckerDb
@@ -33,7 +33,7 @@ func (db *Database) CheckMultisigLatest(address string, currentSlot uint64) bool
 	if err != nil {
 		return false
 	}
-	return currentSlot > latestSlot
+	return latestSlot >= currentSlot
 }
 
 // CheckDelegateLatest implements the db.TokenCheckerDb
@@ -45,7 +45,7 @@ func (db *Database) CheckTokenDelegateLatest(sourceAddress string, currentSlot u
 	if err != nil {
 		return false
 	}
-	return currentSlot > latestSlot
+	return latestSlot >= currentSlot
 }
 
 // CheckTokenSupplyLatest implements the db.TokenCheckerDb
@@ -57,5 +57,5 @@ func (db *Database) CheckTokenSupplyLatest(address string, currentSlot uint64) b
 	if err != nil {
 		return false
 	}
-	return currentSlot > latestSlot
+	return latestSlot >= currentSlot
 }
