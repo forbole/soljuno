@@ -43,6 +43,13 @@ const (
 
 	// Set stake lockup
 	SetLockupChecked
+
+	// Get the minimum stake delegation, in lamports
+	GetMinimumDelegation
+
+	// Deactivate stake delegated to a vote account that has been delinquent for at least
+	// `MINIMUM_DELINQUENT_EPOCHS_FOR_DEACTIVATION` epochs.
+	DeactivateDelinquent
 )
 
 type InitializeInstruction struct {

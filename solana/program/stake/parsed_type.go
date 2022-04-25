@@ -378,3 +378,19 @@ func NewParsedLockupFromCheckedArgs(lockupArgs LockupCheckedArgs) ParsedLockup {
 	}
 	return lockup
 }
+
+//____________________________________________________________________________
+
+type ParsedDeactivateDelinquent struct {
+	Account    string `json:"account"`
+	Delinquent string `json:"delinquent"`
+	Reference  string `json:"reference"`
+}
+
+func NewParsedDeactivateDelinquent(accounts []string) ParsedDeactivateDelinquent {
+	return ParsedDeactivateDelinquent{
+		Account:    accounts[0],
+		Delinquent: accounts[1],
+		Reference:  accounts[2],
+	}
+}

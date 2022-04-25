@@ -146,6 +146,17 @@ func (Parser) Parse(accounts []string, data []byte) types.ParsedInstruction {
 			),
 		)
 
+	case GetMinimumDelegation:
+		return types.NewParsedInstruction(
+			"getMinimumDelegation",
+			nil,
+		)
+
+	case DeactivateDelinquent:
+		return types.NewParsedInstruction(
+			"deactivateDelinquent",
+			NewParsedDeactivateDelinquent(accounts),
+		)
 	}
 	return types.NewParsedInstruction(
 		"unknown",
