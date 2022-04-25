@@ -38,6 +38,8 @@ func HandleInstruction(instruction types.Instruction, db db.StakeDb, client Clie
 		return handleAuthorizeCheckedWithSeed(instruction, db, client)
 	case "setLockupChecked":
 		return handleSetLockupChecked(instruction, db, client)
+	case "deactivateDelinquent":
+		return handleDeactivateDelinquent(instruction, db, client)
 	}
 	return nil
 }
@@ -185,6 +187,16 @@ func handleAuthorizeCheckedWithSeed(instruction types.Instruction, db db.StakeDb
 // handleSetLockupChecked handles a instruction of SetLockupChecked
 func handleSetLockupChecked(instruction types.Instruction, db db.StakeDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedSetLockupChecked)
+	if !ok {
+		return fmt.Errorf("instruction does not match %s type: %s", "setLockupChecked", instruction.Parsed.Type)
+
+	}
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
+}
+
+// handleDeactivateDelinquent handles a instruction of DeactivateDelinquent
+func handleDeactivateDelinquent(instruction types.Instruction, db db.StakeDb, client ClientProxy) error {
+	parsed, ok := instruction.Parsed.Value.(stake.ParsedDeactivateDelinquent)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "setLockupChecked", instruction.Parsed.Type)
 

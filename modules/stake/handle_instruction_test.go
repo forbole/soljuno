@@ -220,6 +220,22 @@ func (suite *ModuleTestSuite) Test_HandleInstruction() {
 				),
 			),
 		},
+		{
+			name: "deactivateDelinquent instruction works properly",
+			data: types.NewInstruction(
+				"sig",
+				1,
+				0,
+				0,
+				"stake",
+				[]string{},
+				"",
+				solanatypes.NewParsedInstruction(
+					"deactivateDelinquent",
+					stakeProgram.ParsedDeactivateDelinquent{},
+				),
+			),
+		},
 	}
 
 	for _, tc := range testCases {
