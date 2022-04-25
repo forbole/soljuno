@@ -36,12 +36,13 @@ type Block struct {
 }
 
 // NewBlock allows to build a new Block instance
-func NewBlock(slot, height uint64, hash, leader string, timestamp time.Time, txs []Tx) Block {
+func NewBlock(slot, height uint64, hash, leader string, rewards []clienttypes.Reward, timestamp time.Time, txs []Tx) Block {
 	return Block{
 		Slot:      slot,
 		Height:    height,
 		Hash:      hash,
 		Leader:    leader,
+		Rewards:   rewards,
 		Timestamp: timestamp,
 		Txs:       txs,
 	}

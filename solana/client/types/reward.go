@@ -16,3 +16,13 @@ const (
 	RewardStaking RewardType = "Staking"
 	RewardVoting  RewardType = "Voting"
 )
+
+func NewReward(pubkey string, lamports int64, postBalance uint64, rewardType RewardType, commission uint8) Reward {
+	return Reward{
+		Pubkey:      pubkey,
+		Lamports:    lamports,
+		PostBalance: postBalance,
+		RewardType:  rewardType,
+		Commission:  commission,
+	}
+}

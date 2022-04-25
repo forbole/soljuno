@@ -9,13 +9,7 @@ import (
 var _ history.HistroyService = &Module{}
 
 func (m *Module) ExecHistory() error {
-	m.mtx.Lock()
-	balanceEntries := m.historyBalancesEntries
-	tokenBalanceEntries := m.historyTokenBalancesEntries
-	m.historyBalancesEntries = nil
-	m.historyTokenBalancesEntries = nil
-	m.mtx.Unlock()
-
+	balanceEntries, tokenBalanceEntries := m.getHistoryEntries()
 	errChan := make(chan error)
 	go func() {
 		timestamp := time.Now()
@@ -35,6 +29,16 @@ func (m *Module) ExecHistory() error {
 		}
 	}
 	return nil
+}
+
+func (m *Module) getHistoryEntries() ([]AccountBalanceEntry, []TokenAccountBalanceEntry) {
+	m.mtx.Lock()
+	defer m.mtx.Unlock()
+	balanceEntries := m.HistoryBalanceEntries
+	tokenBalanceEntries := m.HistoryTokenBalanceEntries
+	m.HistoryBalanceEntries = nil
+	m.HistoryTokenBalanceEntries = nil
+	return balanceEntries, tokenBalanceEntries
 }
 
 // update very 30 minutes

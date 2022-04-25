@@ -12,20 +12,24 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", m.Name()).Msg("setting up periodic tasks")
 	if _, err := scheduler.Every(10).Second().Do(func() {
-		m.mtx.Lock()
-		defer m.mtx.Unlock()
-		balances := m.balanceEntries
-		tokenBalances := m.tokenBalanceEntries
-		m.balanceEntries = nil
-		m.tokenBalanceEntries = nil
-		err := m.updateBalances(balances, tokenBalances)
-		if err != nil {
-			log.Error().Str("module", m.Name()).Err(err).Send()
-		}
+		m.HandlePeriodicOperations()
 	}); err != nil {
 		return fmt.Errorf("error while setting up bank periodic operation: %s", err)
 	}
 	return nil
+}
+
+func (m *Module) HandlePeriodicOperations() {
+	m.mtx.Lock()
+	defer m.mtx.Unlock()
+	balances := m.BalanceEntries
+	tokenBalances := m.TokenBalanceEntries
+	m.BalanceEntries = nil
+	m.TokenBalanceEntries = nil
+	err := m.updateBalances(balances, tokenBalances)
+	if err != nil {
+		log.Error().Str("module", m.Name()).Err(err).Send()
+	}
 }
 
 func (m *Module) updateBalances(balances []AccountBalanceEntry, tokenBalances []TokenAccountBalanceEntry) error {

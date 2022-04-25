@@ -13,7 +13,7 @@ func (suite *ModuleTestSuite) TestName() {
 }
 
 func (suite *ModuleTestSuite) TestHandleBlock() {
-	err := suite.module.HandleBlock(types.NewBlock(0, 0, "hash", "leader", time.Date(2022, 04, 14, 0, 0, 0, 0, time.UTC), []types.Tx{}))
+	err := suite.module.HandleBlock(types.NewBlock(0, 0, "hash", "leader", nil, time.Date(2022, 04, 14, 0, 0, 0, 0, time.UTC), []types.Tx{}))
 	suite.Require().NoError(err)
 }
 
