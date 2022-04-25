@@ -15,18 +15,18 @@ var (
 )
 
 type Module struct {
-	db                  db.Database
+	db                  db.BankDb
 	tasks               chan func()
-	balanceEntries      []AccountBalanceEntry
-	tokenBalanceEntries []TokenAccountBalanceEntry
+	BalanceEntries      []AccountBalanceEntry
+	TokenBalanceEntries []TokenAccountBalanceEntry
 
-	historyBalancesEntries      []AccountBalanceEntry
-	historyTokenBalancesEntries []TokenAccountBalanceEntry
+	HistoryBalanceEntries      []AccountBalanceEntry
+	HistoryTokenBalanceEntries []TokenAccountBalanceEntry
 
 	mtx sync.Mutex
 }
 
-func NewModule(db db.Database) *Module {
+func NewModule(db db.BankDb) *Module {
 	return &Module{
 		db:    db,
 		tasks: make(chan func()),
@@ -43,13 +43,13 @@ func (m *Module) HandleBlock(block types.Block) error {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
 
-	balanceEntries := GetAccountBalaceEntries(block)
-	m.balanceEntries = MergeAccountBalanceEntries(m.balanceEntries, GetAccountBalaceEntries(block))
-	m.historyBalancesEntries = MergeAccountBalanceEntries(m.historyBalancesEntries, balanceEntries)
+	balanceEntries := getAccountBalaceEntries(block)
+	m.BalanceEntries = MergeAccountBalanceEntries(m.BalanceEntries, getAccountBalaceEntries(block))
+	m.HistoryBalanceEntries = MergeAccountBalanceEntries(m.HistoryBalanceEntries, balanceEntries)
 
-	tokenBalanceEntries := GetTokenAccountBalaceEntries(block)
-	m.tokenBalanceEntries = MergeTokenAccountBalanceEntries(m.tokenBalanceEntries, tokenBalanceEntries)
-	m.historyTokenBalancesEntries = MergeTokenAccountBalanceEntries(m.historyTokenBalancesEntries, tokenBalanceEntries)
+	tokenBalanceEntries := getTokenAccountBalaceEntries(block)
+	m.TokenBalanceEntries = MergeTokenAccountBalanceEntries(m.TokenBalanceEntries, tokenBalanceEntries)
+	m.HistoryTokenBalanceEntries = MergeTokenAccountBalanceEntries(m.HistoryTokenBalanceEntries, tokenBalanceEntries)
 	log.Debug().Str("module", m.Name()).Uint64("slot", block.Slot).Msg("handled block")
 	return nil
 }

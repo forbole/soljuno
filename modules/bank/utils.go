@@ -5,7 +5,7 @@ import (
 	"github.com/forbole/soljuno/types"
 )
 
-func GetAccountBalaceEntries(block types.Block) []AccountBalanceEntry {
+func getAccountBalaceEntries(block types.Block) []AccountBalanceEntry {
 	var accounts []string
 	var balances []uint64
 	accountMap := make(map[string]int)
@@ -38,7 +38,7 @@ func GetAccountBalaceEntries(block types.Block) []AccountBalanceEntry {
 	return NewAccountBalanceEntries(block.Slot, accounts, balances)
 }
 
-func GetTokenAccountBalaceEntries(block types.Block) []TokenAccountBalanceEntry {
+func getTokenAccountBalaceEntries(block types.Block) []TokenAccountBalanceEntry {
 	var tokenAccounts []string
 	var tokenBalances []clienttypes.TransactionTokenBalance
 	tokenAccountMap := make(map[string]int)
