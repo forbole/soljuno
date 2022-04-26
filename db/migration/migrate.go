@@ -6,17 +6,29 @@ import (
 
 func Up(db db.ExcecutorDb) error {
 	_, err := db.Exec(`
-		ALTER TABLE token_delegation DROP CONSTRAINT token_delegation_delegate_address_fk;
-		DROP INDEX token_delegation_delegate_address_index;
+		ALTER TABLE transaction ADD COLUMN involved_accounts TEXT[] NOT NULL DEFAULT array[]::TEXT[];
+		CREATE INDEX transaction_accounts_index ON transaction USING GIN(involved_accounts);
+
+		CREATE FUNCTION transactions_by_address(
+			addresses TEXT[],
+			"start_slot" BIGINT = 0,
+			"end_slot" BIGINT = 0
+			)
+			RETURNS SETOF transaction AS
+		$$
+			SELECT * FROM transaction WHERE 
+			(slot < "end_slot" AND slot >= "start_slot") AND
+			involved_accounts @> addresses
+		$$ LANGUAGE sql STABLE;
 	`)
 	return err
 }
 
 func Down(db db.ExcecutorDb) error {
 	_, err := db.Exec(`
-	ALTER TABLE token_delegation ADD CONSTRAINT token_delegation_delegate_address_fk
-	FOREIGN KEY (delegate_address) REFERENCES token_account(address) ON DELETE CASCADE;
-	CREATE INDEX token_delegation_delegate_address_index ON token_delegation (delegate_address);
+	DROP FUNCTION transactions_by_address;
+	DROP INDEX transaction_accounts_index;
+	ALTER TABLE transaction DROP COLUMN involved_accounts;
 	`)
 	return err
 }

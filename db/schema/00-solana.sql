@@ -16,6 +16,7 @@ CREATE TABLE transaction
 (
     signature           TEXT    NOT NULL,
     slot                BIGINT  NOT NULL,
+    involved_accounts   TEXT[]  NOT NULL DEFAULT array[]::TEXT[],
     success             BOOLEAN NOT NULL,
     fee                 INT     NOT NULL,
     logs                TEXT[],
@@ -26,7 +27,7 @@ CREATE TABLE transaction
 ALTER TABLE transaction ADD UNIQUE (signature, partition_id);
 CREATE INDEX transaction_signature_index ON transaction (signature);
 CREATE INDEX transaction_slot_index ON transaction (slot DESC);
-
+CREATE INDEX transaction_accounts_index ON transaction USING GIN(involved_accounts);
 
 CREATE TABLE instruction
 (
@@ -52,6 +53,22 @@ CREATE INDEX instruction_accounts_index ON instruction USING GIN(involved_accoun
  * This function is used to find all the utils that involve any of the given addresses and have
  * type that is one of the specified types.
  */
+CREATE FUNCTION transactions_by_address(
+    addresses TEXT[],
+    "start_slot" BIGINT = 0,
+    "end_slot" BIGINT = 0
+    )
+    RETURNS SETOF transaction AS
+$$
+    SELECT * FROM transaction WHERE 
+    (slot < "end_slot" AND slot >= "start_slot") AND
+    involved_accounts @> addresses
+$$ LANGUAGE sql STABLE;
+
+/**
+ * This function is used to find all the utils that involve any of the given addresses and have
+ * type that is one of the specified types.
+ */
 CREATE FUNCTION instructions_by_address(
     addresses TEXT[],
     programs TEXT[],
@@ -64,8 +81,9 @@ SELECT
     instruction.tx_signature, instruction.slot, instruction.index, instruction.inner_index, instruction.program, instruction.involved_accounts, instruction.raw_data, instruction.type, instruction.value, instruction.partition_id
 FROM (
     SELECT * FROM instruction WHERE 
-    (slot < "end_slot" AND slot >= "start_slot") AND
+    (slot <= "end_slot" AND slot >= "start_slot") AND
     (cardinality(programs) = 0 OR program = ANY (programs)) AND 
     involved_accounts @> addresses
     ) as instruction 
 $$ LANGUAGE sql STABLE;
+
