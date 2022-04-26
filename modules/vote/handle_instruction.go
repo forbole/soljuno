@@ -5,13 +5,12 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	"github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/solana/program/vote"
 	"github.com/forbole/soljuno/types"
 )
 
 // HandleInstruction allows to handle different instructions types for the vote module
-func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
+func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.VoteDb, client ClientProxy) error {
 	switch instruction.Parsed.Type {
 	case "initialize":
 		return handleInitialize(instruction, tx, db)
@@ -44,7 +43,7 @@ func handleInitialize(instruction types.Instruction, tx types.Tx, db db.VoteDb) 
 }
 
 // handleAuthorize handles a instruction of Authorize
-func handleAuthorize(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
+func handleAuthorize(instruction types.Instruction, tx types.Tx, db db.VoteDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedAuthorize)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorize", instruction.Parsed.Type)
@@ -54,7 +53,7 @@ func handleAuthorize(instruction types.Instruction, tx types.Tx, db db.VoteDb, c
 }
 
 // handleWithdraw handles a instruction of Withdraw
-func handleWithdraw(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
+func handleWithdraw(instruction types.Instruction, tx types.Tx, db db.VoteDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedWithdraw)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "withdraw", instruction.Parsed.Type)
@@ -64,7 +63,7 @@ func handleWithdraw(instruction types.Instruction, tx types.Tx, db db.VoteDb, cl
 }
 
 // handleUpdateValidatorIdentity handles a instruction of UpdateValidatorIdentity
-func handleUpdateValidatorIdentity(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
+func handleUpdateValidatorIdentity(instruction types.Instruction, tx types.Tx, db db.VoteDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedUpdateValidatorIdentity)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "updateValidatorIdentity", instruction.Parsed.Type)
@@ -74,7 +73,7 @@ func handleUpdateValidatorIdentity(instruction types.Instruction, tx types.Tx, d
 }
 
 // handleUpdateCommission handles a instruction of UpdateCommission
-func handleUpdateCommission(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
+func handleUpdateCommission(instruction types.Instruction, tx types.Tx, db db.VoteDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedUpdateCommission)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "updateCommission", instruction.Parsed.Type)
@@ -84,7 +83,7 @@ func handleUpdateCommission(instruction types.Instruction, tx types.Tx, db db.Vo
 }
 
 // handleAuthorizeChecked handles a instruction of AuthorizeChecked
-func handleAuthorizeChecked(instruction types.Instruction, tx types.Tx, db db.VoteDb, client client.ClientProxy) error {
+func handleAuthorizeChecked(instruction types.Instruction, tx types.Tx, db db.VoteDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(vote.ParsedAuthorizeChecked)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "authorizeChecked", instruction.Parsed.Type)

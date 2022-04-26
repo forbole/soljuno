@@ -6,11 +6,10 @@ import (
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/solana/account/parser"
-	"github.com/forbole/soljuno/solana/client"
 )
 
 // updateVoteAccount properly stores the statement of vote account inside the database
-func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client client.ClientProxy) error {
+func updateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client ClientProxy) error {
 	if db.CheckValidatorLatest(address, currentSlot) {
 		return nil
 	}
