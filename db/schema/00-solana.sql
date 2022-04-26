@@ -61,7 +61,7 @@ CREATE FUNCTION transactions_by_address(
     RETURNS SETOF transaction AS
 $$
     SELECT * FROM transaction WHERE 
-    (slot < "end_slot" AND slot >= "start_slot") AND
+    (slot <= "end_slot" AND slot >= "start_slot") AND
     involved_accounts @> addresses
 $$ LANGUAGE sql STABLE;
 
