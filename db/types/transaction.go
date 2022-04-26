@@ -2,27 +2,30 @@ package types
 
 import (
 	"github.com/forbole/soljuno/types"
+	"github.com/lib/pq"
 )
 
 type TxRow struct {
-	Signature       string      `db:"signature"`
-	Slot            uint64      `db:"slot"`
-	Success         bool        `db:"success"`
-	Fee             uint64      `db:"fee"`
-	Logs            interface{} `db:"logs"`
-	NumInstructions int         `db:"num_instructions"`
-	PartitionId     int         `db:"partition_id"`
+	Signature        string         `db:"signature"`
+	Slot             uint64         `db:"slot"`
+	InvolvedAccounts pq.StringArray `db:"involved_accounts"`
+	Success          bool           `db:"success"`
+	Fee              uint64         `db:"fee"`
+	Logs             interface{}    `db:"logs"`
+	NumInstructions  int            `db:"num_instructions"`
+	PartitionId      int            `db:"partition_id"`
 }
 
-func NewTxRow(signature string, slot uint64, success bool, fee uint64, logs []string, numInstructions int) TxRow {
+func NewTxRow(signature string, slot uint64, accounts []string, success bool, fee uint64, logs []string, numInstructions int) TxRow {
 	return TxRow{
-		Signature:       signature,
-		Slot:            slot,
-		Success:         success,
-		Fee:             fee,
-		Logs:            logs,
-		NumInstructions: numInstructions,
-		PartitionId:     int(slot / 1000),
+		Signature:        signature,
+		Slot:             slot,
+		InvolvedAccounts: *pq.Array(accounts).(*pq.StringArray),
+		Success:          success,
+		Fee:              fee,
+		Logs:             logs,
+		NumInstructions:  numInstructions,
+		PartitionId:      int(slot / 1000),
 	}
 }
 
@@ -32,6 +35,7 @@ func NewTxRowsFromTxs(txs []types.Tx) []TxRow {
 		txRows[i] = NewTxRow(
 			tx.Signature,
 			tx.Slot,
+			tx.Accounts,
 			tx.Successful(),
 			tx.Fee,
 			tx.Logs,
