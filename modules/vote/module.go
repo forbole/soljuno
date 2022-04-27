@@ -3,11 +3,17 @@ package vote
 import (
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/modules"
-	"github.com/forbole/soljuno/solana/client"
+	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	"github.com/forbole/soljuno/solana/program/vote"
 	"github.com/forbole/soljuno/types"
 	"github.com/rs/zerolog/log"
 )
+
+type ClientProxy interface {
+	GetAccountInfo(string) (clienttypes.AccountInfo, error)
+	GetVoteAccountsWithSlot() (uint64, clienttypes.VoteAccounts, error)
+	GetLeaderSchedule(uint64) (clienttypes.LeaderSchedule, error)
+}
 
 var (
 	_ modules.Module                   = &Module{}
@@ -16,11 +22,11 @@ var (
 )
 
 type Module struct {
-	db     db.Database
-	client client.ClientProxy
+	db     db.VoteDb
+	client ClientProxy
 }
 
-func NewModule(db db.Database, client client.ClientProxy) *Module {
+func NewModule(db db.VoteDb, client ClientProxy) *Module {
 	return &Module{
 		db:     db,
 		client: client,
@@ -41,7 +47,7 @@ func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) e
 		return nil
 	}
 
-	err := HandleInstruction(instruction, tx, m.db, m.client)
+	err := HandleInstruction(instruction, m.db, m.client)
 	if err != nil {
 		return err
 	}

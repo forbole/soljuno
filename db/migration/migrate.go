@@ -18,7 +18,7 @@ func Up(db db.ExcecutorDb) error {
 		$$
 			SELECT * FROM transaction WHERE 
 			(slot < "end_slot" AND slot >= "start_slot") AND
-			involved_accounts @> addresses
+			involved_accounts @> addresses ORDER BY slot+0 DESC
 		$$ LANGUAGE sql STABLE;
 	`)
 	return err

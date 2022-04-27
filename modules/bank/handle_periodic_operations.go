@@ -3,6 +3,7 @@ package bank
 import (
 	"fmt"
 
+	"github.com/forbole/soljuno/modules/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 )
@@ -12,24 +13,21 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", m.Name()).Msg("setting up periodic tasks")
 	if _, err := scheduler.Every(10).Second().Do(func() {
-		m.HandlePeriodicOperations()
+		utils.WatchMethod(m, m.HandlePeriodicOperations)
 	}); err != nil {
 		return fmt.Errorf("error while setting up bank periodic operation: %s", err)
 	}
 	return nil
 }
 
-func (m *Module) HandlePeriodicOperations() {
+func (m *Module) HandlePeriodicOperations() error {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
 	balances := m.BalanceEntries
 	tokenBalances := m.TokenBalanceEntries
 	m.BalanceEntries = nil
 	m.TokenBalanceEntries = nil
-	err := m.updateBalances(balances, tokenBalances)
-	if err != nil {
-		log.Error().Str("module", m.Name()).Err(err).Send()
-	}
+	return m.updateBalances(balances, tokenBalances)
 }
 
 func (m *Module) updateBalances(balances []AccountBalanceEntry, tokenBalances []TokenAccountBalanceEntry) error {
