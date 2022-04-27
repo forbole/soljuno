@@ -47,7 +47,7 @@ func (m *Module) HandleInstruction(instruction types.Instruction, tx types.Tx) e
 		return nil
 	}
 
-	err := HandleInstruction(instruction, tx, m.db, m.client)
+	err := HandleInstruction(instruction, m.db, m.client)
 	if err != nil {
 		return err
 	}
