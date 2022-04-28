@@ -21,7 +21,7 @@ func (suite *ModuleTestSuite) TestModule_HandleInstruction() {
 	}{
 		{
 			name: "failed tx skip properly",
-			tx:   types.NewTx("sig", 0, fmt.Errorf("failed"), 0, nil, nil, nil, nil, nil),
+			tx:   types.NewTx("sig", 0, 0, fmt.Errorf("failed"), 0, nil, nil, nil, nil, nil),
 		},
 		{
 			name: "non stake instruction skips properly",
@@ -41,7 +41,7 @@ func (suite *ModuleTestSuite) TestModule_HandleInstruction() {
 		},
 		{
 			name: "fail to handle instruction return error",
-			tx:   types.NewTx("sig", 0, nil, 0, nil, nil, nil, nil, nil),
+			tx:   types.NewTx("sig", 0, 0, nil, 0, nil, nil, nil, nil, nil),
 			instruction: types.NewInstruction(
 				"sig",
 				1,
@@ -59,7 +59,7 @@ func (suite *ModuleTestSuite) TestModule_HandleInstruction() {
 		},
 		{
 			name: "instruction works properly",
-			tx:   types.NewTx("sig", 0, nil, 0, nil, nil, nil, nil, nil),
+			tx:   types.NewTx("sig", 0, 0, nil, 0, nil, nil, nil, nil, nil),
 			instruction: types.NewInstruction(
 				"sig",
 				1,

@@ -87,6 +87,7 @@ func RegisterAPIs(r *gin.Engine, proxy client.ClientProxy) {
 		tx := solanatypes.NewTxFromTxResult(
 			parserManager,
 			encodedTx.Slot,
+			0,
 			clienttypes.EncodedTransactionWithStatusMeta{
 				Transaction: encodedTx.Transaction,
 				Meta:        encodedTx.Meta,
