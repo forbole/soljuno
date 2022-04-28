@@ -24,6 +24,7 @@ func (suite *ModuleTestSuite) TestModule_HandleBlock() {
 			types.NewTx(
 				"sig",
 				0,
+				0,
 				nil,
 				0,
 				nil,
@@ -40,6 +41,7 @@ func (suite *ModuleTestSuite) TestModule_HandleBlock() {
 			types.NewTx(
 				"sig",
 				0,
+				1,
 				nil,
 				0,
 				nil,

@@ -15,6 +15,7 @@ CREATE INDEX block_timestamp_index ON block (timestamp DESC);
 CREATE TABLE transaction
 (
     signature           TEXT    NOT NULL,
+    index               INT     NOT NULL DEFAULT 0,
     slot                BIGINT  NOT NULL,
     involved_accounts   TEXT[]  NOT NULL DEFAULT array[]::TEXT[],
     success             BOOLEAN NOT NULL,

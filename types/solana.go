@@ -52,7 +52,7 @@ func NewBlock(slot, height uint64, hash, leader string, rewards []clienttypes.Re
 func NewBlockFromResult(parserManager manager.ParserManager, slot uint64, b clienttypes.BlockResult) Block {
 	txs := make([]Tx, len(b.Transactions))
 	for i, txResult := range b.Transactions {
-		txs[i] = NewTxFromTxResult(parserManager, slot, txResult)
+		txs[i] = NewTxFromTxResult(parserManager, slot, i, txResult)
 	}
 
 	return Block{
@@ -82,6 +82,7 @@ func getAccounts(accountKeys []string, ids []uint8) []string {
 type Tx struct {
 	Signature    string
 	Slot         uint64
+	Index        int
 	Error        interface{}
 	Fee          uint64
 	Logs         []string
@@ -96,6 +97,7 @@ type Tx struct {
 func NewTx(
 	signature string,
 	slot uint64,
+	index int,
 	err interface{},
 	fee uint64,
 	logs []string,
@@ -107,6 +109,7 @@ func NewTx(
 	return Tx{
 		Signature:    signature,
 		Slot:         slot,
+		Index:        index,
 		Error:        err,
 		Fee:          fee,
 		Logs:         logs,
@@ -123,7 +126,7 @@ func (tx Tx) Successful() bool {
 	return tx.Error == nil
 }
 
-func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResult clienttypes.EncodedTransactionWithStatusMeta) Tx {
+func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, index int, txResult clienttypes.EncodedTransactionWithStatusMeta) Tx {
 	signature := txResult.Transaction.Signatures[0]
 	rawMsg := txResult.Transaction.Message
 	accountKeys := rawMsg.AccountKeys
@@ -157,6 +160,7 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, txResul
 	return NewTx(
 		signature,
 		slot,
+		index,
 		txResult.Meta.Err,
 		txResult.Meta.Fee,
 		txResult.Meta.LogMessages,

@@ -8,6 +8,7 @@ import (
 type TxRow struct {
 	Signature        string         `db:"signature"`
 	Slot             uint64         `db:"slot"`
+	Index            int            `db:"index"`
 	InvolvedAccounts pq.StringArray `db:"involved_accounts"`
 	Success          bool           `db:"success"`
 	Fee              uint64         `db:"fee"`
@@ -16,10 +17,11 @@ type TxRow struct {
 	PartitionId      int            `db:"partition_id"`
 }
 
-func NewTxRow(signature string, slot uint64, accounts []string, success bool, fee uint64, logs []string, numInstructions int) TxRow {
+func NewTxRow(signature string, slot uint64, index int, accounts []string, success bool, fee uint64, logs []string, numInstructions int) TxRow {
 	return TxRow{
 		Signature:        signature,
 		Slot:             slot,
+		Index:            index,
 		InvolvedAccounts: *pq.Array(accounts).(*pq.StringArray),
 		Success:          success,
 		Fee:              fee,
@@ -35,6 +37,7 @@ func NewTxRowsFromTxs(txs []types.Tx) []TxRow {
 		txRows[i] = NewTxRow(
 			tx.Signature,
 			tx.Slot,
+			tx.Index,
 			tx.Accounts,
 			tx.Successful(),
 			tx.Fee,

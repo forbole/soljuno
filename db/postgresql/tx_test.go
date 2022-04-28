@@ -14,9 +14,9 @@ func (suite *DbTestSuite) TestSaveTxs() {
 	}{
 		{
 			name: "initialize the data",
-			data: dbtypes.NewTxRow("signature", 1, []string{"account"}, true, 500, []string{"logs"}, 2),
+			data: dbtypes.NewTxRow("signature", 1, 0, []string{"account"}, true, 500, []string{"logs"}, 2),
 			expected: []dbtypes.TxRow{
-				dbtypes.NewTxRow("signature", 1, []string{"account"}, true, 500, []string{"logs"}, 2),
+				dbtypes.NewTxRow("signature", 1, 0, []string{"account"}, true, 500, []string{"logs"}, 2),
 			},
 		},
 		{
@@ -33,17 +33,17 @@ func (suite *DbTestSuite) TestSaveTxs() {
 		},
 		{
 			name: "insert the existed data",
-			data: dbtypes.NewTxRow("signature", 1, []string{"account"}, true, 500, []string{"logs"}, 2),
+			data: dbtypes.NewTxRow("signature", 1, 0, []string{"account"}, true, 500, []string{"logs"}, 2),
 			expected: []dbtypes.TxRow{
-				dbtypes.NewTxRow("signature", 1, []string{"account"}, true, 500, []string{"logs"}, 2),
+				dbtypes.NewTxRow("signature", 1, 0, []string{"account"}, true, 500, []string{"logs"}, 2),
 			},
 		},
 		{
 			name: "insert the new data",
-			data: dbtypes.NewTxRow("signature2", 2, []string{"account"}, true, 500, []string{"logs"}, 2),
+			data: dbtypes.NewTxRow("signature2", 2, 0, []string{"account"}, true, 500, []string{"logs"}, 2),
 			expected: []dbtypes.TxRow{
-				dbtypes.NewTxRow("signature", 1, []string{"account"}, true, 500, []string{"logs"}, 2),
-				dbtypes.NewTxRow("signature2", 2, []string{"account"}, true, 500, []string{"logs"}, 2),
+				dbtypes.NewTxRow("signature", 1, 0, []string{"account"}, true, 500, []string{"logs"}, 2),
+				dbtypes.NewTxRow("signature2", 2, 0, []string{"account"}, true, 500, []string{"logs"}, 2),
 			},
 		},
 	}
@@ -72,7 +72,7 @@ func (suite *DbTestSuite) TestPruneTxsBeforeSlot() {
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveTxs([]dbtypes.TxRow{
-		dbtypes.NewTxRow("signature", 1, []string{"account"}, true, 500, []string{"logs"}, 2),
+		dbtypes.NewTxRow("signature", 1, 0, []string{"account"}, true, 500, []string{"logs"}, 2),
 	})
 	suite.Require().NoError(err)
 

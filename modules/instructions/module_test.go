@@ -22,7 +22,7 @@ func (suite *ModuleTestSuite) TestHandleTxs() {
 	suite.module.WithBuffer(buffer)
 	err := suite.module.HandleInstruction(
 		types.NewInstruction("sig", 0, 0, 0, "program", []string{"account"}, "", solana.NewParsedInstruction("unknown", nil)),
-		types.NewTx("hash", 0, nil, 0, nil, nil, nil, nil, nil),
+		types.NewTx("sig", 0, 0, nil, 0, nil, nil, nil, nil, nil),
 	)
 	suite.Require().Len(buffer, 1)
 	suite.Require().Equal(dbtypes.NewInstructionRow("sig", 0, 0, 0, "program", []string{"account"}, "", "unknown", []byte("null")), <-buffer)

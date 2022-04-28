@@ -15,7 +15,7 @@ func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 	if len(txs) == 0 {
 		return nil
 	}
-	insertStmt := `INSERT INTO transaction (signature, slot, involved_accounts, success, fee, logs, num_instructions, partition_id) VALUES`
+	insertStmt := `INSERT INTO transaction (signature, slot, index, involved_accounts, success, fee, logs, num_instructions, partition_id) VALUES`
 	conflictStmt := `ON CONFLICT DO NOTHING`
 
 	var params []interface{}
@@ -26,6 +26,7 @@ func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 			params,
 			tx.Signature,
 			tx.Slot,
+			tx.Index,
 			tx.InvolvedAccounts,
 			tx.Success,
 			tx.Fee,
