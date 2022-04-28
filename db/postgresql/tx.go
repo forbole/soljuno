@@ -19,7 +19,7 @@ func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 	conflictStmt := `ON CONFLICT DO NOTHING`
 
 	var params []interface{}
-	paramsNumber := 8
+	paramsNumber := 9
 	params = make([]interface{}, 0, paramsNumber*len(txs))
 	for _, tx := range txs {
 		params = append(
