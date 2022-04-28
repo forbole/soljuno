@@ -30,6 +30,19 @@ CREATE INDEX transaction_signature_index ON transaction (signature);
 CREATE INDEX transaction_slot_index ON transaction (slot DESC);
 CREATE INDEX transaction_accounts_index ON transaction USING GIN(involved_accounts);
 
+CREATE TABLE transaction_by_address
+(
+    address         TEXT    NOT NULL,
+    slot            BIGINT  NOT NULL, 
+    signature       TEXT    NOT NULL,
+    index           INT     NOT NULL DEFAULT 0,
+    partition_id    INT     NOT NULL
+) PARTITION BY LIST(partition_id);
+ALTER TABLE transaction_by_address ADD UNIQUE (address, signature, partition_id);
+CREATE INDEX transaction_by_address_index ON transaction_by_address(address);
+CREATE INDEX transaction_by_address_signature_index ON transaction_by_address(signature);
+CREATE INDEX transaction_by_address_slot_index ON transaction_by_address (slot DESC);
+
 CREATE TABLE instruction
 (
     tx_signature        TEXT    NOT NULL,

@@ -1,8 +1,6 @@
 package postgresql
 
 import (
-	"database/sql"
-
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/lib/pq"
@@ -10,11 +8,19 @@ import (
 
 var _ db.TxDb = &Database{}
 
-// SaveTxs implements db.Database
+// SaveTxs implements db.TxDb
 func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 	if len(txs) == 0 {
 		return nil
 	}
+	err := db.saveTxs(txs)
+	if err != nil {
+		return err
+	}
+	return db.saveTxByAddressIndexes(txs)
+}
+
+func (db *Database) saveTxs(txs []dbtypes.TxRow) error {
 	insertStmt := `INSERT INTO transaction (signature, slot, index, involved_accounts, success, fee, logs, num_instructions, partition_id) VALUES`
 	conflictStmt := `ON CONFLICT DO NOTHING`
 
@@ -43,20 +49,51 @@ func (db *Database) SaveTxs(txs []dbtypes.TxRow) error {
 	)
 }
 
-// CreateTxPartition implements db.Database
+func (db *Database) saveTxByAddressIndexes(txs []dbtypes.TxRow) error {
+	insertStmt := `INSERT INTO transaction_by_address (address, slot, signature, index, partition_id) VALUES`
+	conflictStmt := `ON CONFLICT DO NOTHING`
+
+	var params []interface{}
+	paramsNumber := 5
+	params = make([]interface{}, 0, paramsNumber*len(txs))
+	for _, tx := range txs {
+		for _, address := range tx.InvolvedAccounts {
+			params = append(
+				params,
+				address,
+				tx.Slot,
+				tx.Signature,
+				tx.Index,
+				tx.PartitionId,
+			)
+		}
+	}
+	return db.InsertBatch(
+		insertStmt,
+		conflictStmt,
+		params,
+		paramsNumber,
+	)
+}
+
+// CreateTxPartition implements db.TxDb
 func (db *Database) CreateTxPartition(Id int) error {
-	return db.createPartition("transaction", Id)
+	err := db.createPartition("transaction", Id)
+	if err != nil {
+		return err
+	}
+	return db.createPartition("transaction_by_address", Id)
 }
 
 // PruneTxsBeforeSlot implements db.TxDb
 func (db *Database) PruneTxsBeforeSlot(slot uint64) error {
 	for {
-		name, err := db.getOldestTxPartitionBeforeSlot(slot)
+		name, err := db.getOldestPartitionBeforeSlot("transaction", slot)
 		if err != nil {
 			return err
 		}
 		if name == "" {
-			return nil
+			break
 		}
 
 		err = db.dropPartition(name)
@@ -64,17 +101,20 @@ func (db *Database) PruneTxsBeforeSlot(slot uint64) error {
 			return err
 		}
 	}
-}
 
-// getOldestTxPartitionBeforeSlot allows to get the oldest tx partition
-func (db *Database) getOldestTxPartitionBeforeSlot(slot uint64) (string, error) {
-	stmt := `
-	SELECT tableoid::pg_catalog.regclass FROM transaction WHERE slot <= $1 ORDER BY slot ASC LIMIT 1;
-	`
-	var partitionName string
-	err := db.Sqlx.QueryRow(stmt, slot).Scan(&partitionName)
-	if err != nil && err != sql.ErrNoRows {
-		return "", err
+	for {
+		name, err := db.getOldestPartitionBeforeSlot("transaction_by_address", slot)
+		if err != nil {
+			return err
+		}
+		if name == "" {
+			break
+		}
+
+		err = db.dropPartition(name)
+		if err != nil {
+			return err
+		}
 	}
-	return partitionName, nil
+	return nil
 }

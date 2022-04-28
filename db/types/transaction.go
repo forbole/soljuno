@@ -47,3 +47,11 @@ func NewTxRowsFromTxs(txs []types.Tx) []TxRow {
 	}
 	return txRows
 }
+
+type TxByAddressRow struct {
+	Address     string `db:"address"`
+	Signature   string `db:"signature"`
+	Slot        uint64 `db:"slot"`
+	Index       int    `db:"index"`
+	PartitionId int    `db:"partition_id"`
+}
