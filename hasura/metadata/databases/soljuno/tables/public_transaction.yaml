@@ -25,6 +25,7 @@ select_permissions:
     columns:
     - signature
     - slot
+    - index
     - involved_accounts
     - success
     - fee
