@@ -1,0 +1,13 @@
+table:
+  name: transaction_by_address
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - signature
+    - slot
+    - index
+    filter: {}
+  role: anonymous
