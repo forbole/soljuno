@@ -61,7 +61,6 @@ CREATE INDEX instruction_slot_index ON instruction (slot DESC);
 CREATE INDEX instruction_program_index ON instruction (program);
 CREATE INDEX instruction_accounts_index ON instruction USING GIN(involved_accounts);
 
-
 CREATE OR REPLACE FUNCTION transactions_by_address_internal(
     "target"    TEXT,
     "current"   TEXT = '',
@@ -95,13 +94,13 @@ BEGIN
         /* index_filter includes the signature behind the current tx index in the current tx block */
         index_filter AS (
             SELECT signature, partition_id FROM transaction_by_address WHERE address = "target" AND 
-            slot = ( SELECT slot FROM slot_getter ) AND index <= (SELECT index FROM index_getter)
+            slot = ( SELECT slot FROM slot_getter ) AND index >= (SELECT index FROM index_getter)
         ),
         /* account_signatures_getter returns the signatures filtered by the account behind the current tx slot and index */
         account_signatures_getter AS (
             SELECT slot_filter.* FROM slot_filter LEFT JOIN index_filter 
-            ON slot_filter.signature = index_filter.signature AND slot_filter.partition_id = index_filter.partition_id
-            ORDER BY slot DESC, index DESC LIMIT "limit" OFFSET 1 
+            ON slot_filter.signature = index_filter.signature AND slot_filter.partition_id = index_filter.partition_id WHERE index_filter.signature IS NULL
+            ORDER BY slot DESC, index DESC LIMIT "limit"
         )   
         /* main query */  
         SELECT t.* FROM account_signatures_getter AS ta LEFT JOIN transaction AS t ON t.signature = ta.signature AND t.partition_id = ta.partition_id;
