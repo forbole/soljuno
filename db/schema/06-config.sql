@@ -8,5 +8,5 @@ CREATE TABLE validator_config
     website             TEXT    NOT NULL DEFAULT '',
     details             TEXT    NOT NULL DEFAULT '',
     avatar_url          TEXT    NOT NULL DEFAULT ''
-);
-CREATE INDEX validator_config_owner_index ON validator_config (owner);
+);;
+CREATE INDEX validator_config_owner_index ON validator_config (owner);;

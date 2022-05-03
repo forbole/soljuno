@@ -5,15 +5,15 @@ CREATE TABLE token
     decimals            INT     NOT NULL,
     mint_authority      TEXT    NOT NULL,
     freeze_authority    TEXT    NOT NULL
-);
-CREATE INDEX token_authority_index ON token (mint_authority);
+);;
+CREATE INDEX token_authority_index ON token (mint_authority);;
 
 CREATE TABLE token_supply
 (
     mint    TEXT            NOT NULL PRIMARY KEY,
     slot    BIGINT          NOT NULL,
     supply  NUMERIC(20,0)   NOT NULL
-);
+);;
 
 CREATE TABLE token_account
 (
@@ -21,8 +21,8 @@ CREATE TABLE token_account
     slot    BIGINT  NOT NULL,
     mint    TEXT    NOT NULL,
     owner   TEXT    NOT NULL
-);
-CREATE INDEX token_account_owner_index ON token_account (owner);
+);;
+CREATE INDEX token_account_owner_index ON token_account (owner);;
 
 CREATE TABLE multisig
 (
@@ -30,7 +30,7 @@ CREATE TABLE multisig
     slot    BIGINT  NOT NULL,
     signers TEXT[]  NOT NULL,
     minimum INT     NOT NULL
-);
+);;
 
 CREATE TABLE token_delegation
 (
@@ -40,4 +40,4 @@ CREATE TABLE token_delegation
     amount              NUMERIC(20,0)   NOT NULL,
     CONSTRAINT token_delegation_source_address_fk 
         FOREIGN KEY (source_address) REFERENCES token_account(address) ON DELETE CASCADE
-);
+);;

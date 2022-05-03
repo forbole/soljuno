@@ -4,8 +4,8 @@ CREATE TABLE stake_account
     slot        BIGINT  NOT NULL,
     staker      TEXT    NOT NULL,
     withdrawer  TEXT    NOT NULL
-);
-CREATE INDEX stake_staker_index ON stake_account (withdrawer);
+);;
+CREATE INDEX stake_staker_index ON stake_account (withdrawer);;
 
 CREATE TABLE stake_lockup
 (
@@ -14,7 +14,7 @@ CREATE TABLE stake_lockup
     custodian       TEXT        NOT NULL,
     epoch           BIGINT      NOT NULL,
     unix_timestamp  TIMESTAMP   WITHOUT TIME ZONE NOT NULL
-);
+);;
 
 CREATE TABLE stake_delegation
 (
@@ -25,4 +25,4 @@ CREATE TABLE stake_delegation
     stake                   BIGINT          NOT NULL,
     voter                   TEXT            NOT NULL,
     warmup_cooldown_rate    FLOAT           NOT NULL
-);
+);;

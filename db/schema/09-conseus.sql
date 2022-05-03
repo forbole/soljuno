@@ -4,4 +4,4 @@ CREATE TABLE average_slot_time_per_hour
     slot            BIGINT  NOT NULL,
     average_time    DECIMAL NOT NULL,
     CHECK (one_row_id)
-);
+);;

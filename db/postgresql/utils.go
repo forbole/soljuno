@@ -1,6 +1,9 @@
 package postgresql
 
-import "fmt"
+import (
+	"database/sql"
+	"fmt"
+)
 
 func (db *Database) InsertBatch(insertStmt string, conflictStmt string, params []interface{}, paramsNumber int) error {
 	start := 0
@@ -65,6 +68,19 @@ func (db *Database) createPartition(table string, id int) error {
 	)
 	_, err := db.Exec(stmt)
 	return err
+}
+
+// getOldestPartitionBeforeSlot allows to get the oldest tx partition
+func (db *Database) getOldestPartitionBeforeSlot(name string, slot uint64) (string, error) {
+	stmt := fmt.Sprintf(`
+	SELECT tableoid::pg_catalog.regclass FROM %s WHERE slot <= $1 ORDER BY slot ASC LIMIT 1;
+	`, name)
+	var partitionName string
+	err := db.Sqlx.QueryRow(stmt, slot).Scan(&partitionName)
+	if err != nil && err != sql.ErrNoRows {
+		return "", err
+	}
+	return partitionName, nil
 }
 
 // dropPartition allows to drop a partition with the given partition name

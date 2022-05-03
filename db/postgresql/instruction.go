@@ -1,8 +1,6 @@
 package postgresql
 
 import (
-	"database/sql"
-
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/lib/pq"
@@ -53,7 +51,7 @@ func (db *Database) CreateInstructionPartition(id int) error {
 // PruneInstructionsBeforeSlot implements db.InstructionDb
 func (db *Database) PruneInstructionsBeforeSlot(slot uint64) error {
 	for {
-		name, err := db.getOldestInstructionsPartitionBeforeSlot(slot)
+		name, err := db.getOldestPartitionBeforeSlot("instruction", slot)
 		if err != nil {
 			return err
 		}
@@ -66,17 +64,4 @@ func (db *Database) PruneInstructionsBeforeSlot(slot uint64) error {
 			return err
 		}
 	}
-}
-
-// getOldestInstructionsPartitionBeforeSlot allows to get the oldest  partition
-func (db *Database) getOldestInstructionsPartitionBeforeSlot(slot uint64) (string, error) {
-	stmt := `
-	SELECT tableoid::pg_catalog.regclass FROM instruction WHERE slot <= $1 ORDER BY slot ASC LIMIT 1;
-	`
-	var partitionName string
-	err := db.Sqlx.QueryRow(stmt, slot).Scan(&partitionName)
-	if err != nil && err != sql.ErrNoRows {
-		return "", err
-	}
-	return partitionName, nil
 }
