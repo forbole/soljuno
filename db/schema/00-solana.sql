@@ -11,8 +11,6 @@ CREATE INDEX block_hash_index ON block (hash);
 CREATE INDEX block_leader_index ON block (leader);
 CREATE INDEX block_timestamp_index ON block (timestamp DESC);
 
-
-CREATE EXTENSION btree_gin;
 CREATE TABLE transaction
 (
     signature           TEXT    NOT NULL,
@@ -142,4 +140,3 @@ FROM (
     involved_accounts @> addresses
     ) as instruction 
 $$ LANGUAGE sql STABLE;
-
