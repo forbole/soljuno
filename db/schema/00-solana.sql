@@ -12,6 +12,7 @@ CREATE INDEX block_leader_index ON block (leader);
 CREATE INDEX block_timestamp_index ON block (timestamp DESC);
 
 
+CREATE EXTENSION btree_gin;
 CREATE TABLE transaction
 (
     signature           TEXT    NOT NULL,
@@ -28,7 +29,6 @@ CREATE TABLE transaction
 ALTER TABLE transaction ADD UNIQUE (signature, partition_id);
 CREATE INDEX transaction_signature_index ON transaction (signature);
 CREATE INDEX transaction_slot_index ON transaction (slot DESC);
-CREATE INDEX transaction_accounts_index ON transaction USING GIN(involved_accounts);
 
 CREATE TABLE transaction_by_address
 (
@@ -38,10 +38,10 @@ CREATE TABLE transaction_by_address
     index           INT     NOT NULL DEFAULT 0,
     partition_id    INT     NOT NULL
 ) PARTITION BY LIST(partition_id);
-ALTER TABLE transaction ADD UNIQUE (address, signature, partition_id);
-CREATE INDEX transaction_by_address_index ON transaction_by_address(address);
+ALTER TABLE transaction_by_address ADD UNIQUE (address, signature, partition_id);
+CREATE INDEX transaction_by_address_slot_index ON transaction_by_address(slot);
 CREATE INDEX transaction_by_address_signature_index ON transaction_by_address(signature);
-CREATE INDEX transaction_by_address_slot_index ON transaction_by_address (slot DESC);
+CREATE INDEX transaction_by_address_search_index ON transaction_by_address (address, slot DESC, index DESC);
 
 CREATE TABLE instruction
 (
@@ -63,76 +63,63 @@ CREATE INDEX instruction_slot_index ON instruction (slot DESC);
 CREATE INDEX instruction_program_index ON instruction (program);
 CREATE INDEX instruction_accounts_index ON instruction USING GIN(involved_accounts);
 
-/**
- * This function is used to find all the utils that involve any of the given addresses and have
- * type that is one of the specified types.
- */
-CREATE FUNCTION transactions_by_address(
-    addresses TEXT[],
-    "start_slot" BIGINT = 0,
-    "end_slot" BIGINT = 0
-    )
-    RETURNS SETOF transaction AS
-$$
-    SELECT * FROM transaction WHERE 
-    (slot <= "end_slot" AND slot >= "start_slot") AND
-    involved_accounts @> addresses ORDER BY slot+0 DESC;
-$$ LANGUAGE sql STABLE;
 
-CREATE OR REPLACE FUNCTION transactions_by_address_2(
+CREATE OR REPLACE FUNCTION transactions_by_address_internal(
     "target"    TEXT,
     "current"   TEXT = '',
     "limit"     INT = 10
     )
     RETURNS SETOF transaction AS
 $$
-    BEGIN
-        IF "current" = '' THEN
-            RETURN QUERY SELECT * FROM transaction WHERE
-            EXISTS (SELECT 1 FROM transaction_by_address WHERE address = "target") AND
-            signature IN ( 
-                SELECT signature FROM transaction_by_address WHERE address = "target" ORDER BY slot DESC, index DESC LIMIT "limit"
-            );
-        ELSE    
-            RETURN QUERY WITH slot_getter AS (
-                /* slot_filter returns the tx current slot */
-                SELECT DISTINCT(slot) FROM transaction_by_address 
-                    WHERE signature = "current"
-                ), 
-                /* index_getter returns the current tx index */
-                index_getter AS (
-                    SELECT DISTINCT(index) FROM transaction_by_address 
-                    WHERE signature = "current"
-                ),
-                /* account_checker returns if the signature exists behind the current tx slot and index */
-                account_checker AS (
-                    SELECT signature FROM transaction_by_address WHERE slot <= (
-                        SELECT slot FROM slot_getter
-                    ) AND 
-                    index < (
-                        SELECT index FROM index_getter
-                    ) AND address = "target"
-                )
-                ,
-                /* account_signatures_getter returns the signatures filtered by the account behind the current tx slot and index */
-                account_signatures_getter AS (
-                    SELECT signature FROM transaction_by_address WHERE slot <= (
-                        SELECT slot FROM slot_getter
-                    ) AND 
-                    index < (
-                        SELECT index FROM index_getter
-                    ) AND address = "target" ORDER BY slot DESC, index DESC LIMIT "limit"
-                )
-                /* main query */  
-                SELECT * FROM transaction WHERE EXISTS (
-                    SELECT 1 FROM account_checker
-                ) AND
-                signature IN ( 
-                    SELECT signature FROM account_signatures_getter
-                );
-        END IF;
-    END;
+BEGIN
+    IF "current" = '' THEN
+        RETURN QUERY SELECT 
+            t.*
+        FROM (
+            SELECT signature, partition_id FROM transaction_by_address WHERE address = "target" ORDER BY slot DESC, index DESC LIMIT "limit"
+            ) AS ta LEFT JOIN transaction AS t ON t.signature = ta.signature AND t.partition_id = ta.partition_id;
+    ELSE    
+        RETURN QUERY WITH slot_getter AS (
+            /* slot_filter returns the tx current slot */
+            SELECT slot FROM transaction 
+                WHERE signature = "current" LIMIT 1
+            ), 
+            /* index_getter returns the current tx index */
+            index_getter AS (
+                SELECT index FROM transaction 
+                WHERE signature = "current" LIMIT 1 
+            ),
+            /* slot_filter includes the signature behind the current tx slot */
+        slot_filter AS (
+            SELECT signature, slot, index, partition_id FROM transaction_by_address WHERE address = "target" AND 
+            slot <= ( SELECT slot FROM slot_getter )
+        ),
+        /* index_filter includes the signature behind the current tx index in the current tx block */
+        index_filter AS (
+            SELECT signature, partition_id FROM transaction_by_address WHERE address = "target" AND 
+            slot = ( SELECT slot FROM slot_getter ) AND index <= (SELECT index FROM index_getter)
+        ),
+        /* account_signatures_getter returns the signatures filtered by the account behind the current tx slot and index */
+        account_signatures_getter AS (
+            SELECT slot_filter.* FROM slot_filter LEFT JOIN index_filter 
+            ON slot_filter.signature = index_filter.signature AND slot_filter.partition_id = index_filter.partition_id
+            ORDER BY slot DESC, index DESC LIMIT "limit" OFFSET 1 
+        )   
+        /* main query */  
+        SELECT t.* FROM account_signatures_getter AS ta LEFT JOIN transaction AS t ON t.signature = ta.signature AND t.partition_id = ta.partition_id;
+    END IF;
+END;
 $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION transactions_by_address_2(
+    "target"    TEXT,
+    "current"   TEXT = '',
+    "limit"     INT = 10
+    )
+    RETURNS SETOF transaction AS
+$$
+    SELECT * FROM transactions_by_address_internal("target", "current", "limit")
+$$ LANGUAGE sql STABLE;
 
 /**
  * This function is used to find all the utils that involve any of the given addresses and have
