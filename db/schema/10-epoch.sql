@@ -5,4 +5,4 @@ CREATE TABLE supply_info (
     circulating     NUMERIC(20,0)   NOT NULL,
     non_circulating NUMERIC(20,0)   NOT NULL,
     CHECK (one_row_id)
-);
+);;

@@ -6,8 +6,8 @@ CREATE TABLE validator
     voter       TEXT    NOT NULL,
     withdrawer  TEXT    NOT NULL,
     commission  INT     NOT NULL
-);
-CREATE INDEX validator_node_index ON validator (node);
+);;
+CREATE INDEX validator_node_index ON validator (node);;
 
 CREATE TABLE validator_status
 (
@@ -17,7 +17,7 @@ CREATE TABLE validator_status
     last_vote       BIGINT  NOT NULL,
     root_slot       BIGINT  NOT NULL,
     active          BOOLEAN NOT NULL
-);
+);;
 
 CREATE TABLE validator_skip_rate
 (
@@ -26,7 +26,7 @@ CREATE TABLE validator_skip_rate
     skip_rate    FLOAT    NOT NULL,
     total        INT      NOT NULL,
     skip         INT      NOT NULL
-);
+);;
 
 CREATE TABLE validator_skip_rate_history
 (
@@ -35,7 +35,7 @@ CREATE TABLE validator_skip_rate_history
     skip_rate    FLOAT    NOT NULL,
     total        INT      NOT NULL,
     skip         INT      NOT NULL
-);
-ALTER TABLE validator_skip_rate_history ADD UNIQUE (address, epoch);
-CREATE INDEX validator_skip_rate_history_address ON validator_skip_rate_history(address);
-CREATE INDEX validator_skip_rate_history_epoch ON validator_skip_rate_history(epoch);
+);;
+ALTER TABLE validator_skip_rate_history ADD UNIQUE (address, epoch);;
+CREATE INDEX validator_skip_rate_history_address ON validator_skip_rate_history(address);;
+CREATE INDEX validator_skip_rate_history_epoch ON validator_skip_rate_history(epoch);;

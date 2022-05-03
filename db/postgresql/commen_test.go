@@ -59,7 +59,7 @@ func (suite *DbTestSuite) SetupTest() {
 		suite.Require().NoError(err)
 
 		commentsRegExp := regexp.MustCompile(`/\*.*\*/`)
-		requests := strings.Split(string(file), ";")
+		requests := strings.Split(string(file), ";;")
 		for _, request := range requests {
 			_, err := db.Exec(commentsRegExp.ReplaceAllString(request, ""))
 			suite.Require().NoError(err)

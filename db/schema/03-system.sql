@@ -5,5 +5,5 @@ CREATE TABLE nonce_account
     authority               TEXT    NOT NULL,
     blockhash               TEXT    NOT NULL,
     lamports_per_signature  INT     NOT NULL
-);
-CREATE INDEX nonce_authority_index ON nonce_account (authority);
+);;
+CREATE INDEX nonce_authority_index ON nonce_account (authority);;

@@ -6,8 +6,8 @@ CREATE TABLE token_unit
     logo_uri    TEXT    NOT NULL DEFAULT '',
     description TEXT    NOT NULL DEFAULT '',
     website     TEXT    NOT NULL DEFAULT ''
-);
-CREATE INDEX token_unit_price_id_index ON token_unit (price_id);
+);;
+CREATE INDEX token_unit_price_id_index ON token_unit (price_id);;
 
 CREATE TABLE token_price
 (
@@ -17,7 +17,7 @@ CREATE TABLE token_price
     symbol      TEXT                        NOT NULL,
     volume      FLOAT                       NOT NULL DEFAULT 0,
     timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
-);
+);;
 
 CREATE TABLE token_price_history
 (
@@ -27,7 +27,7 @@ CREATE TABLE token_price_history
     symbol      TEXT                        NOT NULL,
     volume      BIGINT                      NOT NULL DEFAULT 0,
     timestamp   TIMESTAMP WITHOUT TIME ZONE NOT NULL
-);
-CREATE INDEX token_price_history_id_index ON token_price_history (id);
-CREATE INDEX token_price_history_timestamp_index ON token_price_history (timestamp DESC);
+);;
+CREATE INDEX token_price_history_id_index ON token_price_history (id);;
+CREATE INDEX token_price_history_timestamp_index ON token_price_history (timestamp DESC);;
 
