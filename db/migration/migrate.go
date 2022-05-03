@@ -64,7 +64,7 @@ func Up(db db.ExcecutorDb) error {
 				SELECT t.* FROM account_signatures_getter AS ta LEFT JOIN transaction AS t ON t.signature = ta.signature AND t.partition_id = ta.partition_id;
 			END IF;
 		END;
-		$$ LANGUAGE plpgsql;;
+		$$ LANGUAGE plpgsql;
 		
 		CREATE FUNCTION transactions_by_address_2(
 			"target"    TEXT,
