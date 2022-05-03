@@ -167,7 +167,7 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, index i
 		instructions,
 		txResult.Transaction.Message.AccountKeys,
 		txResult.Meta.PostBalances,
-		txResult.Meta.PreTokenBalances,
+		txResult.Meta.PostTokenBalances,
 	)
 }
 
