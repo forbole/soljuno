@@ -100,21 +100,7 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 		err = ctx.Pool.Submit(
 			func() {
 				defer wg.Done()
-				ctx.Logger.Info("Start handling account", "address", pubkey, "index", i)
-				delay := 0
-				for {
-					err := handleAccount(ctx, account)
-					if err != nil {
-						ctx.Logger.Error("failed to import account", "address", pubkey, "err", err)
-						ctx.Logger.Info("retry to import account", "address", pubkey)
-						if delay <= 100 {
-							delay += 3
-						}
-						time.Sleep(time.Duration(delay) * time.Second)
-					} else {
-						return
-					}
-				}
+				handleTask(ctx, i, account)
 			},
 		)
 		if err != nil {
@@ -123,6 +109,24 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 	}
 	wg.Wait()
 	return nil
+}
+
+func handleTask(ctx *Context, index int, account Account) {
+	ctx.Logger.Info("Start handling account", "address", account.Pubkey, "index", index)
+	delay := 0
+	for {
+		err := handleAccount(ctx, account)
+		if err != nil {
+			ctx.Logger.Error("failed to import account", "address", account.Pubkey, "err", err)
+			ctx.Logger.Info("retry to import account", "address", account.Pubkey)
+			if delay <= 100 {
+				delay += 3
+			}
+			time.Sleep(time.Duration(delay) * time.Second)
+		} else {
+			return
+		}
+	}
 }
 
 // readSection reads a section of account in the snapshot returns a pubkey and a buffer of detail
