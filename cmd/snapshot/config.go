@@ -16,11 +16,10 @@ type Config interface {
 
 // Context contains the snapshot context
 type Context struct {
-	Proxy          client.ClientProxy
-	Database       db.Database
-	Logger         logging.Logger
-	Pool           *ants.Pool
-	BalancesBuffer chan Account
+	Proxy    client.ClientProxy
+	Database db.Database
+	Logger   logging.Logger
+	Pool     *ants.Pool
 }
 
 // NewContext builds a new Context instance
@@ -28,10 +27,9 @@ func NewContext(
 	proxy client.ClientProxy, db db.Database, logger logging.Logger, pool *ants.Pool,
 ) *Context {
 	return &Context{
-		Proxy:          proxy,
-		Database:       db,
-		Logger:         logger,
-		Pool:           pool,
-		BalancesBuffer: make(chan Account),
+		Proxy:    proxy,
+		Database: db,
+		Logger:   logger,
+		Pool:     pool,
 	}
 }

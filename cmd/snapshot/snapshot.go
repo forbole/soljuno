@@ -44,8 +44,6 @@ func ImportSnapshotCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
 }
 
 func StartImportSnapshot(ctx *Context, snapshotFile string, parallelize int) error {
-	go consumeBuffer(ctx, parallelize)
-
 	path, err := filepath.Abs(snapshotFile)
 	if err != nil {
 		return err
@@ -151,11 +149,17 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 }
 
 func handleAccount(ctx *Context, account Account) error {
-	// Add to balances buffer for consumer to update balances
-	ctx.BalancesBuffer <- account
 
 	// Update account data from node
-	address := account.Pubkey
+	address, balance, err := account.ToBalance()
+	if err != nil {
+		return err
+	}
+	err = ctx.Database.SaveAccountBalances(account.Detail.Slot, []string{address}, []uint64{balance})
+	if err != nil {
+		return err
+	}
+
 	info, err := ctx.Proxy.GetAccountInfo(address)
 	if err != nil {
 		return err
