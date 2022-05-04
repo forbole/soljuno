@@ -33,7 +33,7 @@ func ImportSnapshotCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			parallelize, err := cmd.Flags().GetInt(FlagSkip)
+			parallelize, err := cmd.Flags().GetInt(FlagParallelize)
 			if err != nil {
 				return err
 			}
