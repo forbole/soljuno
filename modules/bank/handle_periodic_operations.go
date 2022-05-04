@@ -3,6 +3,7 @@ package bank
 import (
 	"fmt"
 
+	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/modules/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -13,32 +14,42 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", m.Name()).Msg("setting up periodic tasks")
 	if _, err := scheduler.Every(10).Second().Do(func() {
-		utils.WatchMethod(m, m.HandlePeriodicOperations)
+		utils.WatchMethod(m, m.handlePeriodicOperations)
 	}); err != nil {
 		return fmt.Errorf("error while setting up bank periodic operation: %s", err)
 	}
 	return nil
 }
 
-func (m *Module) HandlePeriodicOperations() error {
+func (m *Module) handlePeriodicOperations() error {
+	return HandlePeriodicOperations(m, m.db)
+}
+
+func HandlePeriodicOperations(m *Module, db db.BankDb) error {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
 	balances := m.BalanceEntries
 	tokenBalances := m.TokenBalanceEntries
+	err := updateBalances(db, balances, tokenBalances)
+	if err != nil {
+		return err
+	}
+
+	// if success, clear the stored entries
 	m.BalanceEntries = nil
 	m.TokenBalanceEntries = nil
-	return m.updateBalances(balances, tokenBalances)
+	return nil
 }
 
-func (m *Module) updateBalances(balances []AccountBalanceEntry, tokenBalances []TokenAccountBalanceEntry) error {
+func updateBalances(db db.BankDb, balances []AccountBalanceEntry, tokenBalances []TokenAccountBalanceEntry) error {
 	errChan := make(chan error, 2)
 	go func() {
-		errChan <- m.db.SaveAccountBalances(EntriesToBalances(balances))
+		errChan <- db.SaveAccountBalances(EntriesToBalances(balances))
 	}()
 	go func() {
-		errChan <- m.db.SaveAccountTokenBalances(EntriesToTokenBalances(tokenBalances))
+		errChan <- db.SaveAccountTokenBalances(EntriesToTokenBalances(tokenBalances))
 	}()
-	for i := 0; i < len(errChan); i++ {
+	for i := 0; i < 2; i++ {
 		err := <-errChan
 		if err != nil {
 			return err
