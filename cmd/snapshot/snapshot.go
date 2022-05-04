@@ -100,6 +100,8 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 		err = ctx.Pool.Submit(
 			func() {
 				defer wg.Done()
+				i := i
+				account := account
 				handleTask(ctx, i, account)
 			},
 		)
