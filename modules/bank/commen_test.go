@@ -13,23 +13,34 @@ import (
 type ModuleTestSuite struct {
 	suite.Suite
 	module *bank.Module
+	db     *MockDb
 }
 
-type MockDb struct{}
+type MockDb struct {
+	err error
+}
 
 var _ db.BankDb = &MockDb{}
 
 func (db MockDb) SaveAccountBalances(slot uint64, accounts []string, balances []uint64) error {
-	return nil
+	return db.err
 }
 func (db MockDb) SaveAccountTokenBalances(slot uint64, accounts []string, balances []uint64) error {
-	return nil
+	return db.err
 }
 func (db MockDb) SaveAccountHistoryBalances(time time.Time, accounts []string, balances []uint64) error {
-	return nil
+	return db.err
 }
 func (db MockDb) SaveAccountHistoryTokenBalances(time time.Time, accounts []string, balances []uint64) error {
-	return nil
+	return db.err
+}
+
+func (m MockDb) GetCached() MockDb {
+	return m
+}
+
+func (m *MockDb) WithError(err error) {
+	m.err = err
 }
 
 func TestModuleTestSuitee(t *testing.T) {
@@ -37,5 +48,6 @@ func TestModuleTestSuitee(t *testing.T) {
 }
 
 func (suite *ModuleTestSuite) SetupTest() {
-	suite.module = bank.NewModule(MockDb{})
+	suite.module = bank.NewModule(&MockDb{})
+	suite.db = &MockDb{}
 }
