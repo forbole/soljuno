@@ -101,7 +101,7 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 			func() {
 				defer wg.Done()
 				account := account
-				handleTask(ctx, i, account)
+				handleTask(ctx, account, i)
 			},
 		)
 		if err != nil {
@@ -112,11 +112,20 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 	return nil
 }
 
-func handleTask(ctx *Context, index int, account Account) {
+func handleTask(ctx *Context, account Account, index int) {
+
+	defer func() {
+		r := recover()
+		if r != nil {
+			ctx.Logger.Error("failed to handle account", "address", account.Pubkey, "index", index, "err", r)
+		}
+	}()
+
 	ctx.Logger.Debug("Start handling account", "address", account.Pubkey, "index", index)
 	if index%100000 == 0 {
 		ctx.Logger.Info("Current statement", "address", account.Pubkey, "index", index)
 	}
+
 	delay := 0
 	for {
 		err := handleAccount(ctx, account)
@@ -169,13 +178,6 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 }
 
 func handleAccount(ctx *Context, account Account) (err error) {
-	defer func() {
-		r := recover()
-		if r != nil {
-			ctx.Logger.Error("failed to handle account", "address", account.Pubkey, "err", r)
-		}
-	}()
-
 	// Update account data from node
 	address, balance, err := account.ToBalance()
 	if err != nil {
