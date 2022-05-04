@@ -5,8 +5,10 @@ import (
 	"github.com/forbole/soljuno/solana/types"
 )
 
+const NONCE_ACCOUNT_LEN = 80
+
 func systemParse(decoder bincode.Decoder, bz []byte) interface{} {
-	if len(bz) != 0 {
+	if len(bz) == NONCE_ACCOUNT_LEN {
 		var nonce NonceAccount
 		decoder.Decode(bz, &nonce)
 		return nonce
