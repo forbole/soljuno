@@ -153,7 +153,7 @@ func handleAccount(ctx *Context, account Account) (err error) {
 	defer func() {
 		r := recover()
 		if r != nil {
-			err = fmt.Errorf("failed to handle account: %s, recover %s", account.Pubkey, err)
+			err = fmt.Errorf("failed to handle account: %s, recover %s", account.Pubkey, r)
 		}
 	}()
 
