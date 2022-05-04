@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/base64"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -148,7 +149,13 @@ func readSection(reader *bufio.Reader) (string, bytes.Buffer, error) {
 	return pubkey, buf, nil
 }
 
-func handleAccount(ctx *Context, account Account) error {
+func handleAccount(ctx *Context, account Account) (err error) {
+	defer func() {
+		r := recover()
+		if r != nil {
+			err = fmt.Errorf("failed to handle account: %s, recover %s", account.Pubkey, err)
+		}
+	}()
 
 	// Update account data from node
 	address, balance, err := account.ToBalance()
