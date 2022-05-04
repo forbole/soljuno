@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/base64"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -153,7 +152,7 @@ func handleAccount(ctx *Context, account Account) (err error) {
 	defer func() {
 		r := recover()
 		if r != nil {
-			err = fmt.Errorf("failed to handle account: %s, recover %s", account.Pubkey, r)
+			ctx.Logger.Error("failed to handle account", "address", account.Pubkey, "err", err)
 		}
 	}()
 
