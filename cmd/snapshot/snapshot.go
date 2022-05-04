@@ -19,6 +19,7 @@ import (
 
 const (
 	FlagParallelize = "parallelize"
+	FlagSkip        = "skip"
 )
 
 func ImportSnapshotCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
@@ -32,18 +33,25 @@ func ImportSnapshotCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			parallelize, err := cmd.Flags().GetInt("parallelize")
+			parallelize, err := cmd.Flags().GetInt(FlagSkip)
 			if err != nil {
 				return err
 			}
-			return StartImportSnapshot(context, args[0], parallelize)
+
+			skip, err := cmd.Flags().GetInt(FlagSkip)
+			if err != nil {
+				return err
+			}
+
+			return StartImportSnapshot(context, args[0], skip, parallelize)
 		},
 	}
 	cmd.Flags().Int(FlagParallelize, 100, "the amount of accounts to process at a time")
+	cmd.Flags().Int(FlagSkip, 0, "the amount of accounts to skip")
 	return cmd
 }
 
-func StartImportSnapshot(ctx *Context, snapshotFile string, parallelize int) error {
+func StartImportSnapshot(ctx *Context, snapshotFile string, skip int, parallelize int) error {
 	path, err := filepath.Abs(snapshotFile)
 	if err != nil {
 		return err
@@ -55,13 +63,17 @@ func StartImportSnapshot(ctx *Context, snapshotFile string, parallelize int) err
 	defer func() { _ = file.Close() }()
 	reader := bufio.NewReader(file)
 
-	return handleSnapshot(ctx, reader, parallelize)
+	return handleSnapshot(ctx, reader, skip, parallelize)
 }
 
 // handleSnapshot handles all accounts inside the snapshot file
-func handleSnapshot(ctx *Context, reader *bufio.Reader, parallelize int) error {
+func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize int) error {
 	wg := new(sync.WaitGroup)
 	for i := 0; ; i++ {
+		if skip > i {
+			continue
+		}
+
 		// Sleep when pool is full or reach the parallelize limit
 		if ctx.Pool.Free() == 0 || (i+1)%parallelize == 0 {
 			time.Sleep(time.Second)
@@ -88,7 +100,7 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, parallelize int) error {
 		err = ctx.Pool.Submit(
 			func() {
 				defer wg.Done()
-				ctx.Logger.Info("Start handling account", "address", pubkey)
+				ctx.Logger.Info("Start handling account", "address", pubkey, "index", i)
 				delay := 0
 				for {
 					err := handleAccount(ctx, account)
