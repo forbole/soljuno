@@ -95,16 +95,13 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 			return err
 		}
 		account.Pubkey = pubkey
-
 		wg.Add(1)
-		err = ctx.Pool.Submit(
-			func() {
-				defer wg.Done()
-				i := i
-				account := account
-				handleTask(ctx, i, account)
-			},
-		)
+
+		task := func() {
+			defer wg.Done()
+			handleTask(ctx, i, account)
+		}
+		err = ctx.Pool.Submit(task)
 		if err != nil {
 			return err
 		}
