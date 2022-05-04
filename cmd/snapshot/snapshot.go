@@ -113,7 +113,10 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 }
 
 func handleTask(ctx *Context, index int, account Account) {
-	ctx.Logger.Info("Start handling account", "address", account.Pubkey, "index", index)
+	ctx.Logger.Debug("Start handling account", "address", account.Pubkey, "index", index)
+	if index%100000 == 0 {
+		ctx.Logger.Info("Current statement", "address", account.Pubkey, "index", index)
+	}
 	delay := 0
 	for {
 		err := handleAccount(ctx, account)
