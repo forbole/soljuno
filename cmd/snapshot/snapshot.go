@@ -70,6 +70,7 @@ func StartImportSnapshot(ctx *Context, snapshotFile string, skip int, paralleliz
 func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize int) error {
 	wg := new(sync.WaitGroup)
 	for i := 0; ; i++ {
+		i := i
 		if skip > i {
 			continue
 		}
@@ -96,12 +97,13 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 		}
 		account.Pubkey = pubkey
 		wg.Add(1)
-
-		task := func() {
-			defer wg.Done()
-			handleTask(ctx, i, account)
-		}
-		err = ctx.Pool.Submit(task)
+		err = ctx.Pool.Submit(
+			func() {
+				defer wg.Done()
+				account := account
+				handleTask(ctx, i, account)
+			},
+		)
 		if err != nil {
 			return err
 		}
