@@ -70,11 +70,6 @@ func StartImportSnapshot(ctx *Context, snapshotFile string, skip int, paralleliz
 func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize int) error {
 	wg := new(sync.WaitGroup)
 	for i := 0; ; i++ {
-		// Sleep when pool is full or reach the parallelize limit
-		if ctx.Pool.Free() == 0 || (i+1)%parallelize == 0 {
-			time.Sleep(time.Second)
-		}
-
 		// Read account section from yaml
 		pubkey, bz, err := readSection(reader)
 		// Break the loop when there is no new account
@@ -91,9 +86,14 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 			return err
 		}
 		account.Pubkey = pubkey
+
 		i := i
 		if skip > i {
 			continue
+		}
+		// Sleep when pool is full or reach the parallelize limit
+		if ctx.Pool.Free() == 0 || (i+1)%parallelize == 0 {
+			time.Sleep(time.Second)
 		}
 
 		wg.Add(1)
