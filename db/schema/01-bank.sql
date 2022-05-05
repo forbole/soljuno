@@ -11,7 +11,7 @@ CREATE TABLE token_account_balance
     slot    BIGINT          NOT NULL,
     balance NUMERIC(20,0)   NOT NULL
 );;
-CREATE INDEX token_account_balance_indx ON token_account_balance(balance);;
+CREATE INDEX token_account_balance_index ON token_account_balance(balance DESC);;
 
 CREATE TABLE account_balance_history
 (
