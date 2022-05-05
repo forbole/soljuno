@@ -23,6 +23,7 @@ CREATE TABLE token_account
     owner   TEXT    NOT NULL
 );;
 CREATE INDEX token_account_owner_index ON token_account (owner);;
+CREATE INDEX token_account_mint_index ON token_account (mint);;
 
 CREATE TABLE multisig
 (
