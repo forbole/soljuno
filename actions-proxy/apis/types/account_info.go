@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/base64"
+	"fmt"
 
 	"github.com/forbole/soljuno/solana/account/parser"
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
@@ -26,9 +27,12 @@ type AccountInfoResponse struct {
 }
 
 func NewAccountInfoResponse(info clienttypes.AccountInfo) (AccountInfoResponse, error) {
+	if info.Value == nil {
+		return AccountInfoResponse{}, nil
+	}
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
 	if err != nil {
-		return AccountInfoResponse{}, err
+		return AccountInfoResponse{}, fmt.Errorf("error decoding")
 	}
 	parsed := parser.Parse(info.Value.Owner, bz)
 	return AccountInfoResponse{
