@@ -80,13 +80,6 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 			return err
 		}
 
-		var account Account
-		err = yaml.Unmarshal(bz.Bytes(), &account)
-		if err != nil {
-			return err
-		}
-		account.Pubkey = pubkey
-
 		i := i
 		if skip > i {
 			continue
@@ -95,6 +88,13 @@ func handleSnapshot(ctx *Context, reader *bufio.Reader, skip int, parallelize in
 		if ctx.Pool.Free() == 0 || (i+1)%parallelize == 0 {
 			time.Sleep(time.Second)
 		}
+
+		var account Account
+		err = yaml.Unmarshal(bz.Bytes(), &account)
+		if err != nil {
+			return err
+		}
+		account.Pubkey = pubkey
 
 		wg.Add(1)
 		err = ctx.Pool.Submit(
