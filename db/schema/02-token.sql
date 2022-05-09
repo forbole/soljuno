@@ -42,3 +42,10 @@ CREATE TABLE token_delegation
     CONSTRAINT token_delegation_source_address_fk 
         FOREIGN KEY (source_address) REFERENCES token_account(address) ON DELETE CASCADE
 );;
+
+
+CREATE MATERIALIZED VIEW token_account_balance_ordering AS 
+    SELECT tab.address, tab.balance, ta.mint FROM token_account_balance AS tab 
+    INNER JOIN token_account AS ta ON ta.address = tab.address;
+
+CREATE INDEX CONCURRENTLY token_account_balance_ordering_index ON token_account_balance_ordering(mint, balance DESC);

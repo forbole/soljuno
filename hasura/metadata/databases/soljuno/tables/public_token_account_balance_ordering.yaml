@@ -1,0 +1,12 @@
+table:
+  name: token_account_balance_ordering
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - balance
+    - mint
+    filter: {}
+  role: anonymous
