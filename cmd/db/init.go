@@ -23,7 +23,7 @@ func InitCmd(cmdCfg *cmdtypes.Config) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			confirm, _ := cmd.Flags().GetBool(FlagInitConfirmation)
 			if !confirm {
-				return fmt.Errorf("If you want to initialize database, use the --%s flag", FlagInitConfirmation)
+				return fmt.Errorf("if you want to initialize database, use the --%s flag", FlagInitConfirmation)
 			}
 
 			ctx, err := GetDatabaseContext(cmdCfg)
@@ -68,7 +68,7 @@ func InitDatabase(db db.ExcecutorDb, schemaDir string) error {
 		}
 
 		commentsRegExp := regexp.MustCompile(`/\*.*\*/`)
-		requests := strings.Split(string(file), ";")
+		requests := strings.Split(string(file), ";;")
 		for _, request := range requests {
 			_, err := db.Exec(commentsRegExp.ReplaceAllString(request, ""))
 			if err != nil {
