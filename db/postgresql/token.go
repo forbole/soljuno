@@ -59,8 +59,11 @@ WHERE token_account.slot <= excluded.slot`
 
 // DeleteTokenAccount implements the db.TokenDb
 func (db *Database) DeleteTokenAccount(address string) error {
-	stmt := `DELETE FROM token_account WHERE address = $1`
-	_, err := db.Sqlx.Exec(stmt, address)
+	_, err := db.Sqlx.Exec(`DELETE FROM token_account WHERE address = $1`, address)
+	if err != nil {
+		return err
+	}
+	_, err = db.Sqlx.Exec(`DELETE FROM token_account_balance WHERE address =$1`, address)
 	return err
 }
 

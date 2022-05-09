@@ -2,28 +2,25 @@ package postgresql_test
 
 import (
 	"time"
+
+	dbtypes "github.com/forbole/soljuno/db/types"
 )
 
 func (suite *DbTestSuite) TestSaveAccountBalances() {
-	type BalanceRow struct {
-		Address string `db:"address"`
-		Slot    uint64 `db:"slot"`
-		Balance uint64 `db:"balance"`
-	}
 
 	testCases := []struct {
 		name     string
 		slot     uint64
 		accounts []string
 		balances []uint64
-		expected BalanceRow
+		expected dbtypes.BalanceRow
 	}{
 		{
 			name:     "initialize the data",
 			slot:     1,
 			accounts: []string{"address"},
 			balances: []uint64{1},
-			expected: BalanceRow{
+			expected: dbtypes.BalanceRow{
 				"address", 1, 1,
 			},
 		},
@@ -32,7 +29,7 @@ func (suite *DbTestSuite) TestSaveAccountBalances() {
 			slot:     0,
 			accounts: []string{"address"},
 			balances: []uint64{100},
-			expected: BalanceRow{
+			expected: dbtypes.BalanceRow{
 				"address", 1, 1,
 			},
 		},
@@ -41,7 +38,7 @@ func (suite *DbTestSuite) TestSaveAccountBalances() {
 			slot:     1,
 			accounts: []string{"address"},
 			balances: []uint64{100},
-			expected: BalanceRow{
+			expected: dbtypes.BalanceRow{
 				"address", 1, 100,
 			},
 		},
@@ -50,7 +47,7 @@ func (suite *DbTestSuite) TestSaveAccountBalances() {
 			slot:     2,
 			accounts: []string{"address"},
 			balances: []uint64{1000},
-			expected: BalanceRow{
+			expected: dbtypes.BalanceRow{
 				"address", 2, 1000,
 			},
 		},
@@ -67,7 +64,7 @@ func (suite *DbTestSuite) TestSaveAccountBalances() {
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []BalanceRow{}
+			rows := []dbtypes.BalanceRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM account_balance")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
@@ -77,25 +74,20 @@ func (suite *DbTestSuite) TestSaveAccountBalances() {
 }
 
 func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
-	type BalanceRow struct {
-		Address string `db:"address"`
-		Slot    uint64 `db:"slot"`
-		Balance uint64 `db:"balance"`
-	}
 
 	testCases := []struct {
 		name     string
 		slot     uint64
 		accounts []string
 		balances []uint64
-		expected BalanceRow
+		expected dbtypes.BalanceRow
 	}{
 		{
 			name:     "initialize the data",
 			slot:     1,
 			accounts: []string{"address"},
 			balances: []uint64{1},
-			expected: BalanceRow{
+			expected: dbtypes.BalanceRow{
 				"address", 1, 1,
 			},
 		},
@@ -104,7 +96,7 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 			slot:     0,
 			accounts: []string{"address"},
 			balances: []uint64{10},
-			expected: BalanceRow{
+			expected: dbtypes.BalanceRow{
 				"address", 1, 1,
 			},
 		},
@@ -113,7 +105,7 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 			slot:     1,
 			accounts: []string{"address"},
 			balances: []uint64{100},
-			expected: BalanceRow{
+			expected: dbtypes.BalanceRow{
 				"address", 1, 100,
 			},
 		},
@@ -122,7 +114,7 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 			slot:     2,
 			accounts: []string{"address"},
 			balances: []uint64{1000},
-			expected: BalanceRow{
+			expected: dbtypes.BalanceRow{
 				"address", 2, 1000,
 			},
 		},
@@ -139,7 +131,7 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []BalanceRow{}
+			rows := []dbtypes.BalanceRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_account_balance")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, 1)
@@ -149,25 +141,20 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 }
 
 func (suite *DbTestSuite) TestSaveAccountHistoryBalances() {
-	type BalanceRow struct {
-		Address   string    `db:"address"`
-		Timestamp time.Time `db:"timestamp"`
-		Balance   uint64    `db:"balance"`
-	}
 
 	testCases := []struct {
 		name      string
 		timestamp time.Time
 		accounts  []string
 		balances  []uint64
-		expected  []BalanceRow
+		expected  []dbtypes.BalanceHistoryRow
 	}{
 		{
 			name:      "initialize the data",
 			timestamp: time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC),
 			accounts:  []string{"address"},
 			balances:  []uint64{1},
-			expected: []BalanceRow{
+			expected: []dbtypes.BalanceHistoryRow{
 				{
 					"address", time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC), 1,
 				},
@@ -178,7 +165,7 @@ func (suite *DbTestSuite) TestSaveAccountHistoryBalances() {
 			timestamp: time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC),
 			accounts:  []string{"address"},
 			balances:  []uint64{100},
-			expected: []BalanceRow{
+			expected: []dbtypes.BalanceHistoryRow{
 				{
 					"address", time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC), 1,
 				},
@@ -200,14 +187,12 @@ func (suite *DbTestSuite) TestSaveAccountHistoryBalances() {
 			suite.Require().NoError(err)
 
 			// Verify the data
-			rows := []BalanceRow{}
+			rows := []dbtypes.BalanceHistoryRow{}
 			err = suite.database.Sqlx.Select(&rows, "SELECT * FROM account_balance_history ORDER BY timestamp")
 			suite.Require().NoError(err)
 			suite.Require().Len(rows, len(tc.expected))
 			for i, row := range rows {
-				suite.Require().True(tc.expected[i].Address == row.Address)
-				suite.Require().True(tc.expected[i].Timestamp.Equal(row.Timestamp))
-				suite.Require().True(tc.expected[i].Balance == row.Balance)
+				suite.Require().True(tc.expected[i].Equal(row))
 			}
 		})
 	}
