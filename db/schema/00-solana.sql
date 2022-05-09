@@ -6,10 +6,10 @@ CREATE TABLE block
     leader    TEXT        NOT NULL DEFAULT '',
     timestamp   TIMESTAMP   WITHOUT TIME ZONE NOT NULL,
     num_txs     INT         NOT NULL DEFAULT 0
-);
-CREATE INDEX block_hash_index ON block (hash);
-CREATE INDEX block_leader_index ON block (leader);
-CREATE INDEX block_timestamp_index ON block (timestamp DESC);
+);;
+CREATE INDEX block_hash_index ON block (hash);;
+CREATE INDEX block_leader_index ON block (leader);;
+CREATE INDEX block_timestamp_index ON block (timestamp DESC);;
 
 CREATE TABLE transaction
 (
@@ -23,10 +23,10 @@ CREATE TABLE transaction
     num_instructions    INT     NOT NULL DEFAULT 0,
     partition_id        INT     NOT NULL,
     CHECK (slot / 1000 = partition_id)
-) PARTITION BY LIST(partition_id);
-ALTER TABLE transaction ADD UNIQUE (signature, partition_id);
-CREATE INDEX transaction_signature_index ON transaction (signature);
-CREATE INDEX transaction_slot_index ON transaction (slot DESC);
+) PARTITION BY LIST(partition_id);;
+ALTER TABLE transaction ADD UNIQUE (signature, partition_id);;
+CREATE INDEX transaction_signature_index ON transaction (signature);;
+CREATE INDEX transaction_slot_index ON transaction (slot DESC);;
 
 CREATE TABLE transaction_by_address
 (
@@ -35,11 +35,11 @@ CREATE TABLE transaction_by_address
     signature       TEXT    NOT NULL,
     index           INT     NOT NULL DEFAULT 0,
     partition_id    INT     NOT NULL
-) PARTITION BY LIST(partition_id);
-ALTER TABLE transaction_by_address ADD UNIQUE (address, signature, partition_id);
-CREATE INDEX transaction_by_address_slot_index ON transaction_by_address(slot);
-CREATE INDEX transaction_by_address_signature_index ON transaction_by_address(signature);
-CREATE INDEX transaction_by_address_search_index ON transaction_by_address (address, slot DESC, index DESC);
+) PARTITION BY LIST(partition_id);;
+ALTER TABLE transaction_by_address ADD UNIQUE (address, signature, partition_id);;
+CREATE INDEX transaction_by_address_slot_index ON transaction_by_address(slot);;
+CREATE INDEX transaction_by_address_signature_index ON transaction_by_address(signature);;
+CREATE INDEX transaction_by_address_search_index ON transaction_by_address (address, slot DESC, index DESC);;
 
 CREATE TABLE instruction
 (
@@ -54,12 +54,12 @@ CREATE TABLE instruction
     value               JSON    NOT NULL DEFAULT '{}',
     partition_id        INT     NOT NULL,
     CHECK (slot / 1000 = partition_id)
-) PARTITION BY LIST(partition_id);
-ALTER TABLE instruction ADD UNIQUE (tx_signature, index, inner_index, partition_id);
-CREATE INDEX instruction_tx_signature_index ON instruction (tx_signature);
-CREATE INDEX instruction_slot_index ON instruction (slot DESC);
-CREATE INDEX instruction_program_index ON instruction (program);
-CREATE INDEX instruction_accounts_index ON instruction USING GIN(involved_accounts);
+) PARTITION BY LIST(partition_id);;
+ALTER TABLE instruction ADD UNIQUE (tx_signature, index, inner_index, partition_id);;
+CREATE INDEX instruction_tx_signature_index ON instruction (tx_signature);;
+CREATE INDEX instruction_slot_index ON instruction (slot DESC);;
+CREATE INDEX instruction_program_index ON instruction (program);;
+CREATE INDEX instruction_accounts_index ON instruction USING GIN(involved_accounts);;
 
 CREATE OR REPLACE FUNCTION transactions_by_address_internal(
     "target"    TEXT,
@@ -116,7 +116,7 @@ CREATE FUNCTION transactions_by_address_2(
     RETURNS SETOF transaction AS
 $$
     SELECT * FROM transactions_by_address_internal("target", "current", "limit")
-$$ LANGUAGE sql STABLE;
+$$ LANGUAGE sql STABLE;;
 
 /**
  * This function is used to find all the utils that involve any of the given addresses and have
@@ -138,4 +138,4 @@ FROM (
     (cardinality(programs) = 0 OR program = ANY (programs)) AND 
     involved_accounts @> addresses
     ) as instruction 
-$$ LANGUAGE sql STABLE;
+$$ LANGUAGE sql STABLE;;
