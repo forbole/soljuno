@@ -71,38 +71,38 @@ type ClientProxy interface {
 
 type Client struct {
 	endpoint  string
-	rpcClient jsonrpc.RPCClient
+	RpcClient jsonrpc.RPCClient
 }
 
 func NewClientProxy(endpoint string) ClientProxy {
 	rpcClient := jsonrpc.NewClient(endpoint)
 	return &Client{
 		endpoint:  endpoint,
-		rpcClient: rpcClient,
+		RpcClient: rpcClient,
 	}
 }
 
 func (c *Client) GetBlock(slot uint64) (clienttypes.BlockResult, error) {
 	var block clienttypes.BlockResult
-	err := c.rpcClient.CallFor(&block, "getBlock", slot)
+	err := c.RpcClient.CallFor(&block, "getBlock", slot)
 	return block, err
 }
 
 func (c *Client) GetLatestSlot() (uint64, error) {
 	var slot uint64
-	err := c.rpcClient.CallFor(&slot, "getSlot")
+	err := c.RpcClient.CallFor(&slot, "getSlot")
 	return slot, err
 }
 
 func (c *Client) GetBlocks(start uint64, end uint64) ([]uint64, error) {
 	var slots []uint64
-	err := c.rpcClient.CallFor(&slots, "getBlocks", start, end)
+	err := c.RpcClient.CallFor(&slots, "getBlocks", start, end)
 	return slots, err
 }
 
 func (c *Client) GetVoteAccounts() (clienttypes.VoteAccounts, error) {
 	var voteAccounts clienttypes.VoteAccounts
-	err := c.rpcClient.CallFor(&voteAccounts, "getVoteAccounts")
+	err := c.RpcClient.CallFor(&voteAccounts, "getVoteAccounts")
 	return voteAccounts, err
 }
 
@@ -112,7 +112,7 @@ func (c *Client) GetVoteAccountsWithSlot() (uint64, clienttypes.VoteAccounts, er
 
 	slotReq := jsonrpc.NewRequest("getSlot")
 	voteAccountsReq := jsonrpc.NewRequest("getVoteAccounts")
-	res, err := c.rpcClient.CallBatch(
+	res, err := c.RpcClient.CallBatch(
 		[]*jsonrpc.RPCRequest{
 			slotReq,
 			voteAccountsReq,
@@ -135,25 +135,25 @@ func (c *Client) GetVoteAccountsWithSlot() (uint64, clienttypes.VoteAccounts, er
 
 func (c *Client) GetAccountInfo(address string) (clienttypes.AccountInfo, error) {
 	var accountInfo clienttypes.AccountInfo
-	err := c.rpcClient.CallFor(&accountInfo, "getAccountInfo", address, clienttypes.NewAccountInfoOption("base64"))
+	err := c.RpcClient.CallFor(&accountInfo, "getAccountInfo", address, clienttypes.NewAccountInfoOption("base64"))
 	return accountInfo, err
 }
 
 func (c *Client) GetLeaderSchedule(slot uint64) (clienttypes.LeaderSchedule, error) {
 	var schedule clienttypes.LeaderSchedule
-	err := c.rpcClient.CallFor(&schedule, "getLeaderSchedule", slot)
+	err := c.RpcClient.CallFor(&schedule, "getLeaderSchedule", slot)
 	return schedule, err
 }
 
 func (c *Client) GetSupplyInfo() (clienttypes.SupplyWithContext, error) {
 	var supply clienttypes.SupplyWithContext
-	err := c.rpcClient.CallFor(&supply, "getSupply", []interface{}{clienttypes.NewSupplyConfig(true)})
+	err := c.RpcClient.CallFor(&supply, "getSupply", []interface{}{clienttypes.NewSupplyConfig(true)})
 	return supply, err
 }
 
 func (c *Client) GetInflationRate() (clienttypes.InflationRate, error) {
 	var rate clienttypes.InflationRate
-	err := c.rpcClient.CallFor(&rate, "getInflationRate")
+	err := c.RpcClient.CallFor(&rate, "getInflationRate")
 	if err != nil {
 		return rate, err
 	}
@@ -162,19 +162,19 @@ func (c *Client) GetInflationRate() (clienttypes.InflationRate, error) {
 
 func (c *Client) GetEpochInfo() (clienttypes.EpochInfo, error) {
 	var epochInfo clienttypes.EpochInfo
-	err := c.rpcClient.CallFor(&epochInfo, "getEpochInfo")
+	err := c.RpcClient.CallFor(&epochInfo, "getEpochInfo")
 	return epochInfo, err
 }
 
 func (c *Client) GetEpochSchedule() (clienttypes.EpochSchedule, error) {
 	var epochSchedule clienttypes.EpochSchedule
-	err := c.rpcClient.CallFor(&epochSchedule, "getEpochSchedule")
+	err := c.RpcClient.CallFor(&epochSchedule, "getEpochSchedule")
 	return epochSchedule, err
 }
 
 func (c *Client) GetInflationGovernor() (clienttypes.InflationGovernor, error) {
 	var governor clienttypes.InflationGovernor
-	err := c.rpcClient.CallFor(&governor, "getInflationGovernor")
+	err := c.RpcClient.CallFor(&governor, "getInflationGovernor")
 	return governor, err
 }
 
@@ -183,13 +183,13 @@ func (c *Client) GetSignaturesForAddress(
 	config clienttypes.GetSignaturesForAddressConfig,
 ) ([]clienttypes.ConfirmedTransactionStatusWithSignature, error) {
 	var sig []clienttypes.ConfirmedTransactionStatusWithSignature
-	err := c.rpcClient.CallFor(&sig, "getSignaturesForAddress", address, config)
+	err := c.RpcClient.CallFor(&sig, "getSignaturesForAddress", address, config)
 	return sig, err
 }
 
 func (c *Client) GetTransaction(signature string) (clienttypes.EncodedConfirmedTransactionWithStatusMeta, error) {
 	var tx clienttypes.EncodedConfirmedTransactionWithStatusMeta
-	err := c.rpcClient.CallFor(&tx, "getTransaction", signature, "json")
+	err := c.RpcClient.CallFor(&tx, "getTransaction", signature, "json")
 	if isEmpty(tx) {
 		return tx, fmt.Errorf("target doesn't exist on the chain")
 	}
@@ -198,6 +198,6 @@ func (c *Client) GetTransaction(signature string) (clienttypes.EncodedConfirmedT
 
 func (c *Client) GetSlotLeaders(slot uint64, limit uint64) ([]string, error) {
 	var leaders []string
-	err := c.rpcClient.CallFor(&leaders, "getSlotLeaders", slot, limit)
+	err := c.RpcClient.CallFor(&leaders, "getSlotLeaders", slot, limit)
 	return leaders, err
 }
