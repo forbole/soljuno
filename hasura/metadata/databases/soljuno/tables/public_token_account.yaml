@@ -16,6 +16,8 @@ object_relationships:
       remote_table:
         schema: public
         name: token_account_balance
+      column_mapping:
+        address: address
 - name: token_info
   using:
     manual_configuration:
