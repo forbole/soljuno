@@ -129,12 +129,20 @@ func (suite *DbTestSuite) TestSaveTokenAccount() {
 func (suite *DbTestSuite) TestDeleteTokenAccount() {
 	err := suite.database.SaveTokenAccount(dbtypes.NewTokenAccountRow("address", 0, "mint", "owner"))
 	suite.Require().NoError(err)
+	err = suite.database.SaveAccountTokenBalances(0, []string{"address"}, []uint64{10})
+	suite.Require().NoError(err)
+
+	balanceRows := []dbtypes.BalanceRow{}
 	rows := []dbtypes.TokenAccountRow{}
 
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_account")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
+	err = suite.database.Sqlx.Select(&balanceRows, "SELECT * FROM token_account_balance")
+	suite.Require().NoError(err)
+	suite.Require().Len(balanceRows, 1)
 	rows = nil
+	balanceRows = nil
 
 	err = suite.database.DeleteTokenAccount("address")
 	suite.Require().NoError(err)
@@ -142,6 +150,9 @@ func (suite *DbTestSuite) TestDeleteTokenAccount() {
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM token_account")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 0)
+	err = suite.database.Sqlx.Select(&balanceRows, "SELECT * FROM token_account_balance")
+	suite.Require().NoError(err)
+	suite.Require().Len(balanceRows, 0)
 }
 
 func (suite *DbTestSuite) TestSaveMultisig() {
