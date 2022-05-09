@@ -10,7 +10,7 @@ object_relationships:
         name: token_unit
       column_mapping:
         mint: mint
-- name: token_balance:
+- name: token_balance
   using:
     manual_configuration:
       remote_table:
