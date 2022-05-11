@@ -29,6 +29,8 @@ type Database interface {
 
 	VoteDb
 
+	VoteStatusDb
+
 	BpfLoaderDb
 
 	ConfigDb
@@ -203,7 +205,7 @@ type VoteCheckerDb interface {
 	CheckValidatorLatest(address string, currentSlot uint64) bool
 }
 
-// VoteDb represents a database taht supports vote status properly
+// VoteDb represents a database that supports vote status properly
 type VoteStatusDb interface {
 	// SaveValidatorStatuses allows to store the given current validator statuses inside the database
 	SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow) error
