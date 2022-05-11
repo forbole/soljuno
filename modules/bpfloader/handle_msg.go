@@ -87,5 +87,8 @@ func handleClose(instruction types.Instruction, tx types.Tx, db db.BpfLoaderDb, 
 		return fmt.Errorf("instruction does not match %s type: %s", "close", instruction.Parsed.Type)
 
 	}
+	if err := updateBufferAccount(parsed.Account, tx.Slot, db, client); err != nil {
+		return err
+	}
 	return updateProgramDataAccount(parsed.Account, tx.Slot, db, client)
 }

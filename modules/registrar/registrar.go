@@ -23,6 +23,7 @@ import (
 	"github.com/forbole/soljuno/modules/token"
 	"github.com/forbole/soljuno/modules/txs"
 	"github.com/forbole/soljuno/modules/vote"
+	"github.com/forbole/soljuno/modules/votestatus"
 
 	"github.com/forbole/soljuno/modules"
 
@@ -96,8 +97,8 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 	pruningModule.RegisterService(txsModule, instructionsModule)
 
 	epochModule := epoch.NewModule(ctx.Database, ctx.Proxy)
-	voteModule := vote.NewModule(ctx.Database, ctx.Proxy)
-	epochModule.RegisterService(voteModule)
+	voteStatusModule := votestatus.NewModule(ctx.Database, ctx.Proxy)
+	epochModule.RegisterService(voteStatusModule)
 
 	historyModule := history.NewModule()
 	pricefeedModule := pricefeed.NewModule(ctx.Database)
@@ -118,7 +119,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		txsModule,
 		instructionsModule,
 		epochModule,
-		voteModule,
+		vote.NewModule(ctx.Database, ctx.Proxy),
 		historyModule,
 		blocks.NewModule(ctx.Database),
 	}

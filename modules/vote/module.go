@@ -16,9 +16,8 @@ type ClientProxy interface {
 }
 
 var (
-	_ modules.Module                   = &Module{}
-	_ modules.InstructionModule        = &Module{}
-	_ modules.PeriodicOperationsModule = &Module{}
+	_ modules.Module            = &Module{}
+	_ modules.InstructionModule = &Module{}
 )
 
 type Module struct {

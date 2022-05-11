@@ -1,8 +1,6 @@
 package vote_test
 
 import (
-	"fmt"
-
 	"github.com/forbole/soljuno/modules/vote"
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	voteProgram "github.com/forbole/soljuno/solana/program/vote"
@@ -72,46 +70,4 @@ func (suite *ModuleTestSuite) TestModule_UpdateVoteAccount() {
 			}
 		})
 	}
-}
-
-func (suite *ModuleTestSuite) TestModule_UpdateValidatorsStatus() {
-	err := vote.UpdateValidatorsStatus(suite.db, suite.client)
-	suite.Require().NoError(err)
-
-	// with error client returns error
-	errClient := suite.client.GetCached()
-	errClient.WithError(fmt.Errorf("error"))
-	err = vote.UpdateValidatorsStatus(suite.db, &errClient)
-	suite.Require().Error(err)
-
-	// with error db returns error
-	errDb := suite.db.GetCached()
-	errDb.WithError(fmt.Errorf("error"))
-	err = vote.UpdateValidatorsStatus(&errDb, suite.client)
-	suite.Require().Error(err)
-}
-
-func (suite *ModuleTestSuite) TestModule_UpdateValidatorSkipRates() {
-	err := vote.UpdateValidatorSkipRates(1, suite.db, suite.client)
-	suite.Require().NoError(err)
-
-	// with error client returns error
-	errClient := suite.client.GetCached()
-	errClient.WithError(fmt.Errorf("error"))
-	err = vote.UpdateValidatorSkipRates(1, suite.db, &errClient)
-	suite.Require().Error(err)
-
-	// with error db returns error
-	errDb := suite.db.GetCached()
-	errDb.WithError(fmt.Errorf("error"))
-	err = vote.UpdateValidatorSkipRates(1, &errDb, suite.client)
-	suite.Require().Error(err)
-}
-
-func (suite *ModuleTestSuite) TestModule_GetSkipRateReference() {
-	m := make(map[int]bool)
-	m[0] = true
-	total, skip := vote.GetSkipRateReference(1, m, []int{0, 1})
-	suite.Require().Equal(2, total)
-	suite.Require().Equal(1, skip)
 }
