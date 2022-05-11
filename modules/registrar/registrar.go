@@ -122,6 +122,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		vote.NewModule(ctx.Database, ctx.Proxy),
 		historyModule,
 		blocks.NewModule(ctx.Database),
+		voteStatusModule,
 	}
 }
 
