@@ -2,6 +2,7 @@ package worker
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -124,10 +125,12 @@ func (w Worker) process(slot uint64) error {
 
 	// set block leader
 	leaders, err := w.cp.GetSlotLeaders(slot, 1)
-	if err != nil {
+	if err == nil {
+		block.Leader = leaders[0]
+	}
+	if err != nil && !strings.Contains(err.Error(), "-32602:Invalid slot range: leader schedule for epoch") {
 		return err
 	}
-	block.Leader = leaders[0]
 
 	err = w.ExportBlock(block)
 	return err
