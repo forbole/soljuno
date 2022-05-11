@@ -1,4 +1,4 @@
-package vote
+package votestatus
 
 import (
 	"fmt"

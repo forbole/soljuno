@@ -1,4 +1,4 @@
-package vote_test
+package votestatus_test
 
 import (
 	"testing"
@@ -7,24 +7,27 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	dbtypes "github.com/forbole/soljuno/db/types"
-	"github.com/forbole/soljuno/modules/vote"
+	"github.com/forbole/soljuno/modules/votestatus"
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 )
 
-var _ db.VoteDb = &MockDb{}
+var _ db.VoteStatusDb = &MockDb{}
 
 type MockDb struct {
-	isLatest bool
-	err      error
+	err error
 }
 
 func NewDefaultMockDb() *MockDb {
-	return &MockDb{isLatest: true}
+	return &MockDb{}
 }
 
-func (db *MockDb) SaveValidator(account dbtypes.VoteAccountRow) error { return db.err }
-func (db *MockDb) CheckValidatorLatest(address string, currentSlot uint64) bool {
-	return db.isLatest
+func (db *MockDb) SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow) error { return db.err }
+func (db *MockDb) GetEpochProducedBlocks(epoch uint64) ([]uint64, error)             { return []uint64{0}, db.err }
+func (db *MockDb) SaveValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error {
+	return db.err
+}
+func (db *MockDb) SaveHistoryValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error {
+	return db.err
 }
 
 func (m MockDb) GetCached() MockDb {
@@ -35,13 +38,9 @@ func (m *MockDb) WithError(err error) {
 	m.err = err
 }
 
-func (m *MockDb) WithLatest(isLatest bool) {
-	m.isLatest = isLatest
-}
-
 // ----------------------------------------------------------------
 
-var _ vote.ClientProxy = &MockClient{}
+var _ votestatus.ClientProxy = &MockClient{}
 
 type MockClient struct {
 	account clienttypes.AccountInfo
@@ -64,10 +63,6 @@ func (m *MockClient) WithAccount(account clienttypes.AccountInfo) {
 	m.account = account
 }
 
-func (m *MockClient) GetAccountInfo(address string) (clienttypes.AccountInfo, error) {
-	return m.account, m.err
-}
-
 func (m *MockClient) GetVoteAccountsWithSlot() (uint64, clienttypes.VoteAccounts, error) {
 	return 0, clienttypes.VoteAccounts{
 		Current:    []clienttypes.VoteAccount{{VotePubkey: "current"}},
@@ -83,7 +78,7 @@ func (m *MockClient) GetLeaderSchedule(uint64) (clienttypes.LeaderSchedule, erro
 
 type ModuleTestSuite struct {
 	suite.Suite
-	module *vote.Module
+	module *votestatus.Module
 	db     *MockDb
 	client *MockClient
 }
@@ -93,7 +88,7 @@ func TestModuleTestSuite(t *testing.T) {
 }
 
 func (suite *ModuleTestSuite) SetupTest() {
-	suite.module = vote.NewModule(NewDefaultMockDb(), NewDefaultMockClient())
+	suite.module = votestatus.NewModule(NewDefaultMockDb(), NewDefaultMockClient())
 	suite.db = NewDefaultMockDb()
 	suite.client = NewDefaultMockClient()
 }

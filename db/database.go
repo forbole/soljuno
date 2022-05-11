@@ -29,6 +29,8 @@ type Database interface {
 
 	VoteDb
 
+	VoteStatusDb
+
 	BpfLoaderDb
 
 	ConfigDb
@@ -194,6 +196,17 @@ type VoteDb interface {
 	// SaveValidator allows to store the given vote account data inside the database
 	SaveValidator(account dbtypes.VoteAccountRow) error
 
+	VoteCheckerDb
+}
+
+// VoteCheckerDb represents a database that checks account statement of vote properly
+type VoteCheckerDb interface {
+	// CheckValidatorLatest checks if the vote account statement is latest
+	CheckValidatorLatest(address string, currentSlot uint64) bool
+}
+
+// VoteDb represents a database that supports vote status properly
+type VoteStatusDb interface {
 	// SaveValidatorStatuses allows to store the given current validator statuses inside the database
 	SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow) error
 
@@ -206,14 +219,6 @@ type VoteDb interface {
 
 	// SaveValidatorSkipRates allows to store the historical validator skip rates of the given epoch inside the database
 	SaveHistoryValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error
-
-	VoteCheckerDb
-}
-
-// VoteCheckerDb represents a database that checks account statement of vote properly
-type VoteCheckerDb interface {
-	// CheckValidatorLatest checks if the vote account statement is latest
-	CheckValidatorLatest(address string, currentSlot uint64) bool
 }
 
 // ConfigDb represents a database that supports config properly
