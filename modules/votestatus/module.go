@@ -17,11 +17,11 @@ var (
 )
 
 type Module struct {
-	db     db.VoteDb
+	db     db.VoteStatusDb
 	client ClientProxy
 }
 
-func NewModule(db db.VoteDb, client ClientProxy) *Module {
+func NewModule(db db.VoteStatusDb, client ClientProxy) *Module {
 	return &Module{
 		db:     db,
 		client: client,

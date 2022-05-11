@@ -22,16 +22,7 @@ func NewDefaultMockDb() *MockDb {
 	return &MockDb{isLatest: true}
 }
 
-func (db *MockDb) SaveValidator(account dbtypes.VoteAccountRow) error                { return db.err }
-func (db *MockDb) SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow) error { return db.err }
-func (db *MockDb) GetEpochProducedBlocks(epoch uint64) ([]uint64, error)             { return []uint64{0}, db.err }
-func (db *MockDb) SaveValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error {
-	return db.err
-}
-func (db *MockDb) SaveHistoryValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error {
-	return db.err
-}
-
+func (db *MockDb) SaveValidator(account dbtypes.VoteAccountRow) error { return db.err }
 func (db *MockDb) CheckValidatorLatest(address string, currentSlot uint64) bool {
 	return db.isLatest
 }

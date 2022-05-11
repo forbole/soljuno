@@ -11,18 +11,16 @@ import (
 	clienttypes "github.com/forbole/soljuno/solana/client/types"
 )
 
-var _ db.VoteDb = &MockDb{}
+var _ db.VoteStatusDb = &MockDb{}
 
 type MockDb struct {
-	isLatest bool
-	err      error
+	err error
 }
 
 func NewDefaultMockDb() *MockDb {
-	return &MockDb{isLatest: true}
+	return &MockDb{}
 }
 
-func (db *MockDb) SaveValidator(account dbtypes.VoteAccountRow) error                { return db.err }
 func (db *MockDb) SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow) error { return db.err }
 func (db *MockDb) GetEpochProducedBlocks(epoch uint64) ([]uint64, error)             { return []uint64{0}, db.err }
 func (db *MockDb) SaveValidatorSkipRates(skipRates []dbtypes.ValidatorSkipRateRow) error {
@@ -32,20 +30,12 @@ func (db *MockDb) SaveHistoryValidatorSkipRates(skipRates []dbtypes.ValidatorSki
 	return db.err
 }
 
-func (db *MockDb) CheckValidatorLatest(address string, currentSlot uint64) bool {
-	return db.isLatest
-}
-
 func (m MockDb) GetCached() MockDb {
 	return m
 }
 
 func (m *MockDb) WithError(err error) {
 	m.err = err
-}
-
-func (m *MockDb) WithLatest(isLatest bool) {
-	m.isLatest = isLatest
 }
 
 // ----------------------------------------------------------------

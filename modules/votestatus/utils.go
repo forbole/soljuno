@@ -9,7 +9,7 @@ import (
 )
 
 // UpdateValidatorsStatus insert current validators status
-func UpdateValidatorsStatus(db db.VoteDb, client ClientProxy) error {
+func UpdateValidatorsStatus(db db.VoteStatusDb, client ClientProxy) error {
 	slot, voteAccounts, err := client.GetVoteAccountsWithSlot()
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func UpdateValidatorsStatus(db db.VoteDb, client ClientProxy) error {
 }
 
 // UpdateValidatorSkipRates properly stores the skip rates of all validators inside the database
-func UpdateValidatorSkipRates(lastEpoch uint64, db db.VoteDb, client ClientProxy) error {
+func UpdateValidatorSkipRates(lastEpoch uint64, db db.VoteStatusDb, client ClientProxy) error {
 	slots, err := db.GetEpochProducedBlocks(lastEpoch)
 	if err != nil {
 		return err
