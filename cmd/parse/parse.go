@@ -98,6 +98,8 @@ func StartParsing(ctx *Context) error {
 	if err != nil {
 		panic(fmt.Errorf("failed to get last block from RPC client: %s", err))
 	}
+	// Delay slots to prevent missing blocks caused by rpc
+	latestSlot = withDelaySlot(latestSlot, 50)
 
 	var oldBlockListenerWg sync.WaitGroup
 	if cfg.ShouldParseOldBlocks() {
@@ -152,8 +154,8 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 		if err != nil {
 			continue
 		}
-		// Delay 25 slot to prevent missing blocks
-		end -= 25
+		// Delay slots to prevent missing blocks caused by rpc
+		end = withDelaySlot(end, 50)
 		if end > start {
 			enqueueMissingSlots(ctx, exportQueue, start, end)
 			start = end + 1
@@ -214,4 +216,12 @@ func updateStartSlot(cfg types.Config, slot uint64) error {
 	parsingCfg.SetStartSlot(slot)
 	cfg.SetParsingConfig(parsingCfg)
 	return types.Write(cfg, types.GetConfigFilePath())
+}
+
+func withDelaySlot(slot uint64, delay uint64) uint64 {
+	result := slot - delay
+	if result > slot {
+		return 0
+	}
+	return result
 }
