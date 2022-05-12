@@ -158,7 +158,7 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 		end = withDelaySlot(end, 50)
 		if end > start {
 			enqueueMissingSlots(ctx, exportQueue, start, end)
-			start = end + 1
+			start = end
 		}
 		time.Sleep(time.Second)
 	}
