@@ -152,6 +152,8 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 		if err != nil {
 			continue
 		}
+		// Delay 5 slot to prevent missing blocks
+		end -= 5
 		if end > start {
 			enqueueMissingSlots(ctx, exportQueue, start, end)
 			start = end + 1
@@ -199,7 +201,7 @@ func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) 
 		wg.Wait()
 
 		next := <-queue
-		err := updateStartSlot(ctx.GlobalCfg, next)
+		err := updateStartSlot(ctx.GlobalCfg, next-uint64(len(workerStopChs)))
 		if err != nil {
 			ctx.Logger.Info("failed to update start slot")
 		}
