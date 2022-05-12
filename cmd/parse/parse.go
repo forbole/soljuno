@@ -130,8 +130,8 @@ func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64
 	ctx.Logger.Info("syncing missing blocks...", "latest_block_slot", end)
 	for i := start; i < end; {
 		next := i + 25
-		if next > end {
-			next = end
+		if next >= end {
+			next = end - 1
 		}
 		slots, err := ctx.Proxy.GetBlocks(i, next)
 		if err != nil {
