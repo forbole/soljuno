@@ -152,8 +152,8 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 		if err != nil {
 			continue
 		}
-		// Delay 5 slot to prevent missing blocks
-		end -= 5
+		// Delay 25 slot to prevent missing blocks
+		end -= 25
 		if end > start {
 			enqueueMissingSlots(ctx, exportQueue, start, end)
 			start = end + 1
