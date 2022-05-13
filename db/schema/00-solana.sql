@@ -3,7 +3,7 @@ CREATE TABLE block
     slot        BIGINT      PRIMARY KEY,
     height      BIGINT      NOT NULL,
     hash        TEXT        NOT NULL UNIQUE,
-    leader    TEXT        NOT NULL DEFAULT '',
+    leader      TEXT        NOT NULL DEFAULT '',
     timestamp   TIMESTAMP   WITHOUT TIME ZONE NOT NULL,
     num_txs     INT         NOT NULL DEFAULT 0
 );;

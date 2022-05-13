@@ -41,6 +41,8 @@ type Database interface {
 
 	EpochDb
 
+	FixMissingBlockDb
+
 	// Close closes the connection to the database
 	Close()
 }
@@ -292,6 +294,12 @@ type ConsensusDb interface {
 type EpochDb interface {
 	// SaveSupplyInfo allows to store the current supply info inside the database
 	SaveSupplyInfo(dbtypes.SupplyInfoRow) error
+}
+
+type FixMissingBlockDb interface {
+	GetMissingHeight(start uint64, end uint64) (height uint64, err error)
+
+	GetMissingSlotRange(height uint64) (start uint64, end uint64, err error)
 }
 
 // Context contains the data that might be used to build a Database instance

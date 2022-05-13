@@ -133,7 +133,6 @@ func (w Worker) process(slot uint64) error {
 	} else {
 		block.Leader = ""
 	}
-	fmt.Println(block)
 
 	err = w.ExportBlock(block)
 	return err
