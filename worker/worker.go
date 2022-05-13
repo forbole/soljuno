@@ -128,11 +128,12 @@ func (w Worker) process(slot uint64) error {
 	if err != nil && !strings.Contains(err.Error(), "-32602:Invalid slot range: leader schedule for epoch") {
 		return err
 	}
-	if err == nil {
+	if len(leaders) == 1 {
 		block.Leader = leaders[0]
 	} else {
 		block.Leader = ""
 	}
+	fmt.Println(block)
 
 	err = w.ExportBlock(block)
 	return err
