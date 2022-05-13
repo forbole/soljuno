@@ -98,7 +98,9 @@ func (w Worker) work(slot uint64) {
 		// re-enqueue any failed job
 		// TODO: Implement exponential backoff or max retries for a block slot.
 		w.logger.Error("re-enqueueing failed block", "slot", slot, "err", err)
-		w.queue <- slot
+		go func() {
+			w.queue <- slot
+		}()
 	}
 	logging.WorkerSlot.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(slot))
 	w.logger.Debug("processed block time", "slot", slot, "seconds", time.Since(start).Seconds())
