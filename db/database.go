@@ -296,9 +296,13 @@ type EpochDb interface {
 	SaveSupplyInfo(dbtypes.SupplyInfoRow) error
 }
 
+// FixMissingBlockDb represents a database that supports to get missing blocks info properly
 type FixMissingBlockDb interface {
+
+	// GetMissingHeight returns the height of the earliest missing block in the given range
 	GetMissingHeight(start uint64, end uint64) (height uint64, err error)
 
+	// GetMissingSlotRange returns the smallest slot range containing the given height
 	GetMissingSlotRange(height uint64) (start uint64, end uint64, err error)
 }
 
