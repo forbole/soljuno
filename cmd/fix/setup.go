@@ -6,7 +6,6 @@ import (
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types/pool"
 
-	"github.com/forbole/soljuno/client"
 	"github.com/forbole/soljuno/modules"
 	modsregistrar "github.com/forbole/soljuno/modules/registrar"
 	"github.com/forbole/soljuno/types"
@@ -26,7 +25,7 @@ func GetFixContext(config Config) (*Context, error) {
 	}
 
 	// Init the client
-	cp, err := client.NewClientProxy(cfg)
+	cp, err := NewClientProxy(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start client: %s", err)
 	}
