@@ -10,7 +10,7 @@ import (
 )
 
 type proxy struct {
-	mtx       sync.RWMutex
+	mtx       sync.Mutex
 	rpcClient client.ClientProxy
 }
 
