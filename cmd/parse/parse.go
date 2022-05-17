@@ -128,18 +128,15 @@ func StartParsing(ctx *Context) error {
 // at the startSlot up until the latest known slot.
 func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64, end uint64) {
 	ctx.Logger.Info("syncing missing blocks...", "latest_block_slot", end)
-	fmt.Println(end)
 	for i := start; i < end; {
 		next := i + 25
 		if next >= end {
 			next = end - 1
 		}
-		fmt.Println(i, next)
 		slots, err := ctx.Proxy.GetBlocks(i, next)
 		if err != nil {
 			continue
 		}
-		fmt.Println(slots)
 		for _, slot := range slots {
 			ctx.Logger.Debug("enqueueing missing block", "slot", slot)
 			exportQueue <- slot

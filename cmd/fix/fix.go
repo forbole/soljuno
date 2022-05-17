@@ -124,6 +124,8 @@ func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64
 		}
 		i = end + 1
 	}
+	ctx.Logger.Debug("enqueueing missing block finished")
+
 }
 
 // trapSignal will listen for any OS signal and invoke Done on the main
