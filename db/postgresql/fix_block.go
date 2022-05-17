@@ -45,5 +45,5 @@ func (db *Database) GetMissingSlotRange(height uint64) (start uint64, end uint64
 	if len(slots) != 2 {
 		return 0, 0, err
 	}
-	return slots[0].Slot, slots[1].Slot, err
+	return slots[0].Slot + 1, slots[1].Slot - 1, err
 }

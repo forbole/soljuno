@@ -92,8 +92,8 @@ func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64
 	ctx.Logger.Info("fixing missing blocks...", "latest_block_slot", end)
 	for i := start; i < end; {
 		next := i + 1000
-		if next > end {
-			next = end
+		if next >= end {
+			next = end - 1
 		}
 		height, err := ctx.Database.GetMissingHeight(i, next)
 		if err != nil {
