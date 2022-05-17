@@ -63,6 +63,13 @@ func (w Worker) Start() {
 	}()
 
 	for {
+		// check the stop signal
+		if stopSignal {
+			w.logger.Debug("closed worker", "number", w.index)
+			w.stopChannel <- true
+			return
+		}
+
 		// wait if the pool is full
 		wg := sync.WaitGroup{}
 		wg.Add(1)
@@ -82,14 +89,6 @@ func (w Worker) Start() {
 		case <-timeout:
 			continue
 		}
-
-		// check the stop signal
-		if stopSignal {
-			w.logger.Debug("closed worker", "number", w.index)
-			w.stopChannel <- true
-			return
-		}
-
 	}
 }
 
