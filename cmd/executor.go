@@ -7,6 +7,7 @@ import (
 
 	proxycmd "github.com/forbole/soljuno/cmd/actions/proxy"
 	dbcmd "github.com/forbole/soljuno/cmd/db"
+	fixcmd "github.com/forbole/soljuno/cmd/fix"
 	initcmd "github.com/forbole/soljuno/cmd/init"
 	parsecmd "github.com/forbole/soljuno/cmd/parse"
 	snapshotcmd "github.com/forbole/soljuno/cmd/snapshot"
@@ -48,6 +49,7 @@ func BuildDefaultExecutor(config *cmdtypes.Config) cli.Executor {
 		dbcmd.DbCmd(config),
 		tokenlistcmd.ImportTokenListCmd(config),
 		proxycmd.StartProxyCmd(config),
+		fixcmd.FixCmd(config),
 	)
 
 	return PrepareRootCmd(config.GetName(), rootCmd)

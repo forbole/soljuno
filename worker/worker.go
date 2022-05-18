@@ -98,7 +98,9 @@ func (w Worker) work(slot uint64) {
 		// re-enqueue any failed job
 		// TODO: Implement exponential backoff or max retries for a block slot.
 		w.logger.Error("re-enqueueing failed block", "slot", slot, "err", err)
-		w.queue <- slot
+		go func() {
+			w.queue <- slot
+		}()
 	}
 	logging.WorkerSlot.WithLabelValues(fmt.Sprintf("%d", w.index)).Set(float64(slot))
 	w.logger.Debug("processed block time", "slot", slot, "seconds", time.Since(start).Seconds())
@@ -125,11 +127,13 @@ func (w Worker) process(slot uint64) error {
 
 	// set block leader
 	leaders, err := w.cp.GetSlotLeaders(slot, 1)
-	if err == nil {
-		block.Leader = leaders[0]
-	}
 	if err != nil && !strings.Contains(err.Error(), "-32602:Invalid slot range: leader schedule for epoch") {
 		return err
+	}
+	if len(leaders) == 1 {
+		block.Leader = leaders[0]
+	} else {
+		block.Leader = ""
 	}
 
 	err = w.ExportBlock(block)

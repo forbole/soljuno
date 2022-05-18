@@ -98,6 +98,8 @@ func StartParsing(ctx *Context) error {
 	if err != nil {
 		panic(fmt.Errorf("failed to get last block from RPC client: %s", err))
 	}
+	// Delay slots to prevent missing blocks caused by rpc
+	latestSlot = withDelaySlot(latestSlot, 50)
 
 	var oldBlockListenerWg sync.WaitGroup
 	if cfg.ShouldParseOldBlocks() {
@@ -128,8 +130,8 @@ func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64
 	ctx.Logger.Info("syncing missing blocks...", "latest_block_slot", end)
 	for i := start; i < end; {
 		next := i + 25
-		if next > end {
-			next = end
+		if next >= end {
+			next = end - 1
 		}
 		slots, err := ctx.Proxy.GetBlocks(i, next)
 		if err != nil {
@@ -152,9 +154,11 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 		if err != nil {
 			continue
 		}
+		// Delay slots to prevent missing blocks caused by rpc
+		end = withDelaySlot(end, 50)
 		if end > start {
 			enqueueMissingSlots(ctx, exportQueue, start, end)
-			start = end + 1
+			start = end
 		}
 		time.Sleep(time.Second)
 	}
@@ -199,7 +203,7 @@ func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) 
 		wg.Wait()
 
 		next := <-queue
-		err := updateStartSlot(ctx.GlobalCfg, next)
+		err := updateStartSlot(ctx.GlobalCfg, next-uint64(len(workerStopChs)))
 		if err != nil {
 			ctx.Logger.Info("failed to update start slot")
 		}
@@ -212,4 +216,12 @@ func updateStartSlot(cfg types.Config, slot uint64) error {
 	parsingCfg.SetStartSlot(slot)
 	cfg.SetParsingConfig(parsingCfg)
 	return types.Write(cfg, types.GetConfigFilePath())
+}
+
+func withDelaySlot(slot uint64, delay uint64) uint64 {
+	result := slot - delay
+	if result > slot {
+		return 0
+	}
+	return result
 }
