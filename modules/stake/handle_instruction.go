@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/db"
-	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/solana/program/stake"
 	"github.com/forbole/soljuno/types"
 )
@@ -13,7 +12,7 @@ import (
 func HandleInstruction(instruction types.Instruction, db db.StakeDb, client ClientProxy) error {
 	switch instruction.Parsed.Type {
 	case "initialize":
-		return handleInitialize(instruction, db)
+		return handleInitialize(instruction, db, client)
 	case "authorize":
 		return handleAuthorize(instruction, db, client)
 	case "delegate":
@@ -45,25 +44,13 @@ func HandleInstruction(instruction types.Instruction, db db.StakeDb, client Clie
 }
 
 // handleInitialize handles a instruction of Initialize
-func handleInitialize(instruction types.Instruction, db db.StakeDb) error {
+func handleInitialize(instruction types.Instruction, db db.StakeDb, client ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(stake.ParsedInitialize)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "initialize", instruction.Parsed.Type)
 
 	}
-	err := db.SaveStakeAccount(
-		dbtypes.NewStakeAccountRow(
-			parsed.StakeAccount, instruction.Slot, parsed.Authorized.Staker, parsed.Authorized.Withdrawer,
-		),
-	)
-	if err != nil {
-		return err
-	}
-	return db.SaveStakeLockup(
-		dbtypes.NewStakeLockupRow(
-			parsed.StakeAccount, instruction.Slot, parsed.Lockup.Custodian, parsed.Lockup.Epoch, parsed.Lockup.UnixTimestamp,
-		),
-	)
+	return UpdateStakeAccount(parsed.StakeAccount, instruction.Slot, db, client)
 }
 
 // handleAuthorize handles a instruction of Authorize
