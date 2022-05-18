@@ -19,11 +19,11 @@ func HandleInstruction(instruction types.Instruction, tx types.Tx, db db.TokenDb
 		return handleInitializeMint(instruction, tx, db)
 
 	case "initializeAccount":
-		return handleInitializeAccount(instruction, tx, db)
+		return handleInitializeAccount(instruction, tx, db, client)
 	case "initializeAccount2":
-		return handleInitializeAccount(instruction, tx, db)
+		return handleInitializeAccount(instruction, tx, db, client)
 	case "initializeAccount3":
-		return handleInitializeAccount(instruction, tx, db)
+		return handleInitializeAccount(instruction, tx, db, client)
 
 	case "initializeMultisig":
 		return handleInitializeMultisig(instruction, tx, db)
@@ -90,23 +90,12 @@ func handleInitializeMint(instruction types.Instruction, tx types.Tx, db db.Toke
 }
 
 // handleInitializeAccount handles a instruction of InitializeAccount and properly stores the new token account inside the database
-func handleInitializeAccount(instruction types.Instruction, tx types.Tx, db db.TokenDb) error {
+func handleInitializeAccount(instruction types.Instruction, tx types.Tx, db db.TokenDb, client client.ClientProxy) error {
 	parsed, ok := instruction.Parsed.Value.(token.ParsedInitializeAccount)
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeAccount", instruction.Parsed.Type)
 	}
-	err := db.SaveTokenAccount(
-		dbtypes.NewTokenAccountRow(
-			parsed.Account,
-			tx.Slot,
-			parsed.Mint,
-			parsed.Owner,
-		),
-	)
-	if err != nil {
-		return err
-	}
-	return nil
+	return updateTokenAccount(parsed.Account, instruction.Slot, db, client)
 }
 
 // handleInitializeMultisig handles a instruction of InitializeMultisig and properly stores the new multisig inside the database
@@ -115,7 +104,7 @@ func handleInitializeMultisig(instruction types.Instruction, tx types.Tx, db db.
 	if !ok {
 		return fmt.Errorf("instruction does not match %s type: %s", "initializeMultisig", instruction.Parsed.Type)
 	}
-	err := db.SaveMultisig(
+	return db.SaveMultisig(
 		dbtypes.NewMultisigRow(
 			parsed.MultiSig,
 			tx.Slot,
@@ -123,10 +112,6 @@ func handleInitializeMultisig(instruction types.Instruction, tx types.Tx, db db.
 			parsed.M,
 		),
 	)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // handleApproveChecked handles a instruction of Approve
