@@ -23,6 +23,7 @@ func NewClientProxy(cfg types.Config) (client.ClientProxy, error) {
 	}, nil
 }
 
+// Set delay in order to parse from rate limited node
 func delay() {
 	time.Sleep(100 * time.Millisecond)
 }

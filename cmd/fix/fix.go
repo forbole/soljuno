@@ -65,10 +65,16 @@ func StartFixing(ctx *Context, start uint64, end uint64) error {
 
 	// Create and register solana instruction parserManager
 	parserManager := manager.NewDefaultManager()
+
+	cfg := types.Cfg.GetParsingConfig()
 	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parserManager, ctx.Logger, ctx.Pool, exportQueue, ctx.Modules)
-	stopCh := make(chan bool, 1)
-	worker := worker.NewWorker(1, workerCtx).WithStopChannel(stopCh)
-	go worker.Start()
+	workers := make([]worker.Worker, cfg.GetWorkers())
+	workerStopChs := make([]chan bool, cfg.GetWorkers())
+	for i := range workers {
+		stopCh := make(chan bool, 1)
+		workers[i] = worker.NewWorker(i, workerCtx).WithStopChannel(stopCh)
+		workerStopChs[i] = stopCh
+	}
 	waitGroup.Add(1)
 
 	// Run all the async operations
@@ -79,7 +85,7 @@ func StartFixing(ctx *Context, start uint64, end uint64) error {
 	}
 
 	// Listen for and trap any OS signal to gracefully shutdown and exit
-	trapSignal(ctx, exportQueue, []chan bool{stopCh})
+	trapSignal(ctx, exportQueue, workerStopChs)
 
 	go enqueueMissingSlots(ctx, exportQueue, start, end)
 
