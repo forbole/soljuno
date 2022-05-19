@@ -199,12 +199,19 @@ func trapSignal(ctx *Context, workerStopChs []chan bool) {
 		}()
 		wg.Wait()
 
+		for _, module := range ctx.Modules {
+			if periodicModule, ok := module.(modules.PeriodicOperationsModule); ok {
+				for err := periodicModule.RunPeriodicOperations(); err != nil; {
+					ctx.Logger.Error("module", module.Name(), "err", err)
+				}
+			}
+		}
+
 		next := <-ctx.SlotQueue
 		err := updateStartSlot(ctx.GlobalCfg, next-uint64(len(workerStopChs)))
 		if err != nil {
 			ctx.Logger.Info("failed to update start slot")
 		}
-
 	}()
 }
 

@@ -48,6 +48,8 @@ type PeriodicOperationsModule interface {
 	// The given scheduler can be used to define the periodicity of each task.
 	// NOTE. This method will only be run ONCE during the module initialization.
 	RegisterPeriodicOperations(scheduler *gocron.Scheduler) error
+
+	RunPeriodicOperations() error
 }
 
 type BlockModule interface {

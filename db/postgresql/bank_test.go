@@ -20,36 +20,36 @@ func (suite *DbTestSuite) TestSaveAccountBalances() {
 			slot:     1,
 			accounts: []string{"address"},
 			balances: []uint64{1},
-			expected: dbtypes.BalanceRow{
+			expected: dbtypes.NewBalanceRow(
 				"address", 1, 1,
-			},
+			),
 		},
 		{
 			name:     "update with lower slot",
 			slot:     0,
 			accounts: []string{"address"},
 			balances: []uint64{100},
-			expected: dbtypes.BalanceRow{
+			expected: dbtypes.NewBalanceRow(
 				"address", 1, 1,
-			},
+			),
 		},
 		{
 			name:     "update with same slot",
 			slot:     1,
 			accounts: []string{"address"},
 			balances: []uint64{100},
-			expected: dbtypes.BalanceRow{
+			expected: dbtypes.NewBalanceRow(
 				"address", 1, 100,
-			},
+			),
 		},
 		{
 			name:     "update with higher slot",
 			slot:     2,
 			accounts: []string{"address"},
 			balances: []uint64{1000},
-			expected: dbtypes.BalanceRow{
+			expected: dbtypes.NewBalanceRow(
 				"address", 2, 1000,
-			},
+			),
 		},
 	}
 
@@ -87,36 +87,36 @@ func (suite *DbTestSuite) TestSaveAccountTokenBalances() {
 			slot:     1,
 			accounts: []string{"address"},
 			balances: []uint64{1},
-			expected: dbtypes.BalanceRow{
+			expected: dbtypes.NewBalanceRow(
 				"address", 1, 1,
-			},
+			),
 		},
 		{
 			name:     "update with lower slot",
 			slot:     0,
 			accounts: []string{"address"},
 			balances: []uint64{10},
-			expected: dbtypes.BalanceRow{
+			expected: dbtypes.NewBalanceRow(
 				"address", 1, 1,
-			},
+			),
 		},
 		{
 			name:     "update with same slot",
 			slot:     1,
 			accounts: []string{"address"},
 			balances: []uint64{100},
-			expected: dbtypes.BalanceRow{
+			expected: dbtypes.NewBalanceRow(
 				"address", 1, 100,
-			},
+			),
 		},
 		{
 			name:     "update with higher slot",
 			slot:     2,
 			accounts: []string{"address"},
 			balances: []uint64{1000},
-			expected: dbtypes.BalanceRow{
+			expected: dbtypes.NewBalanceRow(
 				"address", 2, 1000,
-			},
+			),
 		},
 	}
 
@@ -155,9 +155,9 @@ func (suite *DbTestSuite) TestSaveAccountHistoryBalances() {
 			accounts:  []string{"address"},
 			balances:  []uint64{1},
 			expected: []dbtypes.BalanceHistoryRow{
-				{
+				dbtypes.NewBalanceHistoryRow(
 					"address", time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC), 1,
-				},
+				),
 			},
 		},
 		{
@@ -166,12 +166,12 @@ func (suite *DbTestSuite) TestSaveAccountHistoryBalances() {
 			accounts:  []string{"address"},
 			balances:  []uint64{100},
 			expected: []dbtypes.BalanceHistoryRow{
-				{
+				dbtypes.NewBalanceHistoryRow(
 					"address", time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC), 1,
-				},
-				{
+				),
+				dbtypes.NewBalanceHistoryRow(
 					"address", time.Date(2020, 10, 10, 16, 05, 00, 000, time.UTC), 100,
-				},
+				),
 			},
 		},
 	}
