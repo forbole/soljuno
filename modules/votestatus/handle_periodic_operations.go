@@ -13,7 +13,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "vote").Msg("setting up periodic tasks")
 
 	if _, err := scheduler.Every(1).Minute().Do(func() {
-		utils.WatchMethod(m, m.handlePeriodicOperations)
+		utils.WatchMethod(m, m.RunPeriodicOperations)
 	}); err != nil {
 		return fmt.Errorf("error while setting up vote periodic operation: %s", err)
 	}
@@ -21,6 +21,6 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-func (m *Module) handlePeriodicOperations() error {
+func (m *Module) RunPeriodicOperations() error {
 	return UpdateValidatorsStatus(m.db, m.client)
 }

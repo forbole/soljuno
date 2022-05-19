@@ -10,11 +10,15 @@ import (
 
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(1).Hour().Do(func() {
-		utils.WatchMethod(m, m.updateSlotTimeInHour)
+		utils.WatchMethod(m, m.RunPeriodicOperations)
 	}); err != nil {
 		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
 	}
 	return nil
+}
+
+func (m *Module) RunPeriodicOperations() error {
+	return m.updateSlotTimeInHour()
 }
 
 // updateSlotTimeInHour insert average slot time in the latest hour

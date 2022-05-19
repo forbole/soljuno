@@ -18,12 +18,16 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 	// Fetch prices of tokens in 30 seconds each
 	if _, err := scheduler.Every(30).Second().Do(func() {
-		utils.WatchMethod(m, m.updatePrice)
+		utils.WatchMethod(m, m.RunPeriodicOperations)
 	}); err != nil {
 		return fmt.Errorf("error while setting up pricefeed period operations: %s", err)
 	}
 
 	return nil
+}
+
+func (m *Module) RunPeriodicOperations() error {
+	return m.updatePrice()
 }
 
 // getTokenPrices gets the token prices in the database from coingecko
