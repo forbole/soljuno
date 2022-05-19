@@ -29,13 +29,14 @@ type Context struct {
 	Logger    logging.Logger
 	Modules   []modules.Module
 	Pool      pool.Pool
+	SlotQueue types.SlotQueue
 }
 
 // NewContext builds a new Context instance
 func NewContext(
 	globalCfg types.Config, proxy client.ClientProxy, db db.Database,
 	logger logging.Logger, modules []modules.Module,
-	pool pool.Pool,
+	pool pool.Pool, slotQueue types.SlotQueue,
 ) *Context {
 	return &Context{
 		GlobalCfg: globalCfg,
@@ -44,5 +45,6 @@ func NewContext(
 		Modules:   modules,
 		Logger:    logger,
 		Pool:      pool,
+		SlotQueue: slotQueue,
 	}
 }

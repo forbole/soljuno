@@ -47,8 +47,11 @@ func GetParsingContext(config Config) (*Context, error) {
 		return nil, fmt.Errorf("error while setting logging level: %s", err)
 	}
 
+	// Create a queue that will collect, aggregate, and export blocks and metadata
+	slotQueue := types.NewQueue(25)
+
 	// Get the modules
-	context := modsregistrar.NewContext(cfg, database, cp, config.GetLogger(), pool)
+	context := modsregistrar.NewContext(cfg, database, cp, config.GetLogger(), pool, slotQueue)
 	mods := config.GetRegistrar().BuildModules(context)
 	registeredModules := modsregistrar.GetModules(mods, cfg.GetChainConfig().GetModules(), config.GetLogger())
 
@@ -62,5 +65,5 @@ func GetParsingContext(config Config) (*Context, error) {
 		}
 	}
 
-	return NewContext(cfg, cp, database, config.GetLogger(), registeredModules, pool), nil
+	return NewContext(cfg, cp, database, config.GetLogger(), registeredModules, pool, slotQueue), nil
 }
