@@ -60,13 +60,10 @@ func StartParsing(ctx *Context) error {
 	}
 	scheduler.StartAsync()
 
-	// Create a queue that will collect, aggregate, and export blocks and metadata
-	exportQueue := types.NewQueue(25)
-
 	// Create and register solana instruction parserManager
 	parserManager := manager.NewDefaultManager()
 
-	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parserManager, ctx.Logger, ctx.Pool, exportQueue, ctx.Modules)
+	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parserManager, ctx.Logger, ctx.Pool, ctx.SlotQueue, ctx.Modules)
 	workers := make([]worker.Worker, cfg.GetWorkers())
 	workerStopChs := make([]chan bool, cfg.GetWorkers())
 	for i := range workers {
@@ -92,7 +89,7 @@ func StartParsing(ctx *Context) error {
 	}
 
 	// Listen for and trap any OS signal to gracefully shutdown and exit
-	trapSignal(ctx, exportQueue, workerStopChs)
+	trapSignal(ctx, workerStopChs)
 
 	latestSlot, err := ctx.Proxy.GetLatestSlot()
 	if err != nil {
@@ -107,7 +104,7 @@ func StartParsing(ctx *Context) error {
 		oldBlockListenerWg.Add(1)
 
 		go func() {
-			enqueueMissingSlots(ctx, exportQueue, cfg.GetStartSlot(), latestSlot)
+			enqueueMissingSlots(ctx, cfg.GetStartSlot(), latestSlot)
 			oldBlockListenerWg.Done()
 		}()
 	}
@@ -115,7 +112,7 @@ func StartParsing(ctx *Context) error {
 	if cfg.ShouldParseNewBlocks() {
 		go func() {
 			oldBlockListenerWg.Wait()
-			startNewBlockListener(ctx, exportQueue, latestSlot+1)
+			startNewBlockListener(ctx, latestSlot+1)
 		}()
 	}
 
@@ -126,7 +123,7 @@ func StartParsing(ctx *Context) error {
 
 // enqueueMissingSlots enqueue jobs (block slots) for missed blocks starting
 // at the startSlot up until the latest known slot.
-func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64, end uint64) {
+func enqueueMissingSlots(ctx *Context, start uint64, end uint64) {
 	ctx.Logger.Info("syncing missing blocks...", "latest_block_slot", end)
 	for i := start; i < end; {
 		next := i + 25
@@ -139,7 +136,7 @@ func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64
 		}
 		for _, slot := range slots {
 			ctx.Logger.Debug("enqueueing missing block", "slot", slot)
-			exportQueue <- slot
+			ctx.SlotQueue <- slot
 		}
 		i = next + 1
 	}
@@ -148,7 +145,7 @@ func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64
 // startNewBlockListener subscribes to new block events via the RPC
 // and enqueues each new block slot onto the provided queue. It blocks as new
 // blocks are incoming.
-func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint64) {
+func startNewBlockListener(ctx *Context, start uint64) {
 	for {
 		end, err := ctx.Proxy.GetLatestSlot()
 		if err != nil {
@@ -157,7 +154,7 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 		// Delay slots to prevent missing blocks caused by rpc
 		end = withDelaySlot(end, 50)
 		if end > start {
-			enqueueMissingSlots(ctx, exportQueue, start, end)
+			enqueueMissingSlots(ctx, start, end)
 			start = end
 		}
 		time.Sleep(time.Second)
@@ -166,7 +163,7 @@ func startNewBlockListener(ctx *Context, exportQueue types.SlotQueue, start uint
 
 // trapSignal will listen for any OS signal and invoke Done on the main
 // WaitGroup allowing the main process to gracefully exit.
-func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) {
+func trapSignal(ctx *Context, workerStopChs []chan bool) {
 	var sigCh = make(chan os.Signal, 1)
 
 	signal.Notify(sigCh, syscall.SIGTERM)
@@ -202,7 +199,7 @@ func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) 
 		}()
 		wg.Wait()
 
-		next := <-queue
+		next := <-ctx.SlotQueue
 		err := updateStartSlot(ctx.GlobalCfg, next-uint64(len(workerStopChs)))
 		if err != nil {
 			ctx.Logger.Info("failed to update start slot")

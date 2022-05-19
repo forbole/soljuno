@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/soljuno/db"
+	client "github.com/forbole/soljuno/solana/client"
 	"github.com/forbole/soljuno/types/pool"
 
 	"github.com/forbole/soljuno/modules"
@@ -25,11 +26,7 @@ func GetFixContext(config Config) (*Context, error) {
 	}
 
 	// Init the client
-	cp, err := NewClientProxy(cfg)
-	if err != nil {
-		return nil, fmt.Errorf("failed to start client: %s", err)
-	}
-
+	cp := client.NewClientProxy(cfg.GetRPCConfig().GetAddress())
 	pool, err := pool.NewDefaultPool(cfg.GetWorkerConfig().GetPoolSize())
 	if err != nil {
 		return nil, err
@@ -46,8 +43,11 @@ func GetFixContext(config Config) (*Context, error) {
 		return nil, fmt.Errorf("error while setting logging level: %s", err)
 	}
 
+	// Create a queue that will collect, aggregate, and export blocks and metadata
+	slotQueue := types.NewQueue(25)
+
 	// Get the modules
-	context := modsregistrar.NewContext(cfg, database, cp, config.GetLogger(), pool)
+	context := modsregistrar.NewContext(cfg, database, cp, config.GetLogger(), pool, slotQueue)
 	mods := config.GetRegistrar().BuildModules(context)
 	registeredModules := modsregistrar.GetModules(mods, cfg.GetChainConfig().GetModules(), config.GetLogger())
 
@@ -61,5 +61,5 @@ func GetFixContext(config Config) (*Context, error) {
 		}
 	}
 
-	return NewContext(cfg, cp, database, config.GetLogger(), registeredModules, pool), nil
+	return NewContext(cfg, cp, database, config.GetLogger(), registeredModules, pool, slotQueue), nil
 }

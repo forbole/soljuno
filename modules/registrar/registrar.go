@@ -13,6 +13,7 @@ import (
 	"github.com/forbole/soljuno/modules/config"
 	"github.com/forbole/soljuno/modules/consensus"
 	"github.com/forbole/soljuno/modules/epoch"
+	"github.com/forbole/soljuno/modules/fix"
 	"github.com/forbole/soljuno/modules/history"
 	"github.com/forbole/soljuno/modules/instructions"
 	"github.com/forbole/soljuno/modules/pricefeed"
@@ -39,18 +40,25 @@ type Context struct {
 	Proxy         client.ClientProxy
 	Logger        logging.Logger
 	Pool          pool.Pool
+	SlotQueue     types.SlotQueue
 }
 
 // NewContext allows to build a new Context instance
 func NewContext(
-	config types.Config, database db.Database, proxy client.ClientProxy, logger logging.Logger, pool pool.Pool,
+	config types.Config,
+	database db.Database,
+	proxy client.ClientProxy,
+	logger logging.Logger,
+	pool pool.Pool,
+	slotQueue types.SlotQueue,
 ) Context {
 	return Context{
-		Config:   config,
-		Database: database,
-		Proxy:    proxy,
-		Logger:   logger,
-		Pool:     pool,
+		Config:    config,
+		Database:  database,
+		Proxy:     proxy,
+		Logger:    logger,
+		Pool:      pool,
+		SlotQueue: slotQueue,
 	}
 }
 
@@ -123,6 +131,7 @@ func (r *DefaultRegistrar) BuildModules(ctx Context) modules.Modules {
 		historyModule,
 		blocks.NewModule(ctx.Database),
 		voteStatusModule,
+		fix.NewModule(ctx.Database, ctx.SlotQueue, ctx.Proxy),
 	}
 }
 

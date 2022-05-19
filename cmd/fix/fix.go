@@ -10,6 +10,7 @@ import (
 
 	cmdtypes "github.com/forbole/soljuno/cmd/types"
 	"github.com/forbole/soljuno/modules"
+	"github.com/forbole/soljuno/modules/fix"
 	"github.com/forbole/soljuno/solana/program/parser/manager"
 	"github.com/forbole/soljuno/types"
 	"github.com/forbole/soljuno/worker"
@@ -60,14 +61,11 @@ func StartFixing(ctx *Context, start uint64, end uint64) error {
 	}
 	scheduler.StartAsync()
 
-	// Create a queue that will collect, aggregate, and export blocks and metadata
-	exportQueue := types.NewQueue(25)
-
 	// Create and register solana instruction parserManager
 	parserManager := manager.NewDefaultManager()
 
 	cfg := types.Cfg.GetParsingConfig()
-	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parserManager, ctx.Logger, ctx.Pool, exportQueue, ctx.Modules)
+	workerCtx := worker.NewContext(ctx.Proxy, ctx.Database, parserManager, ctx.Logger, ctx.Pool, ctx.SlotQueue, ctx.Modules)
 	workers := make([]worker.Worker, cfg.GetWorkers())
 	workerStopChs := make([]chan bool, cfg.GetWorkers())
 	for i := range workers {
@@ -75,6 +73,14 @@ func StartFixing(ctx *Context, start uint64, end uint64) error {
 		workers[i] = worker.NewWorker(i, workerCtx).WithStopChannel(stopCh)
 		workerStopChs[i] = stopCh
 	}
+
+	// Start each blocking worker in a go-routine where the worker consumes jobs
+	// off of the export queue.
+	for i, w := range workers {
+		ctx.Logger.Debug("starting worker...", "number", i+1)
+		go w.Start()
+	}
+
 	waitGroup.Add(1)
 
 	// Run all the async operations
@@ -85,58 +91,32 @@ func StartFixing(ctx *Context, start uint64, end uint64) error {
 	}
 
 	// Listen for and trap any OS signal to gracefully shutdown and exit
-	trapSignal(ctx, exportQueue, workerStopChs)
+	trapSignal(ctx, workerStopChs)
 
-	go enqueueMissingSlots(ctx, exportQueue, start, end)
+	go enqueueMissingSlots(ctx, start, end)
 
 	// Block main process (signal capture will call WaitGroup's Done)
 	waitGroup.Wait()
 	return nil
 }
 
-func enqueueMissingSlots(ctx *Context, exportQueue types.SlotQueue, start uint64, end uint64) {
+func enqueueMissingSlots(ctx *Context, start uint64, end uint64) {
 	ctx.Logger.Info("fixing missing blocks...", "latest_block_slot", end)
 	for i := start; i < end; {
 		next := i + 1000
 		if next >= end {
 			next = end - 1
 		}
-		height, err := ctx.Database.GetMissingHeight(i, next)
-		if err != nil {
-			continue
-		}
-		// Skip if height = 0 meaning that the given range is no missing blocks there
-		if height == 0 {
-			i = next + 1
-			continue
-		}
-
-		start, end, err := ctx.Database.GetMissingSlotRange(height)
-		if err != nil {
-			continue
-		}
-		// Skip if end = 0 meaning that the given height is not missing
-		if end == 0 {
-			i = next + 1
-			continue
-		}
-		slots, err := ctx.Proxy.GetBlocks(start, end)
-		if err != nil {
-			continue
-		}
-		for _, slot := range slots {
-			ctx.Logger.Debug("enqueueing missing block", "slot", slot)
-			exportQueue <- slot
-		}
-		i = end + 1
+		fix.EnqueueMissingSlots(ctx.Database, ctx.SlotQueue, ctx.Proxy, i, next)
+		i = next + 1
 	}
-	ctx.Logger.Debug("enqueueing missing block finished")
+	ctx.Logger.Info("enqueueing missing block finished")
 
 }
 
 // trapSignal will listen for any OS signal and invoke Done on the main
 // WaitGroup allowing the main process to gracefully exit.
-func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) {
+func trapSignal(ctx *Context, workerStopChs []chan bool) {
 	var sigCh = make(chan os.Signal, 1)
 
 	signal.Notify(sigCh, syscall.SIGTERM)
@@ -145,12 +125,12 @@ func trapSignal(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) 
 	go func() {
 		sig := <-sigCh
 		ctx.Logger.Info("caught signal; shutting down...", "signal", sig.String())
-		close(ctx, queue, workerStopChs)
+		close(ctx, workerStopChs)
 	}()
 }
 
 // close stops the program properly
-func close(ctx *Context, queue types.SlotQueue, workerStopChs []chan bool) {
+func close(ctx *Context, workerStopChs []chan bool) {
 	defer ctx.Database.Close()
 	defer waitGroup.Done()
 	defer ctx.Logger.Info("stopped the program...")
