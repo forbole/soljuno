@@ -1,6 +1,8 @@
 package fix
 
 import (
+	"sync"
+
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/modules"
 	"github.com/forbole/soljuno/types"
@@ -20,6 +22,7 @@ type Module struct {
 	SlotInterval uint64
 	slotQueue    types.SlotQueue
 	client       ClientProxy
+	mtx          sync.Mutex
 }
 
 func NewModule(db db.FixMissingBlockDb, slotQueue types.SlotQueue, client ClientProxy) *Module {
@@ -37,17 +40,19 @@ func (m *Module) Name() string {
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(block types.Block) error {
+	m.mtx.Lock()
+	defer m.mtx.Unlock()
+
 	// set 50 delayed slot
 	interval := (block.Slot - 50) / 100
 	if interval <= m.SlotInterval {
 		return nil
 	}
 	// the first time to set the current interval
-	if m.SlotInterval <= 1 {
+	if m.SlotInterval == 0 {
 		m.SlotInterval = interval
 		return nil
 	}
-
 	m.SlotInterval = interval
 	return HandleBlock(block, m.db, m.slotQueue, m.client)
 }
