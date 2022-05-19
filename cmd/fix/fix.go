@@ -156,4 +156,12 @@ func close(ctx *Context, workerStopChs []chan bool) {
 		wg.Done()
 	}()
 	wg.Wait()
+
+	for _, module := range ctx.Modules {
+		if periodicModule, ok := module.(modules.PeriodicOperationsModule); ok {
+			for err := periodicModule.RunPeriodicOperations(); err != nil; {
+				ctx.Logger.Error("module", module.Name(), "err", err)
+			}
+		}
+	}
 }
