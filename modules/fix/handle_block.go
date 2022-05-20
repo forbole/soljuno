@@ -49,12 +49,13 @@ func EnqueueMissingSlots(
 		if len(slots) == 0 {
 			continue
 		}
-		for _, slot := range slots {
-			slot := slot
-			go func() {
+		go func() {
+			slots := slots
+			for _, slot := range slots {
 				queue <- slot
-			}()
-		}
+			}
+		}()
+
 		i = rangeEnd + 1
 	}
 }
