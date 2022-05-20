@@ -46,6 +46,6 @@ CREATE TABLE token_delegation
 
 CREATE MATERIALIZED VIEW token_account_balance_ordering AS 
     SELECT tab.address, tab.balance, ta.mint FROM token_account_balance AS tab 
-    INNER JOIN token_account AS ta ON ta.address = tab.address;
-
+    INNER JOIN token_account AS ta ON ta.address = tab.address WHERE tab.balance > 0;
+CREATE UNIQUE INDEX token_account_balance_unique_idex ON token_account_balance_ordering(address);
 CREATE INDEX token_account_balance_ordering_index ON token_account_balance_ordering(mint, balance DESC);
