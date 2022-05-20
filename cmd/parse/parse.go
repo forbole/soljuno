@@ -202,7 +202,7 @@ func trapSignal(ctx *Context, workerStopChs []chan bool) {
 		for _, module := range ctx.Modules {
 			if periodicModule, ok := module.(modules.PeriodicOperationsModule); ok {
 				if err := periodicModule.RunPeriodicOperations(); err != nil {
-					ctx.Logger.Error("module", module.Name(), "err", err)
+					ctx.Logger.Error("failed to execute the periodic operations before closing", "module", module.Name(), "err", err)
 				}
 			}
 		}
