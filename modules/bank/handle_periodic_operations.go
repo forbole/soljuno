@@ -14,14 +14,14 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", m.Name()).Msg("setting up periodic tasks")
 	if _, err := scheduler.Every(10).Second().Do(func() {
-		utils.WatchMethod(m, m.handlePeriodicOperations)
+		utils.WatchMethod(m, m.RunPeriodicOperations)
 	}); err != nil {
 		return fmt.Errorf("error while setting up bank periodic operation: %s", err)
 	}
 	return nil
 }
 
-func (m *Module) handlePeriodicOperations() error {
+func (m *Module) RunPeriodicOperations() error {
 	return HandlePeriodicOperations(m, m.db)
 }
 
