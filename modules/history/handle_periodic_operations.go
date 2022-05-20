@@ -12,11 +12,5 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 }
 
 func (m *Module) RunPeriodicOperations() error {
-	for _, service := range m.services {
-		err := service.ExecHistory()
-		if err != nil {
-			return err
-		}
-	}
 	return nil
 }
