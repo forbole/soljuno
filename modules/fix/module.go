@@ -41,6 +41,7 @@ func (m *Module) Name() string {
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(block types.Block) error {
 	m.mtx.Lock()
+	defer m.mtx.Unlock()
 	// set 50 delayed slot
 	interval := (block.Slot - 50) / 100
 	if interval <= m.SlotInterval {
@@ -52,7 +53,5 @@ func (m *Module) HandleBlock(block types.Block) error {
 		return nil
 	}
 	m.SlotInterval = interval
-	m.mtx.Unlock()
-
 	return HandleBlock(block, m.db, m.slotQueue, m.client)
 }
