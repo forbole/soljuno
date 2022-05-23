@@ -33,8 +33,8 @@ func UpdateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client 
 			address,
 			info.Context.Slot,
 			voteAccount.Node.String(),
-			voteAccount.Withdrawer.String(),
 			voteAccount.Voters[0].Pubkey.String(),
+			voteAccount.Withdrawer.String(),
 			voteAccount.Commission,
 		),
 	)
