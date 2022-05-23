@@ -17,7 +17,7 @@ array_relationships:
         schema: public
         name: validator
       column_mapping:
-        leader: node
+        leader: voter
 select_permissions:
 - permission:
     allow_aggregations: true
