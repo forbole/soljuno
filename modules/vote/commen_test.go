@@ -23,6 +23,7 @@ func NewDefaultMockDb() *MockDb {
 }
 
 func (db *MockDb) SaveValidator(account dbtypes.VoteAccountRow) error { return db.err }
+func (db *MockDb) DeleteValidator(address string) error               { return db.err }
 func (db *MockDb) CheckValidatorLatest(address string, currentSlot uint64) bool {
 	return db.isLatest
 }

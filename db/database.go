@@ -198,6 +198,9 @@ type VoteDb interface {
 	// SaveValidator allows to store the given vote account data inside the database
 	SaveValidator(account dbtypes.VoteAccountRow) error
 
+	// DeleteValidator allows to delete the given vote account data with given address
+	DeleteValidator(address string) error
+
 	VoteCheckerDb
 }
 

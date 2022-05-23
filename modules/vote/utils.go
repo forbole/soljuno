@@ -18,7 +18,7 @@ func UpdateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client 
 		return err
 	}
 	if info.Value == nil {
-		return nil
+		return db.DeleteValidator(address)
 	}
 	bz, err := base64.StdEncoding.DecodeString(info.Value.Data[0])
 	if err != nil {
@@ -26,7 +26,7 @@ func UpdateVoteAccount(address string, currentSlot uint64, db db.VoteDb, client 
 	}
 	voteAccount, ok := parser.Parse(info.Value.Owner, bz).(parser.VoteAccount)
 	if !ok {
-		return nil
+		return db.DeleteValidator(address)
 	}
 	return db.SaveValidator(
 		dbtypes.NewVoteAccountRow(

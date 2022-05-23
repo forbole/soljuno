@@ -33,6 +33,13 @@ WHERE validator.slot <= excluded.slot`
 	return err
 }
 
+// DeleteValidator implements the db.VoteDb
+func (db *Database) DeleteValidator(address string) error {
+	stmt := `DELETE FROM validator WHERE address = $1`
+	_, err := db.Sqlx.Exec(stmt, address)
+	return err
+}
+
 // SaveValidatorStatuses implements the db.VoteDb
 func (db *Database) SaveValidatorStatuses(statuses []dbtypes.ValidatorStatusRow) error {
 	// clean the current state
