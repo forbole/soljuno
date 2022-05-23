@@ -1,4 +1,4 @@
-package fix
+package block
 
 import (
 	"github.com/forbole/soljuno/types/logging"
