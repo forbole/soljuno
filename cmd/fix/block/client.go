@@ -25,7 +25,7 @@ func NewClientProxy(cfg types.Config) (client.ClientProxy, error) {
 
 // Set delay in order to parse from rate limited node
 func delay() {
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(500 * time.Millisecond)
 }
 
 func (cp *proxy) GetLatestSlot() (uint64, error) {
