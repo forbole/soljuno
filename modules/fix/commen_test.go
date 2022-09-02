@@ -2,10 +2,12 @@ package fix_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/suite"
 
 	"github.com/forbole/soljuno/db"
+	dbtypes "github.com/forbole/soljuno/db/types"
 	"github.com/forbole/soljuno/modules/fix"
 	"github.com/forbole/soljuno/types"
 )
@@ -27,6 +29,9 @@ func NewMockDb(height, start, end uint64) *MockDb {
 
 var _ db.FixMissingBlockDb = &MockDb{}
 
+func (db MockDb) GetHistoryBlock(historyTime time.Time) (block dbtypes.BlockRow, found bool, err error) {
+	return dbtypes.NewBlockRow(1, db.height-1, "", "", historyTime, 0), false, nil
+}
 func (db MockDb) GetMissingHeight(start uint64, end uint64) (height uint64, err error) {
 	return db.height, nil
 }

@@ -3,6 +3,9 @@ package postgresql
 import (
 	"database/sql"
 	"fmt"
+	"time"
+
+	dbtypes "github.com/forbole/soljuno/db/types"
 )
 
 func (db *Database) InsertBatch(insertStmt string, conflictStmt string, params []interface{}, paramsNumber int) error {
@@ -91,4 +94,19 @@ func (db *Database) dropPartition(name string) error {
 	)
 	_, err := db.Exec(stmt)
 	return err
+}
+
+func (db *Database) getBlockByTime(pastTime time.Time) (dbtypes.BlockRow, bool, error) {
+	stmt := `SELECT * FROM block WHERE block.timestamp <= $1 ORDER BY block.timestamp DESC LIMIT 1;`
+
+	var val []dbtypes.BlockRow
+	if err := db.Sqlx.Select(&val, stmt, pastTime); err != nil {
+		return dbtypes.BlockRow{}, false, err
+	}
+
+	if len(val) == 0 {
+		return dbtypes.BlockRow{}, false, nil
+	}
+
+	return val[0], true, nil
 }

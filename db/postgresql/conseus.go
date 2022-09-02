@@ -21,22 +21,7 @@ func (db *Database) GetLastBlock() (dbtypes.BlockRow, error) {
 	return blocks[0], nil
 }
 
-func (db *Database) getBlockByTime(pastTime time.Time) (dbtypes.BlockRow, error) {
-	stmt := `SELECT * FROM block WHERE block.timestamp <= $1 ORDER BY block.timestamp DESC LIMIT 1;`
-
-	var val []dbtypes.BlockRow
-	if err := db.Sqlx.Select(&val, stmt, pastTime); err != nil {
-		return dbtypes.BlockRow{}, err
-	}
-
-	if len(val) == 0 {
-		return dbtypes.BlockRow{}, fmt.Errorf("cannot get block time, no blocks saved")
-	}
-
-	return val[0], nil
-}
-
-func (db *Database) GetBlockHourAgo(now time.Time) (dbtypes.BlockRow, error) {
+func (db *Database) GetBlockHourAgo(now time.Time) (dbtypes.BlockRow, bool, error) {
 	pastTime := now.Add(time.Hour * -1)
 	return db.getBlockByTime(pastTime)
 }
