@@ -28,15 +28,17 @@ func (suite *DbTestSuite) TestGetBlockHourAgo() {
 	suite.Require().NoError(err)
 
 	timeNow := timeAgo.Add(time.Hour)
-	result, err := suite.database.GetBlockHourAgo(timeNow)
-	suite.Require().Error(err)
+	result, found, err := suite.database.GetBlockHourAgo(timeNow)
+	suite.Require().False(found)
+	suite.Require().NoError(err)
 
 	slot := uint64(1)
 	err = suite.database.SaveBlock(dbtypes.NewBlockRow(
 		1, 1, "leader", "hash", timeAgo, 0,
 	))
 	suite.Require().NoError(err)
-	result, err = suite.database.GetBlockHourAgo(timeNow)
+	result, found, err = suite.database.GetBlockHourAgo(timeNow)
+	suite.Require().True(found)
 	suite.Require().NoError(err)
 
 	suite.Require().True(result.Timestamp.Equal(timeAgo))

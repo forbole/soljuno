@@ -288,7 +288,7 @@ type ConsensusDb interface {
 	GetLastBlock() (dbtypes.BlockRow, error)
 
 	// GetBlockHourAgo allows to get the latest block before a hour ago inside the database
-	GetBlockHourAgo(now time.Time) (dbtypes.BlockRow, error)
+	GetBlockHourAgo(now time.Time) (dbtypes.BlockRow, bool, error)
 
 	// SaveAverageSlotTimePerHour allows to store the average slot time inside the database
 	SaveAverageSlotTimePerHour(slot uint64, averageTime float64) error
@@ -304,6 +304,9 @@ type FixMissingBlockDb interface {
 
 	// GetMissingHeight returns the height of the earliest missing block in the given range
 	GetMissingHeight(start uint64, end uint64) (height uint64, err error)
+
+	// GetHistoryBlock allows to get the latest block before a specified time ago inside the database
+	GetHistoryBlock(now time.Time) (dbtypes.BlockRow, bool, error)
 
 	// GetMissingSlotRange returns the smallest slot range containing the given height
 	GetMissingSlotRange(height uint64) (start uint64, end uint64, err error)

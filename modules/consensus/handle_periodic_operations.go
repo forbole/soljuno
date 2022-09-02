@@ -31,11 +31,14 @@ func (m *Module) updateSlotTimeInHour() error {
 		return fmt.Errorf("error while getting last block: %s", err)
 	}
 
-	hour, err := m.db.GetBlockHourAgo(block.Timestamp)
+	hour, found, err := m.db.GetBlockHourAgo(block.Timestamp)
 	if err != nil {
 		return fmt.Errorf("error while getting block an hour ago: %s", err)
 	}
-	newBlockTime := block.Timestamp.Sub(hour.Timestamp).Seconds() / float64(block.Slot-hour.Slot)
+	if !found {
+		return nil
+	}
 
+	newBlockTime := block.Timestamp.Sub(hour.Timestamp).Seconds() / float64(block.Slot-hour.Slot)
 	return m.db.SaveAverageSlotTimePerHour(block.Slot, newBlockTime)
 }

@@ -9,7 +9,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// RunAsyncOperations implements modules.Module
 // RegisterPeriodicOperations implements modules.Module
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", m.Name()).Msg("setting up periodic tasks")

@@ -1,14 +1,25 @@
 package fix
 
 import (
+	"time"
+
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/types"
 )
 
+const FixPeriod = 1000
+
 func HandleBlock(block types.Block, db db.FixMissingBlockDb, queue types.SlotQueue, client ClientProxy) error {
-	slot := block.Slot - block.Slot%100
+	slot := block.Slot - block.Slot%FixPeriod
+	historyBlock, found, err := db.GetHistoryBlock(block.Timestamp.Add(-time.Hour))
+	if err != nil {
+		return err
+	}
+	if !found {
+		return nil
+	}
 	// fix missing latest slot
-	go EnqueueMissingSlots(db, queue, client, slot-100, slot)
+	go EnqueueMissingSlots(db, queue, client, historyBlock.Slot, slot)
 	return nil
 }
 

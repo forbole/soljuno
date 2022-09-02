@@ -1,6 +1,10 @@
 package postgresql
 
-import dbtypes "github.com/forbole/soljuno/db/types"
+import (
+	"time"
+
+	dbtypes "github.com/forbole/soljuno/db/types"
+)
 
 func (db *Database) GetMissingHeight(start uint64, end uint64) (height uint64, err error) {
 	var heights []dbtypes.MissingHeightRow
@@ -46,4 +50,8 @@ func (db *Database) GetMissingSlotRange(height uint64) (start uint64, end uint64
 		return 0, 0, err
 	}
 	return slots[0].Slot + 1, slots[1].Slot - 1, err
+}
+
+func (db *Database) GetHistoryBlock(history time.Time) (dbtypes.BlockRow, bool, error) {
+	return db.getBlockByTime(history)
 }
