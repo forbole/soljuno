@@ -11,6 +11,7 @@ CREATE INDEX block_hash_index ON block (hash);;
 CREATE INDEX block_leader_index ON block (leader);;
 CREATE INDEX block_timestamp_index ON block (timestamp DESC);;
 
+DROP TABLE transaction CASCADE;
 CREATE TABLE transaction
 (
     signature           TEXT    NOT NULL,
@@ -18,7 +19,7 @@ CREATE TABLE transaction
     index               INT     NOT NULL DEFAULT 0,
     involved_accounts   TEXT[]  NOT NULL DEFAULT array[]::TEXT[],
     success             BOOLEAN NOT NULL,
-    fee                 INT     NOT NULL,
+    fee                 BIGINT  NOT NULL,
     logs                TEXT[],
     num_instructions    INT     NOT NULL DEFAULT 0,
     partition_id        INT     NOT NULL,
