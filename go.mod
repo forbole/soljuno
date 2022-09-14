@@ -18,7 +18,7 @@ require (
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.0
 	github.com/tendermint/tendermint v0.35.9
-	github.com/ybbus/jsonrpc/v2 v2.1.6
+	github.com/ybbus/jsonrpc/v2 v2.1.7
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 )
