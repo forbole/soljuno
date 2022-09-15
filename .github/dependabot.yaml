@@ -13,5 +13,4 @@ updates:
     reviewers:
       - dadamu
     labels:
-      - automerge
       - dependencies
