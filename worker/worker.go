@@ -13,6 +13,7 @@ import (
 
 	"github.com/forbole/soljuno/db"
 	"github.com/forbole/soljuno/solana/client"
+	clienttypes "github.com/forbole/soljuno/solana/client/types"
 	"github.com/forbole/soljuno/solana/program/parser/manager"
 	"github.com/forbole/soljuno/types"
 )
@@ -119,7 +120,7 @@ func (w Worker) process(slot uint64) error {
 	}()
 
 	w.logger.Info("processing block", "slot", slot)
-	b, err := w.cp.GetBlock(slot)
+	b, err := w.cp.GetBlock(slot, clienttypes.NewDefaultBlockConfig())
 	if err != nil {
 		return fmt.Errorf("failed to get block from rpc server: %s", err)
 	}
