@@ -129,7 +129,8 @@ func (tx Tx) Successful() bool {
 func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, index int, txResult clienttypes.EncodedTransactionWithStatusMeta) Tx {
 	signature := txResult.Transaction.Signatures[0]
 	rawMsg := txResult.Transaction.Message
-	accountKeys := rawMsg.AccountKeys
+	accountKeys := append(rawMsg.AccountKeys, txResult.Meta.LoadedAddresses.Writable...)
+	accountKeys = append(accountKeys, txResult.Meta.LoadedAddresses.Readonly...)
 
 	// Put innerstructions to map in order to create inner instructions after the main instruction
 	var innerInstructionMap = make(map[uint8][]clienttypes.UiCompiledInstruction)
@@ -140,18 +141,18 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, index i
 	instructions := make([]Instruction, 0, len(txResult.Transaction.Message.Instructions)+len(txResult.Meta.InnerInstructions))
 	for i, instruction := range rawMsg.Instructions {
 		innerIndex := 0
-		accounts := getAccounts(accountKeys, instruction.Accounts)
+		instructionAccounts := getAccounts(accountKeys, instruction.Accounts)
 		programID := accountKeys[instruction.ProgramIDIndex]
-		parsed := parserManager.Parse(accounts, programID, instruction.Data)
-		instructions = append(instructions, NewInstruction(signature, slot, i, innerIndex, accountKeys[instruction.ProgramIDIndex], accounts, instruction.Data, parsed))
+		parsed := parserManager.Parse(instructionAccounts, programID, instruction.Data)
+		instructions = append(instructions, NewInstruction(signature, slot, i, innerIndex, accountKeys[instruction.ProgramIDIndex], instructionAccounts, instruction.Data, parsed))
 
 		if inner, ok := innerInstructionMap[uint8(i)]; ok {
 			for _, innerInstruction := range inner {
 				innerIndex++
-				accounts := getAccounts(accountKeys, innerInstruction.Accounts)
+				innerInstructionAccounts := getAccounts(accountKeys, innerInstruction.Accounts)
 				programID := accountKeys[innerInstruction.ProgramIDIndex]
-				parsed := parserManager.Parse(accounts, programID, innerInstruction.Data)
-				instructions = append(instructions, NewInstruction(signature, slot, i, innerIndex, accountKeys[innerInstruction.ProgramIDIndex], accounts, innerInstruction.Data, parsed))
+				parsed := parserManager.Parse(innerInstructionAccounts, programID, innerInstruction.Data)
+				instructions = append(instructions, NewInstruction(signature, slot, i, innerIndex, accountKeys[innerInstruction.ProgramIDIndex], innerInstructionAccounts, innerInstruction.Data, parsed))
 			}
 		}
 	}
