@@ -32,8 +32,8 @@ func (cp *proxy) GetBlocks(start uint64, end uint64) ([]uint64, error) {
 	return cp.rpcClient.GetBlocks(start, end)
 }
 
-func (cp *proxy) GetBlock(slot uint64) (clienttypes.BlockResult, error) {
-	return cp.rpcClient.GetBlock(slot)
+func (cp *proxy) GetBlock(slot uint64, config clienttypes.BlockConfig) (clienttypes.BlockResult, error) {
+	return cp.rpcClient.GetBlock(slot, config)
 }
 
 func (cp *proxy) GetVoteAccounts() (clienttypes.VoteAccounts, error) {
