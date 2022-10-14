@@ -2,16 +2,9 @@ package types
 
 type UiRawMessage struct {
 	Header          MessageHeader           `json:"header"`
-	AccountKeys     []AccountKey            `json:"accountKeys"`
+	AccountKeys     []string                `json:"accountKeys"`
 	RecentBlockHash string                  `json:"recentBlockHash"`
 	Instructions    []UiCompiledInstruction `json:"instructions"`
-}
-
-type AccountKey struct {
-	Pubkey   string `json:"pubkey"`
-	Signer   bool   `json:"signer"`
-	Source   string `json:"source"`
-	Writable bool   `json:"writable"`
 }
 
 type MessageHeader struct {
