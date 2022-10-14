@@ -129,7 +129,10 @@ func (tx Tx) Successful() bool {
 func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, index int, txResult clienttypes.EncodedTransactionWithStatusMeta) Tx {
 	signature := txResult.Transaction.Signatures[0]
 	rawMsg := txResult.Transaction.Message
-	accountKeys := rawMsg.AccountKeys
+	accountKeys := []string{}
+	for _, accountKey := range rawMsg.AccountKeys {
+		accountKeys = append(accountKeys, accountKey.Pubkey)
+	}
 
 	// Put innerstructions to map in order to create inner instructions after the main instruction
 	var innerInstructionMap = make(map[uint8][]clienttypes.UiCompiledInstruction)
@@ -165,7 +168,7 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, index i
 		txResult.Meta.Fee,
 		txResult.Meta.LogMessages,
 		instructions,
-		txResult.Transaction.Message.AccountKeys,
+		accountKeys,
 		txResult.Meta.PostBalances,
 		txResult.Meta.PostTokenBalances,
 	)
