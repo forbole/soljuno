@@ -139,21 +139,19 @@ func NewTxFromTxResult(parserManager manager.ParserManager, slot uint64, index i
 
 	instructions := make([]Instruction, 0, len(txResult.Transaction.Message.Instructions)+len(txResult.Meta.InnerInstructions))
 	for i, instruction := range rawMsg.Instructions {
-		var accounts []string
 		innerIndex := 0
-		accounts = getAccounts(accountKeys, instruction.Accounts)
+		accounts := getAccounts(accountKeys, instruction.Accounts)
 		programID := accountKeys[instruction.ProgramIDIndex]
 		parsed := parserManager.Parse(accounts, programID, instruction.Data)
 		instructions = append(instructions, NewInstruction(signature, slot, i, innerIndex, accountKeys[instruction.ProgramIDIndex], accounts, instruction.Data, parsed))
-		innerIndex++
 
 		if inner, ok := innerInstructionMap[uint8(i)]; ok {
 			for _, innerInstruction := range inner {
-				accounts = getAccounts(accountKeys, innerInstruction.Accounts)
+				innerIndex++
+				accounts := getAccounts(accountKeys, innerInstruction.Accounts)
 				programID := accountKeys[innerInstruction.ProgramIDIndex]
 				parsed := parserManager.Parse(accounts, programID, innerInstruction.Data)
 				instructions = append(instructions, NewInstruction(signature, slot, i, innerIndex, accountKeys[innerInstruction.ProgramIDIndex], accounts, innerInstruction.Data, parsed))
-				innerIndex++
 			}
 		}
 	}
