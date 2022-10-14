@@ -12,7 +12,7 @@ type BlockConfig struct {
 
 func NewDefaultBlockConfig() BlockConfig {
 	return BlockConfig{
-		Encoding:                       "jsonParsed",
+		Encoding:                       "json",
 		TransactionDetails:             "full",
 		Rewards:                        true,
 		Commitment:                     "finalized",
