@@ -10,13 +10,13 @@ require (
 	github.com/lib/pq v1.10.7
 	github.com/mkevac/debugcharts v0.0.0-20191222103121-ae1c48aa8615
 	github.com/mr-tron/base58 v1.2.0
-	github.com/panjf2000/ants/v2 v2.5.0
+	github.com/panjf2000/ants/v2 v2.6.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.13.0
 	github.com/rs/zerolog v1.28.0
-	github.com/spf13/cobra v1.5.0
+	github.com/spf13/cobra v1.6.0
 	github.com/spf13/viper v1.13.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.35.9
 	github.com/ybbus/jsonrpc/v2 v2.1.7
 	gopkg.in/yaml.v2 v2.4.0
@@ -38,7 +38,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
