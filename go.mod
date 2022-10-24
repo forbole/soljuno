@@ -10,7 +10,7 @@ require (
 	github.com/lib/pq v1.10.7
 	github.com/mkevac/debugcharts v0.0.0-20191222103121-ae1c48aa8615
 	github.com/mr-tron/base58 v1.2.0
-	github.com/panjf2000/ants/v2 v2.5.0
+	github.com/panjf2000/ants/v2 v2.6.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.13.0
 	github.com/rs/zerolog v1.28.0
