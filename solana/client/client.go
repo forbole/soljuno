@@ -13,7 +13,7 @@ type ClientProxy interface {
 	GetLatestSlot() (uint64, error)
 
 	// GetBlock queries for a block by slot. An error is returned if the query fails.
-	GetBlock(uint64) (clienttypes.BlockResult, error)
+	GetBlock(uint64, clienttypes.BlockConfig) (clienttypes.BlockResult, error)
 
 	// GetBlocks returns the slot of confirmed blocks between the given start and end on the active chain.
 	// An error is returned if the query fails.
@@ -82,9 +82,9 @@ func NewClientProxy(endpoint string) ClientProxy {
 	}
 }
 
-func (c *Client) GetBlock(slot uint64) (clienttypes.BlockResult, error) {
+func (c *Client) GetBlock(slot uint64, config clienttypes.BlockConfig) (clienttypes.BlockResult, error) {
 	var block clienttypes.BlockResult
-	err := c.RpcClient.CallFor(&block, "getBlock", slot)
+	err := c.RpcClient.CallFor(&block, "getBlock", slot, config)
 	return block, err
 }
 
