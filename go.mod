@@ -12,7 +12,7 @@ require (
 	github.com/mr-tron/base58 v1.2.0
 	github.com/panjf2000/ants/v2 v2.6.0
 	github.com/pelletier/go-toml v1.9.5
-	github.com/prometheus/client_golang v1.13.0
+	github.com/prometheus/client_golang v1.13.1
 	github.com/rs/zerolog v1.28.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.13.0
