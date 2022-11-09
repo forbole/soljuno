@@ -36,6 +36,12 @@ type UiTransactionStatusMeta struct {
 	PreTokenBalances  []TransactionTokenBalance `json:"preTokenBalances"`
 	PostTokenBalances []TransactionTokenBalance `json:"postTokenBalances"`
 	Rewards           []Reward                  `json:"rewards"`
+	LoadedAddresses   LoadedAddress             `json:"loadedAddresses"`
+}
+
+type LoadedAddress struct {
+	Readonly []string `json:"readonly"`
+	Writable []string `json:"writable"`
 }
 
 type UiTransaction struct {
